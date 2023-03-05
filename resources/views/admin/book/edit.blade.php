@@ -1,7 +1,8 @@
 @extends('admin/layouts.app')
+@section('pageTitle', 'Cập nhật sách điện tử')
 @section('content')
+<div class="nk-block-head-sub"><a class="back-to" href="{{ url()->previous() }}"><em class="icon ni ni-arrow-left"></em><span>Quay lại</span></a></div>
 
-<h1 class="h3 mb-2 text-gray-800">Cập nhật truyện</h1>
 	<div class="card shadow mb-4">
 		<div class="card-body ">
 			<form action="/admin/book/{{ $book->id }}" method="POST" enctype="multipart/form-data">
@@ -16,14 +17,10 @@
                >
                 
                 <label>Thể loại<sup>*</sup></label>
-
-
                 <select required class="form-control mb-4 col-6"  name="type_id">
-
                    @foreach ($types as $type)
                     <option value="{{ $type->id }}" {{ $book->type_id == $type->id ? 'selected' : '' }} >{{ $type->name }}</option>
                     @endforeach
-
                 </select>
 
                 <label>Tác giả<sup>*</sup></label>
@@ -43,13 +40,17 @@
 
                 <label>Mô tả</label>
                 <textarea 
-               cols="50" 
-               rows="20" 
-               name="description"
-               class="form-control mb-4"
-               id="mytextarea"
+                name="description"
+                class="form-control mb-4"
+                id="mytextarea"
+                >{{ $book -> description }}</textarea>
 
-               >{{ $book -> description }}</textarea>
+
+                <label>Tiến độ<sup>*</sup></label>
+                <select required class="form-control mb-4 col-6"  name="isCompleted"> 
+                <option value=0 {{ $book->isCompleted == 0 ? 'selected' : '' }} >Chưa hoàn thành</option>
+                <option value=1 {{ $book->isCompleted == 1 ? 'selected' : '' }} >Đã hoàn thành</option>
+                </select>
 
 		 		<button type="submit" class="btn btn-info">Cập nhật truyện</button>
 		 	</form>
@@ -70,6 +71,7 @@
         statusbar: false,
         height: 1000,
         resize: false,
+         menubar: false,
         plugins: [
             "advlist", "anchor", "autolink", "charmap", "code", "fullscreen", 
             "help", "image", "insertdatetime", "link", "lists", "media", 

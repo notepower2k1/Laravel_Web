@@ -1,7 +1,8 @@
 @extends('admin/layouts.app')
+@section('pageTitle', 'Thêm diễn đàn')
 @section('content')
+<div class="nk-block-head-sub"><a class="back-to" href="{{ url()->previous() }}"><em class="icon ni ni-arrow-left"></em><span>Quay lại</span></a></div>
 
-<h1 class="h3 mb-2 text-gray-800">Thêm diễn đàn</h1>
 	<div class="card shadow mb-4">
 		<div class="card-body ">
 			<form action="{{ route('forum.store') }}" method="POST">
@@ -41,6 +42,7 @@
         statusbar: false,
         height: 1000,
         resize: false,
+        menubar: false,
         plugins: [
             "advlist", "anchor", "autolink", "charmap", "code", "fullscreen", 
             "help", "image", "insertdatetime", "link", "lists", "media", 

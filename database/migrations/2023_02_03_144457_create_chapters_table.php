@@ -19,10 +19,13 @@ return new class extends Migration
             $table->string('name');
             $table->longText('content');
             $table->string('slug'); 
-            $table->timestamps();
             $table->unsignedInteger('book_id');
             $table->foreign('book_id')
             ->references('id')->on('books')->onDelete('cascade');
+            $table->timestamp('deleted_at')->nullable();;
+            $table->timestamps();
+
+
         });
         
 

@@ -19,15 +19,18 @@ return new class extends Migration
                 $table->string('author');
                 $table->text('description');
                 $table->text('image');
-                $table->integer('status');
+                $table->boolean('isCompleted');
+                $table->boolean('isPublic');
+                $table->tinyInteger('language'); //0 - VN //1 - English
                 $table->string('slug');
                 $table->unsignedInteger('type_id');
                 $table->foreign('type_id')
-                ->references('id')->on('types')->onDelete('cascade');
-                $table->timestamps();
+                ->references('id')->on('book_types')->onDelete('cascade');           
                 $table->unsignedbigInteger('userCreatedID');
                 $table->foreign('userCreatedID')
                 ->references('id')->on('users')->onDelete('cascade');
+                $table->timestamp('deleted_at')->nullable();;
+                $table->timestamps();
             });
         }
      

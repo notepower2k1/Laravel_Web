@@ -12,9 +12,13 @@ class ForumPosts extends Model
     protected $primaryKey = 'id';
     public $incrementing = false;
 
-    protected $fillable = ['topic','content','forumID','userCreatedID','slug'];
+    protected $fillable = ['topic','content','forumID','userCreatedID','slug','image'];
 
     public function forum() {
         return $this->belongsTo(Forum::class,'forumID','id');
+    }
+
+    public function users() {
+        return $this->belongsTo(User::class,'userCreatedID','id');
     }
 }

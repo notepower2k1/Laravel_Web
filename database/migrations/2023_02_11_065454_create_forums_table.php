@@ -17,9 +17,10 @@ return new class extends Migration
             $table->increments('id');
             $table->string('slug');
             $table->string('name');
-            $table->integer('status');
+            $table->tinyInteger('status');
             $table->text('description');
 
+            $table->timestamp('deleted_at')->nullable();;
             $table->timestamps();
         });
     }

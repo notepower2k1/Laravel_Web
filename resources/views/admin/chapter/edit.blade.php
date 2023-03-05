@@ -1,7 +1,9 @@
 @extends('admin/layouts.app')
-@section('content')
+@section('pageTitle', 'Cập nhật chương')
 
-<h1 class="h3 mb-2 text-gray-800">Cập nhật chương</h1>
+@section('content')
+<div class="nk-block-head-sub"><a class="back-to" href="{{ url()->previous() }}"><em class="icon ni ni-arrow-left"></em><span>Quay lại</span></a></div>
+
 <div class="card shadow mb-4">
     <div class="card-body">
         <form action="/admin/book/chapter/{{ $chapter->id }}" method="POST">
@@ -44,6 +46,7 @@
         statusbar: false,
         height: 1000,
         resize: false,
+         menubar: false,
         plugins: [
             "advlist", "anchor", "autolink", "charmap", "code", "fullscreen", 
             "help", "image", "insertdatetime", "link", "lists", "media", 

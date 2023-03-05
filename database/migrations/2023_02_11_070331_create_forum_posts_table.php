@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('topic');
             $table->longText('content');
             $table->unsignedInteger('forumID');
-            
+            $table->text('image');
+
             $table->foreign('forumID')
             ->references('id')->on('forums')->onDelete('cascade');
 
@@ -26,6 +27,7 @@ return new class extends Migration
             $table->foreign('userCreatedID')
             ->references('id')->on('users')->onDelete('cascade');
             
+            $table->timestamp('deleted_at')->nullable();;
             $table->timestamps();
             $table->string('slug');
         });

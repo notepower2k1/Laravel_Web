@@ -16,11 +16,15 @@ class Book extends Model
     public $incrementing = false;
 
     protected $fillable = ['name', 'author', 
-    'description' ,'status','slug','type_id','image','userCreatedID'];
+    'description' ,'isCompleted','slug','type_id','image','userCreatedID','isPublic','language','numberOfChapter'];
 
 
     public function types() {
-        return $this->belongsTo(Type::class,'type_id','id');
+        return $this->belongsTo(BookType::class,'type_id','id');
+    }
+
+    public function users() {
+        return $this->belongsTo(User::class,'userCreatedID','id');
     }
 
     public function chapters() {

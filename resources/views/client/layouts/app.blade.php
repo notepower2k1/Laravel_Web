@@ -4,12 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <title>@yield('pageTitle')</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
     <script src="https://cdn.tiny.cloud/1/eg8iogzlu3jipzfj7j3tuxbi6raibc22pcwt4y2jcu6d3qcn/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-   <style>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+
+    <link rel="stylesheet" href="{{ asset('assets/css/dashlite.css?ver=3.1.2') }}">
+    <link id="skin-default" rel="stylesheet" href="{{ asset('assets/css/theme.css?ver=3.1.2') }}">
+    <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css"
+    rel="stylesheet" />
     
 
     <style>
@@ -24,19 +29,41 @@
         }
     </style>
     
+
 </head>
-<body>
-    @include('client/layouts.header')
-    <div class="container">
-        @yield('content')
-    </div>
-    @include('client/layouts.footer')
+<body class="nk-body bg-lighter npc-general">
+    <div class="nk-app-root">
+        <div class="nk-main ">      
+            <div class="nk-wrap nk-wrap-nosidebar">         
+                <div class="nk-header nk-header-fixed is-light">
+                    @include('client/layouts.header')
+                </div>
 
-    @yield('additional-scripts')
-
-   
+                <div class="nk-content">
+                    <div class="container-fluid">
+                        <div class="nk-content-inner">
+                            <div class="nk-content-body">
+                                @yield('content')
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           
+            {{-- @include('admin/layouts.footer') --}}
+        </div>
   
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    </div>
+  
+    
+    @yield('modal')
+   
+    <script src=" {{ asset('assets/js/bundle.js?ver=3.1.2') }}"></script>
+    <script src="{{ asset('assets/js/scripts.js?ver=3.1.2') }}"></script>
+    {{-- <script src="{{ asset('assets/js/charts/gd-default.js?ver=3.1.2') }}"></script> --}}
+ 
+    
+    @yield('additional-scripts')
 </body>
 </html>

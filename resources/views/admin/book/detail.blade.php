@@ -1,6 +1,7 @@
 @extends('admin/layouts.app')
+@section('pageTitle', 'Chi tiết sách điện tử')
 @section('content')
-
+<div class="nk-block-head-sub"><a class="back-to" href="{{ url()->previous() }}"><em class="icon ni ni-arrow-left"></em><span>Quay lại</span></a></div>
     <div class="row d-flex justify-content-center">
         <div class="col-md-12">
             <div class="card">

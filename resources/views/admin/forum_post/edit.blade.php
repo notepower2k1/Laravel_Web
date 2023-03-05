@@ -1,10 +1,10 @@
 @extends('admin/layouts.app')
+@section('pageTitle', 'Cập nhật bài đăng')
 @section('content')
-
-<h1 class="h3 mb-2 text-gray-800">Cập nhật bài đăng</h1>
+<div class="nk-block-head-sub"><a class="back-to" href="{{ url()->previous() }}"><em class="icon ni ni-arrow-left"></em><span>Quay lại</span></a></div>
 	<div class="card shadow mb-4">
 		<div class="card-body ">
-			<form action="/admin/forum/post/{{ $forum_post->id }}" method="POST">
+			<form action="/admin/forum/post/{{ $forum_post->id }}" method="POST" enctype="multipart/form-data">
 
                 @csrf
                 @method('PUT')
@@ -12,9 +12,15 @@
                 <input type="text" required
                name="topic"
                value="{{ $forum_post->topic }}"
-                class="form-control mb-4 col-6"
-               >
-                
+                class="form-control mb-4 col-6">
+
+                <label>Ảnh đại diện<sup>*</sup></label>
+                <input type="file"
+                name="image"
+                value="{{ $forum_post -> image }}"
+                class="form-control mb-4 col-6">
+                        
+                <input name="oldImage" type="hidden" value="{{ $forum_post -> image }}">
                 <label>Nội dung</label>
                 <textarea 
                cols="50" 
