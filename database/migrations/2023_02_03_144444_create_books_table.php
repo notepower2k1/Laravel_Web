@@ -23,7 +23,10 @@ return new class extends Migration
                 $table->boolean('isPublic');
                 $table->tinyInteger('language'); //0 - VN //1 - English
                 $table->string('slug');
-                $table->unsignedInteger('type_id');
+                $table->float('ratingScore');
+                $table->integer('totalReading');
+                $table->integer('totalBookMarking');
+                $table->unsignedInteger('type_id'); 
                 $table->foreign('type_id')
                 ->references('id')->on('book_types')->onDelete('cascade');           
                 $table->unsignedbigInteger('userCreatedID');

@@ -133,7 +133,7 @@ class ClientChapterController extends Controller
     {
         
         $chapter=Chapter::findOrFail($chuong_id);
-        return view('client.chapter.edit')->with('chapter',$chapter);
+        return view('client.manage.chapter.edit')->with('chapter',$chapter);
     }
 
     /**

@@ -45,4 +45,12 @@ class User extends Authenticatable
     public function profile() {
         return $this->hasOne(Profile::class,'userID');
     }
+
+    public function books() {
+        return $this->hasMany(Book::class,'userCreatedID','id');
+    }
+
+    public function documents() {
+        return $this->hasMany(Document::class,'userCreatedID','id');
+    }
 }

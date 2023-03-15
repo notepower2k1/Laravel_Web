@@ -6,10 +6,16 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ForumPosts;
 use App\Models\Forum;
+use Carbon\Carbon;
 
 class ForumPostController extends Controller
 {
 
+    function setNameForImage(){
+        $now_date = Carbon::now()->toDateTimeString();
+        $string = str_replace(' ', '-', $now_date);
+        return preg_replace('/[^A-Za-z0-9\-]/', '', $string);  
+    }
     public function index()
     {
         $forum_posts = ForumPosts::all();
@@ -80,11 +86,21 @@ class ForumPostController extends Controller
         ]);
         
 
-        $generatedImageName = 'image'.time().'-'
+        $image = $request->file('image'); //image file from frontend
+
+        $generatedImageName = 'image'.$this->setNameForImage().'-'
         .$slug.'.'
         .$request->image->extension();
-        //move to a folder
-        $request->image->move(public_path('storage'), $generatedImageName);
+
+        $firebase_storage_path = 'postImage/';
+        $localfolder = public_path('firebase-temp-uploads') .'/';
+        if ($image->move($localfolder, $generatedImageName)) {
+        $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
+
+        app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
+        unlink($localfolder . $generatedImageName);
+        }
+        
 
         $post = ForumPosts::create([
             'topic' => $request->topic,
@@ -92,8 +108,13 @@ class ForumPostController extends Controller
             'slug' => $slug,
             'userCreatedID' => 1,
             'forumID' => $request->forum_id,
-            'image' => $generatedImageName
+            'image' => $generatedImageName,
+            'totalComments' =>0
         ]);
+        $forum = Forum::findOrFail($post->forumID);
+        $forum->numberOfPosts =$forum->numberOfPosts + 1;
+        $forum ->save();
+
         $post->save();
         return redirect('admin/forum/post/'.$request->forum_id);
     }
@@ -152,11 +173,27 @@ class ForumPostController extends Controller
             $generatedImageName = $request->oldImage;
         }
         else{
-            $generatedImageName = 'image'.time().'-'
+            $image = $request->file('image'); //image file from frontend
+
+            //upload new image
+            $generatedImageName = 'image'.$this->setNameForImage().'-'
             .$slug.'.'
             .$request->image->extension();
-            //move to a folder
-            $request->image->move(public_path('storage'), $generatedImageName);
+
+            $firebase_storage_path = 'postImage/';
+
+            $localfolder = public_path('firebase-temp-uploads') .'/';
+            if ($image->move($localfolder, $generatedImageName)) {
+            $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
+
+            app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
+            unlink($localfolder . $generatedImageName);
+
+            //delete old image
+
+            $imageDeleted = app('firebase.storage')->getBucket()->object($firebase_storage_path.$request->oldImage)->delete();
+
+            }
         }
     
         $forum_post = ForumPosts::findOrFail($id)
@@ -181,12 +218,12 @@ class ForumPostController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
-    {
-        
-
-       
+    {   
         $forum_post = ForumPosts::findOrFail($id);
 
+        $forum = Forum::findOrFail($forum_post->forumID);
+        $forum->numberOfPosts =$forum->numberOfPosts - 1 ;
+        $forum ->save();
         
     
         $forum_post->delete();

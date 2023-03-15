@@ -17,7 +17,7 @@ class MailController extends Controller
     public function index()
     {
         $mailData = [
-            'title' => 'Mail from ItSolutionStuff.com',
+            'title' => 'Email xác thực',
             'body' => 'This is for testing email using smtp.'
         ];
          
@@ -44,8 +44,9 @@ class MailController extends Controller
 
 
         $mailData = [
-            'title' => 'Mail from mydomain@com',
-            'body' =>  'Your OTP '.$otp->token
+            'title' => 'Xin chào '. Auth::user()->name . '!!!',
+            'body' =>  'Mã OTP của bạn là: '.$otp->token,
+            'content' => 'Mã OTP của bạn có hiệu lực trong 2p, bạn có thể nhận lại email này, tài khoản của bạn sẽ bị tạm thời bị vô hiệu hóa nếu bạn xác thực sai quá nhiều lần.'
         ];
          
         Mail::to($identifier)->send(new VerifyMail($mailData));  
@@ -103,26 +104,33 @@ class MailController extends Controller
    
         $identifier = Auth::user()->email;
 
-        $verify = Otp::setAllowedAttempts(10) // number of times they can allow to attempt with wrong token
-        ->validate($identifier,$request->otp);
+        $verify = Otp::validate($identifier,$request->otp);
 
 
         if($verify->status == "true"){
             $user = User::where('email','=', $identifier)->firstOrFail();
             $user->email_verified_at = Carbon::now()->toDateTimeString();
-            $user ->save();
+            $user ->save();  
+            return response()->json([
+                'status' => 1,
+                'message' => $verify->message
+            ]);
             
-            return view('auth.verify-sucess');
         }      
         else{
                
             return response()->json([
-                'result' => 'Xác thực thất bại'
+                'status' => 0,
+                'message' => $verify->message
             ]);
 
 
         }
-       
+            
+
+      
 
     }
+
+  
 }

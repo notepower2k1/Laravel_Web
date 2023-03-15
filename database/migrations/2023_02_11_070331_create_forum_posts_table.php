@@ -19,14 +19,12 @@ return new class extends Migration
             $table->longText('content');
             $table->unsignedInteger('forumID');
             $table->text('image');
-
+            $table->integer('totalComments');
             $table->foreign('forumID')
             ->references('id')->on('forums')->onDelete('cascade');
-
             $table->unsignedbigInteger('userCreatedID');
             $table->foreign('userCreatedID')
             ->references('id')->on('users')->onDelete('cascade');
-            
             $table->timestamp('deleted_at')->nullable();;
             $table->timestamps();
             $table->string('slug');

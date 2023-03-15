@@ -1,4 +1,4 @@
-@extends('client/layouts.app')
+@extends('admin/layouts.app')
 @section('pageTitle', 'Thêm sách sách điện tử')
 
 @section('content')
@@ -9,13 +9,13 @@
         <form action="{{ route('book.store') }}" method="POST" enctype="multipart/form-data">
 
             @csrf
-            <label>Tên truyện<sup>*</sup></label>
+            <label>Tên sách<sup>*</sup></label>
             <input type="text" required
             name="name"
             class="form-control mb-4 col-6">
             
             <label>Thể loại<sup>*</sup></label>
-            <select required class="form-control mb-4 col-6" name="type_id">
+            <select required class="form-control mb-4 col-6" name="book_type_id">
                 @foreach ($types as $type)
                 <option value="{{ $type->id }}" >{{ $type->name }}</option>
                 @endforeach
@@ -26,10 +26,10 @@
             name="author"
             class="form-control mb-4 col-6">	 			 	
         
-            <label>Ảnh đại diện<sup>*</sup></label>
+            <label>Ảnh bìa<sup>*</sup></label>
             <input type="file" required
             name="image"
-            class="form-control mb-4 col-6">
+            class="form-control mb-4 col-6" accept="image/*">
 
             <label>Ngôn ngữ<sup>*</sup></label>
             <select required class="form-control mb-4 col-6" name="language">                           
@@ -41,7 +41,6 @@
             <textarea     
             name="description"
             class="form-control mb-4"
-            id="mytextarea"
             ></textarea>
 
             
@@ -59,23 +58,4 @@
 
     
 @section('additional-scripts')
-<script>
-    tinymce.init({
-        entity_encoding : "raw",
-        selector: '#mytextarea',
-        branding: false,
-        statusbar: false,
-        height: 1000,
-        resize: false,
-        menubar: false,
-        plugins: [
-            "advlist", "anchor", "autolink", "charmap", "code", "fullscreen", 
-            "help", "image", "insertdatetime", "link", "lists", "media", 
-            "preview", "searchreplace", "table", "visualblocks", " wordcount",
-        ],
-        toolbar: "undo redo | styles | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | wordcount"
-        
-    });
-
-</script>
 @endsection

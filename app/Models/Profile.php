@@ -14,7 +14,21 @@ class Profile extends Model
 
     protected $fillable = ['displayName','avatar','gender','userID'];
 
-   
+    protected $appends = ['url'];
+
+    public function getUrlAttribute()
+    {
+        $expiresAt = new \DateTime('tomorrow');
+        $firebase_storage_path = 'avatarImage/';       
+        $imageReference = app('firebase.storage')->getBucket()->object($firebase_storage_path.$this->avatar);
+
+        if ($imageReference->exists()) {
+            $imageURL = $imageReference->signedUrl($expiresAt);
+        } else {
+            $imageURL = '';
+        }
+        return $imageURL;
+    }
 
    
 }

@@ -82,6 +82,7 @@ class ForumController extends Controller
             'description' => $request->description,
             'status' => 1,
             'slug' =>  $slug,
+            'numberOfPosts'=> 0
         ]);
         $forum->save();
         return redirect('/admin/forum');

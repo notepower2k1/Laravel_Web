@@ -5,14 +5,14 @@
                         <div class="nk-block-head">
                             <div class="nk-block-head-content">
 
-                                    <a href="{{ route('book.create') }}" class="btn btn-primary">Thêm truyện</a>
+                                    <a href="{{ route('book.create') }}" class="btn btn-primary">Thêm sách</a>
 
                                
                             </div>
                         </div>
                         <div class="card card-bordered card-preview">
                             <div class="card-inner">
-                                <table class="datatable-init-export nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false" data-export-title="Export">
+                                <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false" data-export-title="Export">
                                     <thead>
                                         <tr class="nk-tb-item nk-tb-head">
                                             <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ảnh đại diện</span></th>
@@ -35,13 +35,12 @@
                                         <tr class="nk-tb-item" id ="row-{{ $book->id }}">
 
                                             <td class="nk-tb-col tb-col-lg">
-                                              <img class="image-fluid" src={{ asset ('storage/'.$book->image) }} alt="..." style="width:100px" />
+                                              <img class="image-fluid" src={{$book->url}} alt="..." style="width:100px" />
                                             </td>
                                             <td class="nk-tb-col">
                                                 <div class="user-card">                                           
                                                     <div class="user-info">
                                                         <span class="tb-lead">{{ $book->name }}<span class="dot dot-success d-md-none ms-1"></span></span>
-                                                        <span>{{ $book->slug }}</span>
                                                     </div>
                                                 </div>
                                             </td>
@@ -158,84 +157,11 @@
 @section('additional-scripts')
 <script src="{{ asset('assets/js/libs/datatable-btns.js?ver=3.1.2') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.jquery.min.js"></script>
+<script src="{{ asset('assets/js/example-sweetalert.js?ver=3.1.2') }}" aria-hidden="true"></script>
 
 <script>
   //custom datatable
-$(document).ready(function() {
 
-  table = $('#DataTables_Table_0').DataTable();
-
-  table.destroy();
-
-
-  table = $('#DataTables_Table_0').DataTable( {
-      dom: 'Blfrtip',
-      columnDefs: [
-          {
-              targets: 4, 
-              className: 'noVis'           
-          }    
-      ],
-    "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "Tất cả"] ],
-     "language": {
-        "lengthMenu": "Hiển thị: _MENU_ đối tượng",
-        "search": "Tìm kiếm _INPUT_",
-        'info':"",
-        "zeroRecords": "Không tìm thấy dữ liệu",
-        "infoEmpty": "Không có dữ liệu hợp lệ",
-        "infoFiltered": "(Lọc từ _MAX_ dữ liệu)",
-        "paginate": {
-          "first":      "Đầu tiên",
-          "last":       "Cuối cùng",
-          "next":       "Tiếp theo",
-          "previous":   "Trước đó"
-      },
-       buttons: {
-            colvis: 'Thay đổi số cột'
-        }
-    },
-
-    buttons: [
-          
-          {
-              extend: 'colvis',
-              columns: ':not(.noVis)'
-          },
-    
-          {
-              extend: 'copyHtml5',
-              exportOptions: {
-                  columns: [1,2,3,4,5]
-              }
-          },
-          {
-              extend: 'excelHtml5',
-              exportOptions: {
-                  columns: [1,2,3,4,5]
-              }
-          },
-          {
-              extend: 'pdfHtml5',
-              exportOptions: {
-                  columns: [1,2,3,4,5]
-              }
-          },
-          {
-              extend: 'csvHtml5',
-              exportOptions: {
-                  columns:[1,2,3,4,5]
-              }
-          },
-          
-      ],
-  
-
-    } );
-    $('#DataTables_Table_0_wrapper').addClass('d-flex row');
-    $('#DataTables_Table_0_length').addClass('mt-2');
-    $('#DataTables_Table_0_filter').addClass('mt-2');
-
-} );
   $(function(){
     $('.form-check-input').change(function() {
       
@@ -250,12 +176,22 @@ $(document).ready(function() {
         })
         .done(function() {
         // If successful
-          console.log("Success");
+          Swal.fire({
+                      icon: 'success',
+                      title: `Đổi trạng thái thành công`,
+                      showConfirmButton: false,
+                      timer: 2500
+                  });
 
         })
         .fail(function(jqXHR, textStatus, errorThrown) {
         // If fail
-        console.log(textStatus + ': ' + errorThrown);
+          Swal.fire({
+                      icon: 'error',
+                      title: `Đổi trạng thái không thành công`,
+                      showConfirmButton: false,
+                      timer: 2500
+                  });
         })
   })
 
@@ -264,27 +200,44 @@ $(document).ready(function() {
     var name = $(this).data('name');
     var token = $("meta[name='csrf-token']").attr("content");
 
-    if (confirm("Xóa sách "+name) == true) {
-        $.ajax({
-          type:"DELETE",
-          url:'/admin/book/' + book_id,
-          data : {
-            "id": book_id,
-            "_token": token,
-          },
-          })
-          .done(function() {
-          // If successful
-            alert("Xóa sách thành công");
-            $("#row-" + book_id).fadeOut();
-          })
-          .fail(function(jqXHR, textStatus, errorThrown) {
-          // If fail
-          console.log(textStatus + ': ' + errorThrown);
-          })
-    } else {
+    Swal.fire({
+        title: "Bạn muốn xóa sách "+ name,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Xóa sách',
+        cancelButtonText: 'Không'
+        }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+            type:"DELETE",
+            url:'/admin/book/' + book_id,
+            data : {
+              "id": book_id,
+              "_token": token,
+            },
+            })
+            .done(function() {
+            // If successful
+              Swal.fire({
+                    icon: 'success',
+                    title: `Xóa sách ${name} thành công`,
+                    showConfirmButton: false,
+                    timer: 2500
+                });
 
-    }
+              $("#row-" + book_id).fadeOut();
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            console.log(textStatus + ': ' + errorThrown);
+            })
+         
+        }
+      })
+   
+  
 
 
   })

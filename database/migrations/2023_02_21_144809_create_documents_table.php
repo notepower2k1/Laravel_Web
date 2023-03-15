@@ -23,6 +23,7 @@ return new class extends Migration
             $table->tinyInteger('language'); //0 - VN //1 - English
             $table->string('slug');
             $table->text('file');
+            $table->integer('totalDownloading');
             $table->unsignedInteger('type_id');
             $table->foreign('type_id')
             ->references('id')->on('document_types')->onDelete('cascade');

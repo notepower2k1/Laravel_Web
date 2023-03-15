@@ -8,14 +8,24 @@ use App\Models\Book;
 use App\Models\BookType;
 use App\Models\Chapter;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 use App\Http\Requests\CreateValidationRequest;
 
 class BookController extends Controller
 {
+    function setNameForImage(){
+        $now_date = Carbon::now()->toDateTimeString();
+        $string = str_replace(' ', '-', $now_date);
+        return preg_replace('/[^A-Za-z0-9\-]/', '', $string);  
+    }
+    
+
     public function index()
     {
+   
        $books = Book::all();
+   
        return view('admin.book.index')->with('books', $books);
     }
 
@@ -75,18 +85,27 @@ class BookController extends Controller
             'name' => 'required',
             'author' => 'required',
             'description' => 'required',
-            'image' => 'required|mimes:jpg,png,jpeg|max:5048',
+            'image' => 'required|mimes:jpg,png,jpeg|max:2048|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
             'language' => 'required'
         ]);
 
 
         $slug =  $this->slugify($request->name);
+    
+        $image = $request->file('image'); //image file from frontend
 
-        $generatedImageName = 'image'.time().'-'
+        $generatedImageName = 'image'.$this->setNameForImage().'-'
         .$slug.'.'
         .$request->image->extension();
-        //move to a folder
-        $request->image->move(public_path('storage'), $generatedImageName);
+
+        $firebase_storage_path = 'bookImage/';
+        $localfolder = public_path('firebase-temp-uploads') .'/';
+        if ($image->move($localfolder, $generatedImageName)) {
+        $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
+
+        app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
+        unlink($localfolder . $generatedImageName);
+        }
 
         $book = Book::create([
             'name' => $request->name,
@@ -94,12 +113,15 @@ class BookController extends Controller
             'description' => $request->description,
             'isPublic' => 0,
             'slug' =>  $slug,
-            'type_id' => intval($request->type_id),
+            'type_id' => intval($request->book_type_id),
             'image' => $generatedImageName,
             'userCreatedID' => Auth::user()->id,
             'isCompleted' => 0,
             'language' => $request -> language,
-            'numberOfChapter' => 0
+            'numberOfChapter' => 0,
+            'ratingScore'=> 0,
+            'totalReading'=>0,
+            'totalBookMarking'=>0
         ]);
         $book->save();
         return redirect('/admin/book');
@@ -153,7 +175,7 @@ class BookController extends Controller
             'name' => 'required',
             'author' => 'required',
             'description' => 'required',
-            'image' => 'mimes:jpg,png,jpeg|max:5048',
+            'image' => 'mimes:jpg,png,jpeg|max:2048|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
             'isCompleted' => 'required'
         ]);
 
@@ -165,11 +187,27 @@ class BookController extends Controller
             $generatedImageName = $request->oldImage;
         }
         else{
-            $generatedImageName = 'image'.time().'-'
+            $image = $request->file('image'); //image file from frontend
+
+            //upload new image
+            $generatedImageName = 'image'.$this->setNameForImage().'-'
             .$slug.'.'
             .$request->image->extension();
-            //move to a folder
-            $request->image->move(public_path('storage'), $generatedImageName);
+
+            $firebase_storage_path = 'bookImage/';
+
+            $localfolder = public_path('firebase-temp-uploads') .'/';
+            if ($image->move($localfolder, $generatedImageName)) {
+            $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
+
+            app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
+            unlink($localfolder . $generatedImageName);
+
+            //delete old image
+
+            $imageDeleted = app('firebase.storage')->getBucket()->object($firebase_storage_path.$request->oldImage)->delete();
+
+            }
         }
         $book = Book::findOrFail($id)
                 ->update([
@@ -177,7 +215,7 @@ class BookController extends Controller
                     'author' => $request->author,
                     'description' => $request->description,
                     'slug' =>  $slug,
-                    'type_id' => intval($request->type_id),
+                    'type_id' => intval($request->book_type_id),
                     'image' => $generatedImageName,
                     'isCompleted' => $request -> isCompleted
                 ]);
@@ -205,8 +243,6 @@ class BookController extends Controller
         $book = Book::findOrFail($request->id);
         $book->isPublic = $request->isPublic;
         $book ->save();
-
-        
     }
 
 }

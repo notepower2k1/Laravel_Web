@@ -34,7 +34,7 @@
 
 
             <label>Thể loại<sup>*</sup></label>
-            <select required class="form-control mb-4 col-6" name="type_id">
+            <select required class="form-control mb-4 col-6" name="document_type_id">
                 @foreach ($types as $type)
                 <option value="{{ $type->id }}" >{{ $type->name }}</option>
                 @endforeach
@@ -42,10 +42,10 @@
         
           
 
-            <label>Ảnh đại diện<sup>*</sup></label>
+            <label>Ảnh bìa<sup>*</sup></label>
             <input type="file" required
             name="image"
-            class="form-control mb-4 col-6 @error('image') is-invalid @enderror">
+            class="form-control mb-4 col-6 @error('image') is-invalid @enderror" accept="image/*">
 
             @error('image')
             <span class="invalid-feedback" role="alert">
@@ -74,7 +74,7 @@
             <label>File đính kèm<sup>*</sup></label>
             <input type="file" required
             name="file_document"
-            class="form-control mb-4 col-6 @error('file_document') is-invalid @enderror">
+            class="form-control mb-4 col-6 @error('file_document') is-invalid @enderror" accept=".doc, .docx,.pdf">
 
             @error('file_document')
             <span class="invalid-feedback" role="alert">

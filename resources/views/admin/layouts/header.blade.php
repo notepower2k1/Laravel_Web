@@ -27,8 +27,8 @@
                       <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
                           <div class="user-toggle">
                               <div class="user-avatar sm">
-                                  <em class="icon ni ni-user-alt"></em>
-                              </div>
+                                <img src={{ Auth::user()->profile->url }} alt="..."  id="previewImage"/>
+                            </div>
                               <div class="user-info d-none d-md-block">
                                   <div class="user-status">Administrator</div>
                                   <div class="user-name dropdown-indicator">{{Auth::user()->name}}</div>
@@ -39,7 +39,7 @@
                           <div class="dropdown-inner user-card-wrap bg-lighter d-none d-md-block">
                               <div class="user-card">
                                   <div class="user-avatar">
-                                      <span>AB</span>
+                                    <img src={{ Auth::user()->profile->url }} alt="..."  id="previewImage"/>
                                   </div>
                                   <div class="user-info">
                                       <span class="lead-text">{{Auth::user()->name}}</span>

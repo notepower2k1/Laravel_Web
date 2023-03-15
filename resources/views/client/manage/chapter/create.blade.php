@@ -1,12 +1,11 @@
-@extends('client/layouts.app')
+@extends('client/manage/layouts.app')
 @section('pageTitle', 'Thêm chương')
 
 @section('content')
-<div class="nk-block-head-sub"><a class="back-to" href="{{ url()->previous() }}"><em class="icon ni ni-arrow-left"></em><span>Quay lại</span></a></div>
-
-
-                  
-
+<div class="nk-fmg-body">
+    <div class="nk-fmg-body-content">
+        <div class="nk-fmg-quick-list nk-block">
+        <div class="nk-block-head-sub"><a class="back-to" href="{{ url()->previous() }}"><em class="icon ni ni-arrow-left"></em><span>Quay lại</span></a></div>
                 <div class="card shadow mb-4">
                     <div class="card-body">
                             <form action="/quan-ly/chuong" method="POST">
@@ -41,17 +40,19 @@
                             <textarea id="mytextarea" 
                             required 
                             name="content" 
-                            class="form-control mb-4 col-6 col-6 @error('content') is-invalid @enderror">
+                            class="form-control col-6 col-6 @error('content') is-invalid @enderror">
                             </textarea>
                     
 
-                            <button type="submit" class="btn btn-info">Thêm mới</button>
+                            <button type="submit" class="btn btn-info mt-4">Thêm mới</button>
                         </form>
                     </div>
                 </div>
-                    
-
-@endsection
+        </div>
+    </div>
+</div>
+        
+                @endsection
 
 @section('additional-scripts')
 <script>
@@ -60,7 +61,7 @@
         selector: '#mytextarea',
         branding: false,
         statusbar: false,
-        height: 1000,
+        height: 500,
         resize: false,
          menubar: false,
         plugins: [

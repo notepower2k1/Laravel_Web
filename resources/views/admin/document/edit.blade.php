@@ -36,7 +36,7 @@
                 @enderror
 
                 <label>Thể loại<sup>*</sup></label>
-                <select required class="form-control mb-4 col-6" name="type_id">
+                <select required class="form-control mb-4 col-6" name="document_type_id">
                     @foreach ($types as $type)
                     <option value="{{ $type->id }}" {{ $document->type_id == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
                     @endforeach
@@ -83,6 +83,13 @@
                     <strong>{{ $message }}</strong>
                 </span>
                 @enderror
+
+
+                <label>Tiến độ<sup>*</sup></label>
+                <select required class="form-control mb-4 col-6"  name="isCompleted"> 
+                <option value=0 {{ $document->isCompleted == 0 ? 'selected' : '' }} >Chưa hoàn thành</option>
+                <option value=1 {{ $document->isCompleted == 1 ? 'selected' : '' }} >Đã hoàn thành</option>
+                </select>
 
 		 		<button type="submit" class="btn btn-info">Cập nhật tài liệu</button>
 		 	</form>

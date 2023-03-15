@@ -142,7 +142,7 @@
                     </ul><!-- .nk-menu-sub -->
                 </li><!-- .nk-menu-item -->
                 <li class="nk-menu-item">
-                    <a href="#" class="nk-menu-link">
+                    <a href="/admin/report" class="nk-menu-link">
                         <span class="nk-menu-icon"><em class="icon ni ni-alert"></em></span>
                         <span class="nk-menu-text">Báo cáo</span>
                     </a>

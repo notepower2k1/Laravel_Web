@@ -12,9 +12,9 @@ class Forum extends Model
     protected $primaryKey = 'id';
     public $incrementing = false;
 
-    protected $fillable = ['slug','name','status','description'];
+    protected $fillable = ['slug','name','status','description','numberOfPosts'];
 
     public function forumPosts() {
-        return $this->hasMany(ForumPosts::class);
+        return $this->hasMany(ForumPosts::class,'forumID','id');
     }
 }

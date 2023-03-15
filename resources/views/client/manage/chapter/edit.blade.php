@@ -1,51 +1,72 @@
-@extends('client/layouts.app')
+@extends('client/manage/layouts.app')
 @section('pageTitle', 'Cập nhật chương')
-
+@section('additional-style')
+<style>
+    .mce-tinymce, .mce-edit-area.mce-container, .mce-container-body.mce-stack-layout
+    {
+        height: 100% !important;
+    }
+    
+    .mce-edit-area.mce-container {
+        height: calc(100% - 88px) !important;
+        overflow-y: scroll;
+    }
+</style>
+@endsection
 @section('content')
-<div class="nk-block-head-sub"><a class="back-to" href="{{ url()->previous() }}"><em class="icon ni ni-arrow-left"></em><span>Quay lại</span></a></div>
+<div class="nk-fmg-body">
+    <div class="nk-fmg-body-content">
 
-<div class="card shadow mb-4">
-    <div class="card-body">
-        <form action="/quan-ly/chuong/{{  $chapter->id  }}" method="POST">
-             
-            @csrf
-            @method('PUT')
-             <label>Chương số <sup>*</sup></label>
-             <input type="text" required
-             name="code"
-             class="form-control mb-4 col-6 @error('code') is-invalid @enderror"
-             value="{{ $chapter-> code}}">
-             
-             @error('code')
-             <span class="invalid-feedback" role="alert">
-                 <strong>{{ $message }}</strong>
-             </span>
-             @enderror
 
-             <label>Tên chương<sup>*</sup></label>
-             <input type="text"
-             name="name"
-             class="form-control mb-4 col-6"
-             value="{{ $chapter-> name }}">
-                                  
-             <label>Nội dung</label>
-             @error('content')
-             <span class="invalid-feedback" role="alert">
-                 <strong>{{ $message }}</strong>
-             </span>
-             @enderror
-             <textarea id="mytextarea" 
-             required 
-             name="content" 
-             class="form-control mb-4 col-6 @error('content') is-invalid @enderror" >
-             {{ $chapter-> content }}</textarea>
-     
-             <input name="book_id" type="hidden" value="{{ $chapter->book_id }}">
+        <div class="nk-fmg-quick-list nk-block">
+            <div class="nk-block-head-sub"><a class="back-to" href="{{ url()->previous() }}"><em class="icon ni ni-arrow-left"></em><span>Quay lại</span></a></div>
+            <div class="card card-bordered card-preview">
+                <div class="card-inner">
+                    <form action="/quan-ly/chuong/{{  $chapter->id  }}" method="POST">
+                        
+                        @csrf
+                        @method('PUT')
+                        <label>Chương số <sup>*</sup></label>
+                        <input type="text" required
+                        name="code"
+                        class="form-control mb-4 col-6 @error('code') is-invalid @enderror"
+                        value="{{ $chapter-> code}}">
+                        
+                        @error('code')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
 
-             <button type="submit" class="btn btn-info">Cập nhật</button>
-         </form>
-       </div>
+                        <label>Tên chương<sup>*</sup></label>
+                        <input type="text"
+                        name="name"
+                        class="form-control mb-4 col-6"
+                        value="{{ $chapter-> name }}">
+                                            
+                        <label>Nội dung</label>
+                        @error('content')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
+                        <textarea id="mytextarea" 
+                        required 
+                        name="content" 
+                        class="form-control mb-4 col-6 @error('content') is-invalid @enderror" >
+                        {{ $chapter-> content }}</textarea>
+                
+                        <input name="book_id" type="hidden" value="{{ $chapter->book_id }}">
+
+                        <button type="submit" class="btn btn-info mt-4">Cập nhật</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+
 @endsection
 
 @section('additional-scripts')
@@ -55,7 +76,7 @@
         selector: '#mytextarea',
         branding: false,
         statusbar: false,
-        height: 1000,
+        height: 500,
         resize: false,
          menubar: false,
         plugins: [

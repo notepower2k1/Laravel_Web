@@ -65,8 +65,9 @@
     <script src=" {{ asset('assets/js/bundle.js?ver=3.1.2') }}"></script>
     <script src="{{ asset('assets/js/scripts.js?ver=3.1.2') }}"></script>
     {{-- <script src="{{ asset('assets/js/charts/gd-default.js?ver=3.1.2') }}"></script> --}}
- 
-    
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    @yield('modal')
     @yield('additional-scripts')
 </body>
 </html>

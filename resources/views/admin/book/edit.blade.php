@@ -17,7 +17,7 @@
                >
                 
                 <label>Thể loại<sup>*</sup></label>
-                <select required class="form-control mb-4 col-6"  name="type_id">
+                <select required class="form-control mb-4 col-6"  name="book_type_id">
                    @foreach ($types as $type)
                     <option value="{{ $type->id }}" {{ $book->type_id == $type->id ? 'selected' : '' }} >{{ $type->name }}</option>
                     @endforeach
@@ -42,7 +42,6 @@
                 <textarea 
                 name="description"
                 class="form-control mb-4"
-                id="mytextarea"
                 >{{ $book -> description }}</textarea>
 
 
@@ -63,23 +62,5 @@
 
 @endsection
 @section('additional-scripts')
-<script>
-    tinymce.init({
-        entity_encoding : "raw",
-        selector: '#mytextarea',
-        branding: false,
-        statusbar: false,
-        height: 1000,
-        resize: false,
-         menubar: false,
-        plugins: [
-            "advlist", "anchor", "autolink", "charmap", "code", "fullscreen", 
-            "help", "image", "insertdatetime", "link", "lists", "media", 
-            "preview", "searchreplace", "table", "visualblocks", " wordcount",
-        ],
-        toolbar: "undo redo | styles | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | wordcount"
-        
-    });
 
-</script>
 @endsection

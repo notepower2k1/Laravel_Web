@@ -6,9 +6,17 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use App\Models\Profile;
+use Carbon\Carbon;
 
 class ProfileController extends Controller
 {
+
+    function setNameForImage(){
+        $now_date = Carbon::now()->toDateTimeString();
+        $string = str_replace(' ', '-', $now_date);
+        return preg_replace('/[^A-Za-z0-9\-]/', '', $string);  
+    }
+
     public function index()
     {
        
@@ -102,14 +110,19 @@ class ProfileController extends Controller
             'image' => 'mimes:jpg,png,jpeg|max:5048',
         ]);
 
-        $generatedImageName="";
+        $image = $request->file('image'); //image file from frontend
 
-       
-        $generatedImageName = 'image'.time().'.'
+        $generatedImageName = 'image'.$this->setNameForImage().'.'
         .$request->image->extension();
-        //move to a folder
-        $request->image->move(public_path('storage/avatar'), $generatedImageName);
-            
+
+        $firebase_storage_path = 'avatarImage/';
+        $localfolder = public_path('firebase-temp-uploads') .'/';
+        if ($image->move($localfolder, $generatedImageName)) {
+        $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
+
+        app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
+        unlink($localfolder . $generatedImageName);
+        }
 
         $profile = Profile::findOrFail($id)
                 ->update([

@@ -16,32 +16,25 @@
     href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css"
     rel="stylesheet" />
     
-
-    <style>
-        .mce-tinymce, .mce-edit-area.mce-container, .mce-container-body.mce-stack-layout
-        {
-            height: 100% !important;
-        }
-        
-        .mce-edit-area.mce-container {
-            height: calc(100% - 88px) !important;
-            overflow-y: scroll;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
     
+   
+    @yield('additional-style')
+
 
 </head>
-<body class="nk-body bg-lighter npc-general">
+<body class="nk-body bg-lighter ">
     <div class="nk-app-root">
         <div class="nk-main ">      
-            <div class="nk-wrap nk-wrap-nosidebar">         
-                <div class="nk-header nk-header-fixed is-light">
+            <div class="nk-wrap">         
+                <div class="nk-header is-light">
                     @include('client/layouts.header')
                 </div>
 
                 <div class="nk-content">
                     <div class="container-fluid">
                         <div class="nk-content-inner">
+                            
                             <div class="nk-content-body">
                                 @yield('content')
                             </div>
@@ -62,7 +55,8 @@
     <script src=" {{ asset('assets/js/bundle.js?ver=3.1.2') }}"></script>
     <script src="{{ asset('assets/js/scripts.js?ver=3.1.2') }}"></script>
     {{-- <script src="{{ asset('assets/js/charts/gd-default.js?ver=3.1.2') }}"></script> --}}
- 
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
     
     @yield('additional-scripts')
 </body>

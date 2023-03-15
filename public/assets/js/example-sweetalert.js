@@ -12,10 +12,12 @@
     Swal.fire('The Internet?', 'That thing is still around?');
     e.preventDefault();
   });
+  
   $('.eg-swal-success').on("click", function (e) {
     Swal.fire("Good job!", "You clicked the button!", "success");
     e.preventDefault();
   });
+
   $('.eg-swal-info').on("click", function (e) {
     Swal.fire("Good job!", "You clicked the button!", "info");
     e.preventDefault();

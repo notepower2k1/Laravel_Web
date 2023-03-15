@@ -21,7 +21,7 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-    ];
+     ];
 
     /**
      * The application's route middleware groups.
@@ -67,6 +67,7 @@ class Kernel extends HttpKernel
         'alreadyVerified' => \App\Http\Middleware\alreadyVerified::class,
         'isVerified' => \App\Http\Middleware\VerifyCheck::class,
         'isAdmin' => \App\Http\Middleware\AuthCheck::class,
+
 
     ];
 }

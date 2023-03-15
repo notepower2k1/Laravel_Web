@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class ClientDashboard extends Controller
 {
     public function index(){
-        return view('client.manage-homepage');
+        return view('client.manage.manage-homepage');
       
     }
 

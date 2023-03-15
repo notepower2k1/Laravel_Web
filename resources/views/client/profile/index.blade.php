@@ -87,7 +87,7 @@
                     <div class="card-inner">
                         <div class="user-card">
                             <div class="user-avatar bg-primary">
-                                    <img src={{ asset ('storage/avatar/'.Auth::user()->profile->avatar) }} alt="..." />
+                                    <img src={{ Auth::user()->profile->url}} alt="..." />
 
                             </div>
                             <div class="user-info">
@@ -200,7 +200,7 @@
                             <div class="row gy-4">
                                 <div class="col-md-12">
                                     <div class="user-avatar sq xl">
-                                        <img src={{ asset ('storage/avatar/'.Auth::user()->profile->avatar) }} alt="..."  id="previewImage"/>
+                                        <img src={{ Auth::user()->profile->url }} alt="..."  id="showNewImage"/>
 
                                     </div>
                                 </div>
@@ -243,6 +243,13 @@
     
     $('#btn-profile-edit').click(function(e){
         e.preventDefault();
+
+        Swal.fire({
+                    icon: 'success',
+                    title: `Cập nhật thông tin cá nhân thành công`,
+                    showConfirmButton: false,
+                    timer: 2500
+                });
         $('#form-profile-edit').submit();
     })
 
@@ -251,7 +258,7 @@
         if (file) {
             let reader = new FileReader();
             reader.onload = function(event){
-                $('#previewImage').attr('src', event.target.result);
+                $('#showNewImage').attr('src', event.target.result);
             }
             reader.readAsDataURL(file);
         }
@@ -259,6 +266,12 @@
     $('#btn-avatar-edit').click(function(e){
         e.preventDefault();
 
+        Swal.fire({
+                    icon: 'success',
+                    title: `Cập nhật thông tin ảnh đại diện thành công`,
+                    showConfirmButton: false,
+                    timer: 2500
+                });
         $('#form-avatar-edit').submit();
      
 
