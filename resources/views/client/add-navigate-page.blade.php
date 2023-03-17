@@ -140,7 +140,7 @@
                                                     <div class="form-group" id="bookType">
                                                         <label class="form-label" for="book_type_id">Thể loại</label>
                                                         <div class="form-control-wrap">
-                                                            <select class="form-control" name="book_type_id">
+                                                            <select class="form-control" name="book_type_id" id="book_type_id">
                                                                 @foreach ($book_types as $book_type)
                                                                     <option value="{{ $book_type->id }}" >{{ $book_type->name }}</option>
                                                                 @endforeach
@@ -151,7 +151,7 @@
                                                     <div class="form-group" id="documentType">
                                                         <label class="form-label" for="document_type_id">Thể loại</label>
                                                         <div class="form-control-wrap">
-                                                            <select class="form-control" name="document_type_id">
+                                                            <select class="form-control" name="document_type_id" id="document_type_id">
                                                                 @foreach ($document_types as $document_type)
                                                                     <option value="{{ $document_type->id }}" >{{ $document_type->name }}</option>
                                                                 @endforeach
@@ -182,7 +182,7 @@
                                             <h5 class="title mb-3">Ảnh bìa</h5>
                                             <div class="row g-3">
                                                 <div class="avatar">
-                                                    <img alt="..."  id="myNewImage" width="300px" accept="image/*" required>
+                                                    <img src="https://cdn.phenompeople.com/CareerConnectResources/GE11GLOBAL/en_global/mobile/assets/images/v-1607764532898-default-category.jpg" alt="..."  id="myNewImage" width="300px" accept="image/*" required>
                                                 </div>
                                                 
                                                 <div class="form-file">
@@ -1018,8 +1018,12 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-    
+        
+    $('#book_type_id').select2({
+    });
 
+    $('#document_type_id').select2({
+    });
     $("input[type=radio][name=type-option]").change(function(){
 
         const fileInput =  $("#file_document_input");

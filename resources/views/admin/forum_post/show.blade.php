@@ -72,7 +72,7 @@
                                                 </div>
                                             </td>
                                             <td class="nk-tb-col tb-col-mb">
-                                              <span>{{  $forum_post->user->name }}</span>
+                                              <span>{{  $forum_post->users->name }}</span>
                                             </td>
                                             <td class="nk-tb-col tb-col-lg">
                                               <span>{{ $forum_post->created_at }}</span>
@@ -138,7 +138,7 @@
 
   $(function(){
 
-  $('.delete-button').click(function(){
+    $('#DataTables_Table_0 tbody').on('click','.delete-button',function(){
     var forum_postID = $(this).data('id');
     var name = $(this).data('name');
     var token = $("meta[name='csrf-token']").attr("content");

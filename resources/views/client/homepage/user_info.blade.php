@@ -126,9 +126,13 @@
                                 <div class="nk-tb-col">
                                     <span class="sub-text">{{ $book->numberOfChapter }}</span>
                                 </div>
-                            </div>          
+                            </div>   
+                           
                             @endforeach
-                                     
+                            <div class="col-md-12">                          
+
+                                {{ $books->links('vendor.pagination.custom',['elements' => $books]) }}
+                            </div>
                         </div><!-- .nk-tb-list -->
                     </div>
 

@@ -14,10 +14,7 @@
                     <form method="POST" action="/user/{{ Auth::user()->id }}">
                         @csrf
                         @method('PUT')
-                        
-                        
-                        
-                        <div class="form-group">
+                         <div class="form-group">
                             <label for="password" class="form-label">{{ __('Mật khẩu') }}</label>
                         
                             <div class="form-control-wrap">

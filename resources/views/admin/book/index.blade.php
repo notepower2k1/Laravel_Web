@@ -40,7 +40,7 @@
                                             <td class="nk-tb-col">
                                                 <div class="user-card">                                           
                                                     <div class="user-info">
-                                                        <span class="tb-lead">{{ $book->name }}<span class="dot dot-success d-md-none ms-1"></span></span>
+                                                        <span class="tb-lead">{{ Str::limit($book->name,30) }}<span class="dot dot-success d-md-none ms-1"></span></span>
                                                     </div>
                                                 </div>
                                             </td>
@@ -92,15 +92,14 @@
                                                 <input type="checkbox" class="custom-control-input form-check-input" id="customSwitch1" data-id="{{ $book->id }}"
                                                 {{ $book->isPublic ? 'checked':'' }}>
                                               </div> --}}
+                                              <div class="form-check form-switch">
 
-                                              <input type="checkbox" 
-                                              class="form-check-input"
-                                              data-toggle="toggle" 
-                                              data-onlabel="Công khai" 
-                                              data-offlabel="Riêng tư" 
-                                              data-size="sm"
-                                              data-id="{{ $book->id }}"
-                                              {{ $book->isPublic ? 'checked':'' }}   />
+                                                <input type="checkbox" 
+                                                class="form-check-input"
+                                                role="switch"
+                                                data-id="{{ $book->id }}"
+                                                {{ $book->isPublic ? 'checked':'' }}   />
+                                              </div>
 
                                             </td>
                                       
@@ -155,47 +154,23 @@
 
 
 @section('additional-scripts')
-<script src="{{ asset('assets/js/libs/datatable-btns.js?ver=3.1.2') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.jquery.min.js"></script>
 <script src="{{ asset('assets/js/example-sweetalert.js?ver=3.1.2') }}" aria-hidden="true"></script>
 
 <script>
   //custom datatable
 
-  $(function(){
-    $('.form-check-input').change(function() {
-      
-      var status = $(this).prop('checked') == true ? 1 : 0;
-      var book_id = $(this).data('id');
+  $(document).ready(function () {
+    var table = $('#DataTables_Table_0').DataTable();
+  
+    // $('#DataTables_Table_0 tbody').on('click', 'tr', function () {
+    //     var data = table.row(this).data();
+    //     alert('You clicked on ' + data[0] + "'s row");
+    // });
 
-      
-      $.ajax({
-        type:"GET",
-        url:'/admin/book/update/changeStatus',
-        data: {'isPublic':status,'id':book_id}   
-        })
-        .done(function() {
-        // If successful
-          Swal.fire({
-                      icon: 'success',
-                      title: `Đổi trạng thái thành công`,
-                      showConfirmButton: false,
-                      timer: 2500
-                  });
 
-        })
-        .fail(function(jqXHR, textStatus, errorThrown) {
-        // If fail
-          Swal.fire({
-                      icon: 'error',
-                      title: `Đổi trạng thái không thành công`,
-                      showConfirmButton: false,
-                      timer: 2500
-                  });
-        })
-  })
+    $('#DataTables_Table_0 tbody').on('click','.delete-button',function(){
 
-  $('.delete-button').click(function(){
     var book_id = $(this).data('id');
     var name = $(this).data('name');
     var token = $("meta[name='csrf-token']").attr("content");
@@ -236,12 +211,41 @@
          
         }
       })
-   
-  
+    })
 
 
-  })
-});
+    $('#DataTables_Table_0 tbody').on('change','.form-check-input',function(){
+
+      var status = $(this).prop('checked') == true ? 1 : 0;
+      var book_id = $(this).data('id');
+
+      
+      $.ajax({ 
+        type:"GET",
+        url:'/admin/book/update/changeStatus',
+        data: {'isPublic':status,'id':book_id}   
+        })
+        .done(function() {
+        // If successful
+          Swal.fire({
+                      icon: 'success',
+                      title: `Đổi trạng thái thành công`,
+                      showConfirmButton: false,
+                      timer: 2500
+                  });
+
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+        // If fail
+          Swal.fire({
+                      icon: 'error',
+                      title: `Đổi trạng thái không thành công`,
+                      showConfirmButton: false,
+                      timer: 2500
+                  });
+        })
+    })
+  });
 
 
 

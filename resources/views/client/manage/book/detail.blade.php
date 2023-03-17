@@ -12,7 +12,7 @@
                         <div class="row">         
                             <div class="col-md-6">
                                 <div class="images">
-                                    <div class="text-center p-4"> <img class="img-fluid" id="main-image" src={{ asset ('storage/'.$book->image) }} alt="..." style="width:800px;height:600px;" /> </div>
+                                    <div class="text-center p-4"> <img class="img-fluid" id="main-image" src={{ $book->url }} alt="..." style="width:800px;height:600px;" /> </div>
                                 </div>
                             </div>
                             <div class="col-md-6">                          

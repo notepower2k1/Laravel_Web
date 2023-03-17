@@ -59,11 +59,11 @@
                     @foreach ($lastPosts as $lastPost)
                     <li class="nk-activity-item">
                         <div class="nk-activity-media user-avatar bg-success">
-                            <a href="/thanh-vien/{{ $lastPost->user->id }}"><img src={{ $lastPost->user->profile->url }} alt="image" /></a>
+                            <a href="/thanh-vien/{{ $lastPost->users->id }}"><img src={{ $lastPost->users->profile->url }} alt="image" /></a>
                         </div>
                         <div class="nk-activity-data">
                             <div class="label">
-                                <a href="/dien-dan/{{ $lastPost->forum->slug }}/{{ $lastPost->slug }}/{{ $lastPost->id }}">{{ $lastPost->topic }}</a>
+                                <a href="/dien-dan/{{ $lastPost->forums->slug }}/{{ $lastPost->slug }}/{{ $lastPost->id }}">{{ $lastPost->topic }}</a>
                             </div>                            
                             <span class="time">{{ $lastPost->time }}</span>
                         </div>

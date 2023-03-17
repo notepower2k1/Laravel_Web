@@ -38,7 +38,7 @@
 
 
                         <label>Thể loại<sup>*</sup></label>
-                        <select required class="form-control mb-4 col-6" name="document_type_id">
+                        <select required class="form-control mb-4 col-6" name="document_type_id" id="document_type_id">
                             @foreach ($types as $type)
                             <option value="{{ $type->id }}" >{{ $type->name }}</option>
                             @endforeach
@@ -46,7 +46,7 @@
                     
                     
 
-                        <label>Ảnh đại diện<sup>*</sup></label>
+                        <label class="mt-4">Ảnh đại diện<sup>*</sup></label>
                         <input type="file" required
                         name="image"
                         class="form-control mb-4 col-6 @error('image') is-invalid @enderror">
@@ -105,5 +105,10 @@
 
     
 @section('additional-scripts')
+
+<script>
+    $('#document_type_id').select2({
+    });
+</script>
 
 @endsection

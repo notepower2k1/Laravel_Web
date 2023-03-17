@@ -9,12 +9,13 @@ use App\Http\Controllers\Admin\ForumPostController;
 use App\Http\Controllers\Admin\DocumentController;
 use App\Http\Controllers\Admin\MailController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\UserController;
 
 use App\Http\Controllers\Admin\DashboardController;
 
 use App\Http\Controllers\Client\ProfileController;
 use App\Http\Controllers\Client\PagesController;
-use App\Http\Controllers\Client\UserController;
+use App\Http\Controllers\Client\ClientUserController;
 use App\Http\Controllers\Client\ClientBookController;
 use App\Http\Controllers\Client\ClientChapterController;
 use App\Http\Controllers\Client\ClientDocumentController;
@@ -34,6 +35,8 @@ use App\Http\Controllers\Client\PDFController;
 */
 Route::get('/',[PagesController::class,'redirect_book_home_page']);
 Route::get('/sach',[PagesController::class,'book_home_page']);
+Route::get('/sach/all/{option?}',[PagesController::class,'book_page_more']);
+
 Route::get('/tai-lieu',[PagesController::class,'document_home_page']);
 
 
@@ -94,6 +97,10 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin','isVerifie
     Route::get("/report/update/changeStatus",[ReportController::class,'changeReportStatus']);
     Route::get("/report/detail",[ReportController::class,'detail']);
 
+    Route::get("/user",[UserController::class,'index']);
+    Route::get("/user/update/changeStatus",[UserController::class,'changeUserStatus']);
+    Route::put("/user/{user_id}",[UserController::class,'update']);
+    Route::get("/user/deleteUser",[UserController::class,'deleteUser']);
 
 });
 
@@ -128,8 +135,8 @@ Route::group(['middleware'=>['auth','isVerified']],function(){
     Route::get("/trang-ca-nhan",[ProfileController::class,'index']);
     Route::put("/profile/changeAvatar/{profile_id}",[ProfileController::class,'changeAvatar']);
     
-    Route::resource('/user',UserController::class,['only' => ['update']]);
-    Route::get("/doi-mat-khau",[UserController::class,'changePassword']);
+    Route::resource('/user',ClientUserController::class,['only' => ['update']]);
+    Route::get("/doi-mat-khau",[ClientUserController::class,'changePassword']);
     Route::get('/them-tai-lieu',[PagesController::class,'post_navigation_page']);
 
     Route::get("/sach-theo-doi",[PagesController::class,'book_mark_page']);

@@ -134,7 +134,7 @@
                     </a>
                     <ul class="nk-menu-sub">
                         <li class="nk-menu-item">
-                            <a href="#" class="nk-menu-link"><span class="nk-menu-text">Dữ liệu</span></a>
+                            <a href="/admin/user" class="nk-menu-link"><span class="nk-menu-text">Dữ liệu</span></a>
                         </li>
                         <li class="nk-menu-item">
                             <a href="#" class="nk-menu-link"><span class="nk-menu-text">Thêm tài liệu</span></a>

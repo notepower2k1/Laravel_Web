@@ -8,6 +8,9 @@ use App\Models\Document;
 use App\Models\DocumentType;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use ZipArchive;
+use SimpleXMLElement;
+
 
 class DocumentController extends Controller
 {
@@ -83,7 +86,7 @@ class DocumentController extends Controller
             'name' => 'required',
             'file_document' => 'required|mimetypes:application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf',
             'description' => 'required',
-            'image' => 'required|mimes:jpg,png,jpeg|max:5048',
+            'image' => 'required|image|max:2048|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
             'language' => 'required',
             'author' => 'required'
         ]);
@@ -99,44 +102,57 @@ class DocumentController extends Controller
         .$request->image->extension();
         $generatedFileName = $this->setNameForImage() . '-' . $slug . '.' . $request->file_document->extension();
 
-        $document = Document::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'isPublic' => 0,
-            'slug' =>  $slug,
-            'type_id' => intval($request->document_type_id),
-            'image' => $generatedImageName,
-            'userCreatedID' => Auth::user()->id,
-            'language' => $request -> language,
-            'file' => $generatedFileName,
-            'author' => $request -> author,
-            'extension' =>  $request->file_document->extension(),
-            'isCompleted' => 0,
-            'totalDownloading'=>0
+        // $document = Document::create([
+        //     'name' => $request->name,
+        //     'description' => $request->description,
+        //     'isPublic' => 0,
+        //     'slug' =>  $slug,
+        //     'type_id' => intval($request->document_type_id),
+        //     'image' => $generatedImageName,
+        //     'userCreatedID' => Auth::user()->id,
+        //     'language' => $request -> language,
+        //     'file' => $generatedFileName,
+        //     'author' => $request -> author,
+        //     'extension' =>  $request->file_document->extension(),
+        //     'isCompleted' => 0,
+        //     'totalDownloading'=>0
 
-        ]);
-        $document->save();
-        //upload image
-        $firebase_storage_path = 'documentImage/';
-        $localfolder = public_path('firebase-temp-uploads') .'/';
-        if ($image->move($localfolder, $generatedImageName)) {
-        $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
+        // ]);
+        // $document->save();
+        // //upload image
+        // $firebase_storage_path = 'documentImage/';
+        // $localfolder = public_path('firebase-temp-uploads') .'/';
+        // if ($image->move($localfolder, $generatedImageName)) {
+        // $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
 
-        app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
-        unlink($localfolder . $generatedImageName);
-        }
-        //upload document
-        $firebase_storage_document_path = 'documentFile/';
-        $localfolder = public_path('firebase-temp-uploads') .'/';
-        if ($document_file->move($localfolder, $generatedFileName)) {
-        $uploadedfile = fopen($localfolder.$generatedFileName, 'r');
+        // app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
+        // unlink($localfolder . $generatedImageName);
+        // }
+        // //upload document
+        // $firebase_storage_document_path = 'documentFile/';
+        // $localfolder = public_path('firebase-temp-uploads') .'/';
+        // if ($document_file->move($localfolder, $generatedFileName)) {
+        // $uploadedfile = fopen($localfolder.$generatedFileName, 'r');
 
-        app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_document_path . $generatedFileName]);
-        unlink($localfolder . $generatedFileName);
-        }
+        // app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_document_path . $generatedFileName]);
+        // unlink($localfolder . $generatedFileName);
+        // }
 
-        return redirect('/admin/document');
+        // return redirect('/admin/document');
 
+       
+        $path = $request->file('file_document');
+
+
+        $num = $this->PageCount_DOCX($path);
+
+        // $path = $request->file('file_document')->getContent();
+
+        // $num = preg_match_all("/\/Page\W/", $path, $dummy);
+
+        dd($num);
+
+       
     }
 
     /**
@@ -268,6 +284,23 @@ class DocumentController extends Controller
 
         return redirect('/admin/document');
 
+    }
+
+    function PageCount_DOCX($file) {
+        $pageCount = 0;
+    
+        $zip = new ZipArchive();
+    
+        if($zip->open($file) === true) {
+            if(($index = $zip->locateName('docProps/app.xml')) !== false)  {
+                $data = $zip->getFromIndex($index);
+                $xml = new SimpleXMLElement($data);
+                $pageCount = $xml->Pages;
+            }
+            $zip->close();
+        }
+    
+        return $pageCount;
     }
 
     /**

@@ -163,7 +163,7 @@
 <script>
 
   $(function(){
-    $('.form-check-input').change(function() {
+    $('#DataTables_Table_0 tbody').on('change','.form-check-input',function(){
       var status = $(this).prop('checked') == true ? 1 :0;
       var forum_id = $(this).data('id');
 
@@ -183,7 +183,7 @@
         })
   })
 
-  $('.delete-button').click(function(){
+  $('#DataTables_Table_0 tbody').on('click','.delete-button',function(){
     var forum_id = $(this).data('id');
     var name = $(this).data('name');
     var token = $("meta[name='csrf-token']").attr("content");

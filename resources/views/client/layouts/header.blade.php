@@ -179,7 +179,13 @@
                         <div class="dropdown-inner">
                             <ul class="link-list">
                                 <li><a href="/trang-ca-nhan"><em class="icon ni ni-user-alt"></em><span>Trang cá nhân</span></a></li>
-                                <li><a href="/quan-ly"><em class="icon ni ni-setting-alt"></em><span>Trang quản lý</span></a></li>
+                                <li>
+                                    @if(Auth::user()->role == 1)
+                                    <a href="/admin/dashboard"><em class="icon ni ni-setting-alt"></em><span>Trang quản lý</span></a>
+                                    @else
+                                    <a href="/quan-ly"><em class="icon ni ni-setting-alt"></em><span>Trang quản lý</span></a>
+                                    @endif
+                                </li>
                                 <li><a href="/them-tai-lieu"><em class="icon ni ni-activity-alt"></em><span>Đăng tài liệu</span></a></li>
                                 <li><a href="/sach-theo-doi"><em class="icon ni ni-bookmark"></em><span>Bookmark</span></a></li>
                                 <li><a class="dark-switch" href="#"><em class="icon ni ni-moon"></em><span>Chế độ ban đêm</span></a></li>

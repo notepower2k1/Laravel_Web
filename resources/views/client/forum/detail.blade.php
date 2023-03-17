@@ -1,5 +1,5 @@
 @extends('client/layouts.app')
-@section('pageTitle', `{{$forum_name}}`)
+@section('pageTitle', `{{$forum->name}}`)
 @section('content')
 <div class="nk-content-wrap">
     <div class="nk-block nk-block-lg">
@@ -8,7 +8,7 @@
                 <div class="nk-block-head-content">
                     <h3 class="nk-block-title page-title">Bài viết</h3>
                     <div class="nk-block-des text-soft">
-                        <p>Tổng cộng 123 bài viết</p>
+                        <p>Số bài viết: {{$forum->numberOfPosts}}</p>
                     </div>
                 </div><!-- .nk-block-head-content -->
                 <div class="nk-block-head-content">
@@ -50,16 +50,16 @@
                         <div class="card-inner">
                             <div class="project">
                                 <div class="project-head">
-                                    <a href="/thanh-vien/{{ $post->user->id }}" class="project-title">
+                                    <a href="/thanh-vien/{{ $post->users->id }}" class="project-title">
                                         <div class="user-avatar sq bg-purple">
-                                            <img src={{ $post->user->profile->url }} alt="image" />
+                                            <img src={{ $post->users->profile->url }} alt="image" />
                                         </div>
                                         <div class="project-info">
                                             <h6 class="title">
-                                                {{ $post->user->profile->displayName }}
+                                                {{ $post->users->profile->displayName }}
                                             </h6>
                                             <span class="sub-text">
-                                                @if ($post->user->role == 1)
+                                                @if ($post->users->role == 1)
                                                     Quản trị viên
                                                 @else
                                                     Thành viên
@@ -68,12 +68,12 @@
                                         </div>
                                     </a>
     
-                                    @if (Auth::check() && Auth::user()->id === $post->user->id)
+                                    @if (Auth::check() && Auth::user()->id === $post->users->id)
                                     <div class="drodown">
                                         <a href="#" class="dropdown-toggle btn btn-sm btn-icon btn-trigger mt-n1 me-n1" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
                                         <div class="dropdown-menu dropdown-menu-end">
                                             <ul class="link-list-opt no-bdr">
-                                                <li><a href="/cap-nhat-bai-viet/{{ $post->forum->slug }}/{{ $post->id }}"><em class="icon ni ni-edit"></em><span>Chỉnh sửa bài viết</span></a></li>
+                                                <li><a href="/cap-nhat-bai-viet/{{ $post->forums->slug }}/{{ $post->id }}"><em class="icon ni ni-edit"></em><span>Chỉnh sửa bài viết</span></a></li>
                                                 <li><a href="#" data-id={{ $post->id }} class="delete-btn"><em class="icon ni ni-check-round-cut"></em><span>Xóa bài viết</span></a></li>
                                             </ul>
                                         </div>
@@ -82,7 +82,7 @@
                                    
                                 </div>
                                 <div class="project-details">
-                                    <a href="/dien-dan/{{ $post->forum->slug }}/{{ $post->slug }}/{{ $post->id }}">{{$post->topic }}</a>
+                                    <a href="/dien-dan/{{ $post->forums->slug }}/{{ $post->slug }}/{{ $post->id }}">{{$post->topic }}</a>
                                 </div>
                                 <div class="project-meta">
                                     <span class="badge badge-dim bg-info"><em class="icon ni ni-comments"></em><span>10</span></span>
@@ -112,11 +112,11 @@
                         @foreach ($lastPosts as $lastPost)
                         <li class="nk-activity-item">
                             <div class="nk-activity-media user-avatar bg-success">
-                                <a href="/thanh-vien/{{ $lastPost->user->id }}"><img src={{ $lastPost->user->profile->url }} alt="image" /></a>
+                                <a href="/thanh-vien/{{ $lastPost->users->id }}"><img src={{ $lastPost->users->profile->url }} alt="image" /></a>
                             </div>
                             <div class="nk-activity-data">
                                 <div class="label">
-                                    <a href="/dien-dan/{{ $lastPost->forum->slug }}/{{ $lastPost->slug }}/{{ $lastPost->id }}">{{ $lastPost->topic }}</a>
+                                    <a href="/dien-dan/{{ $lastPost->forums->slug }}/{{ $lastPost->slug }}/{{ $lastPost->id }}">{{ $lastPost->topic }}</a>
                                 </div>
                                 <span class="time">{{ $lastPost->time }}</span>
                             </div>
@@ -149,11 +149,11 @@
 
                     <input type="hidden"
                     name="forum_slug"
-                    value="{{ $forum_slug }}">
+                    value="{{ $forum->slug }}">
 
                     <input type="hidden"
                     name="forum_id"
-                    value="{{ $forum_id }}">
+                    value="{{ $forum->id }}">
 
 
                     <div class="form-group">

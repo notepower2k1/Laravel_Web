@@ -18,6 +18,7 @@ use App\Models\report;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Spatie\Searchable\Search;
+use Spatie\Searchable\ModelSearchAspect;
 
 
 class PagesController extends Controller
@@ -30,13 +31,55 @@ class PagesController extends Controller
             
         $books = Book::where('isPublic','=',1)->get();
 
+        $high_rating_books = Book::get()->sortByDesc('ratingScore')->take(8);
 
-      
+        $high_reading_books = Book::get()->sortByDesc('totalReading')->take(8);
+
+        $new_books = Book::get()->sortByDesc('updated_at')->take(8);
+
+        $types = BookType::all();
         return view('client.homepage.book_homepage',[
-             'books' => $books
+             'books' => $books,
+             'high_rating_books' => $high_rating_books,
+             'high_reading_books' => $high_reading_books,
+             'new_books' => $new_books,
+             'types'=>$types
         ]);
     }
 
+    public function book_page_more($option = null){
+
+        $books = Book::where('isPublic','=',1)->get();
+        $title = 'Tất cả sách';
+
+        switch ($option) {
+            case 'sach-hay-nen-doc':
+                $books = Book::orderBy('ratingScore', 'desc')->paginate(18);
+                $title = 'Sách hay nên đọc';
+                break;
+            case 'sach-hay-xem-nhieu':
+                $books = Book::orderBy('totalReading', 'desc')->paginate(18);
+                $title = 'Sách hay xem nhiều';
+
+                break;
+            case 'sach-moi-cap-nhat':
+                $books = Book::orderBy('updated_at', 'desc')->paginate(18);
+                $title = 'Sách mới cập nhật';
+
+                break;  
+            default:
+                $books = Book::where('isPublic','=',1)->paginate(18);
+                $title = 'Tất cả sách';
+
+        }
+
+        return view('client.homepage.book_page_more',[
+            'books' => $books,
+            'title' => $title
+         
+       ]);
+
+    }
     public function document_home_page(){
             
         $documents = Document::where('isPublic','=',1)->get();
@@ -177,29 +220,52 @@ class PagesController extends Controller
         switch ($option) {
             case 0:
                 $searchResults = (new Search())
-                ->registerModel(Book::class, ['name','author']) //apply search on field name and description
+                ->registerModel(Book::class, function (ModelSearchAspect $modelSearchAspect){
+                    $modelSearchAspect
+                    ->addSearchableAttribute('name') // only return results that exactly match
+                    ->addSearchableAttribute('author'); // return results for partial matches
+                }) //apply search on field name and description
                 //Config partial match or exactly match
-                ->registerModel(Document::class, ['name','author']) 
+                ->registerModel(Document::class,function (ModelSearchAspect $modelSearchAspect){
+                    $modelSearchAspect
+                    ->addSearchableAttribute('name') // only return results that exactly match
+                    ->addSearchableAttribute('author'); // return results for partial matches
+                })   
                 ->perform($searchterm);
-                $type = 0;
                 break;
             case 1:
                 $searchResults = (new Search())
-                ->registerModel(Book::class, ['name','author']) //apply search on field name and description
+                ->registerModel(Book::class, function (ModelSearchAspect $modelSearchAspect){
+                    $modelSearchAspect
+                    ->addSearchableAttribute('name') // only return results that exactly match
+                    ->addSearchableAttribute('author'); // return results for partial matches
+                })//apply search on field name and description
                 //Config partial match or exactly match
                 ->perform($searchterm);
                 break;
             case 2:
                 $searchResults = (new Search())
                 //Config partial match or exactly match
-                ->registerModel(Document::class, ['name','author']) 
+                ->registerModel(Document::class, function (ModelSearchAspect $modelSearchAspect){
+                    $modelSearchAspect
+                    ->addSearchableAttribute('name') // only return results that exactly match
+                    ->addSearchableAttribute('author'); // return results for partial matches
+                })
                 ->perform($searchterm);
                 break;  
             default:
                 $searchResults = (new Search())
-                ->registerModel(Book::class, ['name','author']) //apply search on field name and description
+                ->registerModel(Book::class,function (ModelSearchAspect $modelSearchAspect){
+                    $modelSearchAspect
+                    ->addSearchableAttribute('name') // only return results that exactly match
+                    ->addSearchableAttribute('author'); // return results for partial matches
+                }) //apply search on field name and description
                 //Config partial match or exactly match
-                ->registerModel(Document::class, ['name','author']) 
+                ->registerModel(Document::class, function (ModelSearchAspect $modelSearchAspect){
+                    $modelSearchAspect
+                    ->addSearchableAttribute('name') // only return results that exactly match
+                    ->addSearchableAttribute('author'); // return results for partial matches
+                })
                 ->perform($searchterm);
         }
         // // return view('client.homepage.search_page', compact('searchResults', 'searchterm'));
@@ -283,7 +349,7 @@ class PagesController extends Controller
 
     public function forum_detail($forum_slug){
 
-        $forum = Forum::where('slug','=',$forum_slug)->first();
+        $forum = Forum::where('slug','=',$forum_slug)->firstOrFail();
 
         $forums_posts = ForumPosts::where('forumID','=',$forum->id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
 
@@ -292,9 +358,8 @@ class PagesController extends Controller
         return view('client.forum.detail')
         ->with('lastPosts', $lastPosts)
         ->with('forums_posts',$forums_posts)
-        ->with('forum_id',$forum->id)
-        ->with('forum_name',$forum->name)
-        ->with('forum_slug',$forum_slug);
+        ->with('forum',$forum);
+
 
     }
 
@@ -312,11 +377,10 @@ class PagesController extends Controller
     public function user_info($user_id){
 
         $user = User::where('deleted_at','=',null)->findOrFail($user_id);
-
-        $book = $user->with('books')->first();
+        $books = Book::where('userCreatedID','=',$user->id)->where('isPublic','=',1)->paginate(3);
         $document = $user->with('documents')->first();
         return view('client.homepage.user_info')
-        ->with('books',$book->books)
+        ->with('books',$books)
         ->with('documents',$document->documents)
         ->with('user',$user);
     }

@@ -17,13 +17,13 @@
                >
                 
                 <label>Thể loại<sup>*</sup></label>
-                <select required class="form-control mb-4 col-6"  name="book_type_id">
+                <select required class="form-control mb-4 col-6"  name="book_type_id" id="book_type_id">
                    @foreach ($types as $type)
                     <option value="{{ $type->id }}" {{ $book->type_id == $type->id ? 'selected' : '' }} >{{ $type->name }}</option>
                     @endforeach
                 </select>
 
-                <label>Tác giả<sup>*</sup></label>
+                <label class="mt-4">Tác giả<sup>*</sup></label>
                 <input type="text" required
                 name="author"
                 value="{{ $book -> author }}"
@@ -62,5 +62,10 @@
 
 @endsection
 @section('additional-scripts')
+
+<script>
+    $('#book_type_id').select2({
+    });
+</script>
 
 @endsection

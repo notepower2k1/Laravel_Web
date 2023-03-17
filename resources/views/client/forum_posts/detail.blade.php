@@ -5,7 +5,7 @@
   <nav>
       <ul class="breadcrumb">
           <li class="breadcrumb-item"><a href="/dien-dan">Diễn đàn</a></li>
-          <li class="breadcrumb-item"><a href="/dien-dan/{{ $post->forum->slug }}">{{ $post->forum->name }}</a></li>
+          <li class="breadcrumb-item"><a href="/dien-dan/{{ $post->forums->slug }}">{{ $post->forums->name }}</a></li>
           <li class="breadcrumb-item active">{{ $post->topic }}</li>
 
       </ul>
@@ -33,7 +33,7 @@
                      
                       
                     </div>
-                      <span class="text-mute ff-italic fw-bold">Đăng bởi: <a href="/thanh-vien/{{ $post->user->id }}" class="text-primary fs-14px">{{ $post->user->profile->displayName }}</a></span>
+                      <span class="text-mute ff-italic fw-bold">Đăng bởi: <a href="/thanh-vien/{{ $post->users->id }}" class="text-primary fs-14px">{{ $post->users->profile->displayName }}</a></span>
                       <br>
                       <span class="text-mute ff-italic fw-bold">Ngày đăng: {{ $post->created_at->format("H:i Y/m/d") }} </span>
 

@@ -82,10 +82,10 @@ class BookController extends Controller
     {
 
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|unique:books',
             'author' => 'required',
             'description' => 'required',
-            'image' => 'required|mimes:jpg,png,jpeg|max:2048|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
+            'image' => 'required|image|max:2048|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
             'language' => 'required'
         ]);
 
@@ -98,15 +98,7 @@ class BookController extends Controller
         .$slug.'.'
         .$request->image->extension();
 
-        $firebase_storage_path = 'bookImage/';
-        $localfolder = public_path('firebase-temp-uploads') .'/';
-        if ($image->move($localfolder, $generatedImageName)) {
-        $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
-
-        app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
-        unlink($localfolder . $generatedImageName);
-        }
-
+   
         $book = Book::create([
             'name' => $request->name,
             'author' => $request->author,
@@ -124,6 +116,17 @@ class BookController extends Controller
             'totalBookMarking'=>0
         ]);
         $book->save();
+
+        $firebase_storage_path = 'bookImage/';
+        $localfolder = public_path('firebase-temp-uploads') .'/';
+        if ($image->move($localfolder, $generatedImageName)) {
+        $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
+
+        app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
+        unlink($localfolder . $generatedImageName);
+        }
+
+
         return redirect('/admin/book');
 
     }
@@ -183,8 +186,23 @@ class BookController extends Controller
 
         $generatedImageName="";
 
+        $firebase_storage_path = 'bookImage/';
+
         if($request->image == null){
             $generatedImageName = $request->oldImage;
+
+
+            $book = Book::findOrFail($id)
+            ->update([
+                'name' => $request->name,
+                'author' => $request->author,
+                'description' => $request->description,
+                'slug' =>  $slug,
+                'type_id' => intval($request->book_type_id),
+                'image' => $generatedImageName,
+                'isCompleted' => $request -> isCompleted
+            ]);
+      
         }
         else{
             $image = $request->file('image'); //image file from frontend
@@ -194,7 +212,6 @@ class BookController extends Controller
             .$slug.'.'
             .$request->image->extension();
 
-            $firebase_storage_path = 'bookImage/';
 
             $localfolder = public_path('firebase-temp-uploads') .'/';
             if ($image->move($localfolder, $generatedImageName)) {
@@ -203,22 +220,24 @@ class BookController extends Controller
             app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
             unlink($localfolder . $generatedImageName);
 
-            //delete old image
 
+            $book = Book::findOrFail($id)
+            ->update([
+                'name' => $request->name,
+                'author' => $request->author,
+                'description' => $request->description,
+                'slug' =>  $slug,
+                'type_id' => intval($request->book_type_id),
+                'image' => $generatedImageName,
+                'isCompleted' => $request -> isCompleted
+            ]);
+
+              //delete old image
             $imageDeleted = app('firebase.storage')->getBucket()->object($firebase_storage_path.$request->oldImage)->delete();
-
             }
         }
-        $book = Book::findOrFail($id)
-                ->update([
-                    'name' => $request->name,
-                    'author' => $request->author,
-                    'description' => $request->description,
-                    'slug' =>  $slug,
-                    'type_id' => intval($request->book_type_id),
-                    'image' => $generatedImageName,
-                    'isCompleted' => $request -> isCompleted
-                ]);
+      
+
         return redirect("/admin/book");
 
     }

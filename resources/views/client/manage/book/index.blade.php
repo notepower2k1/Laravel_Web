@@ -31,7 +31,7 @@
       <div class="nk-fmg-quick-list nk-block">
           <div class="card card-bordered card-preview">
             <div class="card-inner">
-              <table class="datatable-init-export nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false" data-export-title="Export">
+              <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false" data-export-title="Export">
                   <thead>
                       <tr class="nk-tb-item nk-tb-head">
                           <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ảnh đại diện</span></th>
@@ -59,8 +59,7 @@
                           <td class="nk-tb-col">
                               <div class="user-card">                                           
                                   <div class="user-info">
-                                      <span class="tb-lead">{{ $book->name }}<span class="dot dot-success d-md-none ms-1"></span></span>
-                                      <span>{{ $book->slug }}</span>
+                                      <span class="tb-lead">{{ Str::limit($book->name,30) }}<span class="dot dot-success d-md-none ms-1"></span></span>
                                   </div>
                               </div>
                           </td>
@@ -115,10 +114,7 @@
 
                             <input type="checkbox" 
                             class="form-check-input"
-                            data-toggle="toggle" 
-                            data-onlabel="Công khai" 
-                            data-offlabel="Riêng tư" 
-                            data-size="sm"
+                            role="switch"
                             data-id="{{ $book->id }}"
                             {{ $book->isPublic ? 'checked':'' }}   />
 
@@ -166,88 +162,12 @@
 
 @section('additional-scripts')
 <script src="{{ asset('assets/js/libs/datatable-btns.js?ver=3.1.2') }}"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.jquery.min.js"></script>
 <script src="{{ asset('assets/js/example-sweetalert.js?ver=3.1.2') }}" aria-hidden="true"></script>
 
 <script>
   //custom datatable
-$(document).ready(function() {
-
-  table = $('#DataTables_Table_0').DataTable();
-
-  table.destroy();
-
-
-  table = $('#DataTables_Table_0').DataTable( {
-      dom: 'Blfrtip',
-      columnDefs: [
-          {
-              targets: 4, 
-              className: 'noVis'           
-          }    
-      ],
-    "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "Tất cả"] ],
-     "language": {
-        "lengthMenu": "Hiển thị: _MENU_ đối tượng",
-        "search": "Tìm kiếm _INPUT_",
-        'info':"",
-        "zeroRecords": "Không tìm thấy dữ liệu",
-        "infoEmpty": "Không có dữ liệu hợp lệ",
-        "infoFiltered": "(Lọc từ _MAX_ dữ liệu)",
-        "paginate": {
-          "first":      "Đầu tiên",
-          "last":       "Cuối cùng",
-          "next":       "Tiếp theo",
-          "previous":   "Trước đó"
-      },
-       buttons: {
-            colvis: 'Thay đổi số cột'
-        }
-    },
-
-    buttons: [
-          
-          {
-              extend: 'colvis',
-              columns: ':not(.noVis)'
-          },
-    
-          {
-              extend: 'copyHtml5',
-              exportOptions: {
-                  columns: [1,2,3,4,5]
-              }
-          },
-          {
-              extend: 'excelHtml5',
-              exportOptions: {
-                  columns: [1,2,3,4,5]
-              }
-          },
-          {
-              extend: 'pdfHtml5',
-              exportOptions: {
-                  columns: [1,2,3,4,5]
-              }
-          },
-          {
-              extend: 'csvHtml5',
-              exportOptions: {
-                  columns:[1,2,3,4,5]
-              }
-          },
-          
-      ],
-  
-
-    } );
-    $('#DataTables_Table_0_wrapper').addClass('d-flex row');
-    $('#DataTables_Table_0_length').addClass('mt-2');
-    $('#DataTables_Table_0_filter').addClass('mt-2');
-
-} );
   $(function(){
-    $('.form-check-input').change(function() {
+    $('#DataTables_Table_0 tbody').on('change','.form-check-input',function(){
       
       var status = $(this).prop('checked') == true ? 1 : 0;
       var book_id = $(this).data('id');
@@ -269,7 +189,7 @@ $(document).ready(function() {
         })
   })
 
-  $('.delete-button').click(function(){
+    $('#DataTables_Table_0 tbody').on('click','.delete-button',function(){
     var book_id = $(this).data('id');
     var name = $(this).data('name');
     var token = $("meta[name='csrf-token']").attr("content");

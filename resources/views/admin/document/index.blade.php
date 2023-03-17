@@ -41,7 +41,7 @@
                                             <td class="nk-tb-col">
                                                 <div class="user-card">                                           
                                                     <div class="user-info">
-                                                        <span class="tb-lead">{{ $document->name }}<span class="dot dot-success d-md-none ms-1"></span></span>
+                                                        <span class="tb-lead">{{ Str::limit($document->name,30) }}<span class="dot dot-success d-md-none ms-1"></span></span>
                                                     </div>
                                                 </div>
                                             </td>
@@ -91,10 +91,7 @@
 
                                               <input type="checkbox" 
                                               class="form-check-input"
-                                              data-toggle="toggle" 
-                                              data-onlabel="Công khai" 
-                                              data-offlabel="Riêng tư" 
-                                              data-size="sm"
+                                              role="switch"
                                               data-id="{{ $document->id }}"
                                               {{ $document->isPublic ? 'checked':'' }}   />
 
@@ -154,84 +151,9 @@
 <script src="{{ asset('assets/js/example-sweetalert.js?ver=3.1.2') }}" aria-hidden="true"></script>
 
 <script>
-  //custom datatable
-// $(document).ready(function() {
 
-//   table = $('#DataTables_Table_0').DataTable();
-
-//   table.destroy();
-
-
-//   table = $('#DataTables_Table_0').DataTable( {
-//       dom: 'Blfrtip',
-//       columnDefs: [
-//           {
-//               targets: 4, 
-//               className: 'noVis'           
-//           }    
-//       ],
-//     "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "Tất cả"] ],
-//      "language": {
-//         "lengthMenu": "Hiển thị: _MENU_ đối tượng",
-//         "search": "Tìm kiếm _INPUT_",
-//         'info':"",
-//         "zeroRecords": "Không tìm thấy dữ liệu",
-//         "infoEmpty": "Không có dữ liệu hợp lệ",
-//         "infoFiltered": "(Lọc từ _MAX_ dữ liệu)",
-//         "paginate": {
-//           "first":      "Đầu tiên",
-//           "last":       "Cuối cùng",
-//           "next":       "Tiếp theo",
-//           "previous":   "Trước đó"
-//       },
-//        buttons: {
-//             colvis: 'Thay đổi số cột'
-//         }
-//     },
-
-//     buttons: [
-          
-//           {
-//               extend: 'colvis',
-//               columns: ':not(.noVis)'
-//           },
-    
-//           {
-//               extend: 'copyHtml5',
-//               exportOptions: {
-//                   columns: [ 1,2,3,4]
-//               }
-//           },
-//           {
-//               extend: 'excelHtml5',
-//               exportOptions: {
-//                   columns: [ 1,2,3,4]
-//               }
-//           },
-//           {
-//               extend: 'pdfHtml5',
-//               exportOptions: {
-//                   columns: [ 1,2,3,4]
-//               }
-//           },
-//           {
-//               extend: 'csvHtml5',
-//               exportOptions: {
-//                   columns: [ 1,2,3,4]
-//               }
-//           },
-          
-//       ],
-  
-
-//     } );
-//     $('#DataTables_Table_0_wrapper').addClass('d-flex row');
-//     $('#DataTables_Table_0_length').addClass('mt-2');
-//     $('#DataTables_Table_0_filter').addClass('mt-2');
-
-// } );
   $(function(){
-    $('.form-check-input').change(function() {
+    $('#DataTables_Table_0 tbody').on('change','.form-check-input',function(){
       
       var status = $(this).prop('checked') == true ? 1 : 0;
       var document_id = $(this).data('id');
@@ -253,48 +175,48 @@
         })
   })
 
-  $('.delete-button').click(function(){
-    var document_id = $(this).data('id');
-    var name = $(this).data('name');
-    var token = $("meta[name='csrf-token']").attr("content");
+    $('#DataTables_Table_0 tbody').on('click','.delete-button',function(){
+      var document_id = $(this).data('id');
+      var name = $(this).data('name');
+      var token = $("meta[name='csrf-token']").attr("content");
 
-    Swal.fire({
-        title: "Bạn muốn xóa tài liệu "+ name,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Xóa tài liệu',
-        cancelButtonText: 'Không'
-        }).then((result) => {
-        if (result.isConfirmed) {
-           
-          $.ajax({
-            type:"DELETE",
-            url:'/admin/document/' + document_id,
-            data : {
-              "id": document_id,
-              "_token": token,
-            },
-            })
-            .done(function() {
-            // If successful
-              Swal.fire({
-                    icon: 'success',
-                    title: `Xóa tài liệu ${name} thành công`,
-                    showConfirmButton: false,
-                    timer: 2500
-              });
+      Swal.fire({
+          title: "Bạn muốn xóa tài liệu "+ name,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Xóa tài liệu',
+          cancelButtonText: 'Không'
+          }).then((result) => {
+          if (result.isConfirmed) {
+            
+            $.ajax({
+              type:"DELETE",
+              url:'/admin/document/' + document_id,
+              data : {
+                "id": document_id,
+                "_token": token,
+              },
+              })
+              .done(function() {
+              // If successful
+                Swal.fire({
+                      icon: 'success',
+                      title: `Xóa tài liệu ${name} thành công`,
+                      showConfirmButton: false,
+                      timer: 2500
+                });
 
-              $("#row-" + document_id).fadeOut();
-            })
-            .fail(function(jqXHR, textStatus, errorThrown) {
-            // If fail
-            console.log(textStatus + ': ' + errorThrown);
-            })
-         
-        }
-      })
+                $("#row-" + document_id).fadeOut();
+              })
+              .fail(function(jqXHR, textStatus, errorThrown) {
+              // If fail
+              console.log(textStatus + ': ' + errorThrown);
+              })
+          
+          }
+        })
 
    
 

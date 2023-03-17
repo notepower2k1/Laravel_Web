@@ -124,9 +124,7 @@ $("#search-btn").click(function(){
 
 
                 renderArea.append(openEnderContent);
-                var new_div = $('#new_div').hide();
-                renderArea.append(new_div);
-                new_div.show('slow');
+            
                 }
 
             }

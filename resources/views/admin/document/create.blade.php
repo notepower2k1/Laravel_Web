@@ -6,8 +6,7 @@
 
 <div class="card shadow mb-4">
     <div class="card-body ">
-        <form action="{{ route('document.store') }}" method="POST" enctype="multipart/form-data">
-
+            <form action="{{ route('document.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <label>Tiêu đề<sup>*</sup></label>
             <input type="text" required
@@ -34,7 +33,7 @@
 
 
             <label>Thể loại<sup>*</sup></label>
-            <select required class="form-control mb-4 col-6" name="document_type_id">
+            <select required class="form-control mb-4 col-6" name="document_type_id" id="document_type_id">
                 @foreach ($types as $type)
                 <option value="{{ $type->id }}" >{{ $type->name }}</option>
                 @endforeach
@@ -42,7 +41,7 @@
         
           
 
-            <label>Ảnh bìa<sup>*</sup></label>
+            <label class="mt-4">Ảnh bìa<sup>*</sup></label>
             <input type="file" required
             name="image"
             class="form-control mb-4 col-6 @error('image') is-invalid @enderror" accept="image/*">
@@ -74,6 +73,7 @@
             <label>File đính kèm<sup>*</sup></label>
             <input type="file" required
             name="file_document"
+            id="customFile"
             class="form-control mb-4 col-6 @error('file_document') is-invalid @enderror" accept=".doc, .docx,.pdf">
 
             @error('file_document')
@@ -96,5 +96,17 @@
 
     
 @section('additional-scripts')
+
+<script>
+    $('#document_type_id').select2({
+    });
+
+ 
+
+  
+    
+
+  
+</script>
 
 @endsection

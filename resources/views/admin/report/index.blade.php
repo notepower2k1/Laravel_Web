@@ -153,6 +153,7 @@
         .done(function(res) {
         // If successful
             renderArea.empty(); 
+            renderArea2.empty(); 
 
             var report_detail = res.report_detail;
             var type = report_detail.type_id;
@@ -248,7 +249,7 @@
 
                 setTimeout(()=>{
                     $('#show-modal-btn').click();
-                }, 2000);
+                }, 1000);
 
 
 

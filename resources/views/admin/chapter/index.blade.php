@@ -128,52 +128,51 @@
 
 @section('additional-scripts')
 
-<script src="{{ asset('assets/js/libs/datatable-btns.js?ver=3.1.2') }}"></script>
 <script src="{{ asset('assets/js/example-sweetalert.js?ver=3.1.2') }}" aria-hidden="true"></script>
 
 <script>
 $(function(){
-  $('.delete-button').click(function(){
-    var chapter_id = $(this).data('id');
-    var name = $(this).data('name');
-    var token = $("meta[name='csrf-token']").attr("content");
+    $('#DataTables_Table_0 tbody').on('click','.delete-button',function(){
+        var chapter_id = $(this).data('id');
+        var name = $(this).data('name');
+        var token = $("meta[name='csrf-token']").attr("content");
 
-    Swal.fire({
-        title: "Bạn muốn xóa chương "+ name,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Xóa chương',
-        cancelButtonText: 'Không'
-        }).then((result) => {
-        if (result.isConfirmed) {
-           
-            $.ajax({
-                type:"DELETE",
-                url:'/admin/book/chapter/' + chapter_id,
-                data : {
-                    "id": chapter_id,
-                    "_token": token,
-                },
-                })
-                .done(function() {
-                // If successful
-                    Swal.fire({
-                        icon: 'success',
-                        title: `Xóa chương ${name} thành công`,
-                        showConfirmButton: false,
-                        timer: 2500
-                    });
-                    $("#row-" + chapter_id).fadeOut();
-                })
-                .fail(function(jqXHR, textStatus, errorThrown) {
-                // If fail
-                console.log(textStatus + ': ' + errorThrown);
-                })
-         
-        }
-      })
+        Swal.fire({
+            title: "Bạn muốn xóa chương "+ name,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Xóa chương',
+            cancelButtonText: 'Không'
+            }).then((result) => {
+            if (result.isConfirmed) {
+            
+                $.ajax({
+                    type:"DELETE",
+                    url:'/admin/book/chapter/' + chapter_id,
+                    data : {
+                        "id": chapter_id,
+                        "_token": token,
+                    },
+                    })
+                    .done(function() {
+                    // If successful
+                        Swal.fire({
+                            icon: 'success',
+                            title: `Xóa chương ${name} thành công`,
+                            showConfirmButton: false,
+                            timer: 2500
+                        });
+                        $("#row-" + chapter_id).fadeOut();
+                    })
+                    .fail(function(jqXHR, textStatus, errorThrown) {
+                    // If fail
+                    console.log(textStatus + ': ' + errorThrown);
+                    })
+            
+            }
+        })
   })
 });
 

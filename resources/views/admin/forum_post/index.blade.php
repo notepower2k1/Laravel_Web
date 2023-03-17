@@ -40,7 +40,7 @@
                                                 </div>
                                             </td>
                                             <td class="nk-tb-col tb-col-mb">
-                                              <span>{{  $forum_post->user->name }}</span>
+                                              <span>{{  $forum_post->users->name }}</span>
                                             </td>
                                             <td class="nk-tb-col tb-col-lg">
                                               <span>{{ $forum_post->created_at }}</span>
@@ -52,7 +52,7 @@
                                             </td>        
                                             
                                             <td class="nk-tb-col tb-col-mb">
-                                                <span>{{ $forum_post->forum->name }}</span>
+                                                <span>{{ $forum_post->forums->name }}</span>
                                               </td>        
                                             <td class="nk-tb-col nk-tb-col-tools">
                                               <ul class="nk-tb-actions gx-1">
@@ -83,7 +83,7 @@
                                                                   </li>
                                                                   <li><a href="/admin/forum/post/{{$forum_post->id}}/edit"><em class="icon ni ni-edit"></em><span>Cập nhật</span></a></li>
                                                                  
-                                                                  <li><a href="/admin/forum/post/create/{{$forum_post->forum->id}}"><em class="icon ni ni-plus"></em><span>Thêm bài đăng</span></a></li>
+                                                                  <li><a href="/admin/forum/post/create/{{$forum_post->forums->id}}"><em class="icon ni ni-plus"></em><span>Thêm bài đăng</span></a></li>
 
                                                               </ul>
                                                           </div>
@@ -111,7 +111,7 @@
    
   $(function(){
 
-  $('.delete-button').click(function(){
+    $('#DataTables_Table_0 tbody').on('click','.delete-button',function(){
     var forum_postID = $(this).data('id');
     var name = $(this).data('name');
     var token = $("meta[name='csrf-token']").attr("content");

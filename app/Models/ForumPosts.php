@@ -41,11 +41,11 @@ class ForumPosts extends Model
         return $imageURL;
     }
 
-    public function forum() {
+    public function forums() {
         return $this->belongsTo(Forum::class,'forumID','id');
     }
 
-    public function user() {
+    public function users() {
         return $this->belongsTo(User::class,'userCreatedID','id');
     }
 }
