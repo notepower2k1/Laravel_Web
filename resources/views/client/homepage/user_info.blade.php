@@ -171,6 +171,10 @@
                             </div>
                             @endforeach
                       
+                            <div class="col-md-12">                          
+
+                                {{ $documents->links('vendor.pagination.custom',['elements' => $documents]) }}
+                            </div>
                         </div><!-- .nk-tb-list -->
                     </div>                 
                     <div class="nk-block">

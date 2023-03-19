@@ -35,10 +35,6 @@ class ProfileController extends Controller
     
     }
 
-    function slugify($string)
-    {
-       
-    }
     /**
      * Store a newly created resource in storage.
      *

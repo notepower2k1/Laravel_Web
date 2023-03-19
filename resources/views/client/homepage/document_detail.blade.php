@@ -45,6 +45,10 @@
                                                 <div class="fs-16px fw-bold text-secondary" id="totalDownload">{{ $document->totalDownloading }}</div>
                                             </li>
                                             <li>
+                                                <div class="fs-14px text-muted">Số trang</div>
+                                                <div class="fs-16px fw-bold text-secondary">{{ $document->numberOfPages }}</div>
+                                            </li>
+                                            <li>
                                                 <div class="fs-14px text-muted">Định dạng</div>
                                                 <div class="fs-16px fw-bold text-secondary">.{{ $document->extension }}</div>
                                             </li>

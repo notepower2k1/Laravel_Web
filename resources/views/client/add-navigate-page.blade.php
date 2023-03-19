@@ -113,10 +113,15 @@
                                                     <div class="form-group">
                                                         <label class="form-label" for="name">Tiêu đề</label>
                                                         <div class="form-control-wrap">
-                                                            <input type="text" class="form-control" id="name" name="name" placeholder="Tiêu đề" required>
+                                                            <input type="text" class="form-control" id="name" name="name" placeholder="Tiêu đề" required id="in">
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                <input type="hidden" required
+                                                name="slug" id="out"
+                                                class="form-control mb-4 col-6">
+                                
                                                 <div class="col-sm-6">
                                                     <div class="form-group">
                                                         <label class="form-label" for="author">Tác giả</label>
@@ -1013,6 +1018,52 @@
 <script src="{{ asset('assets/js/example-sweetalert.js?ver=3.1.2') }}" aria-hidden="true"></script>
 
 <script>
+       function toSlug(str) {
+	// Chuyển hết sang chữ thường
+	str = str.toLowerCase();     
+ 
+	// xóa dấu
+	str = str
+		.normalize('NFD') // chuyển chuỗi sang unicode tổ hợp
+		.replace(/[\u0300-\u036f]/g, ''); // xóa các ký tự dấu sau khi tách tổ hợp
+ 
+	// Thay ký tự đĐ
+	str = str.replace(/[đĐ]/g, 'd');
+	
+	// Xóa ký tự đặc biệt
+	str = str.replace(/([^0-9a-z-\s])/g, '');
+ 
+	// Xóa khoảng trắng thay bằng ký tự -
+	str = str.replace(/(\s+)/g, '-');
+	
+	// Xóa ký tự - liên tiếp
+	str = str.replace(/-+/g, '-');
+ 
+	// xóa phần dư - ở đầu & cuối
+	str = str.replace(/^-+|-+$/g, '');
+ 
+	// return
+	return str;
+}
+
+    $(() => {
+        let $in = $('#in');
+        let $out = $('#out');
+        
+        function update() {
+            $out.val(toSlug($in.val()));
+        }
+        update();
+        
+        $in.on('change', update);
+    })
+
+    $('#document_type_id').select2({
+    });
+
+    $('#book_type_id').select2({
+    });
+
      $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -1059,54 +1110,11 @@
         var selection = $("input[type=radio][name=type-option]:checked").val();  
         if(selection == 1){ 
             $('#stepper-create').attr('action', "/quan-ly/sach").submit();
-            // $.ajax({
-            //     url:'/quan-ly/sach',
-            //     type:"POST",
-            //     data: JSON.stringify({
-            //     'name':name,
-            //     'author':author,
-            //     'description' :description,
-            //     'language' :language,
-            //     'type_id' :type_id,
-            //     'image' : image,
-            //     }),
-            //      processData: false,
-            //     contentType: "application/json"
-            // })
-            // .done(function() {
-            // // If successful
-            // })
-            // .fail(function(jqXHR, textStatus, errorThrown) {
-            // // If fail
-            // console.log(textStatus + ': ' + errorThrown);
-            // })
+          
         }
         else if (selection == 2){
             $('#stepper-create').attr('action', "/quan-ly/tai-lieu").submit();
 
-            //  $.ajax({
-            //     url:'/quan-ly/tai-lieu',
-            //     type:"POST", 
-            //     data: JSON.stringify({
-            //     'name':name,
-            //     'author':author,
-            //     'description' :description,
-            //     'language' :language,
-            //     'type_id' :type_id,
-            //     'image' : image,
-            //     'file':document_file,
-            //     }),        
-            //     processData: false,
-            //     contentType: "application/json"
-    
-            // })
-            // .done(function() {
-            // // If successful
-            // })
-            // .fail(function(jqXHR, textStatus, errorThrown) {
-            // // If fail
-            // console.log(textStatus + ': ' + errorThrown);
-            // })
         }
         else{
             Swal.fire({

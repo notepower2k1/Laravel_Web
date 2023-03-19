@@ -26,23 +26,32 @@
     <div class="row g-gs">
       @foreach ($documents as $document)
 
-        <div class="col-xxl-4 col-lg-2 col-sm-6">
+        <div class="col-xxl-2 col-lg-2 col-sm-6">
             <div class="card card-bordered product-card">
                 <div class="product-thumb">
                     <a href="/tai-lieu/{{$document->id}}/{{$document->slug}}">
-                        <img class="card-img-top" src="{{ $document->url }}" alt="">
+                        <img class="card-img-top" src="{{ $document->url }}" alt="" width="400px" height="300px">
                     </a>
+                    @if(\Carbon\Carbon::parse($document->created_at)->isToday())
                     <ul class="product-badges">
                         <li><span class="badge bg-success">Mới</span></li>
-                    </ul>             
+                    </ul>    
+                    @endif              
                 </div>
                 <div class="card-inner text-center">             
-                    <h5 class="product-title"><a href="/tai-lieu/{{$document->id}}/{{$document->slug}}">{{ $document->name }}</a></h5>
-                    <small class="text-muted fs-13px"><em class="icon ni ni-book-read"></em> {{ $document->users->profile->displayName }}</small>
+                    <h5 class="product-title"><a href="/tai-lieu/{{$document->id}}/{{$document->slug}}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $document->name }}">{{ Str::limit($document->name,30)}}</a></h5>
+
+                    <small class="text-muted fs-13px"><em class="icon ni ni-file"></em> {{ $document->numberOfPages }}</small>
+                    <small class="text-muted fs-13px ms-3"><em class="icon ni ni-download"></em> {{ $document->totalDownloading }}</small>
+
                 </div>
             </div>
         </div><!-- .col -->
       @endforeach
+    </div>
+    <div class="col-md-12">                          
+
+        {{ $documents->links('vendor.pagination.custom',['elements' => $documents]) }}
     </div>
 </div><!-- .nk-block -->
 @endsection

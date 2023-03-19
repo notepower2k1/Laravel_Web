@@ -174,7 +174,12 @@
         })
         .done(function() {
         // If successful
-          console.log("Success");
+            Swal.fire({
+                          icon: 'success',
+                          title: `Đổi trạng thái thành công`,
+                          showConfirmButton: false,
+                          timer: 2500
+                      });
 
         })
         .fail(function(jqXHR, textStatus, errorThrown) {

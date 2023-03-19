@@ -88,13 +88,14 @@
                                                 <input type="checkbox" class="custom-control-input form-check-input" id="customSwitch1" data-id="{{ $book->id }}"
                                                 {{ $book->isPublic ? 'checked':'' }}>
                                               </div> --}}
+                                              <div class="form-check form-switch">
 
                                               <input type="checkbox" 
                                               class="form-check-input"
                                               role="switch"
                                               data-id="{{ $document->id }}"
                                               {{ $document->isPublic ? 'checked':'' }}   />
-
+                                              </div>
                                             </td>
                                       
                                             <td class="nk-tb-col nk-tb-col-tools">
@@ -166,7 +167,12 @@
         })
         .done(function() {
         // If successful
-          console.log("Success");
+            Swal.fire({
+                          icon: 'success',
+                          title: `Đổi trạng thái thành công`,
+                          showConfirmButton: false,
+                          timer: 2500
+                      });
 
         })
         .fail(function(jqXHR, textStatus, errorThrown) {

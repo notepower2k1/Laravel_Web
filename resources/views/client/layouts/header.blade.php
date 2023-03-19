@@ -57,7 +57,7 @@
               
                 <li class="nk-menu-item {{ Request::is('/tai-lieu') ? 'active' : '' }}">
                     <a href="/tai-lieu" class="nk-menu-link">
-                        <span class="nk-menu-text">Tài liệu tham khảo</span>
+                        <span class="nk-menu-text">Tài liệu</span>
                     </a>
                 </li><!-- .nk-menu-item -->
                 <li class="nk-menu-item {{ Request::is('/tim-kiem') ? 'active' : '' }}">
@@ -188,7 +188,7 @@
                                 </li>
                                 <li><a href="/them-tai-lieu"><em class="icon ni ni-activity-alt"></em><span>Đăng tài liệu</span></a></li>
                                 <li><a href="/sach-theo-doi"><em class="icon ni ni-bookmark"></em><span>Bookmark</span></a></li>
-                                <li><a class="dark-switch" href="#"><em class="icon ni ni-moon"></em><span>Chế độ ban đêm</span></a></li>
+                                {{-- <li><a class="dark-switch" href="#"><em class="icon ni ni-moon"></em><span>Chế độ ban đêm</span></a></li> --}}
                             </ul>
                         </div>
                         <div class="dropdown-inner">

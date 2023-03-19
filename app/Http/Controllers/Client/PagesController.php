@@ -82,7 +82,7 @@ class PagesController extends Controller
     }
     public function document_home_page(){
             
-        $documents = Document::where('isPublic','=',1)->get();
+        $documents = Document::where('isPublic','=',1)->paginate(18);
       
         return view('client.homepage.document_homepage',[
              'documents' => $documents,
@@ -218,27 +218,11 @@ class PagesController extends Controller
         $option = $request->option;
 
         switch ($option) {
-            case 0:
-                $searchResults = (new Search())
-                ->registerModel(Book::class, function (ModelSearchAspect $modelSearchAspect){
-                    $modelSearchAspect
-                    ->addSearchableAttribute('name') // only return results that exactly match
-                    ->addSearchableAttribute('author'); // return results for partial matches
-                }) //apply search on field name and description
-                //Config partial match or exactly match
-                ->registerModel(Document::class,function (ModelSearchAspect $modelSearchAspect){
-                    $modelSearchAspect
-                    ->addSearchableAttribute('name') // only return results that exactly match
-                    ->addSearchableAttribute('author'); // return results for partial matches
-                })   
-                ->perform($searchterm);
-                break;
             case 1:
                 $searchResults = (new Search())
                 ->registerModel(Book::class, function (ModelSearchAspect $modelSearchAspect){
                     $modelSearchAspect
-                    ->addSearchableAttribute('name') // only return results that exactly match
-                    ->addSearchableAttribute('author'); // return results for partial matches
+                    ->addSearchableAttribute('slug'); // only return results that exactly match
                 })//apply search on field name and description
                 //Config partial match or exactly match
                 ->perform($searchterm);
@@ -248,25 +232,19 @@ class PagesController extends Controller
                 //Config partial match or exactly match
                 ->registerModel(Document::class, function (ModelSearchAspect $modelSearchAspect){
                     $modelSearchAspect
-                    ->addSearchableAttribute('name') // only return results that exactly match
-                    ->addSearchableAttribute('author'); // return results for partial matches
+                    ->addSearchableAttribute('slug'); // only return results that exactly match
                 })
                 ->perform($searchterm);
                 break;  
             default:
                 $searchResults = (new Search())
-                ->registerModel(Book::class,function (ModelSearchAspect $modelSearchAspect){
+                ->registerModel(Book::class, function (ModelSearchAspect $modelSearchAspect){
                     $modelSearchAspect
-                    ->addSearchableAttribute('name') // only return results that exactly match
-                    ->addSearchableAttribute('author'); // return results for partial matches
-                }) //apply search on field name and description
+                    ->addSearchableAttribute('slug'); // only return results that exactly match
+                })//apply search on field name and description
                 //Config partial match or exactly match
-                ->registerModel(Document::class, function (ModelSearchAspect $modelSearchAspect){
-                    $modelSearchAspect
-                    ->addSearchableAttribute('name') // only return results that exactly match
-                    ->addSearchableAttribute('author'); // return results for partial matches
-                })
                 ->perform($searchterm);
+                break;
         }
         // // return view('client.homepage.search_page', compact('searchResults', 'searchterm'));
 
@@ -378,10 +356,10 @@ class PagesController extends Controller
 
         $user = User::where('deleted_at','=',null)->findOrFail($user_id);
         $books = Book::where('userCreatedID','=',$user->id)->where('isPublic','=',1)->paginate(3);
-        $document = $user->with('documents')->first();
+        $document = Document::where('userCreatedID','=',$user->id)->where('isPublic','=',1)->paginate(3);
         return view('client.homepage.user_info')
         ->with('books',$books)
-        ->with('documents',$document->documents)
+        ->with('documents',$document)
         ->with('user',$user);
     }
 

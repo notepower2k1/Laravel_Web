@@ -8,9 +8,27 @@ use App\Models\Document;
 use App\Models\DocumentType;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use ZipArchive;
+use SimpleXMLElement;
 
 class ClientDocumentController extends Controller
 {
+    function PageCount_DOCX($file) {
+        $pageCount = 0;
+    
+        $zip = new ZipArchive();
+    
+        if($zip->open($file) === true) {
+            if(($index = $zip->locateName('docProps/app.xml')) !== false)  {
+                $data = $zip->getFromIndex($index);
+                $xml = new SimpleXMLElement($data);
+                $pageCount = $xml->Pages;
+            }
+            $zip->close();
+        }
+    
+        return $pageCount;
+    }
 
     function setNameForImage(){
         $now_date = Carbon::now()->toDateTimeString();
@@ -39,37 +57,6 @@ class ClientDocumentController extends Controller
         return view('client.manage.document.create')->with('types',$types);
     }
 
-    function slugify($string)
-    {
-        $replacement = '-';
-        $map = array();
-        $quotedReplacement = preg_quote($replacement, '/');
-        $default = array(
-            '/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ|À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ|å/' => 'a',
-            '/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ|È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ|ë/' => 'e',
-            '/ì|í|ị|ỉ|ĩ|Ì|Í|Ị|Ỉ|Ĩ|î/' => 'i',
-            '/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ|Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ|ø/' => 'o',
-            '/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ|Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ|ů|û/' => 'u',
-            '/ỳ|ý|ỵ|ỷ|ỹ|Ỳ|Ý|Ỵ|Ỷ|Ỹ/' => 'y',
-            '/đ|Đ/' => 'd',
-            '/ç/' => 'c',
-            '/ñ/' => 'n',
-            '/ä|æ/' => 'ae',
-            '/ö/' => 'oe',
-            '/ü/' => 'ue',
-            '/Ä/' => 'Ae',
-            '/Ü/' => 'Ue',
-            '/Ö/' => 'Oe',
-            '/ß/' => 'ss',
-            '/[^\s\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}]/mu' => ' ',
-            '/\\s+/' => $replacement,
-            sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
-        );
-        //Some URL was encode, decode first
-        $title = urldecode($string);
-        $map = array_merge($map, $default);
-        return strtolower(preg_replace(array_keys($map), array_values($map), $title));
-    }
     /**
      * Store a newly created resource in storage.
      *
@@ -81,23 +68,48 @@ class ClientDocumentController extends Controller
 
         $request->validate([
             'name' => 'required',
-            'file_document' => 'required|mimetypes:application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf',
+            'file_document' => 'required|mimetypes:application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf',
             'description' => 'required',
-            'image' => 'required|mimes:jpg,png,jpeg|max:5048',
+            'image' => 'mimes:jpg,png,jpeg|max:5048',
             'language' => 'required',
             'author' => 'required'
         ]);
 
 
-        $slug =  $this->slugify($request->name);
+        $slug =  $request->slug;
     
         $image = $request->file('image'); //image file from frontend
         $document_file = $request->file('file_document');
 
-        $generatedImageName = 'image'.$this->setNameForImage().'-'
-        .$slug.'.'
-        .$request->image->extension();
+        $generatedImageName = '';
+        if($image == null){
+            if($document_file->extension() == 'pdf'){
+                $generatedImageName = 'default_pdf.jpg';
+            }
+            if($document_file->extension() == 'docx' || $document_file->extension() == 'doc'){
+                $generatedImageName = 'default_docx.jpg';
+            }
+        }
+        else{
+            $generatedImageName = 'image'.$this->setNameForImage().'-'
+            .$slug.'.'
+            .$request->image->extension();
+        }
+   
         $generatedFileName = $this->setNameForImage() . '-' . $slug . '.' . $request->file_document->extension();
+
+        $numberOfPages = 0;
+
+        if($document_file->extension() == 'pdf'){
+            $path = $document_file->getContent();
+            $numberOfPages = preg_match_all("/\/Page\W/", $path, $dummy);
+        }
+        
+        if($document_file->extension() == 'docx'){
+            $path = $document_file;
+            $numberOfPages = $this->PageCount_DOCX($path);
+        }
+
 
         $document = Document::create([
             'name' => $request->name,
@@ -112,18 +124,24 @@ class ClientDocumentController extends Controller
             'author' => $request -> author,
             'extension' =>  $request->file_document->extension(),
             'isCompleted' => 0,
-            'totalDownloading'=>0
+            'totalDownloading'=>0,
+            'numberOfPages' => $numberOfPages
+
         ]);
         $document->save();
         //upload image
-        $firebase_storage_path = 'documentImage/';
-        $localfolder = public_path('firebase-temp-uploads') .'/';
-        if ($image->move($localfolder, $generatedImageName)) {
-        $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
 
-        app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
-        unlink($localfolder . $generatedImageName);
+        if($image){
+            $firebase_storage_path = 'documentImage/';
+            $localfolder = public_path('firebase-temp-uploads') .'/';
+            if ($image->move($localfolder, $generatedImageName)) {
+            $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
+    
+            app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
+            unlink($localfolder . $generatedImageName);
+            }
         }
+      
         //upload document
         $firebase_storage_document_path = 'documentFile/';
         $localfolder = public_path('firebase-temp-uploads') .'/';
@@ -181,7 +199,7 @@ class ClientDocumentController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'file_document' => 'mimetypes:application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf',
+            'file_document' => 'mimetypes:application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf',
             'description' => 'required',
             'image' => 'mimes:jpg,png,jpeg|max:5048',
             'author' => 'required',
@@ -189,7 +207,7 @@ class ClientDocumentController extends Controller
 
         ]);
 
-        $slug =  $this->slugify($request->name);
+        $slug =  $request->slug;
 
         $generatedImageName="";
 
@@ -217,13 +235,21 @@ class ClientDocumentController extends Controller
 
             //delete old image
 
-            $OldimageDeleted = app('firebase.storage')->getBucket()->object($firebase_storage_path.$request->oldImage)->delete();
+            if (strcmp($request->oldImage,'default_pdf.jpg') == 0 || strcmp($request->oldImage,'default_docx.jpg') == 0 ){
+                
+            }
+            else{
+                $OldimageDeleted = app('firebase.storage')->getBucket()->object($firebase_storage_path.$request->oldImage)->delete();
+            }
 
             }
         }
 
+        $numberOfPages = 0;
+
         if($request->file_document == null){
             $generatedFileName = $request->oldFile;
+            $numberOfPages = $request->oldNumberOfPages;
         }
         else{
             $document_file = $request->file('file_document');
@@ -245,6 +271,17 @@ class ClientDocumentController extends Controller
 
             $oldfileDelete = app('firebase.storage')->getBucket()->object($firebase_storage_document_path.$request->oldFile)->delete();
 
+
+            if($document_file->extension() == 'pdf'){
+                $path = $document_file->getContent();
+                $numberOfPages = preg_match_all("/\/Page\W/", $path, $dummy);
+            }
+            
+            if($document_file->extension() == 'docx'){
+                $path = $document_file;
+                $numberOfPages = $this->PageCount_DOCX($path);
+            }
+
         }
 
         $tmp = explode('.', $generatedFileName);
@@ -260,7 +297,9 @@ class ClientDocumentController extends Controller
                     'image' => $generatedImageName,
                     'file' => $generatedFileName,
                     'isCompleted' => $request->isCompleted,
-                    'extension' => $file_extension
+                    'extension' => $file_extension,
+                    'numberOfPages' => $numberOfPages
+
                 ]);
         return redirect('/quan-ly/tai-lieu');
 

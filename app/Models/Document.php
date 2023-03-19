@@ -16,7 +16,7 @@ class Document extends Model implements Searchable
     public $incrementing = false;   
 
     protected $fillable = ['name', 
-    'description' ,'slug','type_id','image','userCreatedID','isPublic','isCompleted','language','file','author','extension','totalDownloading'];
+    'description' ,'slug','type_id','image','userCreatedID','isPublic','isCompleted','language','file','author','extension','totalDownloading','numberOfPages'];
 
 
     public function types() {
