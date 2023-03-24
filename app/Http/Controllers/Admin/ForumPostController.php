@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Str;
 
 use Illuminate\Http\Request;
 use App\Models\ForumPosts;
@@ -47,7 +48,7 @@ class ForumPostController extends Controller
     public function store(Request $request)
     {
 
-        $slug =  $request->slug;
+        $slug =  Str::slug($request->topic);
 
         $request->validate([
             'topic' => 'required',
@@ -134,7 +135,7 @@ class ForumPostController extends Controller
 
         ]);
 
-        $slug =  $request->slug;
+        $slug =  Str::slug($request->topic);
 
 
         $generatedImageName="";

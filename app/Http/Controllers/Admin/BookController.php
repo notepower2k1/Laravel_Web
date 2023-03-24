@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Str;
 
 use Illuminate\Http\Request;
 use App\Models\Book;
@@ -59,7 +60,7 @@ class BookController extends Controller
         ]);
 
 
-        $slug =  $request->slug;
+        $slug =  Str::slug($request->name);
     
         $image = $request->file('image'); //image file from frontend
 
@@ -151,7 +152,7 @@ class BookController extends Controller
             'isCompleted' => 'required'
         ]);
 
-        $slug =   $request->slug;
+        $slug =  Str::slug($request->name);
 
         $generatedImageName="";
 

@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('documents', function (Blueprint $table) {
-            $table->integer('numberOfPages')->default('0');
+        Schema::table('book_marks', function (Blueprint $table) {
+            $table->boolean('status')->default('0');
 
         });
     }
@@ -26,8 +26,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('documents', function (Blueprint $table) {
-            $table->dropColumn('numberOfPages');
+        Schema::table('book_marks', function (Blueprint $table) {
+            $table->dropColumn('status');
         });
     }
 };

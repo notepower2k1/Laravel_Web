@@ -59,5 +59,54 @@
 
     
     @yield('additional-scripts')
+
+    <script>
+        $(document).on('click','#mark_all_notifications',function(){
+    
+            $.ajax({
+                url:'/bookmark-status-all-update',
+                type:"GET",
+                data:{            
+                }
+            })
+            .done(function(res) {
+                
+            
+                Swal.fire({
+                        icon: 'success',
+                        title: `${res.success}`,
+                        showConfirmButton: false,
+                        timer: 2500
+                    });      
+
+                $("#bookMark_notifications_box").load(" #bookMark_notifications_box > *");
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            console.log(textStatus + ': ' + errorThrown);
+            });    
+        })
+
+        $('.nk-notification-item').click(function(){
+
+            var id = $(this).data('id');
+
+            $.ajax({
+                url:'/bookmark-status-update',
+                type:"GET",
+                data:{          
+                    'id':id
+                }
+            })
+            .done(function(res) {
+                
+                window.location.href = res.url;
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            console.log(textStatus + ': ' + errorThrown);
+            });    
+        })
+      </script>
 </body>
 </html>

@@ -13,6 +13,7 @@
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
         "laravel/ui": "^4.2",
+        "mews/purifier": "^3.4",
         "mollie/mollie-api-php": "^2.50",
         "phpoffice/phpword": "*",
         "seshac/otp-generator": "^0.0.7",

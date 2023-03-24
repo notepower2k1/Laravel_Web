@@ -13,6 +13,7 @@ use App\Models\ratingBook;
 use Kreait\Firebase\Auth\SignInResult\SignInResult;
 use Kreait\Firebase\Exception\FirebaseException;
 use Google\Cloud\Firestore\FirestoreClient;
+use Illuminate\Support\Str;
 
 
 class ClientBookController extends Controller
@@ -66,7 +67,7 @@ class ClientBookController extends Controller
         ]);
 
 
-        $slug = $request->slug;
+        $slug =  Str::slug($request->name);
     
         $image = $request->file('image'); //image file from frontend
 
@@ -76,6 +77,7 @@ class ClientBookController extends Controller
 
         $firebase_storage_path = 'bookImage/';
         $localfolder = public_path('firebase-temp-uploads') .'/';
+
         if ($image->move($localfolder, $generatedImageName)) {
         $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
 
@@ -156,7 +158,7 @@ class ClientBookController extends Controller
             'isCompleted' => 'required'
         ]);
 
-        $slug = $request->slug;
+        $slug =  Str::slug($request->name);
 
         $generatedImageName="";
 
@@ -282,5 +284,17 @@ class ClientBookController extends Controller
         ]);
         
        
+    }
+
+    public function changeBookMarkStatus(Request $request){
+        $book = bookMark::findOrFail($request->id);
+        $book->status = 0;
+        $book ->save();
+
+
+        return response()->json([
+            'success' => 'Đánh dấu thành công!!!',      
+        ]);
+      
     }
 }

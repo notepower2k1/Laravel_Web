@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\ForumPosts;
 use App\Models\Forum;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class ClientForumPostController extends Controller
 {
@@ -53,7 +54,7 @@ class ClientForumPostController extends Controller
     public function store(Request $request)
     {
 
-        $slug =  $request->slug;
+        $slug =  Str::slug($request->topic);
 
         $request->validate([
             'topic' => 'required',
@@ -141,7 +142,7 @@ class ClientForumPostController extends Controller
 
         ]);
 
-        $slug =  $request->slug;
+        $slug =  Str::slug($request->topic);
 
 
         $generatedImageName="";

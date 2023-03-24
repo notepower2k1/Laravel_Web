@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Str;
 
 use Illuminate\Http\Request;
 use App\Models\Chapter;
 use App\Models\Book;
+use App\Models\bookMark;
+use App\Models\Notification;
 
 class ChapterController extends Controller
 {
@@ -57,22 +60,41 @@ class ChapterController extends Controller
             $name = $request->name;
         }
 
-        $slug =  $request->slug;
+        $slug =  Str::slug($request->name);
 
 
-        $chapter = Chapter::create([
+        $chapter_id = Chapter::insertGetId([
             'code' => $request->code,
             'name' => $name,
             'content' => $request->content,
             'slug' =>  $slug,
-            'book_id' =>  $request->book_id
+            'book_id' =>  $request->book_id,
+            'numberOfWords' => $request->wordCount,
+            "created_at" =>  \Carbon\Carbon::now(), 
+            "updated_at" => \Carbon\Carbon::now(),
         ]);
-        $chapter->save();
 
         $book = Book::findOrFail($request->book_id);
         $book->numberOfChapter = $book->numberOfChapter + 1;
         $book ->save();
         
+        //update status book_mark
+        $book_mark = bookMark::findOrFail($request->book_id);
+        $book_mark->status = 0;
+        $book_mark ->save();
+
+        $book_mark_userids = bookMark::where('bookID','=',$request->book_id)->pluck('userID')->toArray();
+
+        foreach($book_mark_userids as $id){
+            $notification = Notification::create([
+                'chapter_id'=> $chapter_id,
+                'userID' => $id,
+                'status'=> 1
+            ]);
+
+            $notification->save();
+        }
+
         return redirect('/admin/book/chapter/'.$request->book_id);
 
            
@@ -120,6 +142,12 @@ class ChapterController extends Controller
             'code' => 'required',
             'content' => 'required'
         ]);
+
+        $word_count = 0;
+
+        if($request->wordCount!=null){
+            $word_count = $request->wordCount;
+        }
         
         $name = '';
 
@@ -131,7 +159,7 @@ class ChapterController extends Controller
         }
        
 
-        $slug =  $request->slug;
+        $slug =  Str::slug($request->name);
 
         $chapter = Chapter::findOrFail($id)
         ->update([
@@ -139,6 +167,8 @@ class ChapterController extends Controller
             'name' => $name,
             'content' => $request->content,
             'slug' =>  $slug ,
+            'numberOfWords' => $word_count
+
         ]);
 
       

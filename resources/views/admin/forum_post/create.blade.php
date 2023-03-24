@@ -11,12 +11,10 @@
 
             <label>Chủ đề<sup>*</sup></label>
             <input type="text" required
-            name="topic" id="in"
+            name="topic"
             class="form-control mb-4 col-6"> 
 
-            <input type="hidden" required
-            name="slug" id="out"
-            class="form-control mb-4 col-6">
+        
 
             <label>Ảnh đại diện<sup>*</sup></label>
             <input type="file" required

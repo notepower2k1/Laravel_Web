@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('documents', function (Blueprint $table) {
-            $table->integer('numberOfPages')->default('0');
+        Schema::table('chapters', function (Blueprint $table) {
+            $table->integer('numberOfWords');
 
         });
     }
@@ -26,8 +26,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('documents', function (Blueprint $table) {
-            $table->dropColumn('numberOfPages');
+        Schema::table('chapters', function (Blueprint $table) {
+            $table->dropColumn('numberOfWords');
         });
     }
 };

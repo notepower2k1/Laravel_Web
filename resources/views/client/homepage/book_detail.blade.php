@@ -1,10 +1,6 @@
 @extends('client/layouts.app')
 @section('pageTitle', `${{$book->name}}`)
 @section('additional-style')
-<style>
-   
-
-</style>  
 @endsection
 @section('content')
     <div class="container">
@@ -92,9 +88,9 @@
                                             <ul class="d-flex flex-wrap ailgn-center g-2 pt-1">
                                                 <li class="ms-n1">
                                                     @if($book->numberOfChapter === 0)
-                                                    <a class="btn btn-xl btn-primary disabled"><em class="icon ni ni-arrow-right-circle"></em><span>Đọc ngay</span></a>
+                                                        <a class="btn btn-xl btn-primary disabled"><em class="icon ni ni-arrow-right-circle"></em><span>Đọc ngay</span></a>
                                                     @else
-                                                    <a href="/doc-sach/{{$book->slug}}/{{ $chapters->first()->slug }}" class="btn btn-xl btn-primary"><em class="icon ni ni-arrow-right-circle"></em><span>Đọc ngay</span></a>
+                                                        <a href="/doc-sach/{{$book->slug}}/{{ $chapters->first()->slug }}" class="btn btn-xl btn-primary"><em class="icon ni ni-arrow-right-circle"></em><span>Đọc ngay</span></a>
                                                     @endif
                                                 </li>
                                                 <li class="ms-n1">
@@ -132,13 +128,9 @@
                                     <div class="product-details entry me-xxl-3">
                                         <hr class="hr">
                                         <h3>Danh sách chương</h3>
-                                        <div class="list-group mt-3">
-                                            
-                                            
-                                                @foreach ($chapters as $chapter)
-                                    
-                                                <a href="/doc-sach/{{$book->slug}}/{{ $chapter->slug }}" class="list-group-item list-group-item-action">
-                                                
+                                        <div class="list-group mt-3">                            
+                                                @foreach ($chapters as $chapter)                              
+                                                <a href="/doc-sach/{{$book->slug}}/{{ $chapter->slug }}" class="list-group-item list-group-item-action">                                           
                                                     {{$chapter->code}}
                                                     @if($chapter->name)
                                                     <span>: {{ $chapter->name }}</span>
@@ -148,12 +140,130 @@
                                                 
                                                 </a>
                                                 @endforeach
-                                
+                                                <div class="col-md-12">                          
+
+                                                    {{ $chapters->links('vendor.pagination.custom',['elements' => $chapters]) }}
+                                                </div>
                                          
                                         </div>
                                     </div>
                                 </div><!-- .col -->
                             </div><!-- .row -->
+
+                            <div class="row g-gs flex-lg-row-reverse">                      
+                                <div class="col-lg-12">
+                                    <div class="product-details entry me-xxl-3">
+                                        <hr class="hr">
+                                        <h3>Bình luận</h3>
+                                        <div class="list-group mt-3">
+                                            @if(Auth::check())
+
+                                            <div class="bg-light p-2">
+                                                <div class="d-flex flex-row align-items-start">
+                                                    <img class="rounded-circle" src="{{ Auth::user()->profile->url }}" width="40" id="comment_avatar">
+                                                    <textarea class="form-control ml-1 shadow-none textarea" id="comment_area"></textarea>
+                                                </div>
+                                                <div class="mt-2 d-flex flex-row-reverse">
+
+                                                    <button class="btn btn-primary" id="comment-btn" type="button">
+                                                        <em class="icon ni ni-comments"></em>
+                                                        <span>Bình luận</span>
+                                                    </button>
+                                                </div>
+                                            </div>  
+                                            @endif
+                                            @if ($comments)
+                                            <div id="comment-box">
+                                                @foreach ($comments as $comment)
+                                                    <div id="comment-{{ $comment->id }}">
+                                                            <div class="d-flex flex-column comment-section">
+                                                                <div class="bg-white p-2">
+                                                                    <div class="d-flex flex-row user-info"><img class="rounded-circle" src="{{ $comment->users->profile->url }}" width="40">
+                                                                        <div class="d-flex flex-column justify-content-start ms-2">
+                                                                            <span class="d-block font-weight-bold name">{{ $comment->users->profile->displayName }}</span>
+                                                                            <span class="date text-black-50">{{ $comment->created_at }}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="mt-2">
+                                                                        <p contenteditable="false" id="comment-text-{{ $comment->id }}">
+                                                                            {{ $comment->content }}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                                @if(Auth::check() && Auth::user()->id == $comment->users->id)
+
+                                                                <div class="bg-white">
+                                                                    <div class="d-flex flex-row fs-12">
+                                                                        <button class="btn btn-outline-light create-reply-btn" data-id={{ $comment->id }}>
+                                                                            <em class="icon ni ni-comments"></em>
+                                                                        </button>
+                                                                        <button class="btn btn-outline-light delete-comment-btn" data-id={{ $comment->id }}>
+                                                                            <em class="icon ni ni-trash"></em>
+                                                                        </button>
+                                                                        {{-- <button class="btn btn-icon edit-comment-btn" data-id={{ $comment->id }}>
+                                                                            <em class="icon ni ni-edit"></em>
+                                                                        </button> --}}
+                                                                        <div class="custom-control custom-checkbox custom-control-pro custom-control-pro-icon no-control">
+                                                                            <input type="checkbox" class="custom-control-input edit-comment-btn" name="edit-comment-btn" id="edit-comment-btn-{{ $comment->id }}" value={{ $comment->id }}>
+                                                                            <label class="custom-control-label" name="edit-comment-btn" for="edit-comment-btn-{{ $comment->id }}"><em class="icon ni ni-edit"></em></label>
+                                                                        </div>
+                                                                    </div>
+                                                                   
+                                                                           
+                                                                    </ul>
+                                                                </div>
+                                                                @endif
+                                                            </div> 
+                                                    </div>
+                                                    @foreach ($comment->replies as $reply)
+                                                        @if(is_null($reply->deleted_at))
+                                                        <div class="ms-5" id="reply-{{ $reply->id }}">
+                                                            <div class="d-flex flex-column comment-section">
+                                                                <div class="bg-white p-2">
+                                                                    <div class="d-flex flex-row user-info"><img class="rounded-circle" src="{{ $reply->users->profile->url }}" width="40">
+                                                                        <div class="d-flex flex-column justify-content-start ms-2">
+                                                                            <span class="d-block font-weight-bold name">{{ $reply->users->profile->displayName }}</span>
+                                                                            <span class="date text-black-50">{{ $reply->created_at }}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="mt-2">
+                                                                        <p contenteditable="false" id="reply-text-{{ $reply->id }}">
+                                                                            {{ $reply->content }}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                                @if(Auth::check() && Auth::user()->id == $reply->users->id)
+
+                                                                <div class="bg-white">
+                                                                    <div class="d-flex flex-row fs-12">
+                                                                        <button class="btn btn-outline-light delete-reply-btn" data-id={{ $reply->id }}>
+                                                                            <em class="icon ni ni-trash"></em>
+                                                                        </button>
+                                                                        <div class="custom-control custom-checkbox custom-control-pro custom-control-pro-icon no-control">
+                                                                            <input type="checkbox" class="custom-control-input edit-reply-btn" name="edit-reply-btn" id="edit-reply-btn-{{ $reply->id }}" value={{ $reply->id }}>
+                                                                            <label class="custom-control-label" name="edit-reply-btn" for="edit-reply-btn-{{ $reply->id }}"><em class="icon ni ni-edit"></em></label>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                @endif
+                                                            </div> 
+                                                        </div>
+                                                        @endif
+                                                    @endforeach
+                                                @endforeach
+                                            </div>
+                                            @endif
+                                            
+                                        
+                                                
+                                        </div>
+                                    </div>
+                                </div><!-- .col -->
+                            </div><!-- .row -->
+                         
+                               
+                             
                         </div>
                     </div>
                 </div><!-- .nk-block -->
@@ -297,7 +407,7 @@
             </div>
         </div>
     </div>
-
+ 
 @endsection
 
 @section('modal')
@@ -347,6 +457,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
 <script src="{{ asset('assets/js/example-sweetalert.js?ver=3.1.2') }}" aria-hidden="true"></script>
 
+
 <script>
    
 
@@ -360,6 +471,11 @@
         var value = document.getElementById('divhtmlContent').textContent;
         document.getElementById('divhtmlContent').innerHTML =
         marked.parse(value);
+
+
+        $('#comment-btn').attr('disabled', true);
+    
+       
 
         $("#rateYo").rateYo({
             rating: {!! $ratingScore !!},
@@ -412,7 +528,57 @@
 
    
 
+    $(document).on('keyup','textarea',function() {
+            var comment_value = $("#comment_area").val();
 
+            var reply_value = $("#reply_area").val();
+
+            if(comment_value != '') {
+                $('#comment-btn').attr('disabled', false);
+            } else {
+                $('#comment-btn').attr('disabled', true);
+            }
+
+            if(reply_value != '') {
+                $('#reply-btn').attr('disabled', false);
+            } else {
+                $('#reply-btn').attr('disabled', true);
+            }
+
+    });
+
+    $(document).on('click','#comment-btn',function(){
+        var content = $("#comment_area").val();
+        
+        var book_id = {!! $book->id !!}
+
+        $.ajax({
+                url:'/binh-luan',
+                type:"POST",
+                data:{
+                    'item_id': book_id,
+                    'content': content,
+                    'option':1
+                }
+            })
+            .done(function(res) {
+                
+            
+                Swal.fire({
+                        icon: 'success',
+                        title: `${res.success}`,
+                        showConfirmButton: false,
+                        timer: 2500
+                    });      
+
+                $("#comment-box").load(" #comment-box > *");
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            console.log(textStatus + ': ' + errorThrown);
+            });
+
+    })
     $('#book-mark-btn').click(function(){
         var book_id = {!! $book->id !!}
         
@@ -507,10 +673,272 @@
                 Swal.fire('Báo cáo thất bại', '', 'info')
             }
         })
+
+})
+
+
+    $(document).on('click','.delete-comment-btn',function(){
+        var comment_id = $(this).data('id');
+
+            Swal.fire({
+                title: "Bạn muốn xóa bình luận này?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Xóa',
+                cancelButtonText: 'Không'
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                    type:"GET",
+                    url:'/xoa-binh-luan/1/' + comment_id,
+                    data : {
+                    },
+                    })
+                    .done(function(res) {
+                    // If successful
+                    Swal.fire({
+                            icon: 'success',
+                            title: `Xóa thành công`,
+                            showConfirmButton: false,
+                            timer: 2500
+                    });
+
+                    $("#comment-" + comment_id).fadeOut();
+                    })
+                    .fail(function(jqXHR, textStatus, errorThrown) {
+                    // If fail
+                    console.log(textStatus + ': ' + errorThrown);
+                    });
+                
+                }
+            })
+
     })
 
+    $(document).on('click','.delete-reply-btn',function(){
+        var reply_id = $(this).data('id');
 
+            Swal.fire({
+                title: "Bạn muốn xóa phản hồi này?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Xóa',
+                cancelButtonText: 'Không'
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                    type:"GET",
+                    url:'/xoa-phan-hoi/1/' + reply_id,
+                    data : {
+                    },
+                    })
+                    .done(function() {
+                    // If successful
+                    Swal.fire({
+                            icon: 'success',
+                            title: `Xóa thành công`,
+                            showConfirmButton: false,
+                            timer: 2500
+                    });
+
+                    $("#reply-" + reply_id).fadeOut();
+
+                   
+                    })
+                    .fail(function(jqXHR, textStatus, errorThrown) {
+                    // If fail
+                    console.log(textStatus + ': ' + errorThrown);
+                    });
+                
+                }
+            })
+
+    })
+
+    $(document).on('click','.create-reply-btn',function(){
+
+        var comment_id = $(this).data('id');
+        var avatar = $('#comment_avatar img').attr('src')
+       
+
+        if($("#reply-box").length){
+
+            $("#reply-box").remove();
+        }
+        else{
+            var htmlrender = '<div class="ms-5 p-2" id="reply-box" >'+
+            '<div class="d-flex flex-row align-items-start">'+
+                `<img class="rounded-circle" src="${avatar}" width="40">`+
+                '<textarea class="form-control ml-1 shadow-none textarea" id="reply_area"></textarea>'+
+            '</div>'+
+            '   <div class="mt-2 d-flex flex-row-reverse">'+
+                `<button class="btn btn-primary" id="reply-btn" type="button" data-id=${comment_id}>  `+
+                    '<em class="icon ni ni-comments"></em>'+
+                    '<span>Phản hồi</span>'+
+                '</button>'+
+            '</div>'+
+        '</div> ';
+       
+
+        $('#comment-'+comment_id).append(htmlrender);
+
+        $('#reply-btn').attr('disabled', true);
+
+        }
+        
+    })
+
+    $(document).on('click','#reply-btn',function(){
+        var content = $("#reply_area").val();
+        
+        var comment_id = $(this).data('id');
+
+
+        $.ajax({
+                url:'/phan-hoi',
+                type:"POST",
+                data:{
+                    'comment_id': comment_id,
+                    'content': content,
+                    'option':1
+                }
+            })
+            .done(function(res) {
+ 
+                Swal.fire({
+                        icon: 'success',
+                        title: `${res.success}`,
+                        showConfirmButton: false,
+                        timer: 2500
+                    });      
+
+                $("#comment-box").load(" #comment-box > *");
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            console.log(textStatus + ': ' + errorThrown);
+            });
+
+
+    })
     
+    $(document).on('change','.edit-comment-btn',function(){
+        
+        var comment_id = $(this).val();
+        var item = $('#comment-text-'+comment_id)
+
+        if ($(this).is(":checked")) {
+        
+            item.attr('contenteditable',true);
+
+            item.focus();
+        }
+        else{
+
+            item.attr('contenteditable',false);
+            var content = $.trim(item.text());
+
+            if(content){
+                $.ajax({
+                    url:'/cap-nhat-binh-luan/'+comment_id,
+                    type:"PUT",
+                    data:{
+                        'content': content,
+                        'option':1
+                    }
+                })
+                .done(function(res) {
+    
+                    Swal.fire({
+                            icon: 'success',
+                            title: `${res.success}`,
+                            showConfirmButton: false,
+                            timer: 2500
+                        });      
+
+                    $("#comment-box").load(" #comment-box > *");
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                // If fail
+                console.log(textStatus + ': ' + errorThrown);
+                });
+
+
+            }
+            else{
+                Swal.fire({
+                    icon: 'info',
+                    title: `Không được để trống bình luận!!!`,
+                    showConfirmButton: false,
+                    timer: 2500
+                });      
+
+                $("#comment-box").load(" #comment-box > *");
+            }
+        }
+
+    })
+
+    $(document).on('change','.edit-reply-btn',function(){
+        
+        var reply_id = $(this).val();
+        var item = $('#reply-text-'+reply_id)
+
+        if ($(this).is(":checked")) {
+        
+            item.attr('contenteditable',true);
+
+            item.focus();
+        }
+        else{
+
+            item.attr('contenteditable',false);
+            var content = $.trim(item.text());
+
+            if(content){
+                $.ajax({
+                    url:'/cap-nhat-phan-hoi/'+reply_id,
+                    type:"PUT",
+                    data:{
+                        'content': content,
+                        'option':1
+                    }
+                })
+                .done(function(res) {
+    
+                    Swal.fire({
+                            icon: 'success',
+                            title: `${res.success}`,
+                            showConfirmButton: false,
+                            timer: 2500
+                        });      
+
+                    $("#comment-box").load(" #comment-box > *");
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                // If fail
+                console.log(textStatus + ': ' + errorThrown);
+                });
+
+
+            }
+            else{
+                Swal.fire({
+                    icon: 'info',
+                    title: `Không được để trống phản hồi!!!`,
+                    showConfirmButton: false,
+                    timer: 2500
+                });      
+
+                $("#comment-box").load(" #comment-box > *");
+            }
+        }
+
+    })
 
 </script>
 @endsection

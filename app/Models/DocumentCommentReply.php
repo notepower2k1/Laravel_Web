@@ -8,4 +8,18 @@ use Illuminate\Database\Eloquent\Model;
 class DocumentCommentReply extends Model
 {
     use HasFactory;
+    protected $table = 'document_comment_replies';
+    protected $primaryKey = 'id';
+    public  $timestamps = true;
+    public $incrementing = false;
+
+    protected $fillable = ['commentID','userID','content'];
+
+    public function comments() {
+        return $this->belongsTo(DocumentComment::class,'commentID','id');
+    }
+
+    public function users() {
+        return $this->belongsTo(User::class,'userID','id');
+    }
 }

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use ZipArchive;
 use SimpleXMLElement;
+use Illuminate\Support\Str;
 
 class ClientDocumentController extends Controller
 {
@@ -76,7 +77,7 @@ class ClientDocumentController extends Controller
         ]);
 
 
-        $slug =  $request->slug;
+        $slug =  Str::slug($request->name);
     
         $image = $request->file('image'); //image file from frontend
         $document_file = $request->file('file_document');
@@ -207,7 +208,7 @@ class ClientDocumentController extends Controller
 
         ]);
 
-        $slug =  $request->slug;
+        $slug =  Str::slug($request->name);
 
         $generatedImageName="";
 

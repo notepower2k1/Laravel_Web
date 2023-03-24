@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\DocumentController;
 use App\Http\Controllers\Admin\MailController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\NotificationController;
 
 use App\Http\Controllers\Admin\DashboardController;
 
@@ -47,6 +48,8 @@ Route::get("/tai-lieu/{document_id}/{document_slug}",[PagesController::class,'do
 Route::get("/tai-tai-lieu",[PagesController::class,'download_document']);
 
 Route::get("/doc-sach/{book_slug}/{chapter_slug}",[PagesController::class,'read_book']);
+Route::get("/sach-noi/{book_slug}/{chapter_slug}",[PagesController::class,'listening_book']);
+
 
 Route::get("/tim-kiem",[PagesController::class,'search_name_page']);
 Route::get("/tim-kiem-ket-qua",[PagesController::class,'search_name']);
@@ -62,6 +65,22 @@ Route::get("/thanh-vien/{user_id}",[PagesController::class,'user_info']);
 
 Route::get('/preview-document', [PagesController::class, 'preview_document']);
 
+Route::post("/binh-luan",[PagesController::class,'user_comment']);
+Route::post("/phan-hoi",[PagesController::class,'user_reply']);
+
+Route::get("/xoa-binh-luan/{option}/{item_id}",[PagesController::class,'delete_user_comment']);
+Route::get("/xoa-phan-hoi/{option}/{item_id}",[PagesController::class,'delete_reply_comment']);
+
+
+Route::put("/cap-nhat-binh-luan/{item_id}",[PagesController::class,'edit_user_comment']);
+Route::put("/cap-nhat-phan-hoi/{item_id}",[PagesController::class,'edit_user_reply']);
+Route::post('/upload', [PagesController::class,'uploadCommentImage']);
+
+Route::get("/notification-update",[NotificationController::class,'changeStatus']);
+Route::get("/notification-all-update",[NotificationController::class,'changeAllStatus']);
+Route::get("/bookmark-status-update-no-direct",[ClientBookController::class,'changeBookMarkStatus']);
+Route::get("/bookmark-status-update",[NotificationController::class,'changeBookMarkStatus']);
+Route::get("/bookmark-status-all-update",[NotificationController::class,'changeAllbookMarkStatus']);
 
 Auth::routes();
 
@@ -101,7 +120,6 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin','isVerifie
     Route::get("/user/update/changeStatus",[UserController::class,'changeUserStatus']);
     Route::put("/user/{user_id}",[UserController::class,'update']);
     Route::get("/user/deleteUser",[UserController::class,'deleteUser']);
-
 });
 
 Route::group(['prefix' => 'quan-ly',  'middleware' => ['auth','isVerified']], function()

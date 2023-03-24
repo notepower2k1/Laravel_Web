@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Str;
 
 use Illuminate\Http\Request;
 use App\Models\Document;
@@ -61,7 +62,7 @@ class DocumentController extends Controller
         ]);
 
 
-        $slug =  $request->slug;
+        $slug =  Str::slug($request->name);
     
         $image = $request->file('image'); //image file from frontend
         $document_file = $request->file('file_document');
@@ -192,7 +193,7 @@ class DocumentController extends Controller
 
         ]);
 
-        $slug = $request->slug;
+        $slug =  Str::slug($request->name);
 
         $generatedImageName="";
 

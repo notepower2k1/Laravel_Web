@@ -4,12 +4,6 @@
           <div class="nk-menu-trigger d-xl-none ms-n1">
               <a href="#" class="nk-nav-toggle nk-quick-nav-icon" data-target="sidebarMenu"><em class="icon ni ni-menu"></em></a>
           </div>
-          <div class="nk-header-brand d-xl-none">
-              <a href="html/index.html" class="logo-link">
-                  <img class="logo-light logo-img" src="{{ asset('storage/logo.png') }}" srcset="{{ asset('storage/logo.png') }} 2x" alt="logo">
-                  <img class="logo-dark logo-img" src="{{ asset('storage/logo.png') }}" srcset="{{ asset('storage/logo.png') }} 2x" alt="logo-dark">
-              </a>
-          </div><!-- .nk-header-brand -->
           <div class="nk-header-news d-none d-xl-block">
               <div class="nk-news-list">
                   <a class="nk-news-item" href="#">

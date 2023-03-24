@@ -16,7 +16,6 @@ return new class extends Migration
         Schema::create('post_comments', function (Blueprint $table) {
             $table->increments('id');
             $table->longText('content');
-            $table->text('image');
             $table->unsignedInteger('postID');
             $table->foreign('postID')
             ->references('id')->on('forum_posts')->onDelete('cascade');

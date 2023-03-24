@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Str;
 
 use Illuminate\Http\Request;
 use App\Models\Forum;
@@ -42,7 +43,7 @@ class ForumController extends Controller
         ]);
 
 
-        $slug =  $request->slug;
+        $slug =  Str::slug($request->name);
 
    
 
@@ -99,7 +100,7 @@ class ForumController extends Controller
             'description' => 'required',
         ]);
 
-        $slug =  $request->slug;
+        $slug =  Str::slug($request->name);
 
     
         $forum = Forum::findOrFail($id)

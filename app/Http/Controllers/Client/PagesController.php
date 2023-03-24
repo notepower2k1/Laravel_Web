@@ -15,10 +15,17 @@ use App\Models\BookType;
 use App\Models\DocumentType;
 use App\Models\User;
 use App\Models\report;
+use App\Models\BookComment;
+use App\Models\BookCommentReply;
+use App\Models\DocumentComment;
+use App\Models\DocumentCommentReply;
+use App\Models\PostComment;
+use App\Models\PostCommentReply;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Spatie\Searchable\Search;
 use Spatie\Searchable\ModelSearchAspect;
+use Carbon\Carbon;
 
 
 class PagesController extends Controller
@@ -92,7 +99,8 @@ class PagesController extends Controller
     public function book_detail($book_id,$book_slug){
             
         $book = Book::findOrFail($book_id);
-        $chapters = Chapter::where('book_id','=',$book_id)->get();
+        $chapters = Chapter::where('book_id','=',$book_id)->paginate(10);
+        $comments = BookComment::where('bookID','=',$book_id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(10);
 
         $isMark = false;
         $isRating = false;
@@ -115,6 +123,7 @@ class PagesController extends Controller
             }
 
             return view('client.homepage.book_detail')
+            ->with('comments',$comments)
             ->with('book',$book)
             ->with('chapters',$chapters)
             ->with('isMark',$isMark)
@@ -126,6 +135,7 @@ class PagesController extends Controller
 
         else{
             return view('client.homepage.book_detail')
+            ->with('comments',$comments)
             ->with('book',$book)
             ->with('chapters',$chapters)
             ->with('isMark',$isMark)
@@ -140,8 +150,10 @@ class PagesController extends Controller
     public function document_detail($document_id,$document_slug){
             
         $document = Document::findOrFail($document_id);
+        $comments = DocumentComment::where('documentID','=',$document_id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(10);
 
         return view('client.homepage.document_detail')
+        ->with('comments',$comments)
         ->with('document',$document);
     
     }
@@ -152,11 +164,21 @@ class PagesController extends Controller
     public function read_book($book_slug,$chapter_slug){
         $chapter = Chapter::where('slug','=',$chapter_slug)->firstOrFail();
 
-        $chapters = Chapter::where('book_id','=',$chapter -> book_id)->get();
+        $chapters = Chapter::where('book_id','=',$chapter->book_id)->get();
+
+
+        $current = Chapter::where('book_id','=',$chapter->book_id)->where('slug','=',$chapter_slug)->firstOrFail();
+
+        $next = Chapter::where('book_id','=',$chapter->book_id)->where('id', '>', $current->id)->orderBy('id','asc')->first();
+
+        $previous = Chapter::where('book_id','=',$chapter->book_id)->where('id', '<', $chapter->id)->orderBy('id','desc')->first();
 
         return view('client.homepage.chapter_detail')
+        ->with('next',$next)
+        ->with('previous',$previous)
         ->with('chapter',$chapter)
         ->with('chapters',$chapters);
+
        
     }
 
@@ -191,19 +213,9 @@ class PagesController extends Controller
   
     public function book_mark_page(){
         
-        $book_marks = bookMark::where('userID','=',Auth::user()->id)->get();;
-
-   
-
-        
+        $book_marks = bookMark::where('userID','=',Auth::user()->id)->orderBy('status', 'desc')->paginate(10);
         return view('client.homepage.book_mark')
-        ->with('book_marks',$book_marks);
-       
-    
-        
-
-
-       
+        ->with('book_marks',$book_marks);    
     }
 
     public function search_name_page(){
@@ -246,7 +258,7 @@ class PagesController extends Controller
                 ->perform($searchterm);
                 break;
         }
-        // // return view('client.homepage.search_page', compact('searchResults', 'searchterm'));
+        // // return view('client.homepage.search_page', compact('searchResults', 're'));
 
         return response()->json([
             'res' => $searchResults
@@ -345,7 +357,10 @@ class PagesController extends Controller
 
         $post = ForumPosts::findOrFail($post_id);
 
+        $comments = PostComment::where('postID','=',$post_id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(10);
+
         return view('client.forum_posts.detail')
+        ->with('comments',$comments)
         ->with('forum_slug',$forum_slug)
         ->with('post',$post);
 
@@ -355,11 +370,11 @@ class PagesController extends Controller
     public function user_info($user_id){
 
         $user = User::where('deleted_at','=',null)->findOrFail($user_id);
-        $books = Book::where('userCreatedID','=',$user->id)->where('isPublic','=',1)->paginate(3);
-        $document = Document::where('userCreatedID','=',$user->id)->where('isPublic','=',1)->paginate(3);
+        $books = Book::where('userCreatedID','=',$user->id)->where('isPublic','=',1)->paginate(3,'*', 'books');
+        $documents = Document::where('userCreatedID','=',$user->id)->where('isPublic','=',1)->paginate(3,'*', 'documents');
         return view('client.homepage.user_info')
         ->with('books',$books)
-        ->with('documents',$document)
+        ->with('documents',$documents)
         ->with('user',$user);
     }
 
@@ -411,4 +426,278 @@ class PagesController extends Controller
             'report' => 'Báo cáo thành công!!!'
         ]);
    }
+
+
+   public function user_comment(Request $request){
+
+        $request->validate([
+            'content' => 'required', 
+        ]);
+
+        $option = $request->option;
+        //0 - Sach / 1 - Tai lieu
+        $message = 'Bình luận thành công';
+        switch ($option) {
+            case 0:
+                $comment = DocumentComment::create([
+                    'documentID' => $request->item_id,
+                    'content' => $request->content,
+                    'userID' => Auth::user()->id
+                ]);
+                break;
+            case 1:
+                $comment = BookComment::create([
+                    'bookID' => $request->item_id,
+                    'content' => $request->content,
+                    'userID' => Auth::user()->id
+                ]);
+                break;
+            case 2:
+                $comment = PostComment::create([
+                    'postID' => $request->item_id,
+                    'content' => $request->content,
+                    'userID' => Auth::user()->id
+                ]);
+                break;
+            default:
+                $message = 'Bình luận không thành công';
+            
+        }
+
+       
+
+        
+        return response()->json([
+            'success' => $message,
+        ]);
+   }
+
+   public function user_reply(Request $request){
+
+    $request->validate([
+        'content' => 'required', 
+    ]);
+
+    $option = $request->option;
+
+    $message = 'Phản hồi thành công';
+        switch ($option) {
+            case 0:
+                $reply = DocumentCommentReply::create([
+                    'commentID' => $request->comment_id,
+                    'content' => $request->content,
+                    'userID' => Auth::user()->id
+                ]);
+                break;
+            case 1:
+                $reply = BookCommentReply::create([
+                    'commentID' => $request->comment_id,
+                    'content' => $request->content,
+                    'userID' => Auth::user()->id
+                ]);
+                break;
+            case 2:
+                $reply = PostCommentReply::create([
+                    'commentID' => $request->comment_id,
+                    'content' => $request->content,
+                    'userID' => Auth::user()->id
+                ]);
+                break;
+            default:
+                $message = 'Phản hồi không thành công';
+            
+        }
+   
+
+    
+    return response()->json([
+        'success' => $message,
+    ]);
+}
+
+
+   public function delete_user_comment($option,$item_id){
+
+        switch ($option) {
+            case 0:
+                $comment = DocumentComment::findOrFail($item_id);
+                $comment->deleted_at = Carbon::now()->toDateTimeString();
+                $comment ->save();
+                break;
+            case 1:
+                $comment = BookComment::findOrFail($item_id);
+                $comment->deleted_at = Carbon::now()->toDateTimeString();
+                $comment ->save();
+                break;
+            case 2:
+                $comment = PostComment::findOrFail($item_id);
+                $comment->deleted_at = Carbon::now()->toDateTimeString();
+                $comment ->save();
+                break;
+            default:
+
+        }
+      
+
+   }
+
+   public function delete_reply_comment($option,$item_id){
+      
+
+        switch ($option) {
+            case 0:
+                $reply = DocumentCommentReply::findOrFail($item_id);
+                $reply->deleted_at = Carbon::now()->toDateTimeString();
+                $reply ->save();
+                break;
+            case 1:
+                $reply = BookCommentReply::findOrFail($item_id);
+                $reply->deleted_at = Carbon::now()->toDateTimeString();
+                $reply ->save();
+                break;
+            case 2:
+                $reply = PostCommentReply::findOrFail($item_id);
+                $reply->deleted_at = Carbon::now()->toDateTimeString();
+                $reply ->save();
+                break;
+            default:
+                    
+        }
+   }
+
+   public function edit_user_comment(Request $request,$item_id){
+
+        $request->validate([
+            'content' => 'required', 
+        ]);
+        $option = $request->option;
+
+        $message = 'Cập nhật bình luận thành công';
+
+        switch ($option) {
+            case 0:
+                $comment = DocumentComment::findOrFail($item_id)
+                    ->update([
+                            'content' => $request->content,
+                    ]);
+                break;
+            case 1:
+                $comment = BookComment::findOrFail($item_id)
+                        ->update([
+                                'content' => $request->content,
+                        ]);
+                break;
+            default:
+                $message = 'Cập nhật bình luận không thành công';
+
+        }
+       
+
+        return response()->json([
+            'success' => $message,
+        ]);
+   }
+
+   public function edit_user_reply(Request $request,$item_id){
+        $request->validate([
+            'content' => 'required', 
+        ]);
+        $option = $request->option;
+
+        $message = 'Cập nhật phản hồi thành công';
+        switch ($option) {
+            case 0:
+                $reply = DocumentCommentReply::findOrFail($item_id)
+                    ->update([
+                            'content' => $request->content,
+                    ]);
+                break;
+            case 1:
+                $reply = BookCommentReply::findOrFail($item_id)
+                ->update([
+                        'content' => $request->content,
+                ]);
+                break;
+            default:
+                $message = 'Cập nhật phản hồi không thành công';
+
+        }
+      
+
+        return response()->json([
+            'success' => $message,
+        ]);
+   }
+
+    function setNameForImage(){
+        $now_date = Carbon::now()->toDateTimeString();
+        $string = str_replace(' ', '-', $now_date);
+        return preg_replace('/[^A-Za-z0-9\-]/', '', $string);  
+    }
+
+
+    public function uploadCommentImage(Request $request){
+
+        $generatedImageName = 'image-'.$this->setNameForImage().'.'
+        .$request->file('file')->extension();
+        //move to a folder
+
+        //upload image
+        $localfolder = public_path('firebase-temp-uploads') .'/';
+        $firebase_storage_path = 'commentImage/';
+
+        if ($request->file('file')->move($localfolder, $generatedImageName)) {
+            $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
+    
+            app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
+            unlink($localfolder . $generatedImageName);
+        }
+
+        //get URL
+        // $expiresAt = new \DateTime('tomorrow');
+
+        // $imageReference = app('firebase.storage')->getBucket()->object($firebase_storage_path.$generatedImageName);
+
+        // if ($imageReference->exists()) {
+        //     $imageURL = $imageReference->signedUrl($expiresAt);
+        // } else {
+        //     $imageURL = '';
+        // }
+
+
+        $url = 'https://storage.googleapis.com/do-an-tot-nghiep-f897b.appspot.com/'.$firebase_storage_path.$generatedImageName;
+
+
+        
+        return response()->json([
+            'location' => $url
+        ]);
+
+    }
+
+
+    public function listening_book($book_slug,$chapter_slug){
+
+        $chapter = Chapter::where('slug','=',$chapter_slug)->firstOrFail();
+
+        $chapters = Chapter::where('book_id','=',$chapter->book_id)->get();
+
+
+        $current = Chapter::where('book_id','=',$chapter->book_id)->where('slug','=',$chapter_slug)->firstOrFail();
+
+        $next = Chapter::where('book_id','=',$chapter->book_id)->where('id', '>', $current->id)->orderBy('id','asc')->first();
+
+        $previous = Chapter::where('book_id','=',$chapter->book_id)->where('id', '<', $chapter->id)->orderBy('id','desc')->first();
+
+        $raw = strip_tags($chapter->content);
+        $content = str_replace( array( '*' ), ' ', $raw);
+
+        return view('client.homepage.chapter_listening')
+        ->with('content',$content)
+        ->with('next',$next)
+        ->with('previous',$previous)
+        ->with('chapter',$chapter)
+        ->with('chapters',$chapters);
+
+    }
 }

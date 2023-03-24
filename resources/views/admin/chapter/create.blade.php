@@ -16,15 +16,12 @@
 
                             <label>Chương số <sup>*</sup></label>
                             <input type="text" required
-                            name="code" id="in"
+                            name="code"
                             class="form-control mb-4 col-6">
 
-                                            
-                            <input type="hidden" required
-                            name="slug" id="out"
-                            class="form-control mb-4 col-6">
+                        
 
-                            <label>Tên chương<sup>*</sup></label>
+                            <label>Tên chương<sup></sup></label>
                             <input type="text"
                             name="name" 
                             class="form-control mb-4 col-6">
@@ -35,7 +32,10 @@
                             name="content" 
                             class="form-control mb-4 col-6">
                             </textarea>
-                    
+                            
+                            <input type="hidden" required
+                            name="wordCount" id="wordCount"
+                            class="form-control mb-4 col-6">
 
                             <button type="submit" class="btn btn-info">Thêm mới</button>
                         </form>
@@ -48,49 +48,13 @@
 @section('additional-scripts')
 <script>
 
-function toSlug(str) {
-	// Chuyển hết sang chữ thường
-	str = str.toLowerCase();     
- 
-	// xóa dấu
-	str = str
-		.normalize('NFD') // chuyển chuỗi sang unicode tổ hợp
-		.replace(/[\u0300-\u036f]/g, ''); // xóa các ký tự dấu sau khi tách tổ hợp
- 
-	// Thay ký tự đĐ
-	str = str.replace(/[đĐ]/g, 'd');
-	
-	// Xóa ký tự đặc biệt
-	str = str.replace(/([^0-9a-z-\s])/g, '');
- 
-	// Xóa khoảng trắng thay bằng ký tự -
-	str = str.replace(/(\s+)/g, '-');
-	
-	// Xóa ký tự - liên tiếp
-	str = str.replace(/-+/g, '-');
- 
-	// xóa phần dư - ở đầu & cuối
-	str = str.replace(/^-+|-+$/g, '');
- 
-	// return
-	return str;
-}
+
 
     $(() => {
-        let $in = $('#in');
-        let $out = $('#out');
-        
-        function update() {
-            $out.val(toSlug($in.val()));
-        }
-        update();
-        
-        $in.on('change', update);
-    })
-    
-    
+      
 
-    tinymce.init({
+        
+        tinymce.init({
         entity_encoding : "raw",
         selector: '#mytextarea',
         branding: false,
@@ -103,9 +67,25 @@ function toSlug(str) {
             "help", "image", "insertdatetime", "link", "lists", "media", 
             "preview", "searchreplace", "table", "visualblocks", " wordcount",
         ],
-        toolbar: "undo redo | styles | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | wordcount"
-        
-    });
+        toolbar: "undo redo |  bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | wordcount",
+      
+        init_instance_callback: function (editor) {
+            editor.on('Change', function (e) {
+                
+                var theEditor = tinymce.activeEditor;
+
+                var wordCount = theEditor.plugins.wordcount.getCount();
+
+                $('#wordCount').val(wordCount);
+
+            });
+        }
+        });
+    })
+    
+    
+
+  
 
 </script>
 @endsection

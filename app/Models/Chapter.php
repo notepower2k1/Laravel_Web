@@ -13,9 +13,9 @@ class Chapter extends Model
     public  $timestamps = true;
     public $incrementing = false;
 
-    protected $fillable = ['code','name', 'content','slug','book_id'];
+    protected $fillable = ['code','name', 'content','slug','book_id','numberOfWords'];
 
-    public function book() {
+    public function books() {
         return $this->belongsTo(Book::class,'book_id','id');
     }
     

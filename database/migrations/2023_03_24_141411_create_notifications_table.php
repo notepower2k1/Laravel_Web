@@ -13,15 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('post_comment_replies', function (Blueprint $table) {
+        Schema::create('notifications', function (Blueprint $table) {
             $table->increments('id');
-            $table->longText('content');
-            $table->unsignedInteger('commentID');
-            $table->foreign('commentID')
-            ->references('id')->on('post_comments')->onDelete('cascade');
+            $table->unsignedInteger('chapter_id');
+            $table->foreign('chapter_id')
+            ->references('id')->on('chapters')->onDelete('cascade');
             $table->unsignedbigInteger('userID');
             $table->foreign('userID')
             ->references('id')->on('users')->onDelete('cascade');
+            $table->boolean('status');
             $table->timestamp('deleted_at')->nullable();;
             $table->timestamps();
         });
@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('comment_replies');
+        Schema::dropIfExists('notifications');
     }
 };

@@ -10,7 +10,7 @@
                             <span class="input-group-text" id="basic-addon1">
                             <em class="icon ni ni-search"></em></span>
                         </div>
-                            <input type="text" name="query" class="form-control col-sm-8"  placeholder="Nhập tên tài liệu hoặc tác giả!!!" aria-label="Search">
+                            <input type="text" name="query" class="form-control col-sm-8"  placeholder="Nhập tên sách hoặc tài liệu !!" aria-label="Search">
                         <div class="input-group-append">
                             <button class="btn btn-outline-primary btn-dim" id="search-btn" >Tìm kiếm sách điện tử</button>
                             <button class="btn btn-outline-primary btn-dim dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><span id='option_show'>Loại tài liệu</span><em class="icon mx-n1 ni ni-chevron-down"></em></button>
