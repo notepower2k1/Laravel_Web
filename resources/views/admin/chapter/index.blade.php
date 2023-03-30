@@ -104,7 +104,6 @@
                                                                   </li>
                                                                   <li><a href="/admin/book/chapter/{{$chapter->id}}/edit"><em class="icon ni ni-edit"></em><span>Cập nhật</span></a></li>
                                                                
-                                                                  <li><a href="/admin/book/chapter/create/{{$chapter->books->id}}"><em class="icon ni ni-plus"></em><span>Thêm chương</span></a></li>
 
 
                                                               </ul>
@@ -149,11 +148,9 @@ $(function(){
             if (result.isConfirmed) {
             
                 $.ajax({
-                    type:"DELETE",
-                    url:'/admin/book/chapter/' + chapter_id,
+                    type:"GET",
+                    url:'/admin/book/chapter/customDelete/' + chapter_id,
                     data : {
-                        "id": chapter_id,
-                        "_token": token,
                     },
                     })
                     .done(function() {

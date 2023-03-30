@@ -35,9 +35,15 @@
                     <div class="nk-block nk-block-lg">
                         <div class="nk-block-head">
                             <div class="nk-block-head-content">
-                                    <div class="nk-block-head-sub"><a class="back-to" href="/admin/book"><em class="icon ni ni-arrow-left"></em><span>Quay lại</span></a></div>
+                                <nav>
+                                    <ul class="breadcrumb breadcrumb-arrow">
+                                        <li class="breadcrumb-item"><a href="/admin/book">Sách</a></li>
+                                        <li class="breadcrumb-item active">Chương</li>
 
-                                    <a href="/admin/book/chapter/create/{{$book_id}}" class="btn btn-primary">Thêm chương</a>
+                                    </ul>
+                                </nav>
+
+                                <a href="/admin/book/chapter/create/{{$book_id}}" class="btn btn-primary">Thêm chương</a>
 
                                
                             </div>
@@ -153,11 +159,9 @@ $(function(){
             if (result.isConfirmed) {
             
                 $.ajax({
-                    type:"DELETE",
-                    url:'/admin/book/chapter/' + chapter_id,
+                    type:"GET",
+                    url:'/admin/book/chapter/customDelete/' + chapter_id,
                     data : {
-                        "id": chapter_id,
-                        "_token": token,
                     },
                     })
                     .done(function() {

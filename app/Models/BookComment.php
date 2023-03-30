@@ -13,7 +13,7 @@ class BookComment extends Model
     public  $timestamps = true;
     public $incrementing = false;
 
-    protected $fillable = ['bookID','userID','content'];
+    protected $fillable = ['bookID','userID','content','totalReplies'];
 
     public function books() {
         return $this->belongsTo(Book::class,'bookID','id');

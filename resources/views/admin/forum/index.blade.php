@@ -2,45 +2,6 @@
 @section('pageTitle', 'Danh sách diễn đàn')
 
 @section('content')
-    {{-- <a href="{{ route('forum.create') }}" class="btn btn-primary">Thêm diễn đàn</a>
-    <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Name</th>
-            <th >Create At</th>
-            <th >Last update</th>
-            <th>Actions</th>
-            <th >Status</th>
-            <th> Post in Forums </th>
-          </tr>
-        </thead>
-        <tbody>
-         @foreach ($forums as $forum)
-          <tr id ="row-{{ $forum->id }}">
-            <td>{{  $forum->name  }}</td>
-            <td>{{ $forum->created_at }}</td>
-            <td>{{ $forum->updated_at}}</td>
-            <td>
-              <a href="/admin/forum/{{$forum->id}}/edit" class="btn btn-primary">Edit</a>
-              <button href="" class="btn btn-primary delete-button" data-id="{{ $forum->id }}" data-name="{{ $forum->name }}">Delete</button>
-            </td>
-            <td>
-              <div class="form-check form-switch">
-                <input class="form-check-input" 
-                type="checkbox" role="switch" 
-                id="flexSwitchCheckChecked" 
-                data-id="{{ $forum->id }}"
-                {{ $forum->status? 'checked':'' }}/>
-              </div>
-            </td>
-            <td> <a href="/admin/forum/post/{{ $forum->id }}" class="btn btn-primary">Posts</a></td>
-
-          </tr>
-          @endforeach
-
-        </tbody>
-      </table> --}}
-
       <div class="nk-block nk-block-lg">
                         <div class="nk-block-head">
                             <div class="nk-block-head-content">
@@ -205,11 +166,9 @@
         if (result.isConfirmed) {
            
           $.ajax({
-            type:"DELETE",
-            url:'/admin/forum/' + forum_id,
+            type:"GET",
+            url:'/admin/forum/customDelete/' + forum_id,
             data : {
-              "id": forum_id,
-              "_token": token,
             },
             })
             .done(function() {

@@ -83,7 +83,6 @@
                                                                   </li>
                                                                   <li><a href="/admin/forum/post/{{$forum_post->id}}/edit"><em class="icon ni ni-edit"></em><span>Cập nhật</span></a></li>
                                                                  
-                                                                  <li><a href="/admin/forum/post/create/{{$forum_post->forums->id}}"><em class="icon ni ni-plus"></em><span>Thêm bài đăng</span></a></li>
 
                                                               </ul>
                                                           </div>
@@ -117,7 +116,7 @@
     var token = $("meta[name='csrf-token']").attr("content");
 
     Swal.fire({
-        title: "Bạn muốn bài đăng "+ name,
+        title: "Bạn muốn xóa bài đăng "+ name,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -128,11 +127,9 @@
         if (result.isConfirmed) {
            
             $.ajax({
-                type:"DELETE",
-                url:'/admin/forum/post/' + forum_postID,
+                type:"GET",
+                url:'/admin/forum/post/customDelete/' + forum_postID,
                 data : {
-                    "id": forum_postID,
-                    "_token": token,
                 },
                 })
                 .done(function() {

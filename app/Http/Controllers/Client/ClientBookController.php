@@ -10,9 +10,6 @@ use App\Models\BookType;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\ratingBook;
-use Kreait\Firebase\Auth\SignInResult\SignInResult;
-use Kreait\Firebase\Exception\FirebaseException;
-use Google\Cloud\Firestore\FirestoreClient;
 use Illuminate\Support\Str;
 
 
@@ -30,7 +27,7 @@ class ClientBookController extends Controller
     public function index()
     {
           
-        $books = Book::where('userCreatedID','=',Auth::user()->id)->get();
+        $books = Book::where('userCreatedID','=',Auth::user()->id)->where('deleted_at','=',null)->where('status','=',1)->get();
       
         return view('client.manage.book.index')->with('books', $books);
 
@@ -99,7 +96,9 @@ class ClientBookController extends Controller
             'numberOfChapter' => 0,
             'ratingScore'=> 0,
             'totalReading'=>0,
-            'totalBookMarking'=>0
+            'totalBookMarking'=>0,
+            'totalComments' => 0,
+            'status' =>0
         ]);
         $book->save();
 
@@ -208,16 +207,21 @@ class ClientBookController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        $book = Book::findOrFail($id);
-        $book->delete();
+    // public function destroy($id)
+    // {
+    //     $book = Book::findOrFail($id);
+    //     $book->delete();
 
-        return response()->json([
-            'success' => 'Record deleted successfully!'
-        ]);
-    }
+    //     return response()->json([
+    //         'success' => 'Record deleted successfully!'
+    //     ]);
+    // }
 
+    public function customDelete($book_id){
+        $book = Book::findOrFail($book_id);
+        $book->deleted_at = Carbon::now()->toDateTimeString();
+        $book ->save();
+    }   
     public function changeBookStatus(Request $request){
         $book = Book::findOrFail($request->id);
         $book->isPublic = $request->isPublic;

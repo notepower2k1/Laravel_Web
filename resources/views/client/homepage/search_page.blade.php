@@ -37,7 +37,7 @@
         </div>
     </div>
 </div>
-<div class="nk-block">
+<div class="nk-block mt-4">
     <div class="row g-gs" id="result-box">
        
        
@@ -104,7 +104,7 @@ $("#search-btn").click(function(){
     var input_value = $("input[type=text]").val();
     var renderArea = $('#result-box');
 
-    if(input_value.length > 5){
+    if(input_value.length > 3){
         var slug_value = toSlug(input_value);
 
         if(input_value===""){
@@ -139,7 +139,7 @@ $("#search-btn").click(function(){
                             '<div class="card card-bordered product-card">' +
                                 '<div class="product-thumb">' + 
                                     `<a href="${item.url}">` +
-                                        `<img class="card-img-top" src="${item.searchable.url}" alt="image" >` +
+                                        `<img class="card-img-top" src="${item.searchable.url}" alt="image"  width="400px" height="300px">` +
                                     '</a>' +               
                                 '</div>'
                                 +

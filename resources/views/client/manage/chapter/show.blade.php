@@ -36,7 +36,7 @@
                   </div>             
               </div>
         </div>
-        <div class="nk-fmg-quick-list nk-block">
+        <div class="nk-fmg-quick-list nk-block" style="min-height:100vh">
             <div class="card card-bordered card-preview">
                 <div class="card-inner">
                     <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false" data-export-title="Export">
@@ -150,11 +150,9 @@ $(function(){
         }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                type:"DELETE",
-                url:'/quan-ly/chuong/' + chapter_id,
+                type:"GET",
+                url:'/quan-ly/chuong/customDelete/' + chapter_id,
                 data : {
-                    "id": chapter_id,
-                    "_token": token,
                 },
                 })
                 .done(function() {

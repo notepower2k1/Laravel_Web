@@ -8,6 +8,7 @@ use App\Models\ForumPosts;
 use App\Models\Forum;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class ClientForumPostController extends Controller
 {
@@ -19,19 +20,14 @@ class ClientForumPostController extends Controller
         return preg_replace('/[^A-Za-z0-9\-]/', '', $string);  
     }
     
-
-
     public function index()
     {
-        // $forum_posts = ForumPosts::all();
+        $forum_posts = ForumPosts::where('userCreatedID','=',Auth::user()->id)->where('deleted_at','=',null)->get();
 
-        // return view('admin.forum_post.index')
-        // ->with('forum_posts',$forum_posts);
+        return view('client.manage.post.index')
+        ->with('posts',$forum_posts);
        
     }
-
-  
-
    
   /**
      * Show the form for creating a new resource.
@@ -104,7 +100,7 @@ class ClientForumPostController extends Controller
      */
     public function show($id) //like "show details"
     {
-        $forum_posts = ForumPosts::where('forumID','=', $id)->get();
+        $forum_posts = ForumPosts::where('forumID','=', $id)->where('deleted_at','=',null)->get();
 
         return view('admin.forum_post.show')
         ->with('forum_posts',$forum_posts)

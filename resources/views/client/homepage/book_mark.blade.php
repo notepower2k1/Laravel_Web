@@ -39,9 +39,14 @@
                         <ul class="nk-tb-actions gx-1">                             
                           
                             <li class="me-2">
+
+                                @if($book_mark->status==1)
                                 <button class="btn btn-info me-sm-n1 check-book-mark" data-id="{{ $book_mark->id }}" data-name="{{ $book_mark->books->name }}">
                                     <em class="icon ni ni-check-thick"></em></button>
-                                
+                                @else
+                                <button class="btn btn-info me-sm-n1 check-book-mark" disabled>
+                                    <em class="icon ni ni-check-thick"></em></button>
+                                @endif
                             </li>
                             <li>
                                 <button class="btn btn-danger me-sm-n1 remove-book-mark" data-id="{{ $book_mark->id }}" data-name="{{ $book_mark->books->name }}">
@@ -120,7 +125,7 @@ $('.remove-book-mark').click(function(){
 })
 
 
-$('.check-book-mark').click(function() {
+$(document).on('click','.check-book-mark',function() {
     var book_mark_id = $(this).attr("data-id");
     var book_mark_name = $(this).attr("data-name");
 
@@ -152,6 +157,8 @@ $('.check-book-mark').click(function() {
                     });
 
                     $("#mark-book-box").load(" #mark-book-box > *");
+                    $("#bookMark_notifications_box").load(" #bookMark_notifications_box > *");
+
                 })
                 .fail(function(jqXHR, textStatus, errorThrown) {
                 // If fail

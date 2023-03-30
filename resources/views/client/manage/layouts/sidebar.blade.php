@@ -6,34 +6,39 @@
                     <li class="{{ request()->is('quan-ly') ? 'active': '' }}">
                         <a class="nk-fmg-menu-item" href="/quan-ly">
                             <em class="icon ni ni-home-alt"></em>
-                            <span class="nk-fmg-menu-text">Home</span>
+                            <span class="nk-fmg-menu-text">Trang chủ</span>
                         </a>
                     </li>
-                    <li class="{{ (request()->is('quan-ly/tai-lieu') || request()->is('quan-ly/them-tai-lieu') || request()->is('quan-ly/cap-nhat-tai-lieu/*')) ? 'active': '' }}">
+                    <li class="{{ (request()->is('quan-ly/tai-lieu') || request()->is('quan-ly/them-tai-lieu') || request()->is('quan-ly/cap-nhat-tai-lieu/*') || request()->is('quan-ly/chi-tiet-tai-lieu/*')) ? 'active': '' }}">
                         <a class="nk-fmg-menu-item" href="/quan-ly/tai-lieu">
                             <em class="icon ni ni-file-docs"></em>
                             <span class="nk-fmg-menu-text">Tài liệu đã đăng</span>
                         </a>
                     </li>
-                    <li class="{{ (request()->is('quan-ly/sach') || request()->is('quan-ly/them-sach') || request()->is('quan-ly/cap-nhat-sach/*')) ? 'active': '' }}">
+                    <li class="{{ (request()->is('quan-ly/sach') || request()->is('quan-ly/them-sach') || request()->is('quan-ly/cap-nhat-sach/*') || request()->is('quan-ly/chi-tiet-sach/*')) ? 'active': '' }}">
                         <a class="nk-fmg-menu-item" href="/quan-ly/sach">
                             <em class="icon ni ni-book"></em>
                             <span class="nk-fmg-menu-text">Sách đã đăng</span>
                         </a>
                     </li>
-                    <li>
-                        <a class="nk-fmg-menu-item" href="#">
-                            <em class="icon ni ni-history"></em>
+                    <li class="{{ (request()->is('quan-ly/bai-viet')) ? 'active': '' }}">
+                        <a class="nk-fmg-menu-item" href="/quan-ly/bai-viet">
+                            <em class="icon ni ni-list-fill"></em>
                             <span class="nk-fmg-menu-text">Lịch sử đăng bài</span>
                         </a>
                     </li>
-                    <li>
-                        <a class="nk-fmg-menu-item" href="#">
-                            <em class="icon ni ni-history"></em>
+                    <li class="{{ (request()->is('quan-ly/binh-luan')) ? 'active': '' }}">
+                        <a class="nk-fmg-menu-item" href="/quan-ly/binh-luan">
+                            <em class="icon ni ni-comments"></em>
                             <span class="nk-fmg-menu-text">Lịch sử bình luận</span>
                         </a>
                     </li>
-                   
+                    <li class="{{ (request()->is('quan-ly/phan-hoi')) ? 'active': '' }}">
+                        <a class="nk-fmg-menu-item" href="/quan-ly/phan-hoi">
+                            <em class="icon ni ni-reply-all"></em>
+                            <span class="nk-fmg-menu-text">Lịch sử phản hồi</span>
+                        </a>
+                    </li>
                 </ul>
             </div>
             <div class="nk-fmg-aside-bottom">

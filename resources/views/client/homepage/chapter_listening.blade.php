@@ -8,6 +8,7 @@
 </head>
 
 <style>
+  
     #text {
   display: block;
   line-height: 1.75;
@@ -34,6 +35,13 @@ mark {
                           <li class="nk-block-tools-opt">
                               <a href="#" data-target="addProduct" class="toggle btn btn-icon btn-primary d-md-none"><em class="icon ni ni-setting"></em></a>
                               <a href="#" data-target="addProduct" class="toggle btn btn-primary d-none d-md-inline-flex"><em class="icon ni ni-setting"></em></a>
+                             
+                            
+                          </li>
+                          <li class="nk-block-tools-opt">
+                            <button href="#" class="toggle btn btn-icon btn-primary d-md-none edit-chapter-button"><em class="icon ni ni-edit"></em></button>
+                            <button href="#" class="toggle btn btn-primary d-none d-md-inline-flex edit-chapter-button"><em class="icon ni ni-edit"></em><span>Chỉnh sửa bài nghe</span></button>
+
                           </li>
                       </ul>
                   </div>
@@ -104,9 +112,12 @@ mark {
       </div>
       <div class="border px-2"
         
-      style="font-size: 16px;line-height:30px;white-space: pre-line;" id="text">
+      style="font-size: 16px;line-height:30px;">
 
-      {{ $content }} 
+      <div style="white-space: break-spaces;"  id="text">
+        {{ $content }} 
+
+      </div>
 
     </div>   
   </div>
@@ -209,7 +220,6 @@ mark {
               <div class="col-12">
                   <button class="btn btn-primary" id="save-setting"><em class="icon ni ni-plus"></em><span>Lưu cài đặt</span></button>
               </div>
-
               <div class="col-12">
                 <a href="/doc-sach/{{ $chapter->books->slug }}/{{  $chapter->slug }}" class="btn btn-primary w-75" >
                     <em class="icon ni ni-book-read"></em><span>Chuyển sang sách đọc</span>
@@ -248,8 +258,8 @@ mark {
 
         // set text
 
-        const text = textEl.textContent;
 
+      
         $(function(){
             $("option[value='Microsoft HoaiMy Online (Natural) - Vietnamese (Vietnam)']").text('Giọng nữ');
             $("option[value='Microsoft NamMinh Online (Natural) - Vietnamese (Vietnam)']").text('Giọng nam');
@@ -291,10 +301,8 @@ mark {
             var chapter_slug = $(this).val();  
             $(location).prop('href', chapter_slug);
         });
-
-   
-     
-
+        
+       
         pauseButton.disabled = true;
         stopButton.disabled = true;
         window.speechSynthesis.cancel();
@@ -340,29 +348,29 @@ mark {
 
 
         function play(){
+              const text = textEl.textContent;
 
-            if (window.speechSynthesis.speaking) {
-            // there's an unfinished utterance
-                window.speechSynthesis.resume();
-                handleResume();
-            } 
-            // start new utterance
-            else {
-            let utterance = new SpeechSynthesisUtterance(text);
+              if (window.speechSynthesis.speaking) {
+              // there's an unfinished utterance
+                  window.speechSynthesis.resume();
+                  handleResume();
+              } 
+              // start new utterance
+              else {
+              let utterance = new SpeechSynthesisUtterance(text);
 
-            utterance.voice = window.speechSynthesis.getVoices().find(voice => voice.voiceURI === voiceInEl.value);
-            utterance.pitch = pitchInEl.value;
-            utterance.rate = rateInEl.value;
-            utterance.volume = volumeInEl.value;
+              utterance.voice = window.speechSynthesis.getVoices().find(voice => voice.voiceURI === voiceInEl.value);
+              utterance.pitch = pitchInEl.value;
+              utterance.rate = rateInEl.value;
+              utterance.volume = volumeInEl.value;
 
-            utterance.addEventListener('start', handleStart);
+              utterance.addEventListener('start', handleStart);
 
-            utterance.addEventListener('end', handleEnd);
-            utterance.addEventListener('boundary', handleBoundary);
+              utterance.addEventListener('end', handleEnd);
+              utterance.addEventListener('boundary', handleBoundary);
 
-            window.speechSynthesis.speak(utterance);
-            }
-        
+              window.speechSynthesis.speak(utterance);
+              }     
         }
 
 
@@ -376,17 +384,31 @@ mark {
 
         function stop() {
             window.speechSynthesis.cancel();
-        
+
         // Safari doesn't fire the 'end' event when cancelling, so call handler manually
-        handleEnd();
+            handleEnd();
         }
 
         function handleStart() {
-        playButton.disabled = true;
-        pauseButton.disabled = false;
-        stopButton.disabled = false;
-        voiceList.setAttribute("disabled", "disabled");
 
+          if($('#text').text()){
+            playButton.disabled = true;
+            pauseButton.disabled = false;
+            stopButton.disabled = false;
+            voiceList.setAttribute("disabled", "disabled");
+            $('#text').attr('contenteditable',false);
+
+            $('.edit-chapter-button').attr('disabled',true);
+          }
+          else{
+            handleEnd();
+            Swal.fire({
+                        icon: 'error',
+                        title: `Lỗi văn bản`,
+                        showConfirmButton: false,
+                        timer: 2500
+                    });
+          }
         }
 
 
@@ -398,16 +420,21 @@ mark {
         }
 
         function handleEnd() {
+            const text = textEl.textContent;
+
             playButton.disabled = false;
             pauseButton.disabled = true;
             stopButton.disabled = true;
             voiceList.removeAttribute("disabled", "disabled");
+            $('.edit-chapter-button').removeAttr('disabled');
 
         // reset text to remove mark
-        textEl.innerHTML = text;
+            textEl.innerHTML = text;
         }
 
         function handleBoundary(event) {
+        const text = textEl.textContent;
+
         if (event.name === 'sentence') {
             // we only care about word boundaries
             return;
@@ -472,6 +499,20 @@ mark {
                             timer: 2500
                 })
             })
+       
+          
+          $('.edit-chapter-button').click(function(){
+              window.speechSynthesis.cancel();
+              $('#text').attr('contenteditable',true);
+              $('#text').focus();
+          })  
+
+            $('#text').focusout(function() {
+              $('#text').attr('contenteditable',false);
+          })
+     
+
+       
 
 
     </script>

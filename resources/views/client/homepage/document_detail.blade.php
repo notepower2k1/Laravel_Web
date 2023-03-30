@@ -98,6 +98,7 @@
                                             </li> --}}
                                             <li class="ms-n1">
                                                 <button class="btn btn-xl btn-primary" id="download-btn"><em class="icon ni ni-download"></em><span>Tải xuống</span></button>
+
                                             </li>
                                             <li class="ms-n1">
                                                 <button id="preview-btn" class="btn btn-xl btn-primary" data-bs-toggle="modal" data-bs-target="#modalDefault" ><em class="icon ni ni-eye"></em><span>Xem trước</span></button>
@@ -145,6 +146,7 @@
                                         @endif
                                         @if ($comments)
                                         <div id="comment-box">
+                                            <p>{{ $document->totalComments }} bình luận</p>
                                             @foreach ($comments as $comment)
                                                 <div id="comment-{{ $comment->id }}">
                                                         <div class="d-flex flex-column comment-section">
@@ -186,42 +188,43 @@
                                                             </div>
                                                             @endif
                                                         </div> 
+                                                        @foreach ($comment->replies as $reply)
+                                                        @if(is_null($reply->deleted_at))
+                                                        <div class="ms-5" id="reply-{{ $reply->id }}">
+                                                            <div class="d-flex flex-column comment-section">
+                                                                <div class="bg-white p-2">
+                                                                    <div class="d-flex flex-row user-info"><img class="rounded-circle" src="{{ $reply->users->profile->url }}" width="40">
+                                                                        <div class="d-flex flex-column justify-content-start ms-2">
+                                                                            <span class="d-block font-weight-bold name">{{ $reply->users->profile->displayName }}</span>
+                                                                            <span class="date text-black-50">{{ $reply->created_at }}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="mt-2">
+                                                                        <p contenteditable="false" id="reply-text-{{ $reply->id }}">
+                                                                            {{ $reply->content }}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                                @if(Auth::check() && Auth::user()->id == $reply->users->id)
+    
+                                                                <div class="bg-white">
+                                                                    <div class="d-flex flex-row fs-12">
+                                                                        <button class="btn btn-outline-light delete-reply-btn" data-id={{ $reply->id }}>
+                                                                            <em class="icon ni ni-trash"></em>
+                                                                        </button>
+                                                                        <div class="custom-control custom-checkbox custom-control-pro custom-control-pro-icon no-control">
+                                                                            <input type="checkbox" class="custom-control-input edit-reply-btn" name="edit-reply-btn" id="edit-reply-btn-{{ $reply->id }}" value={{ $reply->id }}>
+                                                                            <label class="custom-control-label" name="edit-reply-btn" for="edit-reply-btn-{{ $reply->id }}"><em class="icon ni ni-edit"></em></label>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                @endif
+                                                            </div> 
+                                                        </div>
+                                                        @endif
+                                                    @endforeach
                                                 </div>
-                                                @foreach ($comment->replies as $reply)
-                                                    @if(is_null($reply->deleted_at))
-                                                    <div class="ms-5" id="reply-{{ $reply->id }}">
-                                                        <div class="d-flex flex-column comment-section">
-                                                            <div class="bg-white p-2">
-                                                                <div class="d-flex flex-row user-info"><img class="rounded-circle" src="{{ $reply->users->profile->url }}" width="40">
-                                                                    <div class="d-flex flex-column justify-content-start ms-2">
-                                                                        <span class="d-block font-weight-bold name">{{ $reply->users->profile->displayName }}</span>
-                                                                        <span class="date text-black-50">{{ $reply->created_at }}</span>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="mt-2">
-                                                                    <p contenteditable="false" id="reply-text-{{ $reply->id }}">
-                                                                        {{ $reply->content }}
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                            @if(Auth::check() && Auth::user()->id == $reply->users->id)
-
-                                                            <div class="bg-white">
-                                                                <div class="d-flex flex-row fs-12">
-                                                                    <button class="btn btn-outline-light delete-reply-btn" data-id={{ $reply->id }}>
-                                                                        <em class="icon ni ni-trash"></em>
-                                                                    </button>
-                                                                    <div class="custom-control custom-checkbox custom-control-pro custom-control-pro-icon no-control">
-                                                                        <input type="checkbox" class="custom-control-input edit-reply-btn" name="edit-reply-btn" id="edit-reply-btn-{{ $reply->id }}" value={{ $reply->id }}>
-                                                                        <label class="custom-control-label" name="edit-reply-btn" for="edit-reply-btn-{{ $reply->id }}"><em class="icon ni ni-edit"></em></label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            @endif
-                                                        </div> 
-                                                    </div>
-                                                    @endif
-                                                @endforeach
+                                           
                                             @endforeach
                                         </div>
                                         @endif
@@ -279,6 +282,9 @@
             <div class="modal-footer bg-light">
                 <span class="sub-text">Báo cáo bởi {{ Auth::user()->profile->displayName }}</span>
             </div>
+
+            <iframe id="my_iframe" style="display:none;"></iframe>
+
         </div>
     </div>
 </div>
@@ -321,10 +327,13 @@
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
     });
+    
     $(function () {
         $('#comment-btn').attr('disabled', true);
 
     })
+
+    
     $("#download-btn").click(function(e){
         e.preventDefault();
         var id = {!! $document->id !!}
@@ -337,13 +346,17 @@
                 })
                 .done(function(res) {
                 // If successful           
-                    window.location.href = res.url;      
+                    window.location.assign(res.url);
+
+
+                    
                     $('#totalDownload').text(res.totalDownload);
                 })
                 .fail(function(jqXHR, textStatus, errorThrown) {
                 // If fail
                 console.log(textStatus + ': ' + errorThrown);
                 })
+       
         
     })
 
@@ -481,7 +494,7 @@
     $(document).on('click','#comment-btn',function(){
         var content = $("#comment_area").val();
         
-        var item_id = {!! $document->id !!}
+        var item_id = {!! $document->id !!};
 
         $.ajax({
                 url:'/binh-luan',
@@ -540,7 +553,7 @@
                             timer: 2500
                     });
 
-                    $("#comment-" + comment_id).fadeOut();
+                    $("#comment-box").load(" #comment-box > *");
                     })
                     .fail(function(jqXHR, textStatus, errorThrown) {
                     // If fail
@@ -580,7 +593,7 @@
                             timer: 2500
                     });
 
-                    $("#reply-" + reply_id).fadeOut();
+                    $("#comment-box").load(" #comment-box > *");
 
                    
                     })
@@ -607,7 +620,6 @@
         else{
             var htmlrender = '<div class="ms-5 p-2" id="reply-box" >'+
             '<div class="d-flex flex-row align-items-start">'+
-                `<img class="rounded-circle"  src="${avatar}" width="40">`+
                 '<textarea class="form-control ml-1 shadow-none textarea" id="reply_area"></textarea>'+
             '</div>'+
             '   <div class="mt-2 d-flex flex-row-reverse">'+

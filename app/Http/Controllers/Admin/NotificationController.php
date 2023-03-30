@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 class NotificationController extends Controller
 {
 
-    public function changebookMarkStatus(Request $request){
+    public function changeBookMarkStatus(Request $request){
         $bookMark = bookMark::findOrFail($request->id);
         $bookMark->status = 0;
         $bookMark ->save();

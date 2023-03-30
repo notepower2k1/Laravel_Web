@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+
 use App\Http\Controllers\Admin\BookController;
 use App\Http\Controllers\Admin\ChapterController;
 use App\Http\Controllers\Admin\ForumController;
@@ -22,7 +24,10 @@ use App\Http\Controllers\Client\ClientChapterController;
 use App\Http\Controllers\Client\ClientDocumentController;
 use App\Http\Controllers\Client\ClientDashboard;
 use App\Http\Controllers\Client\ClientForumPostController;
-use App\Http\Controllers\Client\PDFController;
+use App\Http\Controllers\Client\CommentController;
+
+use App\Http\Controllers\Auth\ForgetPasswordController;
+use App\Http\Controllers\ProfileController as ControllersProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +39,8 @@ use App\Http\Controllers\Client\PDFController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::group(['middleware' => 'isVerified'],function(){
+    
 Route::get('/',[PagesController::class,'redirect_book_home_page']);
 Route::get('/sach',[PagesController::class,'book_home_page']);
 Route::get('/sach/all/{option?}',[PagesController::class,'book_page_more']);
@@ -47,6 +54,8 @@ Route::get("/tai-lieu/{document_id}/{document_slug}",[PagesController::class,'do
 
 Route::get("/tai-tai-lieu",[PagesController::class,'download_document']);
 
+
+ 
 Route::get("/doc-sach/{book_slug}/{chapter_slug}",[PagesController::class,'read_book']);
 Route::get("/sach-noi/{book_slug}/{chapter_slug}",[PagesController::class,'listening_book']);
 
@@ -61,20 +70,20 @@ Route::get("/dien-dan",[PagesController::class,'forum_home_page']);
 Route::get("/dien-dan/{forum_slug}",[PagesController::class,'forum_detail']);
 Route::get("/dien-dan/{forum_slug}/{post_slug}/{post_id}",[PagesController::class,'post_detail']);
 
-Route::get("/thanh-vien/{user_id}",[PagesController::class,'user_info']);
+Route::get("/thanh-vien/{user_id}",[ProfileController::class,'user_info']);
 
 Route::get('/preview-document', [PagesController::class, 'preview_document']);
 
-Route::post("/binh-luan",[PagesController::class,'user_comment']);
-Route::post("/phan-hoi",[PagesController::class,'user_reply']);
+Route::post("/binh-luan",[CommentController::class,'user_comment']);
+Route::post("/phan-hoi",[CommentController::class,'user_reply']);
 
-Route::get("/xoa-binh-luan/{option}/{item_id}",[PagesController::class,'delete_user_comment']);
-Route::get("/xoa-phan-hoi/{option}/{item_id}",[PagesController::class,'delete_reply_comment']);
+Route::get("/xoa-binh-luan/{option}/{item_id}",[CommentController::class,'delete_user_comment']);
+Route::get("/xoa-phan-hoi/{option}/{item_id}",[CommentController::class,'delete_reply_comment']);
 
 
-Route::put("/cap-nhat-binh-luan/{item_id}",[PagesController::class,'edit_user_comment']);
-Route::put("/cap-nhat-phan-hoi/{item_id}",[PagesController::class,'edit_user_reply']);
-Route::post('/upload', [PagesController::class,'uploadCommentImage']);
+Route::put("/cap-nhat-binh-luan/{item_id}",[CommentController::class,'edit_user_comment']);
+Route::put("/cap-nhat-phan-hoi/{item_id}",[CommentController::class,'edit_user_reply']);
+Route::post('/upload', [CommentController::class,'uploadCommentImage']);
 
 Route::get("/notification-update",[NotificationController::class,'changeStatus']);
 Route::get("/notification-all-update",[NotificationController::class,'changeAllStatus']);
@@ -82,31 +91,40 @@ Route::get("/bookmark-status-update-no-direct",[ClientBookController::class,'cha
 Route::get("/bookmark-status-update",[NotificationController::class,'changeBookMarkStatus']);
 Route::get("/bookmark-status-all-update",[NotificationController::class,'changeAllbookMarkStatus']);
 
-Auth::routes();
-
-
-Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin','isVerified']], function()
+Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], function()
 {
+    Route::get('/wait-verification',[DashboardController::class,'wait_verification']);
+    Route::get("/wait-verification/update/changeStatus/verification",[DashboardController::class,'verification_item']);
+    Route::get("/wait-verification/update/changeStatus/rejection",[DashboardController::class,'rejection_item']);
+
     Route::get('/dashboard',[DashboardController::class,'index']);
     //All the routes that belongs to the group goes here
-    Route::resource("/book",BookController::class);
+    Route::resource("/book",BookController::class,['except' => ['destroy']]);
+    Route::get("/customDelete/{book_id}",[BookController::class,'customDelete']);
     Route::get("/book/update/changeStatus",[BookController::class,'changeBookStatus']);
     
     
     
-    Route::resource("/book/chapter",ChapterController::class, ['except' => ['create', 'index']]);
+    Route::resource("/book/chapter",ChapterController::class, ['except' => ['create', 'index','destroy']]);
+    Route::get("/book/chapter/customDelete/{chapter_id}",[ChapterController::class,'customDelete']);
+
     Route::get("/book/chapter/create/{book_id}",[ChapterController::class,'create'])->where('book_id', '[0-9]+');
     Route::get("/chapter",[ChapterController::class,'index']);
     
     
-    Route::resource("/forum",ForumController::class);
+    Route::resource("/forum",ForumController::class,['except' => ['destroy']]);
+    Route::get("/customDelete/{forum_id}",[ForumController::class,'customDelete']);
     Route::get("/forum/update/changeStatus",[ForumController::class,'changeForumStatus']);
     
 
-    Route::resource("/document",DocumentController::class);
+    Route::resource("/document",DocumentController::class,['except' => ['destroy']]);
+    Route::get("/customDelete/{document_id}",[DocumentController::class,'customDelete']);
+
     Route::get("/document/update/changeStatus",[DocumentController::class,'changeDocumentStatus']);
     
-    Route::resource("/forum/post",ForumPostController::class,['except' => ['create', 'index']]);
+    Route::resource("/forum/post",ForumPostController::class,['except' => ['create', 'index','destroy']]);
+    Route::get("/forum/post/customDelete/{post_id}",[ForumPostController::class,'customDelete']);
+
     Route::get("/forum/post/create/{forum_id}",[ForumPostController::class,'create'])->where('forum_id', '[0-9]+');
     Route::get("/post",[ForumPostController::class,'index']);
 
@@ -122,32 +140,47 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin','isVerifie
     Route::get("/user/deleteUser",[UserController::class,'deleteUser']);
 });
 
-Route::group(['prefix' => 'quan-ly',  'middleware' => ['auth','isVerified']], function()
+Route::group(['prefix' => 'quan-ly',  'middleware' => ['auth']], function()
 {
 
     Route::get("/",[ClientDashboard::class,'index']);
-    Route::resource("/sach",ClientBookController::class,['except' => ['create','edit']]);
+    Route::resource("/sach",ClientBookController::class,['except' => ['create','edit','destroy','show']]);
+
+    Route::get("/sach/customDelete/{book_id}",[ClientBookController::class,'customDelete']);
+
     Route::get("/them-sach",[ClientBookController::class,'create']);
+    Route::get("/chi-tiet-sach/{book_id}",[ClientBookController::class,'show']);
     Route::get("/cap-nhat-sach/{book_id}",[ClientBookController::class,'edit']);
     Route::get("/sach/update/changeStatus",[ClientBookController::class,'changeBookStatus']);
     
 
-    Route::resource("/chuong",ClientChapterController::class, ['except' => ['create', 'index','edit']]);
-    Route::get("/them-chuong/{book_id}",[ClientChapterController::class,'create'])->where('book_id', '[0-9]+');
-    Route::get("/cap-nhat-chuong/{chuong_id}",[ClientChapterController::class,'edit']);
+    Route::resource("/chuong",ClientChapterController::class, ['except' => ['create', 'index','edit','destroy']]);
+    Route::get("/chuong/customDelete/{chapter_id}",[ClientChapterController::class,'customDelete']);
+
+    Route::get("/them-chuong/{chapter_id}",[ClientChapterController::class,'create'])->where('book_id', '[0-9]+');
+    Route::get("/cap-nhat-chuong/{chapter_id}",[ClientChapterController::class,'edit']);
 
 
-    Route::resource("/tai-lieu",ClientDocumentController::class,['except' => ['create','edit']]);
+    Route::resource("/tai-lieu",ClientDocumentController::class,['except' => ['create','edit','destroy','show']]);
+    Route::get("/tai-lieu/customDelete/{document_id}",[ClientDocumentController::class,'customDelete']);
+
     Route::get("/them-tai-lieu",[ClientDocumentController::class,'create']);
-    Route::get("/cap-nhat-tai-lieu/{book_id}",[ClientDocumentController::class,'edit']);
+    Route::get("/cap-nhat-tai-lieu/{document_id}",[ClientDocumentController::class,'edit']);
+    Route::get("/chi-tiet-tai-lieu/{document_id}",[ClientDocumentController::class,'show']);
+
     Route::get("/tai-lieu/update/changeStatus",[ClientDocumentController::class,'changeDocumentStatus']);
-    
+
+    Route::get("/bai-viet",[ClientForumPostController::class,'index']);
+    Route::get("/binh-luan",[CommentController::class,'index']);
+    Route::get("/phan-hoi",[CommentController::class,'reply_index']);
+
+
 });
 
 
 //Client PAGE
 
-Route::group(['middleware'=>['auth','isVerified']],function(){
+Route::group(['middleware'=>['auth']],function(){
 
     Route::resource('/profile', ProfileController::class,['except' => ['index','show','store','destroy','create','edit']]);
     Route::get("/trang-ca-nhan",[ProfileController::class,'index']);
@@ -171,8 +204,19 @@ Route::group(['middleware'=>['auth','isVerified']],function(){
 
     Route::post("/bao-cao",[PagesController::class,'report_action']);
 });
+});
 
 
+Route::post('login', 'Auth\LoginController@login');
+Route::get('password/forgot',[ForgetPasswordController::class,'index']);
+Route::post('password/forgot',[ForgetPasswordController::class,'sendEmail']);
+
+Auth::routes([
+    'reset' => false, // Reset Password Routes...
+    'sendReset' =>false,
+    'verify' => false, // Email Verification Routes...,
+    'confirm' => false, //
+]);
 
 
 Route::group(['middleware' => ['auth','alreadyVerified']], function(){
@@ -183,7 +227,6 @@ Route::group(['middleware' => ['auth','alreadyVerified']], function(){
 
 
 });
-// Route::get('/verify-success', [MailController::class, 'verifySucessPage']);
 
 
 

@@ -20,13 +20,13 @@ class BookController extends Controller
         $string = str_replace(' ', '-', $now_date);
         return preg_replace('/[^A-Za-z0-9\-]/', '', $string);  
     }
-    
+
+  
+
 
     public function index()
     {
-   
-       $books = Book::all();
-   
+       $books = Book::where('deleted_at','=',null)->where('status','=',1)->get();
        return view('admin.book.index')->with('books', $books);
     }
 
@@ -83,7 +83,9 @@ class BookController extends Controller
             'numberOfChapter' => 0,
             'ratingScore'=> 0,
             'totalReading'=>0,
-            'totalBookMarking'=>0
+            'totalBookMarking'=>0,
+            'totalComments' => 0,
+            'status' =>1
         ]);
         $book->save();
 
@@ -227,6 +229,12 @@ class BookController extends Controller
             'success' => 'Record deleted successfully!'
         ]);
     }
+
+    public function customDelete($book_id){
+        $book = Book::findOrFail($book_id);
+        $book->deleted_at = Carbon::now()->toDateTimeString();
+        $book ->save();
+    }   
 
     public function changeBookStatus(Request $request){
         $book = Book::findOrFail($request->id);

@@ -174,6 +174,8 @@
                                             @endif
                                             @if ($comments)
                                             <div id="comment-box">
+                                                <p>{{ $book->totalComments }} bình luận</p>
+
                                                 @foreach ($comments as $comment)
                                                     <div id="comment-{{ $comment->id }}">
                                                             <div class="d-flex flex-column comment-section">
@@ -214,43 +216,44 @@
                                                                 </div>
                                                                 @endif
                                                             </div> 
+                                                            @foreach ($comment->replies as $reply)
+                                                            @if(is_null($reply->deleted_at))
+                                                            <div class="ms-5" id="reply-{{ $reply->id }}">
+                                                                <div class="d-flex flex-column comment-section">
+                                                                    <div class="bg-white p-2">
+                                                                        <div class="d-flex flex-row user-info"><img class="rounded-circle" src="{{ $reply->users->profile->url }}" width="40">
+                                                                            <div class="d-flex flex-column justify-content-start ms-2">
+                                                                                <span class="d-block font-weight-bold name">{{ $reply->users->profile->displayName }}</span>
+                                                                                <span class="date text-black-50">{{ $reply->created_at }}</span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="mt-2">
+                                                                            <p contenteditable="false" id="reply-text-{{ $reply->id }}">
+                                                                                {{ $reply->content }}
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                    @if(Auth::check() && Auth::user()->id == $reply->users->id)
+    
+                                                                    <div class="bg-white">
+                                                                        <div class="d-flex flex-row fs-12">
+                                                                            <button class="btn btn-outline-light delete-reply-btn" data-id={{ $reply->id }}>
+                                                                                <em class="icon ni ni-trash"></em>
+                                                                            </button>
+                                                                            <div class="custom-control custom-checkbox custom-control-pro custom-control-pro-icon no-control">
+                                                                                <input type="checkbox" class="custom-control-input edit-reply-btn" name="edit-reply-btn" id="edit-reply-btn-{{ $reply->id }}" value={{ $reply->id }}>
+                                                                                <label class="custom-control-label" name="edit-reply-btn" for="edit-reply-btn-{{ $reply->id }}"><em class="icon ni ni-edit"></em></label>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    @endif
+                                                                </div> 
+                                                            </div>
+                                                            @endif
+                                                        @endforeach
                                                     </div>
-                                                    @foreach ($comment->replies as $reply)
-                                                        @if(is_null($reply->deleted_at))
-                                                        <div class="ms-5" id="reply-{{ $reply->id }}">
-                                                            <div class="d-flex flex-column comment-section">
-                                                                <div class="bg-white p-2">
-                                                                    <div class="d-flex flex-row user-info"><img class="rounded-circle" src="{{ $reply->users->profile->url }}" width="40">
-                                                                        <div class="d-flex flex-column justify-content-start ms-2">
-                                                                            <span class="d-block font-weight-bold name">{{ $reply->users->profile->displayName }}</span>
-                                                                            <span class="date text-black-50">{{ $reply->created_at }}</span>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="mt-2">
-                                                                        <p contenteditable="false" id="reply-text-{{ $reply->id }}">
-                                                                            {{ $reply->content }}
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                                
-                                                                @if(Auth::check() && Auth::user()->id == $reply->users->id)
-
-                                                                <div class="bg-white">
-                                                                    <div class="d-flex flex-row fs-12">
-                                                                        <button class="btn btn-outline-light delete-reply-btn" data-id={{ $reply->id }}>
-                                                                            <em class="icon ni ni-trash"></em>
-                                                                        </button>
-                                                                        <div class="custom-control custom-checkbox custom-control-pro custom-control-pro-icon no-control">
-                                                                            <input type="checkbox" class="custom-control-input edit-reply-btn" name="edit-reply-btn" id="edit-reply-btn-{{ $reply->id }}" value={{ $reply->id }}>
-                                                                            <label class="custom-control-label" name="edit-reply-btn" for="edit-reply-btn-{{ $reply->id }}"><em class="icon ni ni-edit"></em></label>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                @endif
-                                                            </div> 
-                                                        </div>
-                                                        @endif
-                                                    @endforeach
+                                              
                                                 @endforeach
                                             </div>
                                             @endif
@@ -550,7 +553,7 @@
     $(document).on('click','#comment-btn',function(){
         var content = $("#comment_area").val();
         
-        var book_id = {!! $book->id !!}
+        var book_id = {!! $book->id !!};
 
         $.ajax({
                 url:'/binh-luan',
@@ -580,7 +583,7 @@
 
     })
     $('#book-mark-btn').click(function(){
-        var book_id = {!! $book->id !!}
+        var book_id = {!! $book->id !!};
         
         $(this).attr("disabled", 'disabled');
         $('#span-text').text('Đã theo dõi');
@@ -705,7 +708,8 @@
                             timer: 2500
                     });
 
-                    $("#comment-" + comment_id).fadeOut();
+                    $("#comment-box").load(" #comment-box > *");
+
                     })
                     .fail(function(jqXHR, textStatus, errorThrown) {
                     // If fail
@@ -745,7 +749,7 @@
                             timer: 2500
                     });
 
-                    $("#reply-" + reply_id).fadeOut();
+                    $("#comment-box").load(" #comment-box > *");
 
                    
                     })
@@ -762,8 +766,6 @@
     $(document).on('click','.create-reply-btn',function(){
 
         var comment_id = $(this).data('id');
-        var avatar = $('#comment_avatar img').attr('src')
-       
 
         if($("#reply-box").length){
 
@@ -772,11 +774,10 @@
         else{
             var htmlrender = '<div class="ms-5 p-2" id="reply-box" >'+
             '<div class="d-flex flex-row align-items-start">'+
-                `<img class="rounded-circle" src="${avatar}" width="40">`+
                 '<textarea class="form-control ml-1 shadow-none textarea" id="reply_area"></textarea>'+
             '</div>'+
             '   <div class="mt-2 d-flex flex-row-reverse">'+
-                `<button class="btn btn-primary" id="reply-btn" type="button" data-id=${comment_id}>  `+
+                `<button class="btn btn-primary" id="reply-btn" type="button" data-id=${comment_id}>`+
                     '<em class="icon ni ni-comments"></em>'+
                     '<span>Phản hồi</span>'+
                 '</button>'+

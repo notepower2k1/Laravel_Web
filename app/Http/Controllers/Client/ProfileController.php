@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 
 use Illuminate\Http\Request;
 use App\Models\Profile;
+use App\Models\User;
+use App\Models\Book;
+use App\Models\Document;
+
 use Carbon\Carbon;
 
 class ProfileController extends Controller
@@ -19,59 +24,20 @@ class ProfileController extends Controller
 
     public function index()
     {
-       
-
-        return view('client.profile.index');
-     
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-    
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-
-       
-
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id) //like "show details"
-    {
-        // $profile = Profile::where('userID','=',$id)->firstOrFail();
-
-        // return view('client.profile.show')
-        // ->with('profile',$profile);
         
-    }
+        $user = Auth::user();
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-       
+        $updatedDate = new Carbon($user->updated_at);
+
+        $updateFlag = true;
+        if($updatedDate->isToday()){
+
+            $updateFlag = false;
+        }
+
+
+        return view('client.profile.index')->with('updateFlag', $updateFlag);
+     
     }
 
     /**
@@ -128,16 +94,16 @@ class ProfileController extends Controller
         return redirect('/trang-ca-nhan');
        
     }
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-      
-    }
+   
+    public function user_info($user_id){
 
+        $user = User::where('deleted_at','=',null)->findOrFail($user_id);
+        $books = Book::where('userCreatedID','=',$user->id)->where('isPublic','=',1)->paginate(3,'*', 'books');
+        $documents = Document::where('userCreatedID','=',$user->id)->where('isPublic','=',1)->paginate(3,'*', 'documents');
+        return view('client.homepage.user_info')
+        ->with('books',$books)
+        ->with('documents',$documents)
+        ->with('user',$user);
+    }
  
 }

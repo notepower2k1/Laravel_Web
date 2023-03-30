@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('forums', function (Blueprint $table) {
-            $table->integer('numberOfPosts');
+            $table->integer('numberOfPosts')->default('0');
 
         });
     }

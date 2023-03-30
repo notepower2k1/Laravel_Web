@@ -15,9 +15,7 @@ return new class extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('chapter_id');
-            $table->foreign('chapter_id')
-            ->references('id')->on('chapters')->onDelete('cascade');
+            $table->text('description');
             $table->unsignedbigInteger('userID');
             $table->foreign('userID')
             ->references('id')->on('users')->onDelete('cascade');

@@ -4,6 +4,14 @@
   <div class="components-preview wide-md mx-auto mt-5">
         <div class="nk-block nk-block-lg">
             <div class="card card-bordered">
+                @if($errors->any())
+                <div class="alert alert-warning">
+                    @foreach ($errors->all() as $error)
+                        <div class="">{{ $error }}</div>
+                    @endforeach
+    
+                </div>
+                @endif
                 <form class="nk-stepper stepper-init is-alter nk-stepper-s1" action="#" id="stepper-create" method="POST" enctype="multipart/form-data" novalidate>
                     @csrf
                     <div class="row g-0 col-sep col-sep-md col-sep-xl">

@@ -2,40 +2,17 @@
 @section('pageTitle', 'Danh sách bài đăng')
 
 @section('content')
-    {{-- <a href="/admin/forum/post/create/{{$forum_id}}" class="btn btn-primary">Thêm bài đăng</a>
-    <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Topic</th>
-            <th >Created by</th>
-            <th>Created At</th>
-            <th >Last Update</th>
-            <th> Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-         @foreach ($forum_posts as $forum_post)
-          <tr id ="row-{{ $forum_post->id }}">
-            <td>{{  $forum_post->topic  }}</td>
-            <td>{{  $forum_post->userCreatedID  }}</td>
-            <td>{{ $forum_post->created_at }}</td>
-            <td>{{ $forum_post->updated_at}}</td>
-            <td>
-              <a href="/admin/forum/post/{{$forum_post->id}}/edit" class="btn btn-primary">Edit</a>
-              <button class="btn btn-primary delete-button" data-id="{{ $forum_post->id }}" data-name="{{ $forum_post->topic }}">Delete</button>
-            </td>
-           
-
-          </tr>
-          @endforeach
-
-        </tbody>
-      </table> --}}
 
    <div class="nk-block nk-block-lg">
                         <div class="nk-block-head">
                             <div class="nk-block-head-content">
+                            <nav>
+                                <ul class="breadcrumb breadcrumb-arrow">
+                                    <li class="breadcrumb-item"><a href="/admin/forum">Diễn đàn</a></li>
+                                    <li class="breadcrumb-item active">Bài đăng</li>
 
+                                </ul>
+                            </nav> 
                         <a href="/admin/forum/post/create/{{$forum_id}}" class="btn btn-primary">Thêm bài đăng</a>
 
                                
@@ -144,7 +121,7 @@
     var token = $("meta[name='csrf-token']").attr("content");
 
     Swal.fire({
-        title: "Bạn muốn bài đăng "+ name,
+        title: "Bạn muốn xóa bài đăng "+ name,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -155,11 +132,10 @@
         if (result.isConfirmed) {
            
             $.ajax({
-                type:"DELETE",
-                url:'/admin/forum/post/' + forum_postID,
+                type:"GET",
+                url:'/admin/forum/post/customDelete/' + forum_postID,
                 data : {
-                    "id": forum_postID,
-                    "_token": token,
+                  
                 },
                 })
                 .done(function() {

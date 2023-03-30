@@ -1,9 +1,21 @@
 @extends('admin/layouts.app')
 @section('pageTitle', 'Thêm bài đăng')
 @section('content')
-<div class="nk-block-head-sub"><a class="back-to" href="{{ url()->previous() }}"><em class="icon ni ni-arrow-left"></em><span>Quay lại</span></a></div>
-<div class="card shadow mb-4">
+<ul class="breadcrumb breadcrumb-arrow">
+    <li class="breadcrumb-item"><a href="/admin/forum">Diễn đàn</a></li>
+    <li class="breadcrumb-item"><a href="/admin/forum/post/{{ $forum_id }}">Bài đăng</a></li>
+    <li class="breadcrumb-item active">Thêm</li>
+
+</ul><div class="card shadow mb-4">
     <div class="card-body">
+            @if($errors->any())
+            <div class="alert alert-warning">
+                @foreach ($errors->all() as $error)
+                    <div class="">{{ $error }}</div>
+                @endforeach
+
+            </div>
+            @endif
         <form action="/admin/forum/post" method="POST" enctype="multipart/form-data">
              
             @csrf

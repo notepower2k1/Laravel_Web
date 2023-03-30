@@ -96,7 +96,31 @@
                             <a href="#" class="text-decoration-none ms-1 " id="send-otp" >gửi mã OTP</a>
                             @endif
                         </div> 
+
+                  
                     </div> 
+                    <div class="card-2">
+                        <div class="content d-flex justify-content-center align-items-center"> 
+                            <strong>Hoặc</strong>
+                        </div>
+                    </div>
+                    <div class="card-2">
+                        <div class="content d-flex justify-content-center align-items-center"> 
+                            <span>Bạn chưa muốn xác thực 
+                                <a href="{{ route('logout') }}"
+                                onclick="event.preventDefault();
+                                            document.getElementById('logout-form').submit();">
+                                <span> Đăng xuất</span>
+                                </a>
+                            </span> 
+                          
+
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                @csrf
+                            </form>
+                        </div> 
+                    </div>
+
                 </div>
             
         </div>
@@ -131,6 +155,12 @@ $(document).ready(function() {
                                 inputs[i].value=event.key; 
                                 if (i !==inputs.length - 1) inputs[i + 1].focus(); 
                                 event.preventDefault(); 
+                                } 
+                                else if (event.keyCode> 95 && event.keyCode < 106) 
+                                {
+                                    inputs[i].value=event.key; 
+                                    if (i !==inputs.length - 1) inputs[i + 1].focus(); 
+                                    event.preventDefault(); 
                                 } 
                                 else if (event.keyCode> 64 && event.keyCode < 91) {
                                     inputs[i].value=String.fromCharCode(event.keyCode);  
@@ -214,8 +244,8 @@ $('#myForm').submit(function(e){
     $(this).find( "input[id='fifth']" ).val()+
     $(this).find( "input[id='sixth']" ).val();
 
-    console.log(otp);
-    $.ajax({       
+    if(otp){
+        $.ajax({       
       type:"POST",
       url:'/verify-email',
       data : {
@@ -250,6 +280,14 @@ $('#myForm').submit(function(e){
       // If fail
       console.log(textStatus + ': ' + errorThrown);
       })
+    }
+    else{
+        Swal.fire({
+            icon: 'error',
+            title: `Bạn chưa nhập mã OTP`,
+            confirmButtonText: 'Thử lại'
+            });
+    }
   
 
 

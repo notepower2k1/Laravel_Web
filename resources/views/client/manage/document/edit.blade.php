@@ -3,11 +3,41 @@
 
 @section('content')
 <div class="nk-fmg-body">
+    <div class="nk-fmg-body-head d-none d-lg-flex">
+        <div class="nk-fmg-actions">
+            <ul class="nk-block-tools g-3">
+                <li>
+                    <a href="{{ url()->previous() }}" class="btn btn-light"><em class="icon ni ni-arrow-left"></em> <span>Quay lại</span></a>                    
+                </li>
+            </ul>
+        </div>
+    </div>
     <div class="nk-fmg-body-content">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between position-relative">               
+                <div class="nk-block-head-content">
+                    <ul class="nk-block-tools g-1">           
+                        <li class="d-lg-none">
+                            <div class="dropdown">
+                                <a href="{{ url()->previous() }}" class="btn btn-light"><em class="icon ni ni-arrow-left"></em> <span>Quay lại</span></a>                    
+                            </div>
+                        </li>
+                        <li class="d-lg-none me-n1"><a href="#" class="btn btn-trigger btn-icon toggle" data-target="files-aside"><em class="icon ni ni-menu-alt-r"></em></a></li>
+                    </ul>
+                </div>             
+            </div>
+        </div>
         <div class="nk-fmg-quick-list nk-block">
-            <div class="nk-block-head-sub"><a class="back-to" href="{{ url()->previous() }}"><em class="icon ni ni-arrow-left"></em><span>Quay lại</span></a></div>
             <div class="card card-bordered card-preview">
                 <div class="card-inner">
+                    @if($errors->any())
+                    <div class="alert alert-warning">
+                        @foreach ($errors->all() as $error)
+                            <div class="">{{ $error }}</div>
+                        @endforeach
+        
+                    </div>
+                    @endif
                     <form action="/quan-ly/tai-lieu/{{ $document->id }}" method="POST" enctype="multipart/form-data">
         
                         @csrf
@@ -16,29 +46,17 @@
                         <input type="text" required
                         name="name"
                         value="{{ $document->name }}"
-                        class="form-control mb-4 col-6 @error('name') is-invalid @enderror">
-                 
-                        @error('name')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                        @enderror
-        
-        
+                        class="form-control mb-4 col-6">
+               
                    
 
                         <label>Tác giả<sup>*</sup></label>
                         <input type="text" required
                         name="author"
                         value="{{ $document->author }}"
-                        class="form-control mb-4 col-6 @error('author') is-invalid @enderror">
+                        class="form-control mb-4 col-6">
             
-                        @error('author')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                        @enderror
-        
+               
                         <label>Thể loại<sup>*</sup></label>
                         <select required class="form-control mb-4 col-6" name="document_type_id" id="document_type_id">
                             @foreach ($types as $type)
@@ -52,20 +70,16 @@
                         <input type="file"
                         name="image"
                         value="{{ $document -> image }}"
-                        class="form-control mb-4 col-6 @error('image') is-invalid @enderror">
+                        class="form-control mb-4 col-6">
         
                         <input name="oldImage" type="hidden" value="{{ $document -> image }}">
         
-                        @error('image')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                        @enderror         
+                   
         
                         <label>Mô tả</label>
                         <textarea     
                         name="description"
-                        class="form-control mb-4 @error('description') is-invalid @enderror"
+                        class="form-control mb-4"
                         >{{ $document -> description }}</textarea>
         
                         @error('description')
@@ -78,18 +92,13 @@
                         <input type="file" 
                         name="file_document"
                         value="{{ $document -> file }}"
-                        class="form-control mb-4 col-6 @error('file_document') is-invalid @enderror">
+                        class="form-control mb-4 col-6">
         
                         <input name="oldFile" type="hidden" value="{{ $document -> file }}">
         
                         <input name="oldNumberOfPages" type="hidden" value="{{ $document -> numberOfPages }}">
 
-                        @error('file_document')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                        @enderror
-        
+            
         
                         <label>Tiến độ<sup>*</sup></label>
                         <select required class="form-control mb-4 col-6"  name="isCompleted"> 

@@ -6,32 +6,28 @@
 
 <div class="card shadow mb-4">
     <div class="card-body ">
+            @if($errors->any())
+            <div class="alert alert-warning">
+                @foreach ($errors->all() as $error)
+                    <div class="">{{ $error }}</div>
+                @endforeach
+
+            </div>
+            @endif
             <form action="{{ route('document.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <label>Tiêu đề<sup>*</sup></label>
             <input type="text" required
             name="name"
-            class="form-control mb-4 col-6 @error('name') is-invalid @enderror">
-
-            @error('name')
-            <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-            </span>
-            @enderror
-
-
+            class="form-control mb-4 col-6" value="{{ old('name') }}" >
            
 
             <label>Tác giả<sup>*</sup></label>
             <input type="text" required
             name="author"
-            class="form-control mb-4 col-6 @error('author') is-invalid @enderror">
+            class="form-control mb-4 col-6" value="{{ old('author') }}">
 
-            @error('author')
-            <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-            </span>
-            @enderror
+         
 
 
             <label>Thể loại<sup>*</sup></label>
@@ -46,13 +42,9 @@
             <label class="mt-4">Ảnh bìa<sup>*</sup></label>
             <input type="file"
             name="image"
-            class="form-control mb-4 col-6 @error('image') is-invalid @enderror" accept="image/*" data-bs-toggle="tooltip" data-bs-placement="top" title="Nếu bạn để trống hệ thống sẽ sử dụng ảnh mặc định!!!">
+            class="form-control mb-4 col-6" accept="image/*" data-bs-toggle="tooltip" data-bs-placement="top" title="Nếu bạn để trống hệ thống sẽ sử dụng ảnh mặc định!!!">
 
-            @error('image')
-            <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-            </span>
-            @enderror
+
 
             <label>Ngôn ngữ<sup>*</sup></label>
             <select required class="form-control mb-4 col-6" name="language">                           
@@ -63,25 +55,17 @@
             <label>Mô tả</label>
             <textarea     
             name="description"
-            class="form-control mb-4 @error('description') is-invalid @enderror"
+            class="form-control mb-4"
             ></textarea>
 
-             @error('description')
-            <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-            </span>
-            @enderror
+        
 
             <label>File đính kèm<sup>*</sup></label>
             <input type="file" required
             name="file_document"
-            class="form-control mb-4 col-6 @error('file_document') is-invalid @enderror" accept=".doc, .docx,.pdf">
+            class="form-control mb-4 col-6" accept=".docx,.pdf">
 
-            @error('file_document')
-            <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-            </span>
-            @enderror
+          
 
             <button type="submit" class="btn btn-info">Thêm tài liệu</button>
         </form>

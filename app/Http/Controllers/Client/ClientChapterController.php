@@ -9,6 +9,7 @@ use App\Models\Book;
 use App\Models\bookMark;
 use App\Models\Notification;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class ClientChapterController extends Controller
 {
@@ -79,9 +80,9 @@ class ClientChapterController extends Controller
         $book ->save();
         
         //update status book_mark
-        $book_mark = bookMark::findOrFail($request->book_id);
-        $book_mark->status = 1;
-        $book_mark ->save();
+        $book_mark = bookMark::where('bookID','=',$request->book_id)->update([
+            'status' => 1
+        ]);
 
         //create notification
         $book_mark_userids = bookMark::where('bookID','=',$request->book_id)->pluck('userID')->toArray();
@@ -109,7 +110,7 @@ class ClientChapterController extends Controller
      */
     public function show($id) //like "show details"
     {
-        $chapters = Chapter::where('book_id','=',$id)->get();
+        $chapters = Chapter::where('book_id','=',$id)->where('deleted_at','=',null)->get();
 
         return view('client.manage.chapter.show')
         ->with('chapters',$chapters)
@@ -189,20 +190,25 @@ class ClientChapterController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        $chapter = Chapter::findOrFail($id);
-        $chapter->delete();
+    // public function destroy($id)
+    // {
+    //     $chapter = Chapter::findOrFail($id);
+    //     $chapter->delete();
 
-        $book = Book::findOrFail($chapter->book_id);
-        $book->numberOfChapter = $book->numberOfChapter -1;
-        $book ->save();
-
-
-        return response()->json([
-            'success' => 'Record deleted successfully!'
-        ]);    }
+    //     $book = Book::findOrFail($chapter->book_id);
+    //     $book->numberOfChapter = $book->numberOfChapter -1;
+    //     $book ->save();
 
 
+    //     return response()->json([
+    //         'success' => 'Record deleted successfully!'
+    //     ]);    }
+
+
+    public function customDelete($chapter_id){
+        $chapter = Chapter::findOrFail($chapter_id);
+        $chapter->deleted_at = Carbon::now()->toDateTimeString();
+        $chapter ->save();
+    }   
         
 }

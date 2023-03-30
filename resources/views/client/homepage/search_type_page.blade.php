@@ -53,7 +53,7 @@
                     <div class="card card-bordered product-card">
                         <div class="product-thumb">
                             <a href="/sach/{{ $item->id }}/{{ $item->slug }}">
-                                <img class="card-img-top" src="{{ $item->url }}" alt="image" >
+                                <img class="card-img-top" src="{{ $item->url }}" alt="image"  width="400px" height="500px">
                             </a>          
                         </div>
                         
@@ -70,7 +70,7 @@
                 <div class="card card-bordered product-card">
                     <div class="product-thumb">
                         <a href="/tai-lieu/{{ $item->id }}/{{ $item->slug }}">
-                            <img class="card-img-top" src="{{ $item->url }}" alt="image" >
+                            <img class="card-img-top" src="{{ $item->url }}" alt="image"  width="400px" height="500px">
                         </a>          
                     </div>
                     

@@ -18,7 +18,7 @@ class Book extends Model implements Searchable
     public $incrementing = false;
 
     protected $fillable = ['name', 'author', 
-    'description' ,'isCompleted','slug','type_id','image','userCreatedID','isPublic','language','numberOfChapter','ratingScore','totalReading','totalBookMarking'];
+    'description' ,'isCompleted','slug','type_id','image','userCreatedID','isPublic','language','numberOfChapter','ratingScore','totalReading','totalBookMarking','totalComments','status'];
 
 
     public function types() {

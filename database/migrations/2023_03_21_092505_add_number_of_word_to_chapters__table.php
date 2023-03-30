@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('chapters', function (Blueprint $table) {
-            $table->integer('numberOfWords');
+            $table->integer('numberOfWords')->default('0');
 
         });
     }

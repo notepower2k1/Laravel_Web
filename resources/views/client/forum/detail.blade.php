@@ -242,7 +242,7 @@
 
                 var result = res.message;
                 // console.log(res.message);
-                $('#post-4').hide( "slow", function() {
+                $(`#post-${forum_post_id}`).hide( "slow", function() {
                     Swal.fire({
                     icon: 'success',
                     title: `${result}`,

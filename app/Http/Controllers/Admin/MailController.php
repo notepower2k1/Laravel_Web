@@ -59,15 +59,6 @@ class MailController extends Controller
         $identifier = Auth::user()->email;
 
         $expires = Otp::expiredAt($identifier);
-
-        // if($expires->status){
-        //     return view('auth.verify')->with('expires',$expires);
-        // }
-
-        // else{
-        //     return view('auth.verify');
-        // }
-
         if($expires->status){
             $expires_date = new Carbon($expires->expired_at);
             $now_date = Carbon::now();

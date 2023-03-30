@@ -233,8 +233,13 @@
     }
     });
 
-    $(window).bind('beforeunload', function(){
-        return 'Are you sure you want to leave?';
+    $(window).bind('beforeunload', function(e){
+
+        var content = tinymce.activeEditor.getContent("myTextarea");
+
+        if(content){
+            return e.originalEvent.returnValue = "Your message here";        
+        }
     });
 
     $(function () {
@@ -255,7 +260,7 @@
         image_title: true,
         /* enable automatic uploads of images represented by blob or data URIs*/
         automatic_uploads: true,
-        images_upload_url: '/upload/'+  {!! $post->id !!},
+        images_upload_url: '/upload',
         file_picker_types: 'image',
         /* and here's our custom image picker*/
         file_picker_callback: function (cb, value, meta) {
@@ -292,7 +297,7 @@
         var post_id = {!! $post->id !!};
 
         if(content){
-            $.ajax({
+                $.ajax({
                 url:'/binh-luan',
                 type:"POST",
                 data:{

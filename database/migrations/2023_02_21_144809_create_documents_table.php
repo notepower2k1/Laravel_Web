@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('slug');
             $table->text('file');
             $table->integer('totalDownloading');
+            $table->integer('totalComments');
             $table->unsignedInteger('type_id');
             $table->foreign('type_id')
             ->references('id')->on('document_types')->onDelete('cascade');

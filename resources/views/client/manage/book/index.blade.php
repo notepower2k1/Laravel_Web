@@ -28,7 +28,7 @@
       </div>
        
 
-      <div class="nk-fmg-quick-list nk-block">
+      <div class="nk-fmg-quick-list nk-block" style="min-height:100vh">
           <div class="card card-bordered card-preview">
             <div class="card-inner">
               <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false" data-export-title="Export">
@@ -112,11 +112,14 @@
                               {{ $book->isPublic ? 'checked':'' }}>
                             </div> --}}
 
-                            <input type="checkbox" 
-                            class="form-check-input"
-                            role="switch"
-                            data-id="{{ $book->id }}"
-                            {{ $book->isPublic ? 'checked':'' }}   />
+                            <div class="form-check form-switch">
+
+                              <input type="checkbox" 
+                              class="form-check-input"
+                              role="switch"
+                              data-id="{{ $book->id }}"
+                              {{ $book->isPublic ? 'checked':'' }}   />
+                            </div>
 
                           </td>
                     
@@ -135,7 +138,7 @@
                                                   <a href="/quan-ly/cap-nhat-sach/{{$book->id}}"><em class="icon ni ni-edit"></em><span>Cập nhật</span></a>
                                                 </li>
                                                 <li>
-                                                  <a href="{{ route('sach.show', $book->id) }}"><em class="icon ni ni-maximize-alt"></em><span>Chi tiết</span></a>
+                                                  <a href="/quan-ly/chi-tiet-sach/{{$book->id}}"><em class="icon ni ni-maximize-alt"></em><span>Chi tiết</span></a>
                                                 </li>
                                                 <li class="divider"></li>
                                                 <li><a href="/quan-ly/chuong/{{$book->id}}"><em class="icon ni ni-eye"></em><span>Xem chương</span></a></li>
@@ -205,11 +208,9 @@
         }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-            type:"DELETE",
-            url:'/quan-ly/sach/' + book_id,
+            type:"GET",
+            url:'/quan-ly/sach/customDelete/' + book_id,
             data : {
-              "id": book_id,
-              "_token": token,
             },
             })
             .done(function() {

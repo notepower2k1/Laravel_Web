@@ -13,13 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('comment_post_images', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('commentID');
-            $table->foreign('commentID')
-            ->references('id')->on('post_comments')->onDelete('cascade');
-            $table->text('image');
-            $table->timestamps();
+        Schema::table('books', function (Blueprint $table) {
+            $table->tinyInteger('status')->default('0');
+
         });
     }
 
@@ -30,6 +26,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('comment_post_images');
+        Schema::table('books', function (Blueprint $table) {
+            $table->tinyInteger('status');
+        });
     }
 };

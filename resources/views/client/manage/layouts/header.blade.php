@@ -4,15 +4,15 @@
          
           <div class="nk-header-brand d-xl-none">
               <a href="/" class="logo-link">
-                  <img class="logo-light logo-img" src="{{ asset('storage/logo.png') }}" srcset="{{ asset('storage/logo.png') }} 2x" alt="logo">
-                  <img class="logo-dark logo-img" src="{{ asset('storage/logo.png') }}" srcset="{{ asset('storage/logo.png') }} 2x" alt="logo-dark">
+                <img class="logo-light logo-img" src="https://firebasestorage.googleapis.com/v0/b/do-an-tot-nghiep-f897b.appspot.com/o/logo%2Fimage_2023-03-20_162700220.png?alt=media&token=5bbe33d0-757e-46e4-a632-12fdd6c9aa86" srcset="https://firebasestorage.googleapis.com/v0/b/do-an-tot-nghiep-f897b.appspot.com/o/logo%2Fimage_2023-03-20_162700220.png?alt=media&token=5bbe33d0-757e-46e4-a632-12fdd6c9aa86 2x" alt="logo">
+                <img class="logo-dark logo-img" src="https://firebasestorage.googleapis.com/v0/b/do-an-tot-nghiep-f897b.appspot.com/o/logo%2Fimage_2023-03-20_162700220.png?alt=media&token=5bbe33d0-757e-46e4-a632-12fdd6c9aa86" srcset="https://firebasestorage.googleapis.com/v0/b/do-an-tot-nghiep-f897b.appspot.com/o/logo%2Fimage_2023-03-20_162700220.png?alt=media&token=5bbe33d0-757e-46e4-a632-12fdd6c9aa86 2x" alt="logo-dark">
               </a>
           </div><!-- .nk-header-brand -->
           <div class="nk-header-news d-none d-xl-block">
               <div class="nk-news-list">
                 <a href="/" class="logo-link">
-                    <img class="logo-light logo-img" src="{{ asset('storage/logo.png') }}" srcset="{{ asset('storage/logo.png') }} 2x" alt="logo">
-                    <img class="logo-dark logo-img" src="{{ asset('storage/logo.png') }}" srcset="{{ asset('storage/logo.png') }} 2x" alt="logo-dark">
+                    <img class="logo-light logo-img" src="https://firebasestorage.googleapis.com/v0/b/do-an-tot-nghiep-f897b.appspot.com/o/logo%2Fimage_2023-03-20_162700220.png?alt=media&token=5bbe33d0-757e-46e4-a632-12fdd6c9aa86" srcset="https://firebasestorage.googleapis.com/v0/b/do-an-tot-nghiep-f897b.appspot.com/o/logo%2Fimage_2023-03-20_162700220.png?alt=media&token=5bbe33d0-757e-46e4-a632-12fdd6c9aa86 2x" alt="logo">
+                    <img class="logo-dark logo-img" src="https://firebasestorage.googleapis.com/v0/b/do-an-tot-nghiep-f897b.appspot.com/o/logo%2Fimage_2023-03-20_162700220.png?alt=media&token=5bbe33d0-757e-46e4-a632-12fdd6c9aa86" srcset="{https://firebasestorage.googleapis.com/v0/b/do-an-tot-nghiep-f897b.appspot.com/o/logo%2Fimage_2023-03-20_162700220.png?alt=media&token=5bbe33d0-757e-46e4-a632-12fdd6c9aa86 2x" alt="logo-dark">
                 </a>
               </div>
           </div><!-- .nk-header-news -->
@@ -49,7 +49,7 @@
                                   <li><a href="/trang-ca-nhan"><em class="icon ni ni-user-alt"></em><span>Trang cá nhân</span></a></li>
                                   <li><a href="/quan-ly"><em class="icon ni ni-setting-alt"></em><span>Trang quản lý</span></a></li>
                                   <li><a href="/them-tai-lieu"><em class="icon ni ni-activity-alt"></em><span>Đăng tài liệu</span></a></li>
-                                  <li><a class="dark-switch" href="#"><em class="icon ni ni-moon"></em><span>Chế độ ban đêm</span></a></li>
+                                  {{-- <li><a class="dark-switch" href="#"><em class="icon ni ni-moon"></em><span>Chế độ ban đêm</span></a></li> --}}
                               </ul>
                           </div>
                           <div class="dropdown-inner">
@@ -60,7 +60,7 @@
                                     <a href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
-                                        <em class="icon ni ni-signout"></em><span>Sign out</span>
+                                        <em class="icon ni ni-signout"></em><span>Đăng xuấtt</span>
                                     </a>
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">

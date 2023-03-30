@@ -79,12 +79,13 @@
         <div class="nk-header-tools">
             <ul class="nk-quick-nav">              
                 @if(Auth::check())
-                <li class="dropdown notification-dropdown" id="bookMark_notifications_box">
+                    
+                <li class="dropdown notification-dropdown {{ Request::is('sach-theo-doi') ? 'd-none':'' }}" id="bookMark_notifications_box">
                     <a href="#" class="dropdown-toggle nk-quick-nav-icon" data-bs-toggle="dropdown">
                         @if($bookMark_notifications->isEmpty())
-                        <div><em class="icon ni ni-bell"></em></div>
+                        <em class="icon ni ni-bookmark"></em>
                         @else
-                        <div class="icon-status icon-status-info"><em class="icon ni ni-bell"></em></div>
+                        <div class="icon-status icon-status-info"><em class="icon ni ni-bookmark"></em></div>
                         @endif  
                     </a>
                     <div class="dropdown-menu dropdown-menu-xl dropdown-menu-end dropdown-menu-s1">
@@ -100,12 +101,21 @@
                                             <em class="icon icon-circle bg-warning-dim ni ni-curve-down-right"></em>
                                         </div>
                                         <div class="nk-notification-content">
-                                            <div class="nk-notification-text">Sách <a href="/sach/{{$bookMark_notification->books->id}}/{{$bookMark_notification->books->slug}}" >{{$bookMark_notification->books->name }}</a> có chương mới
+                                            <div class="nk-notification-text">Sách <a href="/sach/{{$bookMark_notification->books->id}}/{{$bookMark_notification->books->slug}}" >{{$bookMark_notification->books->name }}</a> 
+                                                có chương mới  
+                                                
+                                                @foreach ($bookMark_notification->books->chapters as $chapter)
+                                                    @if($loop->last)
+                                                        <strong>{{ $chapter->code }}</strong>
+                                                    @endif
+                                                @endforeach
+
+                                                
                                             </div>  
                                         </div>
                                     </div>
                                 @endforeach
-                             
+                            
                                 {{-- <div class="nk-notification-item dropdown-inner">
                                     <div class="nk-notification-icon">
                                         <em class="icon icon-circle bg-success-dim ni ni-curve-down-left"></em>
@@ -158,6 +168,7 @@
                         </div>
                     </div>
                 </li><!-- .dropdown -->
+                   
                 <li class="dropdown user-dropdown">
                     <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
                         <div class="user-toggle">
@@ -203,7 +214,7 @@
                                 <a href="{{ route('logout') }}"
                                     onclick="event.preventDefault();
                                                     document.getElementById('logout-form').submit();">
-                                    <em class="icon ni ni-signout"></em><span>Sign out</span>
+                                    <em class="icon ni ni-signout"></em><span>Đăng xuất</span>
                                 </a>
 
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">

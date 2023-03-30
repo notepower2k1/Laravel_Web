@@ -2,10 +2,24 @@
 @section('pageTitle', 'Cập nhật chương')
 
 @section('content')
-<div class="nk-block-head-sub"><a class="back-to" href="{{ url()->previous() }}"><em class="icon ni ni-arrow-left"></em><span>Quay lại</span></a></div>
+<nav>
+    <ul class="breadcrumb breadcrumb-arrow">
+        <li class="breadcrumb-item"><a href="/admin/book">Sách</a></li>
+        <li class="breadcrumb-item"><a href="/admin/book/chapter/{{ $chapter->book_id }}">Chương</a></li>
+        <li class="breadcrumb-item active">Cập nhật</li>
 
+    </ul>
+</nav>
 <div class="card shadow mb-4">
     <div class="card-body">
+        @if($errors->any())
+        <div class="alert alert-warning">
+            @foreach ($errors->all() as $error)
+                <div class="">{{ $error }}</div>
+            @endforeach
+
+        </div>
+        @endif
         <form action="/admin/book/chapter/{{ $chapter->id }}" method="POST">
              
             @csrf

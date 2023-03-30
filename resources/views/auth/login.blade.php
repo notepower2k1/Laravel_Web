@@ -85,17 +85,25 @@
                     <h4 class="nk-block-title">Đăng nhập</h4>             
                 </div>
             </div>
+            @if($errors->any())
+            <div class="alert alert-warning">
+                @foreach ($errors->all() as $error)
+                    <div class="">{{ $error }}</div>
+                @endforeach
+
+            </div>
+            @endif
             <form method="POST" action="{{ route('login') }}">
                 @csrf
                 <div class="form-group">
                     <div class="form-label-group">
-                        <label class="form-label" for="email">Email</label>
+                        <label class="form-label" for="name">Tên tài khoản</label>
                     </div>
                     <div class="form-control-wrap">
-                        <input id="email" type="email" class="form-control form-control-lg @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus
-                        placeholder="Nhập địa chỉ email của bạn">
+                        <input id="name" type="name" class="form-control form-control-lg @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus
+                        placeholder="Nhập tên tài khoản">
 
-                        @error('email')
+                        @error('name')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
                         </span>
@@ -105,7 +113,7 @@
                 <div class="form-group">
                     <div class="form-label-group">
                         <label class="form-label" for="password">Mật khẩu</label>
-                        <a class="link link-primary link-sm" href="html/pages/auths/auth-reset-v2.html">Quên mật khẩu?</a>
+                        <a class="link link-primary link-sm" href="/password/forgot">Quên mật khẩu?</a>
                     </div>
                     <div class="form-control-wrap">
                         <a href="#" class="form-icon form-icon-right passcode-switch lg" data-target="password">

@@ -13,7 +13,7 @@ class PostComment extends Model
     public  $timestamps = true;
     public $incrementing = false;
 
-    protected $fillable = ['content','postID','userID'];
+    protected $fillable = ['content','postID','userID','totalReplies'];
 
     public function posts() {
         return $this->belongsTo(ForumPosts::class,'postID','id');

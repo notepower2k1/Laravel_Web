@@ -17,20 +17,20 @@ class VerifyCheck
      */
     public function handle(Request $request, Closure $next)
     {
-        
-        if(Auth::user()->email_verified_at)
-        {
-            if(url('verify-email') == $request->url()){
-                return back();
+        if(Auth::check()){
+            if(Auth::user()->email_verified_at)
+            {               
+                return $next($request);
             }
-            else
+            else    
+            {
+                return redirect('/verify-email')->with('message','Please Verify Your Account!');
+            }
+        }
+        else{
             return $next($request);
-
         }
-        else    
-        {
-            return redirect('/verify-email')->with('message','Please Verify Your Account!');
-        }
+        
     
        
     }

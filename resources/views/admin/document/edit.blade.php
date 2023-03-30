@@ -6,6 +6,14 @@
 
 	<div class="card shadow mb-4">
 		<div class="card-body ">
+                @if($errors->any())
+                <div class="alert alert-warning">
+                    @foreach ($errors->all() as $error)
+                        <div class="">{{ $error }}</div>
+                    @endforeach
+
+                </div>
+                @endif
 			<form action="/admin/document/{{ $document->id }}" method="POST" enctype="multipart/form-data">
 
                 @csrf

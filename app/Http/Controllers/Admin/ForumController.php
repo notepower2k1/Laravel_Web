@@ -7,12 +7,13 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\Forum;
 use App\Models\ForumPosts;
+use Carbon\Carbon;
 
 class ForumController extends Controller
 {
     public function index(){
             
-        $forums = Forum::all();
+        $forums = Forum::where('deleted_at','=',null)->get();
 
     
       
@@ -120,15 +121,21 @@ class ForumController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        $forum = Forum::findOrFail($id);
-        $forum->delete();
+    // public function destroy($id)
+    // {
+    //     $forum = Forum::findOrFail($id);
+    //     $forum->delete();
 
-        return response()->json([
-            'success' => 'Record deleted successfully!'
-        ]);
-    }
+    //     return response()->json([
+    //         'success' => 'Record deleted successfully!'
+    //     ]);
+    // }
+
+    public function customDelete($forum_id){
+        $forum = Forum::findOrFail($forum_id);
+        $forum->deleted_at = Carbon::now()->toDateTimeString();
+        $forum ->save();
+    }   
 
     public function changeForumStatus (Request $request){
         $forum = Forum::findOrFail($request->id);

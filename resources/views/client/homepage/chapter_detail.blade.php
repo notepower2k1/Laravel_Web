@@ -7,14 +7,14 @@
   <div class="nk-block-head nk-block-head-sm">
       <div class="nk-block-between">
           <div class="nk-block-head-content">
-                  <div class="toggle-expand-content expanded" data-content="pageMenu" style="display: block;">
-                      <ul class="nk-block-tools g-3">   
-                          <li class="nk-block-tools-opt">
-                              <a href="#" data-target="addProduct" class="toggle btn btn-icon btn-primary d-md-none"><em class="icon ni ni-setting"></em></a>
-                              <a href="#" data-target="addProduct" class="toggle btn btn-primary d-none d-md-inline-flex"><em class="icon ni ni-setting"></em></a>
-                          </li>
-                      </ul>
-                  </div>
+            <div class="toggle-expand-content expanded" data-content="pageMenu" style="display: block;">
+                <ul class="nk-block-tools g-3">   
+                    <li class="nk-block-tools-opt">
+                        <a href="#" data-target="addProduct" class="toggle btn btn-icon btn-primary d-md-none"><em class="icon ni ni-setting"></em></a>
+                        <a href="#" data-target="addProduct" class="toggle btn btn-primary d-none d-md-inline-flex"><em class="icon ni ni-setting"></em></a>
+                    </li>
+                </ul>
+            </div>
           </div><!-- .nk-block-head-content -->
       </div><!-- .nk-block-between -->
   </div><!-- .nk-block-head -->
@@ -121,7 +121,7 @@
                         <em class="icon ni ni-color-palette"></em>
                       </label>
                       <div class="form-control-wrap">
-                        <select class="form-control" id="change-color">
+                        {{-- <select class="form-control" id="change-color">
                           <option value="fff" selected="selected">Mặc định</option>
                           <option value="ddd" >Màu tối</option>
                           <option value="f4f4f4">Xám nhạt</option>
@@ -131,7 +131,64 @@
                           <option value="EAE4D3">Màu sepia</option>
                           <option value="FAFAC8">Vàng đậm</option>
                           <option value="EFEFAB">Vàng ố</option> 
-                        </select>
+                        </select> --}}
+                        <ul class="custom-control-group g-1">
+                          <li>
+                              <div class="custom-control color-control border rounded-circle">
+                                  <input type="radio" class="custom-control-input" id="productColor1" name="productColor">
+                                  <label class="custom-control-label dot dot-xl" data-bg="#fff" for="productColor1" style="background:#fff"></label>
+                              </div>
+                          </li>
+                          <li>
+                              <div class="custom-control color-control border rounded-circle">
+                                  <input type="radio" class="custom-control-input" id="productColor2" name="productColor">
+                                  <label class="custom-control-label dot dot-xl" data-bg="#ddd" for="productColor2" style="background:#ddd"></label>
+                              </div>
+                          </li>
+                          <li>
+                              <div class="custom-control color-control border rounded-circle">
+                                  <input type="radio" class="custom-control-input" id="productColor3" name="productColor">
+                                  <label class="custom-control-label dot dot-xl" data-bg="#f4f4f4" for="productColor3" style="background:#f4f4f4"></label>
+                              </div>
+                          </li>
+                          <li>
+                              <div class="custom-control color-control border rounded-circle">
+                                  <input type="radio" class="custom-control-input" id="productColor4" name="productColor">
+                                  <label class="custom-control-label dot dot-xl" data-bg="#e9ebee" for="productColor4" style="background:#e9ebee"></label>
+                              </div>
+                          </li>
+                          <li>
+                              <div class="custom-control color-control border rounded-circle">
+                                  <input type="radio" class="custom-control-input" id="productColor5" name="productColor">
+                                  <label class="custom-control-label dot dot-xl" data-bg="#E1E4F2" for="productColor5" style="background:#E1E4F2"></label>
+                              </div>
+                          </li>
+                          <li>
+                              <div class="custom-control color-control border rounded-circle">
+                                  <input type="radio" class="custom-control-input" id="productColor6" name="productColor">
+                                  <label class="custom-control-label dot dot-xl" data-bg="#F4F4E4" for="productColor6" style="background:#F4F4E4"></label>
+                              </div>
+                          </li>
+                          <li>
+                              <div class="custom-control color-control border rounded-circle">
+                                  <input type="radio" class="custom-control-input" id="productColor7" name="productColor">
+                                  <label class="custom-control-label dot dot-xl" data-bg="#EAE4D3"  for="productColor7" style="background:#EAE4D3"></label>
+                              </div>
+                          </li>
+                          <li>
+                              <div class="custom-control color-control border rounded-circle">
+                                  <input type="radio" class="custom-control-input" id="productColor8" name="productColor">
+                                  <label class="custom-control-label dot dot-xl" data-bg="#FAFAC8" for="productColor8" style="background:#FAFAC8"></label>
+                              </div>
+                          </li>
+                          <li>
+                              <div class="custom-control color-control border rounded-circle">
+                                  <input type="radio" class="custom-control-input" id="productColor9" name="productColor">
+                                  <label class="custom-control-label dot dot-xl"  data-bg="#EFEFAB" for="productColor9" style="background:#EFEFAB"></label>
+                              </div>
+                          </li>
+                      
+                        </ul>
                       </div>
                   </div>
               </div>
@@ -181,11 +238,14 @@
                         </span>
                         <em class="icon ni ni-text2"></em>
                       </label>
-                      <div class="form-control-wrap">
-                        <input type="hidden" class="fontsize" id="change-fontsize" value=16>
+                      <div class="form-control-wrap number-spinner-wrap">
+                        {{-- <input type="hidden" class="fontsize" id="change-fontsize" value=16>
                         <button type="button" class="btn btn-primary size-increment">Tăng</button>
                         <button type="button" class="btn btn-info size-orig">Ban đầu</button>
-                        <button type="button" class="btn btn-secondary size-decrement">Giảm</button>
+                        <button type="button" class="btn btn-secondary size-decrement">Giảm</button> --}}
+                        <button class="btn btn-icon btn-outline-light number-spinner-btn number-minus size-decrement" data-number="minus"><em class="icon ni ni-minus"></em></button>
+                        <input type="number" class="form-control number-spinner fontsize" value="16" id="change-fontsize" step="1" min="10" max="30">
+                        <button class="btn btn-icon btn-outline-light number-spinner-btn number-plus size-increment" data-number="plus"><em class="icon ni ni-plus"></em></button>
                       </div>
                   </div>
               </div>
@@ -236,7 +296,9 @@
     
     $(function() {
 
+      
    
+
       if(readCookie('setting')){
         var setting = readCookie('setting');
         var color = setting.color;
@@ -244,17 +306,24 @@
         var lightheight = setting.lightheight;
         var currentFontSize = parseInt(setting.fontsize);
 
-        $(`#change-color option[value=${color}]`).attr('selected','selected');
+        // $(`#change-color option[value=${color}]`).attr('selected','selected');
+        $(`label[data-bg='${color}'`).parent().addClass('checked');
+        $(`label[data-bg='${color}'`).prev().attr('checked', true);
+
+
         $(`#change-font option[value=${font}]`).attr('selected','selected');
         $(`#change-lineheight option[value=${lightheight}]`).attr('selected','selected');
 
-        $("#divhtmlContent").css("background-color",'#'+color);
+        $("#divhtmlContent").css("background-color",color);
         $("#divhtmlContent").css("font-family",font);
         $("#divhtmlContent").css("line-height",lightheight+'px');
         $("#divhtmlContent").css("font-size",currentFontSize+'px');
         $(".fontsize").val(currentFontSize);
       }
-    
+      else{
+        $(`label[data-bg='#fff'`).prev().attr('checked', true);
+
+      }
 
   });
 
@@ -284,8 +353,9 @@
 
     $('#save-setting').click(function(){
 
+
       eraseCookie('setting');
-      var color = $('#change-color').val();
+      var color = $('.color-control.checked').find('label').data('bg');
       var font = $('#change-font').val();
       var lightheight = $('#change-lineheight').val();
       var currentFontSize = $(".fontsize").val();
@@ -304,28 +374,37 @@
                         showConfirmButton: false,
                         timer: 2500
           })
+
+
     })
 
-  $("#change-color").change(function(){ //2 step
-        var color = $(this).val();
-        $("#divhtmlContent").css("background-color",'#'+color);
-      });
+    $('.color-control').change(function(){
 
-      $("#change-font").change(function(){ //2 step
-        var font = $(this).val();
-        $("#divhtmlContent").css("font-family",font);
-      });
+      var color = $(this).find('label').data('bg');
+      $("#divhtmlContent").css("background-color",color);
+
+    })
+
+    // $("#change-color").change(function(){ //2 step
+    //       var color = $(this).val();
+    //       $("#divhtmlContent").css("background-color",'#'+color);
+    // });
+
+    $("#change-font").change(function(){ //2 step
+      var font = $(this).val();
+      $("#divhtmlContent").css("font-family",font);
+    });
 
 
-      $("#change-lineheight").change(function(){ //2 step
-        var lightheight = $(this).val();
-        $("#divhtmlContent").css("line-height",lightheight+'px');
-      });
+    $("#change-lineheight").change(function(){ //2 step
+      var lightheight = $(this).val();
+      $("#divhtmlContent").css("line-height",lightheight+'px');
+    });
 
-      $("#change-chapter").change(function(){ //2 step
-        var chapter_slug = $(this).val();  
-        $(location).prop('href', chapter_slug);
-      });
+    $("#change-chapter").change(function(){ //2 step
+      var chapter_slug = $(this).val();  
+      $(location).prop('href', chapter_slug);
+    });
 
 
       $(".size-increment").on("click", function(){
@@ -341,7 +420,6 @@
         }
           else{
             $("#divhtmlContent").css("font-size",(currentFontSize + 1) +'px');
-            $(".fontsize").val(currentFontSize + 1);
           }
 
       
@@ -367,7 +445,6 @@
           }
           else{
             $("#divhtmlContent").css("font-size",(currentFontSize - 1) +'px');
-            $(".fontsize").val(currentFontSize - 1);
           }
        
 

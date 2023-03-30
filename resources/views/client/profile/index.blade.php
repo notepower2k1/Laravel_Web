@@ -25,18 +25,26 @@
                         </div>
                         <div class="data-item">
                             <div class="data-col">
-                                <span class="data-label">Họ và tên</span>
+                                <span class="data-label">Tên tài khoản</span>
                                 <span class="data-value">{{Auth::user()->name}}</span>
                             </div>
                             <div class="data-col data-col-end"><span class="data-more disable"><em class="icon ni ni-lock-alt"></em></span></div>
 
                         </div><!-- data-item -->
-                        <div class="data-item" data-bs-toggle="modal" data-bs-target="#profile-edit">
+                        <div class="data-item">
                             <div class="data-col">
                                 <span class="data-label">Biệt danh</span>
                                 <span class="data-value">{{Auth::user()->profile->displayName}}</span>
                             </div>
-                            <div class="data-col data-col-end"><span class="data-more"><em class="icon ni ni-forward-ios"></em></span></div>
+                            @if($updateFlag)
+                            <div class="data-col data-col-end">
+                                <span class="data-more" data-bs-toggle="modal" data-bs-target="#profile-edit"><em class="icon ni ni-forward-ios"></em></span>
+                            </div>
+                            @else
+                            <div class="data-col data-col-end">
+                                <span class="data-more fail-update-btn"><em class="icon ni ni-forward-ios"></em></span>
+                            </div>
+                            @endif
                         </div><!-- data-item -->
                         <div class="data-item">
                             <div class="data-col">
@@ -45,7 +53,7 @@
                             </div>
                             <div class="data-col data-col-end"><span class="data-more disable"><em class="icon ni ni-lock-alt"></em></span></div>
                         </div><!-- data-item -->                                                                                                    
-                        <div class="data-item" data-bs-toggle="modal" data-bs-target="#profile-edit">
+                        <div class="data-item">
                             <div class="data-col">
                                 <span class="data-label">Giới tính</span>
                                 <span class="data-value">
@@ -63,7 +71,15 @@
                                 @endswitch
                                 </span>
                             </div>
-                            <div class="data-col data-col-end"><span class="data-more"><em class="icon ni ni-forward-ios"></em></span></div>
+                            @if($updateFlag)
+                            <div class="data-col data-col-end">
+                                <span class="data-more" data-bs-toggle="modal" data-bs-target="#profile-edit"><em class="icon ni ni-forward-ios"></em></span>
+                            </div>
+                            @else
+                            <div class="data-col data-col-end">
+                                <span class="data-more fail-update-btn"><em class="icon ni ni-forward-ios"></em></span>
+                            </div>
+                            @endif
                         </div><!-- data-item -->
                     </div><!-- data-list -->
                     <div class="nk-data data-list">
@@ -100,10 +116,24 @@
                                     <div class="dropdown-menu dropdown-menu-end">
                                         <ul class="link-list-opt no-bdr">
                                             <li>
-                                            <a data-bs-toggle="modal" data-bs-target="#profile-edit"><em class="icon ni ni-camera-fill"></em><span>Thay đổi thông tin</span></a>
+                                                @if($updateFlag)
+                                                <a href="#"data-bs-toggle="modal" data-bs-target="#profile-edit"><em class="icon ni ni-camera-fill"></em><span>Thay đổi ảnh</span></a>
+
+                                                @else
+                                                <a href="#" class="fail-update-btn" ><em class="icon ni ni-camera-fill"></em><span>Thay đổi ảnh</span></a>
+
+                                                @endif
 
                                             </li>
-                                            <li><a data-bs-toggle="modal" data-bs-target="#profile-edit"><em class="icon ni ni-edit-fill"></em><span>Thay đổi ảnh</span></a></li>
+                                            <li>
+                                                @if($updateFlag)
+                                                <a href="#" data-bs-toggle="modal" data-bs-target="#profile-edit"><em class="icon ni ni-edit-fill"></em><span>Thay đổi thông tin</span></a>
+
+                                                @else
+                                                <a href="#"  class="fail-update-btn" ><em class="icon ni ni-edit-fill"></em><span>Thay đổi thông tin</span></a>
+
+                                                @endif
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>
@@ -115,7 +145,15 @@
                         <ul class="link-list-menu">
                             <li><a class="active" href="/trang-ca-nhan"><em class="icon ni ni-user-fill-c"></em><span>Thông tin cá nhân</span></a></li>
                             <li><a href="html/user-profile-activity.html"><em class="icon ni ni-activity-round-fill"></em><span>Lịch sử hoạt động</span></a></li>
-                            <li><a href="/doi-mat-khau"><em class="icon ni ni-lock-alt-fill"></em><span>Cài đặt bảo mật</span></a></li>
+                            <li>
+                                @if($updateFlag)
+                                <a href="/doi-mat-khau"><em class="icon ni ni-lock-alt-fill"></em><span>Cài đặt bảo mật</span></a>
+
+                                @else
+                                <a href="#" class="fail-update-btn" ><em class="icon ni ni-lock-alt-fill"></em><span>Cài đặt bảo mật</span></a>
+
+                                @endif
+                            </li>
                         </ul>
                     </div><!-- .card-inner -->
                 </div><!-- .card-inner-group -->
@@ -241,6 +279,15 @@
 @section('additional-scripts')
 <script>
     
+    $('.fail-update-btn').click(function(){
+        Swal.fire({
+                    icon: 'info',
+                    title: `Bạn vừa cập nhật thông tin trong hôm nay, hãy đợi hôm sau!!!`,
+                    showConfirmButton: false,
+                    timer: 2500
+                });
+    })
+
     $('#btn-profile-edit').click(function(e){
         e.preventDefault();
 

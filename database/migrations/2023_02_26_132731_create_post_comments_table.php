@@ -22,7 +22,8 @@ return new class extends Migration
             $table->unsignedbigInteger('userID');
             $table->foreign('userID')
             ->references('id')->on('users')->onDelete('cascade');
-            $table->timestamp('deleted_at')->nullable();;
+            $table->timestamp('deleted_at')->nullable();
+            $table->integer('totalReplies');
             $table->timestamps();
         });
     }

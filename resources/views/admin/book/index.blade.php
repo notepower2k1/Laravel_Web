@@ -128,11 +128,12 @@
                                                                   <li><a href="#" class="delete-button" data-id="{{ $book->id }}" data-name="{{ $book->name }}">
                                                                     <em class="icon ni ni-trash"></em><span>Xóa</span>
                                                                   </a>
+                                                                  <li><a href="/admin/book/{{$book->id}}"><em class="icon ni ni-eye"></em><span>Chi tiết</span></a></li>
 
                                                                   </li>
                                                                   <li><a href="/admin/book/{{$book->id}}/edit"><em class="icon ni ni-edit"></em><span>Cập nhật</span></a></li>
                                                                   <li class="divider"></li>
-                                                                  <li><a href="/admin/book/chapter/{{$book->id}}"><em class="icon ni ni-eye"></em><span>Xem chương</span></a></li>
+                                                                  <li><a href="/admin/book/chapter/{{$book->id}}"><em class="icon ni ni-list-index"></em><span>Xem chương</span></a></li>
 
                                                               </ul>
                                                           </div>
@@ -186,11 +187,9 @@
         }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-            type:"DELETE",
-            url:'/admin/book/' + book_id,
+            type:"GET",
+            url:'/admin/book/customDelete/' + book_id,
             data : {
-              "id": book_id,
-              "_token": token,
             },
             })
             .done(function() {

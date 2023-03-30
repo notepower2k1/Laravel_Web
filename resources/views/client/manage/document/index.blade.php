@@ -27,7 +27,7 @@
                 </div>             
             </div>
       </div>
-      <div class="nk-fmg-quick-list nk-block">
+      <div class="nk-fmg-quick-list nk-block" style="min-height:100vh">
         <div class="card card-bordered card-preview">
           <div class="card-inner">
               <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false" data-export-title="Export">
@@ -105,16 +105,13 @@
                               <input type="checkbox" class="custom-control-input form-check-input" id="customSwitch1" data-id="{{ $book->id }}"
                               {{ $book->isPublic ? 'checked':'' }}>
                             </div> --}}
-  
-                            <input type="checkbox" 
-                            class="form-check-input"
-                            data-toggle="toggle" 
-                            data-onlabel="Công khai" 
-                            data-offlabel="Riêng tư" 
-                            data-size="sm"
-                            data-id="{{ $document->id }}"
-                            {{ $document->isPublic ? 'checked':'' }}   />
-  
+                            <div class="form-check form-switch">        
+                              <input type="checkbox" 
+                              class="form-check-input"
+                              role="switch"
+                              data-id="{{ $document->id }}"
+                              {{ $document->isPublic ? 'checked':'' }}   />
+                            </div>
                           </td>
                     
                           <td class="nk-tb-col nk-tb-col-tools">
@@ -142,10 +139,11 @@
                                                 <li><a href="#" class="delete-button" data-id="{{ $document->id }}" data-name="{{ $document->name }}">
                                                   <em class="icon ni ni-trash"></em><span>Xóa</span>
                                                 </a>
-  
-                                                </li>
+                                                </li>                                         
                                                 <li><a href="/quan-ly/cap-nhat-tai-lieu/{{$document->id}}"><em class="icon ni ni-edit"></em><span>Cập nhật</span></a></li>
-                                            
+                                                <li>
+                                                  <a href="/quan-ly/chi-tiet-tai-lieu/{{$document->id}}"><em class="icon ni ni-maximize-alt"></em><span>Chi tiết</span></a>
+                                                </li>
                                             </ul>
                                         </div>
                                     </div>
@@ -206,21 +204,20 @@
     var token = $("meta[name='csrf-token']").attr("content");
 
     Swal.fire({
-        title: "Bạn muốn xóa chương "+ name,
+        title: "Bạn muốn tài liệu "+ name,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Xóa chương',
+        confirmButtonText: 'Xóa tài liệu',
         cancelButtonText: 'Không'
         }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-            type:"DELETE",
-            url:'/quan-ly/tai-lieu/' + document_id,
+            type:"GET",
+            url:'/quan-ly/tai-lieu/customDelete/' + document_id,
             data : {
-              "id": document_id,
-              "_token": token,
+    
             },
             })
             .done(function() {

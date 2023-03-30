@@ -13,10 +13,10 @@ class DocumentComment extends Model
     public  $timestamps = true;
     public $incrementing = false;
 
-    protected $fillable = ['documentID','userID','content'];
+    protected $fillable = ['documentID','userID','content','totalReplies'];
 
     public function documents() {
-        return $this->belongsTo(Book::class,'documentID','id');
+        return $this->belongsTo(Document::class,'documentID','id');
     }
 
     public function users() {

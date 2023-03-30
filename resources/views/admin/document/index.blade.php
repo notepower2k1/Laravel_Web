@@ -123,6 +123,7 @@
                                                                   <li><a href="#" class="delete-button" data-id="{{ $document->id }}" data-name="{{ $document->name }}">
                                                                     <em class="icon ni ni-trash"></em><span>Xóa</span>
                                                                   </a>
+                                                                  <li><a href="/admin/document/{{$book->id}}"><em class="icon ni ni-eye"></em><span>Chi tiết</span></a></li>
 
                                                                   </li>
                                                                   <li><a href="/admin/document/{{$document->id}}/edit"><em class="icon ni ni-edit"></em><span>Cập nhật</span></a></li>
@@ -198,11 +199,9 @@
           if (result.isConfirmed) {
             
             $.ajax({
-              type:"DELETE",
-              url:'/admin/document/' + document_id,
+              type:"GET",
+              url:'/admin/document/customDelete/' + document_id,
               data : {
-                "id": document_id,
-                "_token": token,
               },
               })
               .done(function() {

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -51,5 +52,22 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+
+    public function login(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'password' => 'required',
+        ]);
+     
+        $credentials = $request->only('name', 'password');
+
+        if (Auth::attempt($credentials)) {
+            $this->authenticated();
+        }
+    
+        return redirect("login")->withSuccess('Oppes! You have entered invalid credentials');
     }
 }

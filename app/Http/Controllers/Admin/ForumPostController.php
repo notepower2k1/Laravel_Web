@@ -19,7 +19,7 @@ class ForumPostController extends Controller
     }
     public function index()
     {
-        $forum_posts = ForumPosts::all();
+        $forum_posts = ForumPosts::where('deleted_at','=',null)->get();
 
         return view('admin.forum_post.index')
         ->with('forum_posts',$forum_posts);
@@ -188,18 +188,24 @@ class ForumPostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {   
-        $forum_post = ForumPosts::findOrFail($id);
+    // public function destroy($id)
+    // {   
+    //     $forum_post = ForumPosts::findOrFail($id);
 
-        $forum = Forum::findOrFail($forum_post->forumID);
-        $forum->numberOfPosts =$forum->numberOfPosts - 1 ;
-        $forum ->save();
+    //     $forum = Forum::findOrFail($forum_post->forumID);
+    //     $forum->numberOfPosts =$forum->numberOfPosts - 1 ;
+    //     $forum ->save();
         
     
-        $forum_post->delete();
-        return response()->json([
-            'success' => 'Record deleted successfully!'
-        ]); 
-    }
+    //     $forum_post->delete();
+    //     return response()->json([
+    //         'success' => 'Record deleted successfully!'
+    //     ]); 
+    // }
+
+    public function customDelete($post_id){
+        $forum_post = ForumPosts::findOrFail($post_id);
+        $forum_post->deleted_at = Carbon::now()->toDateTimeString();
+        $forum_post ->save();
+    }   
 }

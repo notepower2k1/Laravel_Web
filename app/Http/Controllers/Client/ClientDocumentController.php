@@ -41,7 +41,7 @@ class ClientDocumentController extends Controller
     public function index()
     {
       
-        $documents = Document::where('userCreatedID','=',Auth::user()->id)->get();
+        $documents = Document::where('userCreatedID','=',Auth::user()->id)->where('deleted_at','=',null)->where('status','=',1)->get();
        
         return view('client.manage.document.index')->with('documents', $documents);
     }
@@ -126,7 +126,11 @@ class ClientDocumentController extends Controller
             'extension' =>  $request->file_document->extension(),
             'isCompleted' => 0,
             'totalDownloading'=>0,
-            'numberOfPages' => $numberOfPages
+            'numberOfPages' => $numberOfPages,
+            'totalComments' => 0,
+            'status' =>0
+
+
 
         ]);
         $document->save();
@@ -164,10 +168,10 @@ class ClientDocumentController extends Controller
      */
     public function show($id) //like "show details"
     {
-        // $book = Book::findOrFail($id);
+        $document = Document::findOrFail($id);
 
-        // return view('admin.book.detail')
-        // ->with('book',$book);
+        return view('client.manage.document.detail')
+        ->with('document',$document);
         
     }
 
@@ -312,15 +316,21 @@ class ClientDocumentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        $document = Document::findOrFail($id);
-        $document->delete();
+    // public function destroy($id)
+    // {
+    //     $document = Document::findOrFail($id);
+    //     $document->delete();
 
-        return response()->json([
-            'success' => 'Record deleted successfully!'
-        ]);
-    }
+    //     return response()->json([
+    //         'success' => 'Record deleted successfully!'
+    //     ]);
+    // }
+
+    public function customDelete($document_id){
+        $document = Document::findOrFail($document_id);
+        $document->deleted_at = Carbon::now()->toDateTimeString();
+        $document ->save();
+    }   
 
     public function changeDocumentStatus(Request $request){
         $document = Document::findOrFail($request->id);

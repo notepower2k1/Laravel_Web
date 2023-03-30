@@ -28,14 +28,18 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         
+            view()->composer('client.layouts.header', function ($view) {
 
-        view()->composer('client.layouts.header', function ($view) {
-
-            $notifications = Notification::where('userID','=',Auth::user()->id)->where('status','=',1)->get();
-            $bookMark_notifications = bookMark::where('userID','=',Auth::user()->id)->where('status','=',1)->get();
-            $view
-            ->with('bookMark_notifications',$bookMark_notifications);
-        });
+                if(Auth::check()){
+                    $notifications = Notification::where('userID','=',Auth::user()->id)->where('status','=',1)->get();
+                
+                    $bookMark_notifications = bookMark::where('userID','=',Auth::user()->id)->where('status','=',1)->get();
+                    $view->with('bookMark_notifications',$bookMark_notifications);
+                }
+              
+            });
+        
+    
      
     }
 }
