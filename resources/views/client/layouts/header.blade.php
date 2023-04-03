@@ -91,12 +91,12 @@
                     <div class="dropdown-menu dropdown-menu-xl dropdown-menu-end dropdown-menu-s1">
                         <div class="dropdown-head">
                             <span class="sub-title nk-dropdown-title">Sách theo dõi</span>
-                            <button class="btn btn-info" id="mark_all_notifications">Đánh dấu đã đọc hết</button>
+                            <button class="btn btn-info" id="mark_all_bookMark_notifications">Đánh dấu đã đọc hết</button>
                         </div>
                         <div class="dropdown-body">
                             <div class="nk-notification">
                                 @foreach ($bookMark_notifications as  $bookMark_notification)
-                                    <div class="nk-notification-item dropdown-inner" data-id="{{ $bookMark_notification->id }}" style="cursor: pointer;">
+                                    <div class="nk-notification-item bookMark-notifications dropdown-inner" data-id="{{ $bookMark_notification->id }}" style="cursor: pointer;">
                                         <div class="nk-notification-icon">
                                             <em class="icon icon-circle bg-warning-dim ni ni-curve-down-right"></em>
                                         </div>
@@ -116,51 +116,7 @@
                                     </div>
                                 @endforeach
                             
-                                {{-- <div class="nk-notification-item dropdown-inner">
-                                    <div class="nk-notification-icon">
-                                        <em class="icon icon-circle bg-success-dim ni ni-curve-down-left"></em>
-                                    </div>
-                                    <div class="nk-notification-content">
-                                        <div class="nk-notification-text">Your <span>Deposit Order</span> is placed</div>
-                                        <div class="nk-notification-time">2 hrs ago</div>
-                                    </div>
-                                </div>
-                                <div class="nk-notification-item dropdown-inner">
-                                    <div class="nk-notification-icon">
-                                        <em class="icon icon-circle bg-warning-dim ni ni-curve-down-right"></em>
-                                    </div>
-                                    <div class="nk-notification-content">
-                                        <div class="nk-notification-text">You have requested to <span>Widthdrawl</span></div>
-                                        <div class="nk-notification-time">2 hrs ago</div>
-                                    </div>
-                                </div>
-                                <div class="nk-notification-item dropdown-inner">
-                                    <div class="nk-notification-icon">
-                                        <em class="icon icon-circle bg-success-dim ni ni-curve-down-left"></em>
-                                    </div>
-                                    <div class="nk-notification-content">
-                                        <div class="nk-notification-text">Your <span>Deposit Order</span> is placed</div>
-                                        <div class="nk-notification-time">2 hrs ago</div>
-                                    </div>
-                                </div>
-                                <div class="nk-notification-item dropdown-inner">
-                                    <div class="nk-notification-icon">
-                                        <em class="icon icon-circle bg-warning-dim ni ni-curve-down-right"></em>
-                                    </div>
-                                    <div class="nk-notification-content">
-                                        <div class="nk-notification-text">You have requested to <span>Widthdrawl</span></div>
-                                        <div class="nk-notification-time">2 hrs ago</div>
-                                    </div>
-                                </div>
-                                <div class="nk-notification-item dropdown-inner">
-                                    <div class="nk-notification-icon">
-                                        <em class="icon icon-circle bg-success-dim ni ni-curve-down-left"></em>
-                                    </div>
-                                    <div class="nk-notification-content">
-                                        <div class="nk-notification-text">Your <span>Deposit Order</span> is placed</div>
-                                        <div class="nk-notification-time">2 hrs ago</div>
-                                    </div>
-                                </div> --}}
+                               
                             </div><!-- .nk-notification -->
                         </div><!-- .nk-dropdown-body -->
                         <div class="dropdown-foot center">
@@ -168,7 +124,120 @@
                         </div>
                     </div>
                 </li><!-- .dropdown -->
-                   
+                
+                <li class="dropdown notification-2-dropdown" id="comment_notifications_box">
+                    <a href="#" class="dropdown-toggle nk-quick-nav-icon" data-bs-toggle="dropdown">
+                        @if($comment_notifications->isEmpty())
+                        <em class="icon ni ni-bell"></em>
+                        @else
+                        <div class="icon-status icon-status-info"><em class="icon ni ni-bell"></em></div>
+                        @endif  
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-xl dropdown-menu-end dropdown-menu-s1">
+                        <div class="dropdown-head">
+                            <span class="sub-title nk-dropdown-title">Thông báo</span>
+                            <button class="btn btn-info" id="mark_all_comment_notifications">Đánh dấu đã đọc hết</button>
+                        </div>
+                        <div class="dropdown-body">
+                            <div class="nk-notification">
+                                @foreach ($comment_notifications as  $comment_notification)
+                                    <div class="nk-notification-item comment-notifications dropdown-inner" data-id="{{ $comment_notification->id }}" style="cursor: pointer;">
+                                        <div class="nk-notification-icon">
+                                            @switch($comment_notification->type_id)
+                                            @case(1)
+                                            <em class="icon icon-circle bg-success-dim ni ni-book"></em>
+                                            @break
+        
+                                            @case(2)
+                                            <em class="icon icon-circle bg-secondary-dim ni ni-file-docs"></em>
+                                            @break
+
+                                            @case(3)
+                                            <em class="icon icon-circle bg-info-dim ni ni-list-fill"></em>
+                                            @break
+
+                                            @case(4)
+                                            <em class="icon icon-circle bg-success-dim ni ni-reply"></em>
+                                            @break
+
+                                            @case(5)
+                                            <em class="icon icon-circle bg-secondary-dim ni ni-reply"></em>
+                                            @break
+
+                                            @case(5)
+                                            <em class="icon icon-circle bg-info-dim ni ni-reply"></em>
+                                            @break
+                                        @default
+                                            Lỗi thông báo
+                                        @endswitch
+                                        </div>
+                                        <div class="nk-notification-content">
+                                            <div class="nk-notification-text">
+                                                <strong>{{ $comment_notification->senders->profile->displayName }}</strong>
+                                                @switch($comment_notification->type_id)
+                                                    @case(1)
+                                                    vừa bình luận về sách
+                                                    <strong>
+                                                        {{ $comment_notification->identifier->name }}
+                                                    </strong>
+                                                    của bạn
+                                                    @break
+                
+                                                    @case(2)
+                                                    vừa bình luận về tài liệu
+                                                    <strong>
+                                                        {{ $comment_notification->identifier->name }}
+                                                    </strong>
+                                                    của bạn
+
+                                                    @break
+
+                                                    @case(3)
+                                                    vừa bình luận về bài viết
+                                                    <strong>
+                                                    {{ $comment_notification->identifier->topic }}
+                                                    </strong>
+                                                    của bạn
+                                                    @break
+
+                                                    @case(4)
+                                                    vừa trả lời bình luận của bạn trong sách
+                                                    <strong>
+                                                    {{ $comment_notification->identifier->books->name }}
+                                                    </strong>
+                                                    @break
+
+                                                    @case(5)
+                                                    vừa trả lời bình luận của bạn tài liệu
+                                                    <strong>
+                                                    {{ $comment_notification->identifier->documents->name }}
+                                                    </strong>
+                                                    @break
+
+                                                    @case(5)
+                                                    vừa trả lời bình luận của bạn trong bài viết
+                                                    <strong>
+                                                    {{ $comment_notification->identifier->posts->name }}
+                                                    </strong>
+                                                    @break
+                                                @default
+                                                    Lỗi thông báo
+                                                @endswitch
+                                            </div>  
+                                            <div class="nk-notification-time">
+                                                {{ $comment_notification->time }}
+                                            </div>  
+                                        </div>
+                                    </div>
+                                @endforeach
+                            
+                              
+                            </div><!-- .nk-notification -->
+                        </div><!-- .nk-dropdown-body -->
+                       
+                    </div>
+                </li><!-- .dropdown -->
+
                 <li class="dropdown user-dropdown">
                     <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
                         <div class="user-toggle">
@@ -198,13 +267,13 @@
                                 <li><a href="/trang-ca-nhan"><em class="icon ni ni-user-alt"></em><span>Trang cá nhân</span></a></li>
                                 <li>
                                     @if(Auth::user()->role == 1)
-                                    <a href="/admin/dashboard"><em class="icon ni ni-setting-alt"></em><span>Trang quản lý</span></a>
+                                    <a href="/admin/dashboard"><em class="icon ni ni-activity-alt"></em><span>Trang quản lý</span></a>
                                     @else
-                                    <a href="/quan-ly"><em class="icon ni ni-setting-alt"></em><span>Trang quản lý</span></a>
+                                    <a href="/quan-ly"><em class="icon ni ni-activity-alt"></em><span>Trang quản lý</span></a>
                                     @endif
                                 </li>
-                                <li><a href="/them-tai-lieu"><em class="icon ni ni-activity-alt"></em><span>Đăng tài liệu</span></a></li>
-                                <li><a href="/sach-theo-doi"><em class="icon ni ni-bookmark"></em><span>Bookmark</span></a></li>
+                                <li><a href="/them-tai-lieu"><em class="icon ni ni-plus"></em><span>Đăng tài liệu</span></a></li>
+                                <li><a href="/sach-theo-doi"><em class="icon ni ni-bookmark"></em><span>Sách theo dõi</span></a></li>
                                 {{-- <li><a class="dark-switch" href="#"><em class="icon ni ni-moon"></em><span>Chế độ ban đêm</span></a></li> --}}
                             </ul>
                         </div>

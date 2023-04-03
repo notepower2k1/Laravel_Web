@@ -90,7 +90,9 @@
                                                     @if($book->numberOfChapter === 0)
                                                         <a class="btn btn-xl btn-primary disabled"><em class="icon ni ni-arrow-right-circle"></em><span>Đọc ngay</span></a>
                                                     @else
-                                                        <a href="/doc-sach/{{$book->slug}}/{{ $chapters->first()->slug }}" class="btn btn-xl btn-primary"><em class="icon ni ni-arrow-right-circle"></em><span>Đọc ngay</span></a>
+                                                        <a href="/doc-sach/{{$book->slug}}/{{ $chapters->first()->slug }}" class="btn btn-xl btn-primary">
+                                                            <em class="icon ni ni-arrow-right-circle"></em><span>Đọc ngay</span>
+                                                        </a>
                                                     @endif
                                                 </li>
                                                 <li class="ms-n1">
@@ -128,10 +130,11 @@
                                     <div class="product-details entry me-xxl-3">
                                         <hr class="hr">
                                         <h3>Danh sách chương</h3>
-                                        <div class="list-group mt-3">                            
-                                                @foreach ($chapters as $chapter)                              
-                                                <a href="/doc-sach/{{$book->slug}}/{{ $chapter->slug }}" class="list-group-item list-group-item-action">                                           
+                                        <div class="list-group mt-3" id="chapter_list">                            
+                                                @foreach ($chapters as $chapter)                         
+                                                <a href="/doc-sach/{{ $chapter->books->slug }}/{{ $chapter->slug }}" class="list-group-item list-group-item-action" data-id="{{ $chapter->id }}">                                           
                                                     {{$chapter->code}}
+
                                                     @if($chapter->name)
                                                     <span>: {{ $chapter->name }}</span>
                                                     @else
@@ -192,29 +195,29 @@
                                                                         </p>
                                                                     </div>
                                                                 </div>
-                                                                @if(Auth::check() && Auth::user()->id == $comment->users->id)
 
                                                                 <div class="bg-white">
                                                                     <div class="d-flex flex-row fs-12">
                                                                         <button class="btn btn-outline-light create-reply-btn" data-id={{ $comment->id }}>
                                                                             <em class="icon ni ni-comments"></em>
                                                                         </button>
+                                                                        @if(Auth::check() && Auth::user()->id == $comment->users->id)
+
                                                                         <button class="btn btn-outline-light delete-comment-btn" data-id={{ $comment->id }}>
                                                                             <em class="icon ni ni-trash"></em>
                                                                         </button>
-                                                                        {{-- <button class="btn btn-icon edit-comment-btn" data-id={{ $comment->id }}>
-                                                                            <em class="icon ni ni-edit"></em>
-                                                                        </button> --}}
+                                                                        
                                                                         <div class="custom-control custom-checkbox custom-control-pro custom-control-pro-icon no-control">
                                                                             <input type="checkbox" class="custom-control-input edit-comment-btn" name="edit-comment-btn" id="edit-comment-btn-{{ $comment->id }}" value={{ $comment->id }}>
                                                                             <label class="custom-control-label" name="edit-comment-btn" for="edit-comment-btn-{{ $comment->id }}"><em class="icon ni ni-edit"></em></label>
                                                                         </div>
+                                                                        @endif
+
                                                                     </div>
                                                                    
                                                                            
                                                                     </ul>
                                                                 </div>
-                                                                @endif
                                                             </div> 
                                                             @foreach ($comment->replies as $reply)
                                                             @if(is_null($reply->deleted_at))
@@ -475,7 +478,30 @@
         document.getElementById('divhtmlContent').innerHTML =
         marked.parse(value);
 
+        var chapter = {!! $book->numberOfChapter  !!}
 
+        if(chapter > 0){
+            if(readCookie('readingLog')){
+
+            var log = readCookie('readingLog');
+            const current_book_id = {!! $book->id !!}
+            objIndex = log.findIndex((obj => obj.book_id == current_book_id));
+
+            if(objIndex >= 0){
+                log[objIndex].chapter_id.forEach(element => {
+                var buttonChapters = $('#chapter_list').find(`a[data-id='${element}']`);
+                
+                buttonChapters.each(function (i,item) {
+                    $(item).css("background-color", "#dbd7d3");
+                })
+
+
+                });
+            }
+          
+            }
+        }
+       
         $('#comment-btn').attr('disabled', true);
     
        
@@ -574,6 +600,7 @@
                         timer: 2500
                     });      
 
+                $("#comment_area").val('');
                 $("#comment-box").load(" #comment-box > *");
             })
             .fail(function(jqXHR, textStatus, errorThrown) {
@@ -941,5 +968,32 @@
 
     })
 
+    function createCookie(name, value, days) {
+        var expires;
+
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toGMTString();
+        } else {
+            expires = "";
+        }
+        document.cookie = encodeURIComponent(name) + "=" + JSON.stringify(value) + expires + "; path=/";
+    }
+
+    function readCookie(name) {
+      var result = document.cookie.match(new RegExp(name + '=([^;]+)'));
+      result && (result = JSON.parse(result[1]));
+      return result;
+    }
+
+    function eraseCookie(name) {
+        createCookie(name, "", -1);
+    }
+
+   
+
+
+   
 </script>
 @endsection

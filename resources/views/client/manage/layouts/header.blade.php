@@ -60,7 +60,7 @@
                                     <a href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
-                                        <em class="icon ni ni-signout"></em><span>Đăng xuấtt</span>
+                                        <em class="icon ni ni-signout"></em><span>Đăng xuất</span>
                                     </a>
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">

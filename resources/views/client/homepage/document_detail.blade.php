@@ -163,13 +163,14 @@
                                                                     </p>
                                                                 </div>
                                                             </div>
-                                                            @if(Auth::check() && Auth::user()->id == $comment->users->id)
 
                                                             <div class="bg-white">
                                                                 <div class="d-flex flex-row fs-12">
                                                                     <button class="btn btn-outline-light create-reply-btn" data-id={{ $comment->id }}>
                                                                         <em class="icon ni ni-comments"></em>
                                                                     </button>
+                                                                    @if(Auth::check() && Auth::user()->id == $comment->users->id)
+
                                                                     <button class="btn btn-outline-light delete-comment-btn" data-id={{ $comment->id }}>
                                                                         <em class="icon ni ni-trash"></em>
                                                                     </button>
@@ -180,13 +181,13 @@
                                                                         <input type="checkbox" class="custom-control-input edit-comment-btn" name="edit-comment-btn" id="edit-comment-btn-{{ $comment->id }}" value={{ $comment->id }}>
                                                                         <label class="custom-control-label" name="edit-comment-btn" for="edit-comment-btn-{{ $comment->id }}"><em class="icon ni ni-edit"></em></label>
                                                                     </div>
+                                                                    @endif
                                                                 </div>
                                                                
                                                                        
                                                                 </ul>
                                                             
                                                             </div>
-                                                            @endif
                                                         </div> 
                                                         @foreach ($comment->replies as $reply)
                                                         @if(is_null($reply->deleted_at))
@@ -514,6 +515,7 @@
                         showConfirmButton: false,
                         timer: 2500
                     });      
+                $("#comment_area").val('');
 
                 $("#comment-box").load(" #comment-box > *");
             })

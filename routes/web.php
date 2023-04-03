@@ -67,7 +67,9 @@ Route::get("/the-loai/{option?}/{type_slug?}",[PagesController::class,'search_ty
 Route::get("/the-loai-ket-qua",[PagesController::class,'search_type_result']);
 
 Route::get("/dien-dan",[PagesController::class,'forum_home_page']);
-Route::get("/dien-dan/{forum_slug}",[PagesController::class,'forum_detail']);
+Route::get("/dien-dan/{forum_slug}/",[PagesController::class,'forum_detail']);
+Route::get("/dien-dan/{forum_slug}/all/{type_slug?}",[PagesController::class,'forum_detail_filter']);
+
 Route::get("/dien-dan/{forum_slug}/{post_slug}/{post_id}",[PagesController::class,'post_detail']);
 
 Route::get("/thanh-vien/{user_id}",[ProfileController::class,'user_info']);
@@ -100,6 +102,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
     Route::get('/dashboard',[DashboardController::class,'index']);
     //All the routes that belongs to the group goes here
     Route::resource("/book",BookController::class,['except' => ['destroy']]);
+    Route::get("/book/statistics/{year?}",[BookController::class,'statistics_book_page']);
+
     Route::get("/customDelete/{book_id}",[BookController::class,'customDelete']);
     Route::get("/book/update/changeStatus",[BookController::class,'changeBookStatus']);
     

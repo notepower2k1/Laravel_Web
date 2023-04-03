@@ -1,27 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-
-<style>
-  
-    #text {
-  display: block;
-  line-height: 1.75;
-}
-
-mark {
-  color: #000;
-  background-color: #f4d03f;
-}
-</style>
-<body>
-    
-    @extends('client/layouts.app')
+@extends('client/layouts.app')
 
 @section('additional-style')
 @endsection
@@ -295,6 +272,54 @@ mark {
 
                
             }
+
+              const current_book_id = {!! $chapter->books->id !!}
+              var chapter_id =  {!! $chapter->id !!}
+              var log = readCookie('readingLog');
+              //update cookie
+              if(log){             
+                  objIndex = log.findIndex((obj => obj.book_id == current_book_id));
+                  //book exist
+                  if(objIndex > -1){
+                      var currentChapterList = log[objIndex].chapter_id;
+                      if(currentChapterList.includes(chapter_id)){
+
+                      }
+                      else{
+                          const updateChapterList = [...currentChapterList,chapter_id]
+                          log[objIndex].chapter_id = updateChapterList;
+
+                          createCookie('readingLog',log);
+                      }
+                      
+                  }
+                  //book not exist
+                  else{
+                      var chapter_list = [];
+                      chapter_list.push(chapter_id);
+
+                      var reading_object = {
+                      'book_id' : current_book_id,
+                      'chapter_id' : chapter_list        
+                      };       
+                      const updateLog = [...log,reading_object]
+                      createCookie('readingLog',updateLog);
+
+                  }        
+              }
+              //create new cookie
+              else{
+                  var chapter_list = [];
+                  chapter_list.push(chapter_id);
+                  var reading_object = {
+                  'book_id' : current_book_id,
+                  'chapter_id' : chapter_list        
+                  };            
+                  var reading_log = [];
+                  reading_log.push(reading_object);
+                  createCookie('readingLog',reading_log);
+
+              }
         })
 
         $(document).on('change','#change-chapter',function(){ //2 step

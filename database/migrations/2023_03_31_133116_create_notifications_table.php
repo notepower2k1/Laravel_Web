@@ -13,15 +13,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('reports', function (Blueprint $table) {
+        Schema::create('notifications', function (Blueprint $table) {
             $table->increments('id');
-            $table->text('description');
             $table->unsignedInteger('identifier_id');
             $table->unsignedInteger('type_id');
             $table->foreign('type_id')
-            ->references('id')->on('report_types')->onDelete('cascade');
-            $table->unsignedbigInteger('userID');
-            $table->foreign('userID')
+            ->references('id')->on('notification_types')->onDelete('cascade');
+            $table->unsignedbigInteger('senderID');
+            $table->foreign('senderID')
+            ->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedbigInteger('receiverID');
+            $table->foreign('receiverID')
             ->references('id')->on('users')->onDelete('cascade');
             $table->boolean('status')->default('0');
             $table->timestamp('deleted_at')->nullable();;
@@ -36,6 +38,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('reports');
+        Schema::dropIfExists('notifications');
     }
 };

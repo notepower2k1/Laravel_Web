@@ -30,11 +30,14 @@ class AppServiceProvider extends ServiceProvider
         
             view()->composer('client.layouts.header', function ($view) {
 
-                if(Auth::check()){
-                    $notifications = Notification::where('userID','=',Auth::user()->id)->where('status','=',1)->get();
-                
+                if(Auth::check()){   
+
                     $bookMark_notifications = bookMark::where('userID','=',Auth::user()->id)->where('status','=',1)->get();
                     $view->with('bookMark_notifications',$bookMark_notifications);
+
+                    $comment_notifications = Notification::where('receiverID','=',Auth::user()->id)->where('status','=',1)->get();
+                    $view->with('comment_notifications',$comment_notifications);
+
                 }
               
             });

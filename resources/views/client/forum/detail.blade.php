@@ -21,9 +21,14 @@
                                         <a href="#" class="dropdown-toggle btn btn-white btn-dim btn-outline-light" data-bs-toggle="dropdown"><em class="d-none d-sm-inline icon ni ni-filter-alt"></em><span>Lọc bài viết</span><em class="dd-indc icon ni ni-chevron-right"></em></a>
                                         <div class="dropdown-menu dropdown-menu-end">
                                             <ul class="link-list-opt no-bdr">
-                                                <li><a href="#"><span>Lượt bình luận nhiều nhất</span></a></li>
-                                                <li><a href="#"><span>Bài đăng cũ nhất</span></a></li>
-                                                <li><a href="#"><span>Bài đăng của bạn</span></a></li>
+                                                <li><a href="/dien-dan/{{ $forum->slug }}"><span>Mặc định</span></a></li>
+                                                <li><a href="/dien-dan/{{ $forum->slug }}/all/luot-binh-luan-nhieu-nhat"><span>Lượt bình luận nhiều nhất</span></a></li>
+                                                <li><a href="/dien-dan/{{ $forum->slug }}/all/bai-dang-cu-nhat"><span>Bài đăng cũ nhất</span></a></li>
+
+                                                @if (Auth::check())
+                                                <li><a href="/dien-dan/{{ $forum->slug }}/all/bai-dang-cua-ban"><span>Bài đăng của bạn</span></a></li>
+
+                                                @endif
                                             </ul>
                                         </div>
                                     </div>
@@ -85,7 +90,7 @@
                                     <a href="/dien-dan/{{ $post->forums->slug }}/{{ $post->slug }}/{{ $post->id }}">{{$post->topic }}</a>
                                 </div>
                                 <div class="project-meta">
-                                    <span class="badge badge-dim bg-info"><em class="icon ni ni-comments"></em><span>10</span></span>
+                                    <span class="badge badge-dim bg-info"><em class="icon ni ni-comments"></em><span>{{ $post->totalComments }}</span></span>
     
                                     <span class="badge badge-dim bg-success"><em class="icon ni ni-clock"></em><span>{{ $post->time }}</span></span>
                                 </div>
@@ -96,6 +101,10 @@
     
                 
                 @endforeach
+                <div class="col-md-12">                          
+
+                    {{ $forums_posts->links('vendor.pagination.custom',['elements' => $forums_posts]) }}
+                </div>
                 </div>
             </div>
             <div class="col-lg-4">

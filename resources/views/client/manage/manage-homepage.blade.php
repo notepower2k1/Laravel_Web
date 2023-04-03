@@ -215,7 +215,10 @@
                 </div>
             </div><!-- .nk-block-head -->
             <div class="tab-content">
+
                 <div class="tab-pane active" id="file-grid-view">
+                    @if($high_reading_book)
+
                     <div class="nk-files nk-files-view-grid">                 
                         <div class="card card-bordered">
                             <div class="card-inner">
@@ -269,8 +272,16 @@
                             </div>
                         </div>
                     </div><!-- .nk-files -->
+                    @else
+                    <p>Bạn chưa đăng sách nào</p>
+                    @endif
+
                 </div><!-- .tab-pane -->
+              
+
                 <div class="tab-pane" id="file-group-view">
+                    @if($high_downloading_document)
+
                     <div class="nk-files nk-files-view-group">
                         <div class="card card-bordered">
                             <div class="card-inner">
@@ -323,8 +334,12 @@
                         </div>
                       
                     </div><!-- .nk-files -->
+                    @else
+                    <p>Bạn chưa đăng tài liệu nào</p>
+
+                    @endif
                 </div><!-- .tab-pane -->
-             
+                
             </div><!-- .tab-content -->
         </div><!-- .nk-block -->
     </div><!-- .nk-fmg-body-content -->

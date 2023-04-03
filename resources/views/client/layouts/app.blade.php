@@ -61,7 +61,7 @@
     @yield('additional-scripts')
 
     <script>
-        $(document).on('click','#mark_all_notifications',function(){
+        $(document).on('click','#mark_all_bookMark_notifications',function(){
     
             $.ajax({
                 url:'/bookmark-status-all-update',
@@ -87,12 +87,60 @@
             });    
         })
 
-        $('.nk-notification-item').click(function(){
+        $('.bookMark-notifications').click(function(){
 
             var id = $(this).data('id');
 
             $.ajax({
                 url:'/bookmark-status-update',
+                type:"GET",
+                data:{          
+                    'id':id
+                }
+            })
+            .done(function(res) {
+                
+                window.location.href = res.url;
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            console.log(textStatus + ': ' + errorThrown);
+            });    
+        })
+
+
+        $(document).on('click','#mark_all_comment_notifications',function(){
+    
+            $.ajax({
+                url:'/notification-all-update',
+                type:"GET",
+                data:{            
+                }
+            })
+            .done(function(res) {
+                
+            
+                Swal.fire({
+                        icon: 'success',
+                        title: `${res.success}`,
+                        showConfirmButton: false,
+                        timer: 2500
+                    });      
+
+                $("#comment_notifications_box").load(" #comment_notifications_box > *");
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            console.log(textStatus + ': ' + errorThrown);
+            });    
+        })
+
+        $('.comment-notifications').click(function(){
+
+            var id = $(this).data('id');
+
+            $.ajax({
+                url:'/notification-update',
                 type:"GET",
                 data:{          
                     'id':id

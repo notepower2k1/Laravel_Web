@@ -10,8 +10,8 @@ use App\Models\BookType;
 use App\Models\Chapter;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
-use App\Http\Requests\CreateValidationRequest;
 
 class BookController extends Controller
 {
@@ -242,4 +242,55 @@ class BookController extends Controller
         $book ->save();
     }
 
-}
+
+    public function statistics_book_page($year = null){
+        DB::statement("SET SQL_MODE=''");
+            
+        $allYears = DB::select("SELECT distinct year(books.created_at) as 'year'
+        from books");
+
+        $totalByTypes = DB::select("SELECT Count(books.id) as 'total', book_types.name 
+        from books join book_types on books.type_id = book_types.id 
+        GROUP by book_types.name");
+
+        
+        if($year == null){
+
+            $year = Carbon::now()->year;
+        }
+        $totalBooksPerMonth = DB::select("SELECT 
+            SUM(IF(month = 'Jan', total, 0)) AS 'Tháng 1', 
+            SUM(IF(month = 'Feb', total, 0)) AS 'Tháng 2', 
+            SUM(IF(month = 'Mar', total, 0)) AS 'Tháng 3', 
+            SUM(IF(month = 'Apr', total, 0)) AS 'Tháng 4', 
+            SUM(IF(month = 'May', total, 0)) AS 'Tháng 5', 
+            SUM(IF(month = 'Jun', total, 0)) AS 'Tháng 6', 
+            SUM(IF(month = 'Jul', total, 0)) AS 'Tháng 7', 
+            SUM(IF(month = 'Aug', total, 0)) AS 'Tháng 8', 
+            SUM(IF(month = 'Sep', total, 0)) AS 'Tháng 9', 
+            SUM(IF(month = 'Oct', total, 0)) AS 'Tháng 10', 
+            SUM(IF(month = 'Nov', total, 0)) AS 'Tháng 11', 
+            SUM(IF(month = 'Dec', total, 0)) AS 'Tháng 12' 
+            FROM ( 
+                SELECT DATE_FORMAT(books.created_at, '%b') AS month, 
+                COUNT(books.id) as total FROM books WHERE Year(books.created_at) = $year GROUP BY DATE_FORMAT(books.created_at, '%m-%Y')
+        ) as sub");
+        
+        $totalBooksInYear = Book::whereYear('created_at', '=', $year)->get();
+
+        $totalBooksPerDate = DB::select("SELECT Count(books.id) as 'total', DATE(books.created_at) as 'date'
+        from books 
+        WHERE YEAR(books.created_at) = $year 
+        GROUP by  DATE(books.created_at)");
+        
+         return view('admin.book.statistics')
+            ->with('allYears',$allYears)
+            ->with('totalBooksInYear',$totalBooksInYear->count())
+            ->with('totalBooksPerDate',$totalBooksPerDate)
+            ->with('statisticsYear',$year)
+            ->with('totalBooksPerMonth',$totalBooksPerMonth)
+            ->with('totalByTypes', $totalByTypes);
+            
+    }
+
+}   

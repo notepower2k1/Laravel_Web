@@ -16,6 +16,7 @@
     href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css"
     rel="stylesheet" />
     
+    @yield('additional-style')
 
     <style>
         .mce-tinymce, .mce-edit-area.mce-container, .mce-container-body.mce-stack-layout

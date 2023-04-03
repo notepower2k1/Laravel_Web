@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\Book;
 use App\Models\Document;
+use App\Models\Notification;
+
 use App\Models\ForumPosts;
 
 
@@ -73,19 +75,42 @@ class CommentController extends Controller
                 $document = Document::findOrFail($comment->documentID);
                 $document->totalComments = $document->totalComments + 1;
                 $document ->save();
+
+
+                if($comment->documents->users->id != Auth::user()->id){
+                    $notification = Notification::create([             
+                        'identifier_id'=>$comment->documentID,
+                        'type_id'=> 2, 
+                        'senderID' => Auth::user()->id,
+                        'receiverID'=>$comment->documents->users->id,
+                        'status'=>1
+                    ]);
+                }
+              
+
                 break;
             case 1:
                 $comment = BookComment::create([
                     'bookID' => $request->item_id,
                     'content' => $request->content,
                     'userID' => Auth::user()->id,
-                    'totalReplies'=> 0,           
+                    'totalReplies'=> 1,           
                 ]);
 
                 $book = Book::findOrFail($comment->bookID);
                 $book->totalComments = $book->totalComments + 1;
                 $book ->save();
 
+                if($comment->books->users->id != Auth::user()->id){
+                    $notification = Notification::create([
+                        'identifier_id'=>$comment->bookID,
+                        'type_id'=> 1, 
+                        'senderID' => Auth::user()->id,
+                        'receiverID'=>$comment->books->users->id,
+                        'status'=>1
+                    ]);
+                }
+              
                 break;
             case 2:
                 $comment = PostComment::create([
@@ -97,6 +122,17 @@ class CommentController extends Controller
                 $post = ForumPosts::findOrFail($comment->postID);
                 $post->totalComments = $post->totalComments + 1;
                 $post ->save();
+
+                if($comment->posts->users->id != Auth::user()->id){
+                    $notification = Notification::create([
+                        'identifier_id'=>$comment->postID,
+                        'type_id'=> 3, 
+                        'senderID' => Auth::user()->id,
+                        'receiverID'=>$comment->posts->users->id,
+                        'status'=>1
+                    ]);
+                }
+               
 
                 break;
             default:
@@ -133,6 +169,17 @@ class CommentController extends Controller
                 $document->totalComments = $document->totalComments + 1;
                 $document ->save();
 
+                if($comment->users->id != Auth::user()->id){
+                    $notification = Notification::create([
+                        'identifier_id'=>$comment->id,
+                        'type_id'=> 5, 
+                        'senderID' => Auth::user()->id,
+                        'receiverID'=>$comment->users->id,
+                        'status'=>1
+                    ]);
+                }
+
+
                 break;
             case 1:
                 $reply = BookCommentReply::create([
@@ -148,6 +195,15 @@ class CommentController extends Controller
                 $book->totalComments = $book->totalComments + 1;
                 $book ->save();
 
+                if($comment->users->id != Auth::user()->id){
+                    $notification = Notification::create([
+                        'identifier_id'=>$comment->id,
+                        'type_id'=> 4, 
+                        'senderID' => Auth::user()->id,
+                        'receiverID'=>$comment->users->id,
+                        'status'=>1
+                    ]);
+                }
                 break;
             case 2:
                 $reply = PostCommentReply::create([
@@ -162,6 +218,16 @@ class CommentController extends Controller
                 $post = ForumPosts::findOrFail($reply->comments->postID);
                 $post->totalComments = $post->totalComments + 1;
                 $post ->save();
+
+                if($comment->users->id != Auth::user()->id){
+                    $notification = Notification::create([
+                        'identifier_id'=>$comment->id,
+                        'type_id'=> 6, 
+                        'senderID' => Auth::user()->id,
+                        'receiverID'=>$comment->users->id,
+                        'status'=>1
+                    ]);
+                }
                 break;
             default:
                 $message = 'Phản hồi không thành công';

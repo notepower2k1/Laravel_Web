@@ -259,8 +259,8 @@
         toolbar: "undo redo |  bold italic underline strikethrough | link image | forecolor ",
         image_title: true,
         /* enable automatic uploads of images represented by blob or data URIs*/
-        automatic_uploads: true,
         images_upload_url: '/upload',
+        automatic_uploads: false,
         file_picker_types: 'image',
         /* and here's our custom image picker*/
         file_picker_callback: function (cb, value, meta) {
@@ -292,46 +292,62 @@
     })
     
     $(document).on('click','#comment-btn',function(){
-
         var content = tinymce.activeEditor.getContent("myTextarea");
         var post_id = {!! $post->id !!};
 
-        if(content){
-                $.ajax({
-                url:'/binh-luan',
-                type:"POST",
-                data:{
-                    'item_id': post_id,
-                    'content': content,
-                    'option':2
-                }
-            })
-            .done(function(res) {
-                Swal.fire({
-                        icon: 'success',
-                        title: `${res.success}`,
-                        showConfirmButton: false,
-                        timer: 2500
-                    });      
-                tinymce.activeEditor.setContent("");
-
-                $("#comment-box").load(" #comment-box > *");
-            })
-            .fail(function(jqXHR, textStatus, errorThrown) {
-            // If fail
-            console.log(textStatus + ': ' + errorThrown);
-            });
+        if($("#reply-box").length){
+                tinyMCE.remove("textarea#reply_textarea");
+                $("#reply-box").remove();
         }
         else{
-            Swal.fire({
-                        icon: 'info',
-                        title: `Vui lòng nhập nội dung !!!`,
+            if(content){
+
+                tinymce.activeEditor.uploadImages().then((response)=>{
+                var update_content = tinymce.activeEditor.getContent("myTextarea");
+
+                    $.ajax({
+                        url:'/binh-luan',
+                        type:"POST",
+                        data:{
+                            'item_id': post_id,
+                            'content': update_content,
+                            'option':2
+                        }
+                    })
+                    .done(function(res) {
+
+                        Swal.fire({
+                                icon: 'success',
+                                title: `${res.success}`,
+                                showConfirmButton: false,
+                                timer: 2500
+                            });      
+                        tinymce.activeEditor.setContent("");
+
+                        $("#comment-box").load(" #comment-box > *");
+                    })
+                    .fail(function(jqXHR, textStatus, errorThrown) {
+                    // If fail
+                    console.log(textStatus + ': ' + errorThrown);
+                    });
+
+
+                })
+                    
+                }
+            else{
+                Swal.fire({
+                        icon: 'error',
+                        title: `Vui lòng điền nội dung`,
                         showConfirmButton: false,
                         timer: 2500
-                    });   
-        }
-   
+                    });    
+            }
 
+        }
+       
+       
+    
     })
 
     $(document).on('click','.delete-comment-btn',function(){
@@ -414,8 +430,8 @@
                     toolbar: "undo redo |  bold italic underline strikethrough | link image | forecolor ",
                     image_title: true,
                     /* enable automatic uploads of images represented by blob or data URIs*/
-                    automatic_uploads: true,
                     images_upload_url: '/upload',
+                    automatic_uploads: false,
                     file_picker_types: 'image',
                     /* and here's our custom image picker*/
                     file_picker_callback: function (cb, value, meta) {
@@ -455,35 +471,57 @@
     })
 
     $(document).on('click','#reply-btn',function(){
+
         var content = tinymce.activeEditor.getContent("reply_textarea");
         
         var comment_id = $(this).data('id');
 
+        if(content){
+            tinymce.activeEditor.uploadImages().then((response)=>{
+            var update_content = tinymce.activeEditor.getContent("reply_textarea");
+            
 
-        $.ajax({
-                url:'/phan-hoi',
-                type:"POST",
-                data:{
-                    'comment_id': comment_id,
-                    'content': content,
-                    'option':2
-                }
+            
+                $.ajax({
+                    url:'/phan-hoi',
+                    type:"POST",
+                    data:{
+                        'comment_id': comment_id,
+                        'content': update_content,
+                        'option':2
+                    }
+                })
+                .done(function(res) {
+
+                    Swal.fire({
+                            icon: 'success',
+                            title: `${res.success}`,
+                            showConfirmButton: false,
+                            timer: 2500
+                        });      
+
+                    $("#comment-box").load(" #comment-box > *");
+
+                    tinyMCE.remove("textarea#reply_textarea");
+                    $("#reply-box").remove();
+
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                // If fail
+                console.log(textStatus + ': ' + errorThrown);
+            });
             })
-            .done(function(res) {
- 
-                Swal.fire({
-                        icon: 'success',
-                        title: `${res.success}`,
+        }
+        else{
+            Swal.fire({
+                        icon: 'error',
+                        title: `Vui lòng điền nội dung`,
                         showConfirmButton: false,
                         timer: 2500
-                    });      
+                    });    
+        }
 
-                $("#comment-box").load(" #comment-box > *");
-            })
-            .fail(function(jqXHR, textStatus, errorThrown) {
-            // If fail
-            console.log(textStatus + ': ' + errorThrown);
-            });
+    
 
 
     })

@@ -26,14 +26,18 @@
       <div class="d-flex mb-3">
         <div class="p-2 ">
           @if($next)
-          <a href="{{ $next->slug }}" class="btn btn-icon btn-lg btn-primary"><em class="icon ni ni-arrow-long-right"></em></a>
+          <a href="{{ $next->slug }}" class="btn btn-icon btn-lg btn-primary">
+            <em class="icon ni ni-arrow-long-right"></em>
+          </a>
           @else
           <button class="btn btn-icon btn-lg btn-primary" disabled><em class="icon ni ni-arrow-long-right"></em></button>
           @endif
         </div>
         <div class="ms-auto p-2">
           @if($previous)
-          <a href="{{ $previous->slug }}"  class="btn btn-icon btn-lg btn-primary"> <em class="icon ni ni-arrow-long-left"></em></a>
+          <a href="{{ $previous->slug }}"  class="btn btn-icon btn-lg btn-primary">
+             <em class="icon ni ni-arrow-long-left"></em>
+            </a>
           @else
           <button  class="btn btn-icon btn-lg btn-primary" disabled><em class="icon ni ni-arrow-long-left"></em></button>
           @endif
@@ -325,6 +329,56 @@
 
       }
 
+   
+      const current_book_id = {!! $chapter->books->id !!}
+      var chapter_id =  {!! $chapter->id !!}
+      var log = readCookie('readingLog');
+      //update cookie
+      if(log){             
+          objIndex = log.findIndex((obj => obj.book_id == current_book_id));
+          //book exist
+          if(objIndex > -1){
+              var currentChapterList = log[objIndex].chapter_id;
+              if(currentChapterList.includes(chapter_id)){
+
+              }
+              else{
+                  const updateChapterList = [...currentChapterList,chapter_id]
+                  log[objIndex].chapter_id = updateChapterList;
+
+                  createCookie('readingLog',log);
+              }
+              
+          }
+          //book not exist
+          else{
+              var chapter_list = [];
+              chapter_list.push(chapter_id);
+
+              var reading_object = {
+              'book_id' : current_book_id,
+              'chapter_id' : chapter_list        
+              };       
+              const updateLog = [...log,reading_object]
+              createCookie('readingLog',updateLog);
+
+          }        
+      }
+      //create new cookie
+      else{
+          var chapter_list = [];
+          chapter_list.push(chapter_id);
+          var reading_object = {
+          'book_id' : current_book_id,
+          'chapter_id' : chapter_list        
+          };            
+          var reading_log = [];
+          reading_log.push(reading_object);
+          createCookie('readingLog',reading_log);
+
+      }
+
+      
   });
 
 
@@ -403,6 +457,11 @@
 
     $("#change-chapter").change(function(){ //2 step
       var chapter_slug = $(this).val();  
+
+
+      var chapter_id = $(this).find('option:selected').data('id')
+
+
       $(location).prop('href', chapter_slug);
     });
 
@@ -449,7 +508,6 @@
        
 
       })
-
 
 
 

@@ -338,7 +338,7 @@ class PagesController extends Controller
 
         $forum = Forum::where('slug','=',$forum_slug)->firstOrFail();
 
-        $forums_posts = ForumPosts::where('forumID','=',$forum->id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
+        $forums_posts = ForumPosts::where('forumID','=',$forum->id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(9);
 
         $lastPosts = ForumPosts::where('deleted_at','=',null)->orderBy('created_at', 'desc')->take(10)->get();
 
@@ -349,7 +349,35 @@ class PagesController extends Controller
 
 
     }
+    public function forum_detail_filter($forum_slug,$type_slug = null){
 
+        $forum = Forum::where('slug','=',$forum_slug)->firstOrFail();
+
+        $forums_posts = ForumPosts::where('forumID','=',$forum->id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(9);
+
+        $lastPosts = ForumPosts::where('deleted_at','=',null)->orderBy('created_at', 'desc')->take(10)->get();
+
+        switch ($type_slug) {
+            case 'luot-binh-luan-nhieu-nhat':
+                $forums_posts = ForumPosts::where('forumID','=',$forum->id)->where('deleted_at','=',null)->orderBy('totalComments', 'desc')->paginate(9);
+    
+                break;
+            case 'bai-dang-cu-nhat':
+                $forums_posts = ForumPosts::where('forumID','=',$forum->id)->where('deleted_at','=',null)->orderBy('created_at', 'asc')->paginate(9);
+
+                break;
+            case 'bai-dang-cua-ban':
+                $forums_posts = ForumPosts::where('forumID','=',$forum->id)->where('userCreatedID','=',Auth::user()->id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(9);
+                break;
+            default:
+                $forums_posts = ForumPosts::where('forumID','=',$forum->id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(9);
+
+        }
+            return view('client.forum.detail')
+            ->with('lastPosts', $lastPosts)
+            ->with('forums_posts',$forums_posts)
+            ->with('forum',$forum);
+    }
     public function post_detail($forum_slug,$post_slug,$post_id){
 
         $post = ForumPosts::findOrFail($post_id);

@@ -64,7 +64,7 @@
                             <a href="{{route('book.index')}}" class="nk-menu-link"><span class="nk-menu-text">Dữ liệu</span></a>
                         </li>
                         <li class="nk-menu-item">
-                            <a href="#" class="nk-menu-link"><span class="nk-menu-text">Thống kê</span></a>
+                            <a href="/admin/book/statistics/{{ \Carbon\Carbon::now()->year }}" class="nk-menu-link"><span class="nk-menu-text">Thống kê</span></a>
                         </li>
                     </ul><!-- .nk-menu-sub -->
                 </li><!-- .nk-menu-item -->
