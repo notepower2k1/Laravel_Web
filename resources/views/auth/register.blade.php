@@ -15,22 +15,25 @@
                         <h4 class="nk-block-title">Đăng ký</h4>              
                     </div>
                 </div>
+                @if($errors->any())
+                <div class="alert alert-warning">
+                    @foreach ($errors->all() as $error)
+                        <div class="">{{ $error }}</div>
+                    @endforeach
+    
+                </div>
+                @endif
                 <form method="POST" action="{{ route('register') }}">
                     @csrf
                     <div class="form-group">
                         <label class="form-label">Tên tài khoản</label>
                         <div class="form-control-wrap">
                             <input id="name" 
-                            type="text" class="form-control form-control-lg @error('name') 
-                            is-invalid @enderror" name="name" value="{{ old('name') }}" 
-                            required autocomplete="name"
+                            type="text" class="form-control form-control-lg" name="name" value="{{ old('name') }}" 
+                            required 
                             placeholder="Nhập tên tài khoản của bạn">
 
-                            @error('name')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
+                      
 
                         </div>
                     </div>
@@ -38,16 +41,11 @@
                         <label class="form-label" for="email">Email</label>
                         <div class="form-control-wrap">
                             <input id="email" 
-                            type="email" class="form-control form-control-lg @error('email') 
-                            is-invalid @enderror" name="email" value="{{ old('email') }}" 
-                            required autocomplete="email"
+                            type="email" class="form-control form-control-lg" name="email" value="{{ old('email') }}" 
+                            required
                             placeholder="Nhập email của bạn">
 
-                            @error('email')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
+                       
 
                         </div>
                     </div>
@@ -59,8 +57,8 @@
                                 <em class="passcode-icon icon-hide icon ni ni-eye-off"></em>
                             </a>
                             <input id="password" type="password" class="form-control 
-                            form-control-lg @error('password') is-invalid @enderror" 
-                            name="password" required autocomplete="new-password"
+                            form-control-lg" 
+                            name="password" required
                             placeholder="Nhập mật khảu">
 
                             @error('password')
@@ -83,6 +81,15 @@
 
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        {!! NoCaptcha::renderJs('vi') !!}
+                        {!! NoCaptcha::display() !!}
+
+                 
+                    </div>
+
+                 
                     <div class="form-group">
                         <div class="custom-control custom-control-xs custom-checkbox">
                             <input type="checkbox" class="custom-control-input" id="checkbox" required>

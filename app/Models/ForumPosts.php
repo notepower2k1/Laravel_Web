@@ -13,9 +13,9 @@ class ForumPosts extends Model
     protected $primaryKey = 'id';
     public $incrementing = false;
 
-    protected $fillable = ['topic','content','forumID','userCreatedID','slug','image','totalComments'];
+    protected $fillable = ['topic','content','forumID','userCreatedID','slug','totalComments'];
 
-    protected $appends = ['time','url'];
+    protected $appends = ['time'];
 
     public function getTimeAttribute()
     {
@@ -27,19 +27,7 @@ class ForumPosts extends Model
         return $dt->diffForHumans($now);
     }
 
-    public function getUrlAttribute()
-    {
-        $expiresAt = new \DateTime('tomorrow');
-        $firebase_storage_path = 'postImage/';       
-        $imageReference = app('firebase.storage')->getBucket()->object($firebase_storage_path.$this->image);
 
-        if ($imageReference->exists()) {
-            $imageURL = $imageReference->signedUrl($expiresAt);
-        } else {
-            $imageURL = '';
-        }
-        return $imageURL;
-    }
 
     public function forums() {
         return $this->belongsTo(Forum::class,'forumID','id');

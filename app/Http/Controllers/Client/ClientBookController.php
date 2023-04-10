@@ -102,7 +102,7 @@ class ClientBookController extends Controller
         ]);
         $book->save();
 
-        return redirect('/quan-ly/sach');
+        return redirect('/quan-ly');
 
     }
 

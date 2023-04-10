@@ -69,7 +69,7 @@ class ClientDocumentController extends Controller
 
         $request->validate([
             'name' => 'required',
-            'file_document' => 'required|mimetypes:application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf',
+            'file_document' => 'required|mimetypes:application/pdf',
             'description' => 'required',
             'image' => 'mimes:jpg,png,jpeg|max:5048',
             'language' => 'required',
@@ -83,19 +83,11 @@ class ClientDocumentController extends Controller
         $document_file = $request->file('file_document');
 
         $generatedImageName = '';
-        if($image == null){
-            if($document_file->extension() == 'pdf'){
-                $generatedImageName = 'default_pdf.jpg';
-            }
-            if($document_file->extension() == 'docx' || $document_file->extension() == 'doc'){
-                $generatedImageName = 'default_docx.jpg';
-            }
-        }
-        else{
-            $generatedImageName = 'image'.$this->setNameForImage().'-'
-            .$slug.'.'
-            .$request->image->extension();
-        }
+       
+        $generatedImageName = 'image'.$this->setNameForImage().'-'
+        .$slug.'.'
+        .$request->image->extension();
+        
    
         $generatedFileName = $this->setNameForImage() . '-' . $slug . '.' . $request->file_document->extension();
 
@@ -156,7 +148,7 @@ class ClientDocumentController extends Controller
         app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_document_path . $generatedFileName]);
         unlink($localfolder . $generatedFileName);
         }
-        return redirect('/quan-ly/tai-lieu');
+        return redirect('/quan-ly');
 
     }
 
@@ -204,7 +196,6 @@ class ClientDocumentController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'file_document' => 'mimetypes:application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf',
             'description' => 'required',
             'image' => 'mimes:jpg,png,jpeg|max:5048',
             'author' => 'required',
@@ -216,7 +207,6 @@ class ClientDocumentController extends Controller
 
         $generatedImageName="";
 
-        $generatedFileName="";
 
         if($request->image == null){
             $generatedImageName = $request->oldImage;
@@ -240,58 +230,13 @@ class ClientDocumentController extends Controller
 
             //delete old image
 
-            if (strcmp($request->oldImage,'default_pdf.jpg') == 0 || strcmp($request->oldImage,'default_docx.jpg') == 0 ){
-                
-            }
-            else{
-                $OldimageDeleted = app('firebase.storage')->getBucket()->object($firebase_storage_path.$request->oldImage)->delete();
-            }
-
+          
+            $OldimageDeleted = app('firebase.storage')->getBucket()->object($firebase_storage_path.$request->oldImage)->delete();
+          
             }
         }
 
-        $numberOfPages = 0;
-
-        if($request->file_document == null){
-            $generatedFileName = $request->oldFile;
-            $numberOfPages = $request->oldNumberOfPages;
-        }
-        else{
-            $document_file = $request->file('file_document');
-
-
-
-            $generatedFileName = $this->setNameForImage() . '-' . $slug . '.' . $request->file_document->extension();
-
-
-            $firebase_storage_document_path = 'documentFile/';
-            $localfolder = public_path('firebase-temp-uploads') .'/';
-            if ($document_file->move($localfolder, $generatedFileName)) {
-            $uploadedfile = fopen($localfolder.$generatedFileName, 'r');
     
-            app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_document_path . $generatedFileName]);
-            unlink($localfolder . $generatedFileName);
-            }
-
-
-            $oldfileDelete = app('firebase.storage')->getBucket()->object($firebase_storage_document_path.$request->oldFile)->delete();
-
-
-            if($document_file->extension() == 'pdf'){
-                $path = $document_file->getContent();
-                $numberOfPages = preg_match_all("/\/Page\W/", $path, $dummy);
-            }
-            
-            if($document_file->extension() == 'docx'){
-                $path = $document_file;
-                $numberOfPages = $this->PageCount_DOCX($path);
-            }
-
-        }
-
-        $tmp = explode('.', $generatedFileName);
-
-        $file_extension = end($tmp);
 
         $document = Document::findOrFail($id)
                 ->update([
@@ -300,10 +245,8 @@ class ClientDocumentController extends Controller
                     'slug' =>  $slug,
                     'type_id' => intval($request->document_type_id),
                     'image' => $generatedImageName,
-                    'file' => $generatedFileName,
                     'isCompleted' => $request->isCompleted,
-                    'extension' => $file_extension,
-                    'numberOfPages' => $numberOfPages
+                   
 
                 ]);
         return redirect('/quan-ly/tai-lieu');

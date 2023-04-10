@@ -16,7 +16,7 @@
 
             </div>
             @endif
-        <form action="/admin/forum/post" method="POST" enctype="multipart/form-data">
+        <form action="#" method="POST" id="addForm">
              
             @csrf
             <input type="hidden" name="forum_id" value={{ $forum_id }}>
@@ -26,12 +26,6 @@
             name="topic"
             class="form-control mb-4 col-6"> 
 
-        
-
-            <label>Ảnh đại diện<sup>*</sup></label>
-            <input type="file" required
-            name="image"
-            class="form-control mb-4 col-6">     
 
             <label>Nội dung</label>
             <textarea id="mytextarea" 
@@ -41,72 +35,89 @@
             </textarea>
      
 
-             <button type="submit" class="btn btn-info">Thêm mới</button>
          </form>
+         <button id="add-btn" class="btn btn-info">Thêm mới</button>
+
        </div>
 </div>
 @endsection
 
 @section('additional-scripts')
 <script>
-    function toSlug(str) {
-	// Chuyển hết sang chữ thường
-	str = str.toLowerCase();     
- 
-	// xóa dấu
-	str = str
-		.normalize('NFD') // chuyển chuỗi sang unicode tổ hợp
-		.replace(/[\u0300-\u036f]/g, ''); // xóa các ký tự dấu sau khi tách tổ hợp
- 
-	// Thay ký tự đĐ
-	str = str.replace(/[đĐ]/g, 'd');
-	
-	// Xóa ký tự đặc biệt
-	str = str.replace(/([^0-9a-z-\s])/g, '');
- 
-	// Xóa khoảng trắng thay bằng ký tự -
-	str = str.replace(/(\s+)/g, '-');
-	
-	// Xóa ký tự - liên tiếp
-	str = str.replace(/-+/g, '-');
- 
-	// xóa phần dư - ở đầu & cuối
-	str = str.replace(/^-+|-+$/g, '');
- 
-	// return
-	return str;
-}
-
-    $(() => {
-        let $in = $('#in');
-        let $out = $('#out');
-        
-        function update() {
-            $out.val(toSlug($in.val()));
-        }
-        update();
-        
-        $in.on('change', update);
-    })
-    
-    
-
-    tinymce.init({
+  
+  $(function () {
+        tinymce.init({
         entity_encoding : "raw",
         selector: '#mytextarea',
         branding: false,
         statusbar: false,
-        height: 1000,
+        height: 800,
         resize: false,
-         menubar: false,
+        menubar: false,
         plugins: [
             "advlist", "anchor", "autolink", "charmap", "code", "fullscreen", 
             "help", "image", "insertdatetime", "link", "lists", "media", 
-            "preview", "searchreplace", "table", "visualblocks", " wordcount",
+            "preview", "searchreplace", "table", "visualblocks",
         ],
-        toolbar: "undo redo | styles | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | wordcount"
-        
-    });
+        toolbar: "undo redo |  bold italic underline strikethrough | link image | forecolor ",
+        image_title: true,
+        /* enable automatic uploads of images represented by blob or data URIs*/
+        images_upload_url: '/upload',
+        automatic_uploads: false,
+        file_picker_types: 'image',
+        /* and here's our custom image picker*/
+        file_picker_callback: function (cb, value, meta) {
+            var input = document.createElement('input');
+            input.setAttribute('type', 'file');
+            input.setAttribute('accept', 'image/*');
+
+            input.onchange = function () {
+            var file = this.files[0]; 
+            var reader = new FileReader();
+            reader.onload = function () {
+                var id = 'blobid' + (new Date()).getTime();
+                var blobCache =  tinymce.activeEditor.editorUpload.blobCache;
+                var base64 = reader.result.split(',')[1];
+                var blobInfo = blobCache.create(id, file, base64);
+                blobCache.add(blobInfo);
+
+                /* call the callback and populate the Title field with the file name */
+                cb(blobInfo.blobUri(), { title: file.name });
+            };
+            reader.readAsDataURL(file);
+            };
+
+            input.click();
+        },
+        content_style: 'body { font-size: 16px; font-family: Roboto; }' 
+        });
+
+    })
+    
+
+  
+
+
+    $('#add-btn').click(function(){
+        var content = tinymce.activeEditor.getContent("myTextarea");
+        if(content){
+
+        tinymce.activeEditor.uploadImages().then((response)=>{
+        var update_content = tinymce.activeEditor.getContent("myTextarea");
+            $('#addForm').attr('action', "/admin/forum/post").submit();
+
+        })
+            
+        }
+        else{
+        Swal.fire({
+                icon: 'error',
+                title: `Vui lòng điền nội dung`,
+                showConfirmButton: false,
+                timer: 2500
+            });    
+        }
+    })
 
 </script>
 @endsection

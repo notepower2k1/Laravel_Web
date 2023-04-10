@@ -178,7 +178,7 @@
                                                     @case(1)
                                                     vừa bình luận về sách
                                                     <strong>
-                                                        {{ $comment_notification->identifier->name }}
+                                                        {{ $comment_notification->identifier }}
                                                     </strong>
                                                     của bạn
                                                     @break
@@ -186,7 +186,7 @@
                                                     @case(2)
                                                     vừa bình luận về tài liệu
                                                     <strong>
-                                                        {{ $comment_notification->identifier->name }}
+                                                        {{ $comment_notification->identifier }}
                                                     </strong>
                                                     của bạn
 
@@ -195,7 +195,7 @@
                                                     @case(3)
                                                     vừa bình luận về bài viết
                                                     <strong>
-                                                    {{ $comment_notification->identifier->topic }}
+                                                    {{ $comment_notification->identifier }}
                                                     </strong>
                                                     của bạn
                                                     @break
@@ -203,21 +203,21 @@
                                                     @case(4)
                                                     vừa trả lời bình luận của bạn trong sách
                                                     <strong>
-                                                    {{ $comment_notification->identifier->books->name }}
+                                                    {{ $comment_notification->identifier}}
                                                     </strong>
                                                     @break
 
                                                     @case(5)
                                                     vừa trả lời bình luận của bạn tài liệu
                                                     <strong>
-                                                    {{ $comment_notification->identifier->documents->name }}
+                                                    {{ $comment_notification->identifier }}
                                                     </strong>
                                                     @break
 
                                                     @case(5)
                                                     vừa trả lời bình luận của bạn trong bài viết
                                                     <strong>
-                                                    {{ $comment_notification->identifier->posts->name }}
+                                                    {{ $comment_notification->identifier }}
                                                     </strong>
                                                     @break
                                                 @default

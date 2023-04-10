@@ -36,7 +36,7 @@
                         </div>
                         <div class="card card-bordered card-preview">
                             <div class="card-inner">
-                                <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false" data-export-title="Export">
+                                <table class="datatable-init nowrap nk-tb-list nk-tb-ulist mt-2" data-auto-responsive="false" data-export-title="Export">
                                     <thead>
                                         <tr class="nk-tb-item nk-tb-head">
                                             <th class="nk-tb-col"><span class="sub-text">Sách</span></th>
@@ -131,6 +131,67 @@
 
 <script>
 $(function(){
+    $('#DataTables_Table_0').DataTable().destroy();
+    $('#DataTables_Table_0').DataTable( {
+      dom: 'Blfrtip',
+      
+      "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "Tất cả"] ],
+      "language": {
+          "lengthMenu": "Hiển thị: _MENU_ đối tượng",
+          "search": "Tìm kiếm _INPUT_",
+          'info':"",
+          "zeroRecords": "Không tìm thấy dữ liệu",
+          "infoEmpty": "Không có dữ liệu hợp lệ",
+          "infoFiltered": "(Lọc từ _MAX_ dữ liệu)",
+          "paginate": {
+            "first":      "Đầu tiên",
+            "last":       "Cuối cùng",
+            "next":       "Tiếp theo",
+            "previous":   "Trước đó"
+        },
+       buttons: {
+            colvis: 'Thay đổi số cột'
+        }
+      },
+      buttons: [
+            
+            {
+                extend: 'colvis',
+                columns: ':not(.noVis)'
+            },
+      
+            {
+                extend: 'copyHtml5',
+                exportOptions: {
+                    columns: [0,1,2,3,4]
+                }
+            },
+            {
+                extend: 'excelHtml5',
+                exportOptions: {
+                    columns: [0,1,2,3,4]
+                }
+            },
+            {
+                extend: 'pdfHtml5',
+                exportOptions: {
+                    columns: [0,1,2,3,4]
+                }
+            },
+            {
+                extend: 'csvHtml5',
+                exportOptions: {
+                    columns: [0,1,2,3,4]
+                }
+            },
+            
+        ],
+    
+    });
+
+    $('#DataTables_Table_0_wrapper').addClass('d-flex row');
+    $('#DataTables_Table_0_length').addClass('mt-2');
+    $('#DataTables_Table_0_filter').addClass('mt-2');
     $('#DataTables_Table_0 tbody').on('click','.delete-button',function(){
         var chapter_id = $(this).data('id');
         var name = $(this).data('name');

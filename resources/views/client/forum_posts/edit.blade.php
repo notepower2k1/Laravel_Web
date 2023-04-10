@@ -8,7 +8,7 @@
             <div class="nk-block-head-sub"><a class="back-to" href="/dien-dan/{{$forum_slug}}"><em class="icon ni ni-arrow-left"></em><span>Quay lại</span></a></div>
             <div class="card card-bordered card-preview">
                 <div class="card-inner">
-                    <form action="/bai-viet/{{ $forum_post->id }}" method="POST" enctype="multipart/form-data">
+                    <form action="/bai-viet/{{ $forum_post->id }}" method="POST" id="editForm">
 
                         @csrf
                         @method('PUT')
@@ -24,13 +24,7 @@
         
                     
 
-                        <label>Ảnh đại diện<sup>*</sup></label>
-                        <input type="file"
-                        name="image"
-                        value="{{ $forum_post -> image }}"
-                        class="form-control mb-4 col-6">
-                                
-                        <input name="oldImage" type="hidden" value="{{ $forum_post -> image }}">
+                      
                         <label>Nội dung</label>
                         <textarea 
                        cols="50" 
@@ -43,8 +37,9 @@
         
                        <input name="forum_id" type="hidden" value="{{ $forum_post->forumID  }}">
         
-                         <button type="submit" class="btn btn-info">Cập nhật bài đăng</button>
                      </form>
+                     <button id="add-btn" class="btn btn-info">Cập nhật bài đăng</button>
+
                 </div>
             </div>
         </div>
@@ -56,22 +51,80 @@
 <script>
     
 
-    tinymce.init({
+    $(function () {
+        tinymce.init({
         entity_encoding : "raw",
         selector: '#mytextarea',
         branding: false,
         statusbar: false,
-        height: 500,
+        height: 800,
         resize: false,
         menubar: false,
         plugins: [
             "advlist", "anchor", "autolink", "charmap", "code", "fullscreen", 
             "help", "image", "insertdatetime", "link", "lists", "media", 
-            "preview", "searchreplace", "table", "visualblocks", " wordcount",
+            "preview", "searchreplace", "table", "visualblocks",
         ],
-        toolbar: "undo redo | styles | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | wordcount"
-        
+        toolbar: "undo redo |  bold italic underline strikethrough | link image | forecolor ",
+        image_title: true,
+        /* enable automatic uploads of images represented by blob or data URIs*/
+        images_upload_url: '/upload',
+        automatic_uploads: false,
+        file_picker_types: 'image',
+        /* and here's our custom image picker*/
+        file_picker_callback: function (cb, value, meta) {
+            var input = document.createElement('input');
+            input.setAttribute('type', 'file');
+            input.setAttribute('accept', 'image/*');
+
+            input.onchange = function () {
+            var file = this.files[0]; 
+            var reader = new FileReader();
+            reader.onload = function () {
+                var id = 'blobid' + (new Date()).getTime();
+                var blobCache =  tinymce.activeEditor.editorUpload.blobCache;
+                var base64 = reader.result.split(',')[1];
+                var blobInfo = blobCache.create(id, file, base64);
+                blobCache.add(blobInfo);
+
+                /* call the callback and populate the Title field with the file name */
+                cb(blobInfo.blobUri(), { title: file.name });
+            };
+            reader.readAsDataURL(file);
+            };
+
+            input.click();
+        },
+        content_style: 'body { font-size: 16px; font-family: Roboto; }' 
+        });
+
     })
+    
+
+  
+
+
+    $('#add-btn').click(function(){
+        var content = tinymce.activeEditor.getContent("myTextarea");
+        if(content){
+
+        tinymce.activeEditor.uploadImages().then((response)=>{
+        var update_content = tinymce.activeEditor.getContent("myTextarea");
+            $('#editForm').submit();
+
+        })
+            
+        }
+        else{
+        Swal.fire({
+                icon: 'error',
+                title: `Vui lòng điền nội dung`,
+                showConfirmButton: false,
+                timer: 2500
+            });    
+        }
+    })
+
 </script>
 
 @endsection

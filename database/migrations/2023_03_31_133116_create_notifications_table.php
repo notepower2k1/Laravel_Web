@@ -25,7 +25,7 @@ return new class extends Migration
             $table->unsignedbigInteger('receiverID');
             $table->foreign('receiverID')
             ->references('id')->on('users')->onDelete('cascade');
-            $table->boolean('status')->default('0');
+            $table->boolean('status')->default('1');
             $table->timestamp('deleted_at')->nullable();;
             $table->timestamps();
         });

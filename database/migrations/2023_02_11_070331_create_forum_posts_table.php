@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('topic');
             $table->longText('content');
             $table->unsignedInteger('forumID');
-            $table->text('image');
             $table->integer('totalComments');
             $table->foreign('forumID')
             ->references('id')->on('forums')->onDelete('cascade');

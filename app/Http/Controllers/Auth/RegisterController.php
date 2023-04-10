@@ -55,6 +55,8 @@ class RegisterController extends Controller
             'name' => ['required', 'alpha_dash', 'max:255','unique:users'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'g-recaptcha-response' => 'required|captcha'
+
         ]);
     }
 
@@ -72,6 +74,7 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'status' => 1
         ]);
 
         $profile = Profile::create([

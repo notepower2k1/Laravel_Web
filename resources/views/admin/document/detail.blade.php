@@ -60,7 +60,7 @@
                                     <div class="product-meta">
 
                                         <h6 class="title">Flle đính kèm</h6>
-                                        <a href="{{ $document->documentUrl}}" class="btn btn-primary" download>File</a>
+                                        <a href="#" class="btn btn-primary" id="download-btn">File</a>
                                     </div><!-- .product-meta -->
                                 </div><!-- .product-info -->
                                 
@@ -96,5 +96,30 @@
         marked.parse(value);
   
     });
+
+    $("#download-btn").click(function(e){
+        e.preventDefault();
+        var id = {!! $document->id !!}
+        $.ajax({
+                type:"GET",
+                url:'/tai-tai-lieu',
+                data : {
+                    "id": id
+                },
+                })
+                .done(function() {
+                // If successful           
+                    window.open(`/tai-tai-lieu?id=${id}`, "_blank");
+
+
+                    
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                // If fail
+                console.log(textStatus + ': ' + errorThrown);
+                })
+       
+        
+    })
  </script>
 @endsection

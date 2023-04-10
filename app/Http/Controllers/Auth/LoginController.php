@@ -7,6 +7,8 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Models\loginHistory;
+use Carbon\Carbon;
 
 class LoginController extends Controller
 {
@@ -65,9 +67,22 @@ class LoginController extends Controller
         $credentials = $request->only('name', 'password');
 
         if (Auth::attempt($credentials)) {
-            $this->authenticated();
+
+            if(Auth::user()->status == 0){
+                Auth::logout();
+                return redirect('login')->with('fail', 'Tài khoản của bạn đã bị khóa');
+            }
+
+            else{
+                loginHistory::create([
+                    'userID' => Auth::user()->id,
+                    'created_at' => Carbon::now()
+                ]);
+                $this->authenticated();
+            }
+          
         }
     
-        return redirect("login")->withSuccess('Oppes! You have entered invalid credentials');
+        return redirect('login')->with('fail', 'Tài khoản hoặc mật khẩu sai!!!');
     }
 }

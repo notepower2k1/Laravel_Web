@@ -55,32 +55,16 @@ class ClientForumPostController extends Controller
         $request->validate([
             'topic' => 'required',
             'content' => 'required',
-            'image' => 'required|mimes:jpg,png,jpeg|max:5048',
         ]);
         
 
-        $image = $request->file('image'); //image file from frontend
-
-        $generatedImageName = 'image'.$this->setNameForImage().'-'
-        .$slug.'.'
-        .$request->image->extension();
-
-        $firebase_storage_path = 'postImage/';
-        $localfolder = public_path('firebase-temp-uploads') .'/';
-        if ($image->move($localfolder, $generatedImageName)) {
-        $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
-
-        app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
-        unlink($localfolder . $generatedImageName);
-        }
-
+     
         $post = ForumPosts::create([
             'topic' => $request->topic,
             'content' => $request->content,
             'slug' => $slug,
             'userCreatedID' => 1,
             'forumID' => $request->forum_id,
-            'image' => $generatedImageName,
             'totalComments' =>0,
         ]);
         
@@ -134,41 +118,13 @@ class ClientForumPostController extends Controller
         $request->validate([
             'topic' => 'required',
             'content' => 'required',
-            'image' => 'mimes:jpg,png,jpeg|max:5048',
 
         ]);
 
         $slug =  Str::slug($request->topic);
 
 
-        $generatedImageName="";
-
-        if($request->image == null){
-            $generatedImageName = $request->oldImage;
-        }
-        else{
-            $image = $request->file('image'); //image file from frontend
-
-            //upload new image
-            $generatedImageName = 'image'.$this->setNameForImage().'-'
-            .$slug.'.'
-            .$request->image->extension();
-
-            $firebase_storage_path = 'postImage/';
-
-            $localfolder = public_path('firebase-temp-uploads') .'/';
-            if ($image->move($localfolder, $generatedImageName)) {
-            $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
-
-            app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
-            unlink($localfolder . $generatedImageName);
-
-            //delete old image
-
-            $imageDeleted = app('firebase.storage')->getBucket()->object($firebase_storage_path.$request->oldImage)->delete();
-
-            }
-        }
+        
     
         $forum_post = ForumPosts::findOrFail($id)
                 ->update([
@@ -177,7 +133,6 @@ class ClientForumPostController extends Controller
                     'slug' =>  $slug,
                     'userCreatedID ' =>1,
                     'forumID ' => $request ->forum_id,
-                    'image' => $generatedImageName
                 ]);
         // return redirect("/admin/forum/post/".$request ->forum_id);
         return redirect("/dien-dan/".$request->forum_slug);

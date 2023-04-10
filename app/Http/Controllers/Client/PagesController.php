@@ -23,6 +23,7 @@ use Illuminate\Http\Request;
 use Spatie\Searchable\Search;
 use Spatie\Searchable\ModelSearchAspect;
 use Drnxloc\LaravelHtmlDom\HtmlDomParser;
+use Illuminate\Support\Facades\Storage;
 
 
 class PagesController extends Controller
@@ -395,32 +396,59 @@ class PagesController extends Controller
 
     public function download_document(Request $request){
 
+        $request->validate([
+            'g-recaptcha-response' => 'required|captcha'
+        ],[
+            'g-recaptcha-response.required' => 'Bạn cần xác thực captcha',
+        ]);
+
         $document = Document::findOrFail($request->id);
 
         
         $document->totalDownloading = $document->totalDownloading + 1;
-
         $document->save();
-        return response()->json([
-            'url' => $document-> documentUrl,
-            'totalDownload' =>  $document->totalDownloading
-        ]);
+
+        $url = $document-> documentUrl;
+        $name = $document->slug;
+
+        $extension = $document->extension;
+        
+
+        $filename = $name.'.'.$extension;
+        $tempImage = tempnam(sys_get_temp_dir(), $filename);
+        copy($url, $tempImage);
+
+        return response()->download($tempImage, $filename)->deleteFileAfterSend(true);;
+        
        
+        // return response()->json([
+        //     'url' => $document-> documentUrl,
+        //     'totalDownload' =>  $document->totalDownloading
+        // ]);
+        
+       
+    }
+   
+    public function download_document_page($document_id){
+
+        $id = $document_id;
+        return view('client.homepage.document_download_page')->with('id',$id);
     }
 
     public function preview_document(Request $request){
 
         $document = Document::findOrFail($request->id);
 
-        $storage_path = 'documentFile/';
-        $file_name = $document->file;
-        $url = 'https://storage.googleapis.com/do-an-tot-nghiep-f897b.appspot.com/'.$storage_path.$file_name;
+        // $storage_path = 'documentFile/';
+        // $file_name = $document->file;
+        // $url = 'https://storage.googleapis.com/do-an-tot-nghiep-f897b.appspot.com/'.$storage_path.$file_name;
 
-        $full_url = "https://docs.google.com/gview?url=".$url."&embedded=true";
+        $url = $document-> documentUrl;
 
-        
+        // $full_url = "https://docs.google.com/gview?url=".$url."&embedded=true";
+
         return response()->json([
-            'url' => $full_url
+            'url' => $url
         ]);
 
 

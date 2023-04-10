@@ -1,6 +1,15 @@
 @extends('admin/layouts.app')
 @section('pageTitle', 'Danh sách tài liệu')
-
+@section('additional-style')
+<style>
+  .sorting_disabled:after{
+    content: none !important;
+  }
+  .sorting_disabled:before{
+    content: none !important;
+    }
+</style>
+@endsection
 @section('content')
                     <div class="nk-block nk-block-lg">
                         <div class="nk-block-head">
@@ -13,7 +22,7 @@
                         </div>
                         <div class="card card-bordered card-preview">
                             <div class="card-inner">
-                                <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false" data-export-title="Export">
+                                <table class="datatable-init nowrap nk-tb-list nk-tb-ulist mt-2" data-auto-responsive="false" data-export-title="Export">
                                     <thead>
                                         <tr class="nk-tb-item nk-tb-head">
                                             <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ảnh đại diện</span></th>
@@ -41,7 +50,7 @@
                                             <td class="nk-tb-col">
                                                 <div class="user-card">                                           
                                                     <div class="user-info">
-                                                        <span class="tb-lead">{{ Str::limit($document->name,30) }}<span class="dot dot-success d-md-none ms-1"></span></span>
+                                                        <span class="tb-lead"  data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $document->name }}">{{ Str::limit($document->name,30) }}<span class="dot dot-success d-md-none ms-1"></span></span>
                                                     </div>
                                                 </div>
                                             </td>
@@ -70,24 +79,7 @@
                                               @endif 
                                             </td>
                                             <td class="nk-tb-col tb-col-mb">
-                                              {{-- @if ($book->status === 1)
-                                              <span class="tb-status text-success">Public</span>
-                                              @else
-                                              <span class="tb-status text-info">Private</span>
-
-                                              @endif --}}
-                                              {{-- <div class="form-check form-switch">
-                                                <input class="form-check-input" 
-                                                type="checkbox" role="switch" 
-                                                id="flexSwitchCheckChecked" 
-                                                data-id="{{ $book->id }}"
-                                                {{ $book->status? 'checked':'' }}/>
-                                              </div> --}}
-
-                                              {{-- <div class="custom-control custom-switch">
-                                                <input type="checkbox" class="custom-control-input form-check-input" id="customSwitch1" data-id="{{ $book->id }}"
-                                                {{ $book->isPublic ? 'checked':'' }}>
-                                              </div> --}}
+                                            
                                               <div class="form-check form-switch">
 
                                               <input type="checkbox" 
@@ -123,7 +115,7 @@
                                                                   <li><a href="#" class="delete-button" data-id="{{ $document->id }}" data-name="{{ $document->name }}">
                                                                     <em class="icon ni ni-trash"></em><span>Xóa</span>
                                                                   </a>
-                                                                  <li><a href="/admin/document/{{$book->id}}"><em class="icon ni ni-eye"></em><span>Chi tiết</span></a></li>
+                                                                  <li><a href="/admin/document/{{$document->id}}"><em class="icon ni ni-eye"></em><span>Chi tiết</span></a></li>
 
                                                                   </li>
                                                                   <li><a href="/admin/document/{{$document->id}}/edit"><em class="icon ni ni-edit"></em><span>Cập nhật</span></a></li>
@@ -155,6 +147,75 @@
 <script>
 
   $(function(){
+    $('#DataTables_Table_0').DataTable().destroy();
+    
+    $('#DataTables_Table_0').DataTable( {
+      dom: 'Blfrtip',
+      columnDefs: [
+         
+          {
+              targets: [0,6],
+              orderable: false     
+          }
+      ],
+      "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "Tất cả"] ],
+      "language": {
+          "lengthMenu": "Hiển thị: _MENU_ đối tượng",
+          "search": "Tìm kiếm _INPUT_",
+          'info':"",
+          "zeroRecords": "Không tìm thấy dữ liệu",
+          "infoEmpty": "Không có dữ liệu hợp lệ",
+          "infoFiltered": "(Lọc từ _MAX_ dữ liệu)",
+          "paginate": {
+            "first":      "Đầu tiên",
+            "last":       "Cuối cùng",
+            "next":       "Tiếp theo",
+            "previous":   "Trước đó"
+        },
+       buttons: {
+            colvis: 'Thay đổi số cột'
+        }
+      },
+      buttons: [
+            
+            {
+                extend: 'colvis',
+                columns: ':not(.noVis)'
+            },
+      
+            {
+                extend: 'copyHtml5',
+                exportOptions: {
+                    columns: [1,2,3,4,5]
+                }
+            },
+            {
+                extend: 'excelHtml5',
+                exportOptions: {
+                    columns: [1,2,3,4,5]
+                }
+            },
+            {
+                extend: 'pdfHtml5',
+                exportOptions: {
+                    columns: [1,2,3,4,5]
+                }
+            },
+            {
+                extend: 'csvHtml5',
+                exportOptions: {
+                    columns:[1,2,3,4,5]
+                }
+            },
+            
+        ],
+    
+    });
+
+    $('#DataTables_Table_0_wrapper').addClass('d-flex row');
+    $('#DataTables_Table_0_length').addClass('mt-2');
+    $('#DataTables_Table_0_filter').addClass('mt-2');
+
     $('#DataTables_Table_0 tbody').on('change','.form-check-input',function(){
       
       var status = $(this).prop('checked') == true ? 1 : 0;

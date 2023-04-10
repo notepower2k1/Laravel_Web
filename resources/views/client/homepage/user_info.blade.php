@@ -343,7 +343,7 @@ $.ajaxSetup({
                             
                             setTimeout(()=>{
                                 $('#close-btn').click();
-                            }, 3000);
+                            }, 2500);
                         })
 
                         .fail(function(jqXHR, textStatus, errorThrown) {

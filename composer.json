@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
+        "anhskohbo/no-captcha": "^3.5",
         "barryvdh/laravel-dompdf": "^2.0",
         "drnxloc/laravel-simple-html-dom": "^1.9",
         "guzzlehttp/guzzle": "^7.2",
@@ -16,7 +17,6 @@
         "laravel/ui": "^4.2",
         "mews/purifier": "^3.4",
         "mollie/mollie-api-php": "^2.50",
-        "phpoffice/phpword": "*",
         "seshac/otp-generator": "^0.0.7",
         "spatie/laravel-searchable": "^1.11"
     },

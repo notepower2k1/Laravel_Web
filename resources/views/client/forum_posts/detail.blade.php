@@ -13,12 +13,8 @@
   <div class="card card-bordered">
       <div class="card-inner">
           <div class="row g-gs flex-lg-row-reverse">
-              <div class="col-lg-5">
-                  <div class="video">
-                      <img class="video-poster w-100" src="{{ $post->url }}" alt="">                   
-                  </div>
-              </div><!-- .col -->
-              <div class="col-lg-7">
+             
+              <div class="col-lg-12">
                   <div class="entry me-xxl-3">
                    
                     <div class="d-flex align-content-center">
@@ -611,7 +607,7 @@
                             
                             setTimeout(()=>{
                                 $('#close-btn').click();
-                            }, 3000);
+                            }, 2500);
                         })
 
                         .fail(function(jqXHR, textStatus, errorThrown) {

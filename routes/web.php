@@ -39,7 +39,7 @@ use App\Http\Controllers\ProfileController as ControllersProfileController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::group(['middleware' => 'isVerified'],function(){
+Route::group(['middleware' => ['isVerified']],function(){
     
 Route::get('/',[PagesController::class,'redirect_book_home_page']);
 Route::get('/sach',[PagesController::class,'book_home_page']);
@@ -51,8 +51,9 @@ Route::get('/tai-lieu',[PagesController::class,'document_home_page']);
     
 Route::get("/sach/{book_id}/{book_slug}",[PagesController::class,'book_detail'])->where('book_id', '[0-9]+');
 Route::get("/tai-lieu/{document_id}/{document_slug}",[PagesController::class,'document_detail'])->where('document_id', '[0-9]+');
-
+Route::get("/tai-lieu/download/{document_id}",[PagesController::class,'download_document_page']);
 Route::get("/tai-tai-lieu",[PagesController::class,'download_document']);
+// Route::get("/tai-tai-lieu",[PagesController::class,'download_document']);
 
 
  
@@ -100,9 +101,11 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
     Route::get("/wait-verification/update/changeStatus/rejection",[DashboardController::class,'rejection_item']);
 
     Route::get('/dashboard',[DashboardController::class,'index']);
+    Route::get('/dashboard/get/LoginHistory',[DashboardController::class,'getLoginHistory']);
+
     //All the routes that belongs to the group goes here
     Route::resource("/book",BookController::class,['except' => ['destroy']]);
-    Route::get("/book/statistics/{year?}",[BookController::class,'statistics_book_page']);
+    Route::get("/statistics/book/{year?}",[BookController::class,'statistics_book_page']);
 
     Route::get("/customDelete/{book_id}",[BookController::class,'customDelete']);
     Route::get("/book/update/changeStatus",[BookController::class,'changeBookStatus']);
@@ -110,6 +113,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
     
     
     Route::resource("/book/chapter",ChapterController::class, ['except' => ['create', 'index','destroy']]);
+    
+    Route::get("/statistics/chapter/{year?}",[ChapterController::class,'statistics_chapter_page']);
+
     Route::get("/book/chapter/customDelete/{chapter_id}",[ChapterController::class,'customDelete']);
 
     Route::get("/book/chapter/create/{book_id}",[ChapterController::class,'create'])->where('book_id', '[0-9]+');
@@ -117,28 +123,38 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
     
     
     Route::resource("/forum",ForumController::class,['except' => ['destroy']]);
+
     Route::get("/customDelete/{forum_id}",[ForumController::class,'customDelete']);
     Route::get("/forum/update/changeStatus",[ForumController::class,'changeForumStatus']);
     
 
     Route::resource("/document",DocumentController::class,['except' => ['destroy']]);
+    Route::get("/statistics/document/{year?}",[DocumentController::class,'statistics_document_page']);
+
     Route::get("/customDelete/{document_id}",[DocumentController::class,'customDelete']);
 
     Route::get("/document/update/changeStatus",[DocumentController::class,'changeDocumentStatus']);
     
     Route::resource("/forum/post",ForumPostController::class,['except' => ['create', 'index','destroy']]);
+    Route::get("/statistics/post/{year?}",[ForumPostController::class,'statistics_post_page']);
+
     Route::get("/forum/post/customDelete/{post_id}",[ForumPostController::class,'customDelete']);
 
     Route::get("/forum/post/create/{forum_id}",[ForumPostController::class,'create'])->where('forum_id', '[0-9]+');
     Route::get("/post",[ForumPostController::class,'index']);
 
     Route::get("/report",[ReportController::class,'index']);
+    Route::get("/statistics/report/{year?}",[ReportController::class,'statistics_report_page']);
+
     Route::get("/report/waiting",[ReportController::class,'report_wait_page']);
     Route::get("/report/done",[ReportController::class,'report_done_page']);
     Route::get("/report/update/changeStatus",[ReportController::class,'changeReportStatus']);
     Route::get("/report/detail",[ReportController::class,'detail']);
 
     Route::get("/user",[UserController::class,'index']);
+    Route::get("/statistics/user/{year?}",[UserController::class,'statistics_user_page']);
+    Route::get("/statistics/user/get/LoginHistoryPerMonth",[UserController::class,'getLoginHistoryPerMonth']);
+
     Route::get("/user/update/changeStatus",[UserController::class,'changeUserStatus']);
     Route::put("/user/{user_id}",[UserController::class,'update']);
     Route::get("/user/deleteUser",[UserController::class,'deleteUser']);

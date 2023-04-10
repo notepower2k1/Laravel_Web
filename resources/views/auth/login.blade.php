@@ -85,6 +85,16 @@
                     <h4 class="nk-block-title">Đăng nhập</h4>             
                 </div>
             </div>
+
+            @if(Session::has('fail'))
+            <div class="alert alert-danger" role="alert">
+                {{ Session::get('fail') }}
+                @php
+                    Session::forget('fail');
+                @endphp
+            </div>
+            @endif
+
             @if($errors->any())
             <div class="alert alert-warning">
                 @foreach ($errors->all() as $error)

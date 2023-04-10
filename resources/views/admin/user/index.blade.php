@@ -1,10 +1,18 @@
 @extends('admin/layouts.app')
 @section('pageTitle', 'Danh sách người dùng')
+<style>
+    .sorting_disabled:after{
+      content: none !important;
+    }
+    .sorting_disabled:before{
+      content: none !important;
+      }
+  </style>
 @section('content')
                     <div class="nk-block nk-block-lg">             
                         <div class="card card-bordered card-preview">
                             <div class="card-inner">
-                                <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false" data-export-title="Export">
+                                <table class="datatable-init nowrap nk-tb-list nk-tb-ulist mt-2" data-auto-responsive="false" data-export-title="Export">
                                     <thead>
                                         <tr class="nk-tb-item nk-tb-head">
                                             <th class="nk-tb-col"><span class="sub-text">Người dùng</span></th>
@@ -47,10 +55,10 @@
                                                 <span>10 Feb 2020</span>                                            
                                             </td>   
                                             <td class="nk-tb-col tb-col-md" id ="status-{{ $user->id }}">
-                                                @if($user->status == 0)
-                                                <span class="tb-status text-success">Active</span>      
+                                                @if($user->status == 1)
+                                                <span class="tb-status text-success">Hoạt động</span>      
                                                 @else
-                                                <span class="tb-status text-danger">Suspend</span>      
+                                                <span class="tb-status text-danger">Đình chỉ</span>      
                                                 @endif                          
                                             </td>                                                   
                                             <td class="nk-tb-col nk-tb-col-tools">
@@ -137,9 +145,79 @@
 <script src="{{ asset('assets/js/example-sweetalert.js?ver=3.1.2') }}" aria-hidden="true"></script>
 
 <script>
+    $(function(){
+    $('#DataTables_Table_0').DataTable().destroy();
+    
+    $('#DataTables_Table_0').DataTable( {
+    dom: 'Blfrtip',
+    columnDefs: [
+        
+        {
+            targets: [0],
+            orderable: false     
+        }
+    ],
+    "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "Tất cả"] ],
+    "language": {
+        "lengthMenu": "Hiển thị: _MENU_ đối tượng",
+        "search": "Tìm kiếm _INPUT_",
+        'info':"",
+        "zeroRecords": "Không tìm thấy dữ liệu",
+        "infoEmpty": "Không có dữ liệu hợp lệ",
+        "infoFiltered": "(Lọc từ _MAX_ dữ liệu)",
+        "paginate": {
+            "first":      "Đầu tiên",
+            "last":       "Cuối cùng",
+            "next":       "Tiếp theo",
+            "previous":   "Trước đó"
+        },
+    buttons: {
+            colvis: 'Thay đổi số cột'
+        }
+    },
+    buttons: [
+            
+            {
+                extend: 'colvis',
+                columns: ':not(.noVis)'
+            },
+    
+            {
+                extend: 'copyHtml5',
+                exportOptions: {
+                    columns: [0,1,2,3]
+                }
+            },
+            {
+                extend: 'excelHtml5',
+                exportOptions: {
+                    columns: [0,1,2,3]
+                }
+            },
+            {
+                extend: 'pdfHtml5',
+                exportOptions: {
+                    columns: [0,1,2,3]
+                }
+            },
+            {
+                extend: 'csvHtml5',
+                exportOptions: {
+                    columns: [0,1,2,3]
+                }
+            },
+            
+        ],
+    
+    });
 
-    $('.btn-suspend').click(function(){
+    $('#DataTables_Table_0_wrapper').addClass('d-flex row');
+    $('#DataTables_Table_0_length').addClass('mt-2');
+    $('#DataTables_Table_0_filter').addClass('mt-2');
 
+
+    $('#DataTables_Table_0 tbody').on('click','.btn-suspend',function(){
+        
         var user_id = $(this).data('id');
         var status = $(this).data('value');
 
@@ -196,14 +274,9 @@
         }
       })
    
-  
+    });
 
-
-    })
-
-
-    $('.recovery-password-a-tag').click(function(){
-
+    $('#DataTables_Table_0 tbody').on('click','.recovery-password-a-tag',function(){
         var user_id = $(this).data('id');
         
         $('#passwordForm').attr('action', `/admin/user/${user_id}`);
@@ -222,57 +295,61 @@
         });
     })
 
-    $('.delete-button').click(function(){
-    var user_id = $(this).data('id');
+    $('#DataTables_Table_0 tbody').on('click','.delete-button',function(){
+        var user_id = $(this).data('id');
 
-    Swal.fire({
-        title: "Bạn muốn xóa người dùng này",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Xóa',
-        cancelButtonText: 'Không'
-        }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-            type:"GET",
-            url:'/admin/user/deleteUser',
-            data : {
-              "id": user_id,
-            },
-            })
-            .done(function(res) {
-            // If successful
-              Swal.fire({
-                    icon: 'success',
-                    title: `${res.message}`,
-                    showConfirmButton: false,
-                    timer: 2500
-                });
+        Swal.fire({
+            title: "Bạn muốn xóa người dùng này",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Không'
+            }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                type:"GET",
+                url:'/admin/user/deleteUser',
+                data : {
+                "id": user_id,
+                },
+                })
+                .done(function(res) {
+                // If successful
+                Swal.fire({
+                        icon: 'success',
+                        title: `${res.message}`,
+                        showConfirmButton: false,
+                        timer: 2500
+                    });
 
-              $("#row-" + user_id).fadeOut();
-            })
-            .fail(function(jqXHR, textStatus, errorThrown) {
-            // If fail
-            console.log(textStatus + ': ' + errorThrown);
-            })
-         
-        }
-      })
-   
-  
-     
+                $("#row-" + user_id).fadeOut();
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                // If fail
+                console.log(textStatus + ': ' + errorThrown);
+                })
+            
+            }
+        })
+    });
 
-  })
-        $('.btn-email').click(function(){
-
+    $('#DataTables_Table_0 tbody').on('click','.btn-email',function(){
         var email = $(this).data('email');
         var subject = 'Đây là email gửi từ quản trị viên!!!';
         var emailBody = 'Xin chào ' + $(this).data('name');
         window.location = "mailto:"+email+"?subject="+subject+"&body="+emailBody;
         // window.location =  `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${emailBody}`;
+    });
 
-        })
+    })
+
+
+  
+  
+
+
+  
 </script>
 @endsection

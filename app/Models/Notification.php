@@ -29,33 +29,45 @@ class Notification extends Model
     }
     public function getIdentifierAttribute()
     {
-        $item = collect();
         $option = $this->type_id;
+        $identifier = '';
+
 
         switch ($option) {
             case 1:
-                $item = Book::findOrFail($this->identifier_id);          
+                $item = Book::findOrFail($this->identifier_id);
+                $identifier = $item->name;
                 break;
             case 2:
-                $item = Document::findOrFail($this->identifier_id);          
+                $item = Document::findOrFail($this->identifier_id);        
+                $identifier = $item->name;
+  
                 break;
             case 3:
-                $item = ForumPosts::findOrFail($this->identifier_id);          
+                $item = ForumPosts::findOrFail($this->identifier_id);  
+                $identifier = $item->topic;
+        
                 break;
             case 4:
-                $item = BookComment::findOrFail($this->identifier_id);          
+                $item = BookComment::findOrFail($this->identifier_id);   
+                $identifier = $item->books->name;
+       
                 break;
             case 5:
-                $item = DocumentComment::findOrFail($this->identifier_id);          
+                $item = DocumentComment::findOrFail($this->identifier_id); 
+                $identifier = $item->documents->name;
+         
                 break;
             case 6:
-                $item = PostComment::findOrFail($this->identifier_id);          
+                $item = PostComment::findOrFail($this->identifier_id); 
+                $identifier = $item->posts->name;
+         
                 break;
             default:
-                $item = collect();
+                $identifier = '';
         }
         
-        return $item;
+        return $identifier;
 
     }
 

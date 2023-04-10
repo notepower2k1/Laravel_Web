@@ -15,7 +15,7 @@
     <link
     href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css"
     rel="stylesheet" />
-    
+
     @yield('additional-style')
 
     <style>
@@ -65,9 +65,10 @@
 
     <script src=" {{ asset('assets/js/bundle.js?ver=3.1.2') }}"></script>
     <script src="{{ asset('assets/js/scripts.js?ver=3.1.2') }}"></script>
+    <script src="{{ asset('assets/js/libs/datatable-btns.js?ver=3.1.2') }}"></script>
+
     {{-- <script src="{{ asset('assets/js/charts/gd-default.js?ver=3.1.2') }}"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
     @yield('modal')
     @yield('additional-scripts')
 </body>

@@ -1,5 +1,15 @@
 @extends('admin/layouts.app')
 @section('pageTitle', 'Danh sách sách điện tử')
+@section('additional-style')
+<style>
+  .sorting_disabled:after{
+    content: none !important;
+  }
+  .sorting_disabled:before{
+    content: none !important;
+    }
+</style>
+@endsection
 @section('content')
                     <div class="nk-block nk-block-lg">
                         <div class="nk-block-head">
@@ -12,7 +22,7 @@
                         </div>
                         <div class="card card-bordered card-preview">
                             <div class="card-inner">
-                                <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false" data-export-title="Export">
+                                <table class="datatable-init-export nowrap nk-tb-list nk-tb-ulist mt-2" data-auto-responsive="false" data-export-title="Export">
                                     <thead>
                                         <tr class="nk-tb-item nk-tb-head">
                                             <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ảnh đại diện</span></th>
@@ -40,7 +50,7 @@
                                             <td class="nk-tb-col">
                                                 <div class="user-card">                                           
                                                     <div class="user-info">
-                                                        <span class="tb-lead">{{ Str::limit($book->name,30) }}<span class="dot dot-success d-md-none ms-1"></span></span>
+                                                        <span class="tb-lead"  data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $book->name }}">{{ Str::limit($book->name,30) }}<span class="dot dot-success d-md-none ms-1"></span></span>
                                                     </div>
                                                 </div>
                                             </td>
@@ -133,7 +143,7 @@
                                                                   </li>
                                                                   <li><a href="/admin/book/{{$book->id}}/edit"><em class="icon ni ni-edit"></em><span>Cập nhật</span></a></li>
                                                                   <li class="divider"></li>
-                                                                  <li><a href="/admin/book/chapter/{{$book->id}}"><em class="icon ni ni-list-index"></em><span>Xem chương</span></a></li>
+                                                                  <li><a href="/admin/book/chapter/{{$book->id}}"><em class="icon ni ni-list-index"></em><span>Xem chương ({{ $book->numberOfChapter }})</span></a></li>
 
                                                               </ul>
                                                           </div>
@@ -162,13 +172,77 @@
   //custom datatable
 
   $(document).ready(function () {
-    var table = $('#DataTables_Table_0').DataTable();
-  
-    // $('#DataTables_Table_0 tbody').on('click', 'tr', function () {
-    //     var data = table.row(this).data();
-    //     alert('You clicked on ' + data[0] + "'s row");
-    // });
+    $('#DataTables_Table_0').DataTable().destroy();
+    
+    $('#DataTables_Table_0').DataTable( {
+      dom: 'Blfrtip',
+      columnDefs: [
+          {
+              targets: 4, 
+              className: 'noVis'           
+          },
+          {
+              targets: [0,6],
+              orderable: false     
+          }
+      ],
+      "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "Tất cả"] ],
+      "language": {
+          "lengthMenu": "Hiển thị: _MENU_ đối tượng",
+          "search": "Tìm kiếm _INPUT_",
+          'info':"",
+          "zeroRecords": "Không tìm thấy dữ liệu",
+          "infoEmpty": "Không có dữ liệu hợp lệ",
+          "infoFiltered": "(Lọc từ _MAX_ dữ liệu)",
+          "paginate": {
+            "first":      "Đầu tiên",
+            "last":       "Cuối cùng",
+            "next":       "Tiếp theo",
+            "previous":   "Trước đó"
+        },
+       buttons: {
+            colvis: 'Thay đổi số cột'
+        }
+      },
+      buttons: [
+            
+            {
+                extend: 'colvis',
+                columns: ':not(.noVis)'
+            },
+      
+            {
+                extend: 'copyHtml5',
+                exportOptions: {
+                    columns: [1,2,3,4,5]
+                }
+            },
+            {
+                extend: 'excelHtml5',
+                exportOptions: {
+                    columns: [1,2,3,4,5]
+                }
+            },
+            {
+                extend: 'pdfHtml5',
+                exportOptions: {
+                    columns: [1,2,3,4,5]
+                }
+            },
+            {
+                extend: 'csvHtml5',
+                exportOptions: {
+                    columns:[1,2,3,4,5]
+                }
+            },
+            
+        ],
+    
+    });
 
+    $('#DataTables_Table_0_wrapper').addClass('d-flex row');
+    $('#DataTables_Table_0_length').addClass('mt-2');
+    $('#DataTables_Table_0_filter').addClass('mt-2');
 
     $('#DataTables_Table_0 tbody').on('click','.delete-button',function(){
 

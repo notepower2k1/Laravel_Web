@@ -182,7 +182,7 @@
                                                     <div class="form-group">
                                                         <label class="form-label" for="file_document">File đính kèm</label>
                                                         <div class="form-control-wrap">
-                                                            <input type="file" class="form-control" id="file_document" name="file_document" required  accept=".doc, .docx,.pdf">
+                                                            <input type="file" class="form-control" id="file_document" name="file_document" required  accept=".pdf">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -193,13 +193,11 @@
                                             <h5 class="title mb-3">Ảnh bìa</h5>
                                             <div class="row g-3">
                                                 <div class="avatar">
-                                                    <img src="https://cdn.phenompeople.com/CareerConnectResources/GE11GLOBAL/en_global/mobile/assets/images/v-1607764532898-default-category.jpg" alt="..."  id="myNewImage" width="300px" accept="image/*" required>
+                                                    <canvas id="the-canvas" style="border:1px solid black;width:200px;height:300px" ></canvas>
                                                 </div>
-                                                
-                                                <div class="form-file">
-                                                <input type="file" class="form-file-input" id="customFile" name="image" accept="image/*" required >
-                                                <label class="form-file-label" for="customFile">Chọn ảnh bìa</label>
-                                                </div>
+
+                                                <label class="form-file-label" for="imageFileInput">Chọn ảnh bìa</label>
+                                                <input type="file" id="imageFileInput" name="image" accept="image/*" required >
                                             </div>
                                         </div>
                                         <div class="nk-stepper-step text-center">
@@ -1022,6 +1020,7 @@
 
 @section('additional-scripts')
 <script src="{{ asset('assets/js/example-sweetalert.js?ver=3.1.2') }}" aria-hidden="true"></script>
+<script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
 
 <script>
     
@@ -1051,11 +1050,17 @@
         const documentType =  $("#documentType");
         const bookType = $("#bookType");
 
+        var canvas = document.getElementById('the-canvas');
+        const context = canvas.getContext('2d');
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        $('#imageFileInput').val(null);
 
         if(this.value == 1){
             fileInput.hide();
             documentType.hide();
             bookType.show();
+            
         }
         else{
             fileInput.show();
@@ -1065,14 +1070,22 @@
 
     })
 
-    $("#customFile").change(function() {
+    $("#imageFileInput").change(function() {
         const file = this.files[0]
+
         if (file) {
-            let reader = new FileReader();
-            reader.onload = function(event){
-                $('#myNewImage').attr('src', event.target.result);
+            var canvas = document.getElementById('the-canvas');
+            var ctx = canvas.getContext('2d');
+            var url = URL.createObjectURL(file);
+            var img = new Image();
+
+            img.onload = function() {
+                var ratio = this.height / this.width;
+                canvas.height = canvas.width * ratio;   
+
+                ctx.drawImage(this, 0, 0,canvas.width, canvas.height);    
             }
-            reader.readAsDataURL(file);
+            img.src = url;
         }
     })
     $('#submit-btn').click(function (e) { 
@@ -1097,5 +1110,89 @@
 
         
     });
+
+
+    var pdfjsLib = window['pdfjs-dist/build/pdf'];
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.worker.js';
+
+    //
+    // Asynchronous download PDF as an ArrayBuffer
+    //
+    var pdf = document.getElementById('file_document');
+
+    base64ToFile = (url) => {
+        let arr = url.split(',');
+        // console.log(arr)
+        let mime = arr[0].match(/:(.*?);/)[1];
+        let data = arr[1];
+
+        let dataStr = atob(data);
+        let n = dataStr.length;
+        let dataArr = new Uint8Array(n);
+
+        while (n--) {
+        dataArr[n] = dataStr.charCodeAt(n);
+        }
+
+        let file = new File([dataArr], 'image.jpeg', { type: mime });
+
+
+        const fileInput = document.getElementById('imageFileInput');
+
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+
+    };
+
+    pdf.onchange = function (ev) {
+      if (file = document.getElementById('file_document').files[0]) {
+        fileReader = new FileReader();
+        fileReader.onload = function (ev) {
+          console.log(ev);
+
+          var loadingTask = pdfjsLib.getDocument(fileReader.result);
+
+          loadingTask.promise
+            .then(function (pdf) {
+              console.log('PDF loaded');
+
+              // Fetch the first page
+              var pageNumber = 1;
+              pdf.getPage(pageNumber).then(function (page) {
+                console.log('Page loaded');
+
+                var scale = 1.5;
+                console.log(page);
+                var viewport = page.getViewport({ scale: scale });
+
+                var canvas = document.getElementById('the-canvas');
+                var context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                var renderContext = {
+                  canvasContext: context,
+                  viewport: viewport
+                };
+
+                var renderTask = page.render(renderContext);
+
+                renderTask.promise.then(function () {
+                    
+                    const base64Image = canvas.toDataURL('image/jpeg');
+
+                    base64ToFile(base64Image);
+                  
+                });
+              });
+            }, function (error) {
+              console.log(error);
+            });
+        };
+        fileReader.readAsArrayBuffer(file);
+      }
+    }
+
 </script>
 @endsection

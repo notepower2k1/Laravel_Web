@@ -444,7 +444,7 @@ class CommentController extends Controller
 
         //upload image
         $localfolder = public_path('firebase-temp-uploads') .'/';
-        $firebase_storage_path = 'commentImage/';
+        $firebase_storage_path = 'postImage/';
 
         if ($request->file('file')->move($localfolder, $generatedImageName)) {
             $uploadedfile = fopen($localfolder.$generatedImageName, 'r');

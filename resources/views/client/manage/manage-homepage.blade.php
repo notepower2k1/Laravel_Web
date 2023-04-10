@@ -321,7 +321,7 @@
                                             </div><!-- .product-meta -->   
                                             <div class="product-meta">
                                                 <h6 class="title">File đỉnh kèm</h6>
-                                                <a href="{{ $high_downloading_document->downloadUrl }}" download>
+                                                <a href="#" id="download-btn" data-id="{{ $high_downloading_document->id }}">
                                                     file.{{ $high_downloading_document->extension }}
                                                 </a>
                                             </div><!-- .product-meta -->   
@@ -433,7 +433,31 @@
 
         });
     })
-   
+    
+    $("#download-btn").click(function(e){
+        e.preventDefault();
+        var id = $(this).data('id');
+        $.ajax({
+                type:"GET",
+                url:'/tai-tai-lieu',
+                data : {
+                    "id": id
+                },
+                })
+                .done(function() {
+                // If successful           
+                    window.open(`/tai-tai-lieu?id=${id}`, "_blank");
+
+
+                    
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                // If fail
+                console.log(textStatus + ': ' + errorThrown);
+                })
+       
+        
+    })
 
 </script>
 @endsection

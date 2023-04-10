@@ -355,9 +355,20 @@
         voices();
         function voices(){
 
-            var voices = window.speechSynthesis.getVoices().filter(function(item){            
+            // 1 - VN | 0 - ENGLISH
+            const language = {!! $chapter->books->language !!}
+
+            var voices = null;
+            if(language == 1){
+               voices = window.speechSynthesis.getVoices().filter(function(item){            
                         return item.lang === "vi-VN";
-            });
+                });
+            }else{
+              voices = window.speechSynthesis.getVoices().filter(function(item){            
+                        return item.lang === "en-US";
+                });
+            }
+         
 
             voices.forEach(voice => {
             const isAlreadyAdded = [...voiceInEl.options].some(option => option.value === voice.voiceURI);

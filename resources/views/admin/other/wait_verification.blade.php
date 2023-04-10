@@ -29,7 +29,7 @@
                                                 </div>
                                             </th>
                                             <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ảnh đại diện</span></th>
-                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Tiêu đề</span></th>
+                                            <th class="nk-tb-col tb-col"><span class="sub-text">Tiêu đề</span></th>
                                             <th class="nk-tb-col tb-col-lg"><span class="sub-text">Tác giả</span></th>
                                             <th class="nk-tb-col tb-col-lg"><span class="sub-text">Danh mục</span></th>
                                             <th class="nk-tb-col tb-col-mb"><span class="sub-text">Người thêm</span></th>
@@ -57,7 +57,7 @@
                                             <td class="nk-tb-col">
                                                 <div class="user-card">                                           
                                                     <div class="user-info">
-                                                        <span class="tb-lead">{{ Str::limit($book->name,30) }}<span class="dot dot-success d-md-none ms-1"></span></span>
+                                                        <span class="tb-lead" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $book->name }}">{{ Str::limit($book->name,30) }}<span class="dot dot-success d-md-none ms-1"></span></span>
                                                     </div>
                                                 </div>
                                             </td>
@@ -68,10 +68,10 @@
                                               <span>{{ $book->types->name }}</span>
 
                                             </td>
-                                            <td class="nk-tb-col tb-col-lg">
+                                            <td class="nk-tb-col tb-col-mb">
                                                 <span>{{ $book->users->name }}</span>
                                               </td>
-                                              <td class="nk-tb-col tb-col-lg">
+                                              <td class="nk-tb-col tb-col-mb">
                                                 <span>{{ $book->created_at }}</span>
                                               </td>
                                             <td class="nk-tb-col nk-tb-col-tools">
@@ -112,7 +112,7 @@
                                           <td class="nk-tb-col">
                                               <div class="user-card">                                           
                                                   <div class="user-info">
-                                                      <span class="tb-lead">{{ Str::limit($document->name,30) }}<span class="dot dot-success d-md-none ms-1"></span></span>
+                                                      <span class="tb-lead" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $document->name }}">{{ Str::limit($document->name,30) }}<span class="dot dot-success d-md-none ms-1"></span></span>
                                                   </div>
                                               </div>
                                           </td>
@@ -123,10 +123,10 @@
                                             <span>{{ $document->types->name }}</span>
 
                                           </td>
-                                          <td class="nk-tb-col tb-col-lg">
+                                          <td class="nk-tb-col tb-col-mb">
                                               <span>{{ $document->users->name }}</span>
                                             </td>
-                                            <td class="nk-tb-col tb-col-lg">
+                                            <td class="nk-tb-col tb-col-mb">
                                               <span>{{ $document->created_at }}</span>
                                             </td>
                                           <td class="nk-tb-col nk-tb-col-tools">

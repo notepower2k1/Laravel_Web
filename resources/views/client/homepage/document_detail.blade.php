@@ -97,12 +97,19 @@
                                                 @endif
                                             </li> --}}
                                             <li class="ms-n1">
+                                                @if(Auth::check())
                                                 <button class="btn btn-xl btn-primary" id="download-btn"><em class="icon ni ni-download"></em><span>Tải xuống</span></button>
+                                                @else
+                                                <a href="/login" class="btn btn-xl btn-primary"><em class="icon ni ni-download"></em><span>Tải xuống</span></a>
 
+                                                @endif
                                             </li>
                                             <li class="ms-n1">
+                                                @if($document->numberOfPages > 50)
+                                                <button id="preview-btn" class="btn btn-xl btn-primary" disabled><em class="icon ni ni-eye"></em><span>Không thể xem trước</span></button>
+                                                @else
                                                 <button id="preview-btn" class="btn btn-xl btn-primary" data-bs-toggle="modal" data-bs-target="#modalDefault" ><em class="icon ni ni-eye"></em><span>Xem trước</span></button>
-                                            
+                                                @endif
 
                                             </li>
                                         </ul>
@@ -122,6 +129,7 @@
                                 </div>
                             </div><!-- .col -->
                         </div><!-- .row -->
+
                         <div class="row g-gs flex-lg-row-reverse">                      
                             <div class="col-lg-12">
                                 <div class="product-details entry me-xxl-3">
@@ -284,8 +292,6 @@
                 <span class="sub-text">Báo cáo bởi {{ Auth::user()->profile->displayName }}</span>
             </div>
 
-            <iframe id="my_iframe" style="display:none;"></iframe>
-
         </div>
     </div>
 </div>
@@ -308,7 +314,8 @@
                         <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
                       </div>
                 </div>
-                <iframe id="preview-iframe" class="doc embed-responsive-item"></iframe>
+                
+                <iframe  id="preview-iframe" class="doc embed-responsive-item" frameborder='0'></iframe>
             </div>
             <div class="modal-footer">
                 <span class="modal-title">Thử lại nếu chưa hiện dữ liệu</span><em class="icon ni ni-info"></em>
@@ -320,7 +327,7 @@
 
 @endsection
 @section('additional-scripts')
-
+<script src="{{ asset('js/ViewerJS/viewer.js') }}"></script>
 <script>
     
     $.ajaxSetup({
@@ -335,30 +342,13 @@
     })
 
     
-    $("#download-btn").click(function(e){
-        e.preventDefault();
-        var id = {!! $document->id !!}
-        $.ajax({
-                type:"GET",
-                url:'/tai-tai-lieu',
-                data : {
-                    "id": id
-                },
-                })
-                .done(function(res) {
-                // If successful           
-                    window.location.assign(res.url);
 
 
-                    
-                    $('#totalDownload').text(res.totalDownload);
-                })
-                .fail(function(jqXHR, textStatus, errorThrown) {
-                // If fail
-                console.log(textStatus + ': ' + errorThrown);
-                })
-       
-        
+    $("#download-btn").click(function(e){  
+
+        const id = {!! $document->id !!};
+
+        window.location.href = `/tai-lieu/download/${id}`;
     })
 
 
@@ -379,8 +369,9 @@
 
                 // If successful           
                     var url = res.url;
-                    $('#preview-iframe').attr('src',url);
+                    $('#preview-iframe').attr('src',url+'#toolbar=0&navpanes=0');
 
+            
                     setTimeout(()=>{
                         $('#modal-btn').click();
                     }, 2000);
@@ -451,7 +442,7 @@
                             
                             setTimeout(()=>{
                                 $('#close-btn').click();
-                            }, 3000);
+                            }, 2500);
                         })
 
                         .fail(function(jqXHR, textStatus, errorThrown) {

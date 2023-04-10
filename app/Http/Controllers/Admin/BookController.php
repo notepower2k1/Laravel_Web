@@ -251,6 +251,8 @@ class BookController extends Controller
 
         $totalByTypes = DB::select("SELECT Count(books.id) as 'total', book_types.name 
         from books join book_types on books.type_id = book_types.id 
+        where books.deleted_at is null
+
         GROUP by book_types.name");
 
         
@@ -273,16 +275,20 @@ class BookController extends Controller
             SUM(IF(month = 'Dec', total, 0)) AS 'Tháng 12' 
             FROM ( 
                 SELECT DATE_FORMAT(books.created_at, '%b') AS month, 
-                COUNT(books.id) as total FROM books WHERE Year(books.created_at) = $year GROUP BY DATE_FORMAT(books.created_at, '%m-%Y')
+                COUNT(books.id) as total FROM books 
+                WHERE Year(books.created_at) = $year  and books.deleted_at is null
+                GROUP BY DATE_FORMAT(books.created_at, '%m-%Y')
         ) as sub");
         
-        $totalBooksInYear = Book::whereYear('created_at', '=', $year)->get();
+        $totalBooksInYear = Book::whereYear('created_at', '=', $year)->where('deleted_at','=',null)->get();
 
         $totalBooksPerDate = DB::select("SELECT Count(books.id) as 'total', DATE(books.created_at) as 'date'
         from books 
-        WHERE YEAR(books.created_at) = $year 
+        WHERE YEAR(books.created_at) = $year and books.deleted_at is null
         GROUP by  DATE(books.created_at)");
-        
+
+
+
          return view('admin.book.statistics')
             ->with('allYears',$allYears)
             ->with('totalBooksInYear',$totalBooksInYear->count())

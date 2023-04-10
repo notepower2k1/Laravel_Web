@@ -80,23 +80,7 @@
                 </span>
                 @enderror
 
-                <label>File đính kèm<sup>*</sup></label>
-                <input type="file" 
-                name="file_document"
-                value="{{ $document -> file }}"
-                class="form-control mb-4 col-6 @error('file_document') is-invalid @enderror">
-
-                <input name="oldFile" type="hidden" value="{{ $document -> file }}">
-
-                <input name="oldNumberOfPages" type="hidden" value="{{ $document -> numberOfPages }}">
-
-                @error('file_document')
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-                @enderror
-
-
+                
                 <label>Tiến độ<sup>*</sup></label>
                 <select required class="form-control mb-4 col-6"  name="isCompleted"> 
                 <option value=0 {{ $document->isCompleted == 0 ? 'selected' : '' }} >Chưa hoàn thành</option>
@@ -116,7 +100,7 @@
 @section('additional-scripts')
 <script>
    
-
+    
    
 
     $('#document_type_id').select2({

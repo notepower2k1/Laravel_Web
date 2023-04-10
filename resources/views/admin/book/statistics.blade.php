@@ -44,7 +44,7 @@
                                 <div class="dropdown-menu dropdown-menu-end">
                                     <ul class="link-list-opt no-bdr">
                                         @foreach ($allYears as $year)
-                                            <li><a href="/admin/book/statistics/{{ $year->year }}"><em class="icon ni ni-calendar"></em><span>Năm {{ $year->year }} </span></a></li>
+                                            <li><a href="/admin/statistics/book/{{ $year->year }}"><em class="icon ni ni-calendar"></em><span>Năm {{ $year->year }} </span></a></li>
                                         @endforeach
                                       
                                     </ul>
@@ -89,18 +89,43 @@
                             </div>
                         </div>
                     </div>
-                    <div class="nk-sale-data-group align-center justify-between gy-3 gx-5">
-                        <div class="nk-sale-data">
-                            <span class="amount">Tổng sách: <span id="total-books-span"></span></span>
-                        </div>
-                        <div class="nk-sale-data">
+                    <div class="analytic-ov">
+                        <div class="analytic-data-group analytic-ov-group g-3">
+                            <div class="analytic-data analytic-ov-data d-flex flex-column  align-items-center">
+                                <div class="title">Tổng</div>
+                                <div class="amount">
+                                    <span id="total-users-span"></span>
+                                </div>
+                                {{-- <div class="change up"><em class="icon ni ni-arrow-long-up"></em>12.37%</div> --}}
+                            </div>
+                            <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
+                                <div class="title">Min</div>
+                                <div class="amount">                               
+                                    <span id="min-users-span"></span>
 
-                            <span class="amount sm">Tháng: <span id="month-selection-span"></span></span>
+                                </div>
+                                {{-- <div class="change up"><em class="icon ni ni-arrow-long-up"></em>47.74%</div> --}}
+                            </div>
+                            <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
+                                <div class="title">Max</div>
+                                <div class="amount">
+                                    <span id="max-users-span"></span>
+
+                                </div>
+                                {{-- <div class="change down"><em class="icon ni ni-arrow-long-down"></em>12.37%</div> --}}
+                            </div>
+                            <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
+                                <div class="title">Tháng</div>
+                                <div class="amount">
+                                    <span id="month-selection-span"></span>
+                                </div>
+                                {{-- <div class="change down"><em class="icon ni ni-arrow-long-down"></em>0.35%</div> --}}
+                            </div>
                         </div>
-                    </div>
-                    <div class="">
-                        <canvas id="myBar"></canvas>
-                        {{-- <input type="month" onchange="filterChart(this)"/> --}}                    
+                        <div class="analytic-ov-ck" style=" height: 300px;">
+                            <canvas id="myBar"></canvas>
+                            {{-- <input type="month" onchange="filterChart(this)"/> --}}                    
+                        </div>
                     </div>
                 </div>
             </div><!-- .card -->
@@ -138,11 +163,23 @@
 
 
 
-        const sum = filterByMonth.reduce((accumulator, object) => {
-            return accumulator + object.total;
-        }, 0);
+        var min = 0;
+        var max = 0;
+        var sum = 0;
+        if(filterByMonth.length){
+            min = Math.min(...filterByMonth.map(object => object.total));
+                
+            max = Math.max(...filterByMonth.map(object => object.total));
 
-        $('#total-books-span').text(sum);
+            sum = filterByMonth.reduce((accumulator, object) => {
+                return accumulator + object.total;
+            }, 0);
+        }
+     
+
+        $('#total-users-span').text(sum);
+        $('#min-users-span').text(min);
+        $('#max-users-span').text(max);
 
     });
 
@@ -363,11 +400,23 @@
 
 
 
-        const sum = filterByMonth.reduce((accumulator, object) => {
-            return accumulator + object.total;
-        }, 0);
+        var min = 0;
+        var max = 0;
+        var sum = 0;
+        if(filterByMonth.length){
+            min = Math.min(...filterByMonth.map(object => object.total));
+                
+            max = Math.max(...filterByMonth.map(object => object.total));
 
-        $('#total-books-span').text(sum);
+            sum = filterByMonth.reduce((accumulator, object) => {
+                return accumulator + object.total;
+            }, 0);
+        }
+     
+
+        $('#total-users-span').text(sum);
+        $('#min-users-span').text(min);
+        $('#max-users-span').text(max);
 
     })
 </script>

@@ -42,16 +42,15 @@
                                               <span>{{ $report->users->email  }}</span>
 
                                             </td>   
-                                            <td class="nk-tb-col tb-col-md">                           
-                                                <input type="checkbox" 
-                                                class="form-check-input"
-                                                data-toggle="toggle" 
-                                                data-onlabel="Đã xử lý" 
-                                                data-offlabel="Chưa xử lý" 
-                                                data-size="sm"
-                                                data-id="{{ $report->id }}"
-                                                {{ $report->status ? 'checked':'' }}   />
-  
+                                            <td class="nk-tb-col tb-col-md">    
+                                                
+                                                <div class="form-check form-switch">
+                                                    <input type="checkbox" 
+                                                    class="form-check-input"
+                                                    role="switch"
+                                                    data-id="{{ $report->id }}"
+                                                    {{ $report->status ? 'checked':'' }}   />
+                                                </div>
                                             </td>                                                                                                                                                                                                                  
                                             <td class="nk-tb-col nk-tb-col-tools">
                                                 <button class="btn btn-icon btn-lg ni ni-eye detail-btn" data-id="{{ $report->id }}"></button>
@@ -247,9 +246,7 @@
 
                 $('#report-reason').text(`${report_detail.description}`)
 
-                setTimeout(()=>{
-                    $('#show-modal-btn').click();
-                }, 1000);
+                $('#show-modal-btn').click();
 
 
 

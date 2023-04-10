@@ -311,11 +311,11 @@
         var currentFontSize = parseInt(setting.fontsize);
 
         // $(`#change-color option[value=${color}]`).attr('selected','selected');
-        $(`label[data-bg='${color}'`).parent().addClass('checked');
-        $(`label[data-bg='${color}'`).prev().attr('checked', true);
+        $(`label[data-bg='${color}']`).parent().addClass('checked');
+        $(`label[data-bg='${color}']`).prev().attr('checked', true);
 
 
-        $(`#change-font option[value=${font}]`).attr('selected','selected');
+        $(`#change-font option[value='${font}']`).attr('selected','selected');
         $(`#change-lineheight option[value=${lightheight}]`).attr('selected','selected');
 
         $("#divhtmlContent").css("background-color",color);
@@ -325,7 +325,7 @@
         $(".fontsize").val(currentFontSize);
       }
       else{
-        $(`label[data-bg='#fff'`).prev().attr('checked', true);
+        $(`label[data-bg='#fff']`).prev().attr('checked', true);
 
       }
 
