@@ -1,4 +1,4 @@
-@extends('client/manage/layouts.app')
+@extends('client/manage.layouts.app')
 @section('pageTitle', 'Chi tiết tài liệu')
 
 @section('content')

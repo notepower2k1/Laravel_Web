@@ -41,11 +41,14 @@ use App\Http\Controllers\ProfileController as ControllersProfileController;
 */
 Route::group(['middleware' => ['isVerified']],function(){
     
-Route::get('/',[PagesController::class,'redirect_book_home_page']);
-Route::get('/sach',[PagesController::class,'book_home_page']);
-Route::get('/sach/all/{option?}',[PagesController::class,'book_page_more']);
 
-Route::get('/tai-lieu',[PagesController::class,'document_home_page']);
+Route::get('/test',[PagesController::class,'test']);
+
+Route::get('/',[PagesController::class,'home_page']);
+
+Route::get('/sach/all/{option?}',[PagesController::class,'book_page_more']);
+Route::get('/tai-lieu/all/{option?}',[PagesController::class,'document_page_more']);
+
 
 
     

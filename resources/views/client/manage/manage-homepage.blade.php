@@ -1,4 +1,4 @@
-@extends('client/manage/layouts.app')
+@extends('client/manage.layouts.app')
 @section('content')
 
 <div class="nk-fmg-body">

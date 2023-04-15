@@ -1,4 +1,4 @@
-@extends('client/layouts.app')
+@extends('client/forum.layouts.app')
 @section('pageTitle', `${{$post->topic}}`)
 @section('content')
 <div class="nk-block">
@@ -7,7 +7,6 @@
           <li class="breadcrumb-item"><a href="/dien-dan">Diễn đàn</a></li>
           <li class="breadcrumb-item"><a href="/dien-dan/{{ $post->forums->slug }}">{{ $post->forums->name }}</a></li>
           <li class="breadcrumb-item active">{{ $post->topic }}</li>
-
       </ul>
   </nav>
   <div class="card card-bordered">

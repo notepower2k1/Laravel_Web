@@ -1,4 +1,4 @@
-@extends('client/layouts.app')
+@extends('client/homepage.layouts.app')
 @section('pageTitle', 'Thông tin cá nhân')
 
 @section('content')
@@ -6,6 +6,67 @@
 <div class="nk-block">
     <div class="card card-bordered">
         <div class="card-aside-wrap">
+         
+            <div class="card-aside card-aside-left user-aside toggle-slide toggle-slide-left toggle-break-lg" data-toggle-body="true" data-content="userAside" data-toggle-screen="lg" data-toggle-overlay="true">
+                <div class="card-inner-group" data-simplebar>
+                    <div class="card-inner">
+                        <div class="user-card">
+                            <div class="user-avatar bg-primary">
+                                    <img src={{ Auth::user()->profile->url}} alt="..." />
+
+                            </div>
+                            <div class="user-info">
+                                <span class="lead-text">{{Auth::user()->name}}</span>
+                                <span class="sub-text">{{Auth::user()->email}}</span>
+                            </div>
+                            <div class="user-action">
+                                <div class="dropdown">
+                                    <a class="btn btn-icon btn-trigger me-n2" data-bs-toggle="dropdown" href="#"><em class="icon ni ni-more-v"></em></a>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <ul class="link-list-opt no-bdr">
+                                            <li>
+                                                @if($updateFlag)
+                                                <a href="#"data-bs-toggle="modal" data-bs-target="#profile-edit"><em class="icon ni ni-camera-fill"></em><span>Thay đổi ảnh</span></a>
+
+                                                @else
+                                                <a href="#" class="fail-update-btn" ><em class="icon ni ni-camera-fill"></em><span>Thay đổi ảnh</span></a>
+
+                                                @endif
+
+                                            </li>
+                                            <li>
+                                                @if($updateFlag)
+                                                <a href="#" data-bs-toggle="modal" data-bs-target="#profile-edit"><em class="icon ni ni-edit-fill"></em><span>Thay đổi thông tin</span></a>
+
+                                                @else
+                                                <a href="#"  class="fail-update-btn" ><em class="icon ni ni-edit-fill"></em><span>Thay đổi thông tin</span></a>
+
+                                                @endif
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- .user-card -->
+                    </div><!-- .card-inner -->
+                    
+                    <div class="card-inner p-0">
+                        <ul class="link-list-menu">
+                            <li><a href="/trang-ca-nhan"><em class="icon ni ni-user-fill-c"></em><span>Thông tin cá nhân</span></a></li>
+                            <li><a href="/quan-ly/binh-luan"><em class="icon ni ni-activity-round-fill"></em><span>Lịch sử hoạt động</span></a></li>
+                            <li>
+                                @if($updateFlag)
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#profile-edit"><em class="icon ni ni-lock-alt-fill"></em><span>Cài đặt bảo mật</span></a>
+
+                                @else
+                                <a href="#" class="fail-update-btn" ><em class="icon ni ni-lock-alt-fill"></em><span>Cài đặt bảo mật</span></a>
+
+                                @endif
+                            </li>
+                        </ul>
+                    </div><!-- .card-inner -->
+                </div><!-- .card-inner-group -->
+            </div><!-- card-aside -->
             <div class="card-inner card-inner-lg">
                 <div class="nk-block-head nk-block-head-lg">
                     <div class="nk-block-between">
@@ -98,66 +159,6 @@
                     </div><!-- data-list -->
                 </div><!-- .nk-block -->
             </div>
-            <div class="card-aside card-aside-left user-aside toggle-slide toggle-slide-left toggle-break-lg" data-toggle-body="true" data-content="userAside" data-toggle-screen="lg" data-toggle-overlay="true">
-                <div class="card-inner-group" data-simplebar>
-                    <div class="card-inner">
-                        <div class="user-card">
-                            <div class="user-avatar bg-primary">
-                                    <img src={{ Auth::user()->profile->url}} alt="..." />
-
-                            </div>
-                            <div class="user-info">
-                                <span class="lead-text">{{Auth::user()->name}}</span>
-                                <span class="sub-text">{{Auth::user()->email}}</span>
-                            </div>
-                            <div class="user-action">
-                                <div class="dropdown">
-                                    <a class="btn btn-icon btn-trigger me-n2" data-bs-toggle="dropdown" href="#"><em class="icon ni ni-more-v"></em></a>
-                                    <div class="dropdown-menu dropdown-menu-end">
-                                        <ul class="link-list-opt no-bdr">
-                                            <li>
-                                                @if($updateFlag)
-                                                <a href="#"data-bs-toggle="modal" data-bs-target="#profile-edit"><em class="icon ni ni-camera-fill"></em><span>Thay đổi ảnh</span></a>
-
-                                                @else
-                                                <a href="#" class="fail-update-btn" ><em class="icon ni ni-camera-fill"></em><span>Thay đổi ảnh</span></a>
-
-                                                @endif
-
-                                            </li>
-                                            <li>
-                                                @if($updateFlag)
-                                                <a href="#" data-bs-toggle="modal" data-bs-target="#profile-edit"><em class="icon ni ni-edit-fill"></em><span>Thay đổi thông tin</span></a>
-
-                                                @else
-                                                <a href="#"  class="fail-update-btn" ><em class="icon ni ni-edit-fill"></em><span>Thay đổi thông tin</span></a>
-
-                                                @endif
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div><!-- .user-card -->
-                    </div><!-- .card-inner -->
-                    
-                    <div class="card-inner p-0">
-                        <ul class="link-list-menu">
-                            <li><a class="active" href="/trang-ca-nhan"><em class="icon ni ni-user-fill-c"></em><span>Thông tin cá nhân</span></a></li>
-                            <li><a href="html/user-profile-activity.html"><em class="icon ni ni-activity-round-fill"></em><span>Lịch sử hoạt động</span></a></li>
-                            <li>
-                                @if($updateFlag)
-                                <a href="/doi-mat-khau"><em class="icon ni ni-lock-alt-fill"></em><span>Cài đặt bảo mật</span></a>
-
-                                @else
-                                <a href="#" class="fail-update-btn" ><em class="icon ni ni-lock-alt-fill"></em><span>Cài đặt bảo mật</span></a>
-
-                                @endif
-                            </li>
-                        </ul>
-                    </div><!-- .card-inner -->
-                </div><!-- .card-inner-group -->
-            </div><!-- card-aside -->
         </div><!-- .card-aside-wrap -->
     </div><!-- .card -->
 </div><!-- .nk-block -->
@@ -174,9 +175,13 @@
                         <li class="nav-item">
                             <a class="nav-link active" data-bs-toggle="tab" href="#personal">Thông tin cá nhân</a>
                         </li>
-                        <li class="nav-item" role="presentation">
+                        <li class="nav-item">
                             <a class="nav-link" data-bs-toggle="tab" href="#avatar" aria-selected="false" tabindex="-1" role="tab">Ảnh đại diện</a>
                         </li>   
+
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#password" aria-selected="false" tabindex="-1" role="tab">Đổi mật khẩu</a>
+                        </li>  
                     </ul><!-- .nav-tabs -->
                     <div class="tab-content">
                         <div class="tab-pane active" id="personal">
@@ -235,38 +240,69 @@
                             <form id="form-avatar-edit" method="POST" action="/profile/changeAvatar/{{ Auth::user()->profile->id }}" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
-                            <div class="row gy-4">
-                                <div class="col-md-12">
-                                    <div class="user-avatar sq xl">
-                                        <img src={{ Auth::user()->profile->url }} alt="..."  id="showNewImage"/>
+                                <div class="row gy-4">
+                                    <div class="col-md-12">
+                                        <div class="user-avatar sq xl">
+                                            <img src={{ Auth::user()->profile->url }} alt="..."  id="showNewImage"/>
 
+                                        </div>
                                     </div>
-                                </div>
-                                  
-                                <div class="col-md-8">
-                                    <div class="form-group">
-                                        <label class="form-label" for="customFileLabel">Upload ảnh đại diện</label>
-                                        <div class="form-control-wrap">
-                                            <div class="form-file">
-                                                <input type="file" class="form-file-input" id="customFile" name="image" required>
-                                                <label class="form-file-label" for="customFile">Chọn ảnh</label>
+                                    
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            <label class="form-label" for="customFileLabel">Upload ảnh đại diện</label>
+                                            <div class="form-control-wrap">
+                                                <div class="form-file">
+                                                    <input type="file" class="form-file-input" id="customFile" name="image" required>
+                                                    <label class="form-file-label" for="customFile">Chọn ảnh</label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    
+                                    <div class="col-12">
+                                        <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                            <li>
+                                                <a href="#" class="btn btn-lg btn-primary" data-bs-dismiss="modal" id="btn-avatar-edit">Cập nhật ảnh đại diện</a>
+                                            </li>
+                                            <li>
+                                                <a href="#" data-bs-dismiss="modal" class="link link-light">Quay lại</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="tab-pane" id="password" role="tabpanel">
+                            <form method="POST" action="/user/{{ Auth::user()->id }}">
+                                @csrf
+                                @method('PUT')
+                                 <div class="form-group">
+                                    <label for="password" class="form-label">{{ __('Mật khẩu') }}</label>
+                                
+                                    <div class="form-control-wrap">
+                                        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
+                                
+                                        @error('password')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
                                 </div>
                                 
-                                <div class="col-12">
-                                    <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
-                                        <li>
-                                            <a href="#" class="btn btn-lg btn-primary" data-bs-dismiss="modal" id="btn-avatar-edit">Cập nhật ảnh đại diện</a>
-                                        </li>
-                                        <li>
-                                            <a href="#" data-bs-dismiss="modal" class="link link-light">Quay lại</a>
-                                        </li>
-                                    </ul>
+                                <div class="form-group">
+                                    <label for="password-confirm" class="form-label">{{ __('Xác nhận mật khẩu') }}</label>
+                                
+                                    <div class="form-control-wrap">
+                                        <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
+                                    </div>
                                 </div>
-                            </div>
-                            </form>
+                                
+                                
+                                <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
+                                </form>
                         </div>
                     </div><!-- .tab-content -->
 

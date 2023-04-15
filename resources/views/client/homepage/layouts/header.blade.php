@@ -1,32 +1,27 @@
-<div class="container-fluid">
+<div class="container-lg wide-xl">
     <div class="nk-header-wrap">      
             <div class="nk-menu-trigger me-sm-2 d-lg-none">
                 <a href="#" class="nk-nav-toggle nk-quick-nav-icon" data-target="headerNav"><em class="icon ni ni-menu"></em></a>
             </div>
             <div class="nk-header-brand">
                 <a href="/" class="logo-link">
-                    <img class="logo-light logo-img" src="https://firebasestorage.googleapis.com/v0/b/do-an-tot-nghiep-f897b.appspot.com/o/logo%2Fimage_2023-03-20_162700220.png?alt=media&token=5bbe33d0-757e-46e4-a632-12fdd6c9aa86" srcset="https://firebasestorage.googleapis.com/v0/b/do-an-tot-nghiep-f897b.appspot.com/o/logo%2Fimage_2023-03-20_162700220.png?alt=media&token=5bbe33d0-757e-46e4-a632-12fdd6c9aa86 2x" alt="logo">
-                    <img class="logo-dark logo-img" src="https://firebasestorage.googleapis.com/v0/b/do-an-tot-nghiep-f897b.appspot.com/o/logo%2Fimage_2023-03-20_162700220.png?alt=media&token=5bbe33d0-757e-46e4-a632-12fdd6c9aa86" srcset="https://firebasestorage.googleapis.com/v0/b/do-an-tot-nghiep-f897b.appspot.com/o/logo%2Fimage_2023-03-20_162700220.png?alt=media&token=5bbe33d0-757e-46e4-a632-12fdd6c9aa86 2x" alt="logo-dark">
+                    <img class="logo-light logo-img" src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png" alt="logo">
+                    <img class="logo-dark logo-img" src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png" alt="logo-dark">
                 </a>
             </div>
-        <div class="nk-header-menu ms-auto" data-content="headerNav">
+        <div class="nk-header-menu ms-auto" data-content="headerNav">    
             <div class="nk-header-mobile">
                 <div class="nk-header-brand">
-                    <a href="html/index.html" class="logo-link">
-                        <img class="logo-light logo-img" src="https://firebasestorage.googleapis.com/v0/b/do-an-tot-nghiep-f897b.appspot.com/o/logo%2Fimage_2023-03-20_162700220.png?alt=media&token=5bbe33d0-757e-46e4-a632-12fdd6c9aa86" srcset="https://firebasestorage.googleapis.com/v0/b/do-an-tot-nghiep-f897b.appspot.com/o/logo%2Fimage_2023-03-20_162700220.png?alt=media&token=5bbe33d0-757e-46e4-a632-12fdd6c9aa86 2x" alt="logo">
-                        <img class="logo-dark logo-img" src="https://firebasestorage.googleapis.com/v0/b/do-an-tot-nghiep-f897b.appspot.com/o/logo%2Fimage_2023-03-20_162700220.png?alt=media&token=5bbe33d0-757e-46e4-a632-12fdd6c9aa86" srcset="{https://firebasestorage.googleapis.com/v0/b/do-an-tot-nghiep-f897b.appspot.com/o/logo%2Fimage_2023-03-20_162700220.png?alt=media&token=5bbe33d0-757e-46e4-a632-12fdd6c9aa86 2x" alt="logo-dark">
+                    <a href="/" class="logo-link">
+                        <img class="logo-light logo-img" src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png" alt="logo">
+                        <img class="logo-dark logo-img" src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png" alt="logo-dark">
                     </a>
                 </div>
                 <div class="nk-menu-trigger me-n2">
                     <a href="#" class="nk-nav-toggle nk-quick-nav-icon" data-target="headerNav"><em class="icon ni ni-arrow-left"></em></a>
                 </div>
-            </div>
-            <ul class="nk-menu nk-menu-main">
-                <li class="nk-menu-item {{ Request::is('/sach') ? 'active' : '' }}">
-                    <a href="/sach" class="nk-menu-link">
-                        <span class="nk-menu-text">Sách</span>
-                    </a>
-                </li><!-- .nk-menu-item -->
+            </div>            
+            <ul class="nk-menu nk-menu-main">             
                 {{-- <li class="nk-menu-item has-sub">
                     <a href="#" class="nk-menu-link nk-menu-toggle">
                         <span class="nk-menu-text">Apps</span>
@@ -51,27 +46,46 @@
                             <a href="html/apps-kanban.html" class="nk-menu-link"><span class="nk-menu-text">Kanban Board</span></a>
                         </li>
                     </ul><!-- .nk-menu-sub -->
-                </li> --}}
-              
-              
-                <li class="nk-menu-item {{ Request::is('/tai-lieu') ? 'active' : '' }}">
-                    <a href="/tai-lieu" class="nk-menu-link">
-                        <span class="nk-menu-text">Tài liệu</span>
-                    </a>
-                </li><!-- .nk-menu-item -->
+                </li> --}}             
                 <li class="nk-menu-item {{ Request::is('/tim-kiem') ? 'active' : '' }}">
                     <a href="/tim-kiem" class="nk-menu-link">
-                        <span class="nk-menu-text">Tìm kiếm</span>
+                        <span class="nk-menu-text">
+                            <em class="icon ni ni-search"></em>
+                            Tìm kiếm               
+                        </span>
+                       
                     </a>
                 </li><!-- .nk-menu-item -->
                 <li class="nk-menu-item {{ Request::is('/the-loai') ? 'active' : '' }}">
                     <a href="/the-loai" class="nk-menu-link">
-                        <span class="nk-menu-text">Thể loại</span>
+                        
+                        <span class="nk-menu-text">
+                            <em class="icon ni ni-menu-circled"></em>
+                            Thể loại
+                        </span>
                     </a>
-                </li><!-- .nk-menu-item -->
+                </li><!-- .nk-menu-item -->           
+                <li class="nk-menu-item {{ Request::is('/the-loai') ? 'active' : '' }}">
+                    <a href="/sach/all/sach-hay-nen-doc" class="nk-menu-link">
+                        
+                        <span class="nk-menu-text">
+                            <em class="icon ni ni-star-fill"></em>
+                            Khuyên đọc</span>
+                    </a>
+                </li><!-- .nk-menu-item -->             
+                <li class="nk-menu-item {{ Request::is('/tai-lieu/*') ? 'active' : '' }}">
+                    <a href="/tai-lieu/all/tai-lieu-hay-nhat" class="nk-menu-link">
+                        
+                        <span class="nk-menu-text">
+                            <em class="icon ni ni-download"></em>
+                            Nên tải</span>
+                    </a>
+                </li><!-- .nk-menu-item -->               
                 <li class="nk-menu-item {{ Request::is('/dien-dan') ? 'active' : '' }}">
                     <a href="/dien-dan" class="nk-menu-link">
-                        <span class="nk-menu-text">Diễn đàn</span>
+                        <span class="nk-menu-text">
+                            <em class="icon ni ni-question"></em>
+                            Diễn đàn</span>
                     </a>
                 </li><!-- .nk-menu-item -->
             </ul><!-- .nk-menu -->
@@ -297,7 +311,7 @@
                 </li><!-- .dropdown -->
                 @else
                     <li>
-                        <a href="{{route('login')}}" class="btn btn-primary">Đăng nhập</a>
+                        <a href="{{route('login')}}" class="btn btn-outline-primary">Đăng nhập</a>
                     </li>
                 @endif
 

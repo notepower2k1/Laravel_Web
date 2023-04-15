@@ -12,7 +12,7 @@ class ClientUserController extends Controller
 {
     public function changePassword()
     {
-        return view('client.profile.change-password');
+        return view('client.homepage.profile.change-password');
      
     }
 

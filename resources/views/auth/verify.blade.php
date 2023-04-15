@@ -60,10 +60,12 @@
     </div>  --}}
 
     <div class="nk-block nk-block-middle nk-auth-body wide-xs">
+        
         <div class="card card-bordered">
                 <div class="card-inner card-inner-lg">
 
                     <div class="card p-2 text-center"> 
+                       
                         <h6>Vui lòng nhập mã OTP để xác nhận tài khoản của bạn</h6> 
                         <div> 
                             <span>Mã OTP sẽ được gửi đến email</span> 
@@ -71,6 +73,14 @@
                                 <?=Str::mask(Auth::user()->email,'*',0,strpos(Auth::user()->email,'@')-3)?>
                             </small> 
                         </div> 
+
+                        <div style="display:none" id="loading">
+                            <div class="d-flex align-items-center mt-4">
+                                <strong>Đang thực hiện...</strong>
+                                <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
+                            </div>
+                        </div>
+                   
                         <form id="myForm">
                             @csrf
                             <div id="otp" class="inputs d-flex flex-row justify-content-center mt-2"> 
@@ -82,7 +92,7 @@
                                 <input class="m-2 text-center form-control rounded" type="text" id="sixth" maxlength="1" /> 
                             </div> 
                             <div class="mt-4"> 
-                                <button type="submit" name="submit" value="Submit" class="btn btn-danger px-4">Xác thực</button> 
+                                <button type="submit" name="submit" value="Submit" class="btn btn-danger px-4" id="verify-btn">Xác thực</button> 
                             </div> 
                         </form>
 
@@ -199,13 +209,15 @@ $(document).ready(function() {
  $('#send-otp').on("click", function(e){
     
 
+    $('#loading').show('slow');
+    $('#send-otp').addClass('disabled');
 
     $.ajax({
     type:"GET",
     url:'/send-email'
     })
     .done(function() {
-        $('#send-otp').addClass('disabled');
+        $('#loading').hide();
 
         Swal.fire({
             icon: 'success',
@@ -256,6 +268,9 @@ $('#myForm').submit(function(e){
       .done(function(res) {
 
         if(res.status === 1){
+
+            $('#verify-btn').attr('disabled', 'disabled');
+
             Swal.fire({
                 icon: 'success',
                 title: 'Xác thực thành công!!!',

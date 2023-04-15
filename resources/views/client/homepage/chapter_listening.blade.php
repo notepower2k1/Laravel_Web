@@ -1,4 +1,4 @@
-@extends('client/layouts.app')
+@extends('client/homepage.layouts.app')
 
 @section('additional-style')
 @endsection

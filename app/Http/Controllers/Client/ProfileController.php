@@ -36,7 +36,7 @@ class ProfileController extends Controller
         }
 
 
-        return view('client.profile.index')->with('updateFlag', $updateFlag);
+        return view('client.homepage.profile.index')->with('updateFlag', $updateFlag);
      
     }
 

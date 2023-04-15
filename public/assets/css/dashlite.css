@@ -29024,7 +29024,7 @@ body.nav-shown {
   min-height: 100vh;
 }
 .nk-content {
-  padding: 24px 4px;
+  padding: 24px 0px;
 }
 .nk-content-fs {
   min-height: calc(100vh - (65px + 65px));
@@ -29034,7 +29034,7 @@ body.nav-shown {
 
 @media (min-width: 576px) {
   .nk-content {
-    padding: 32px 22px;
+    padding: 32px 0px;
   }
   .nk-content-fluid {
     padding-left: 22px;

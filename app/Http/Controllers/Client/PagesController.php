@@ -18,37 +18,40 @@ use App\Models\report;
 use App\Models\BookComment;
 use App\Models\DocumentComment;
 use App\Models\PostComment;
+use App\Models\readingHistory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Spatie\Searchable\Search;
 use Spatie\Searchable\ModelSearchAspect;
 use Drnxloc\LaravelHtmlDom\HtmlDomParser;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 
 class PagesController extends Controller
 {
-    public function redirect_book_home_page(){
-        return redirect('/sach');
-
-    }
-    public function book_home_page(){
+   
+    public function home_page(){
             
         $books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get();
 
-        $high_rating_books = Book::where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('ratingScore')->take(8);
+        $high_rating_books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('ratingScore')->take(8);
 
-        $high_reading_books = Book::where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('totalReading')->take(8);
+        $high_reading_books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('totalReading')->take(9);
 
-        $new_books = Book::where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('updated_at')->take(8);
+        $new_books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('updated_at')->take(8);
 
-        $types = BookType::all();
-        return view('client.homepage.book_homepage',[
+        $documents = Document::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get()->take(8);
+
+        $high_downloading_documents = Document::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('totalDownloading')->take(8);
+
+        return view('client.homepage.homepage',[
              'books' => $books,
              'high_rating_books' => $high_rating_books,
              'high_reading_books' => $high_reading_books,
              'new_books' => $new_books,
-             'types'=>$types
+             'documents'=>$documents,
+             'high_downloading_documents'=>$high_downloading_documents
         ]);
     }
 
@@ -59,16 +62,16 @@ class PagesController extends Controller
 
         switch ($option) {
             case 'sach-hay-nen-doc':
-                $books = Book::where('deleted_at','=',null)->where('status','=',1)->orderBy('ratingScore', 'desc')->paginate(18);
+                $books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('ratingScore', 'desc')->paginate(18);
                 $title = 'Sách hay nên đọc';
                 break;
             case 'sach-hay-xem-nhieu':
-                $books = Book::where('deleted_at','=',null)->where('status','=',1)->orderBy('totalReading', 'desc')->paginate(18);
+                $books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('totalReading', 'desc')->paginate(18);
                 $title = 'Sách hay xem nhiều';
 
                 break;
             case 'sach-moi-cap-nhat':
-                $books = Book::where('deleted_at','=',null)->where('status','=',1)->orderBy('updated_at', 'desc')->paginate(18);
+                $books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('updated_at', 'desc')->paginate(18);
                 $title = 'Sách mới cập nhật';
 
                 break;  
@@ -85,14 +88,32 @@ class PagesController extends Controller
        ]);
 
     }
-    public function document_home_page(){
-            
-        $documents = Document::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->paginate(18);
-      
-        return view('client.homepage.document_homepage',[
-             'documents' => $documents,
-        ]);
+
+    public function document_page_more($option = null){
+
+        $documents = Document::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get();
+        $title = 'Tất cả tài liệu';
+
+        switch ($option) {
+            case 'tai-lieu-hay-nhat':
+                $documents = Document::where('deleted_at','=',null)->where('status','=',1)->where('isPublic','=',1)->orderBy('totalDownloading', 'desc')->paginate(18);
+                $title = 'Tài liệu hay nhất';
+                break;
+            default:
+                $documents = Document::where('deleted_at','=',null)->where('status','=',1)->where('isPublic','=',1)->paginate(18);
+                $title = 'Tất cả tài liệu';
+
+        }
+
+        return view('client.homepage.document_page_more',[
+            'documents' => $documents,
+            'title' => $title
+         
+       ]);
+
     }
+
+    
 
     public function book_detail($book_id,$book_slug){
             
@@ -100,6 +121,7 @@ class PagesController extends Controller
         $chapters = Chapter::where('book_id','=',$book_id)->where('deleted_at','=',null)->paginate(10);
         $comments = BookComment::where('bookID','=',$book_id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(10);
 
+        $booksWithSameType = Book::where('type_id','=',$book->type_id)->where('id','!=',$book->id)->get();
         $isMark = false;
         $isRating = false;
     
@@ -120,27 +142,21 @@ class PagesController extends Controller
                 $isRating = true;
             }
 
-            return view('client.homepage.book_detail')
-            ->with('comments',$comments)
-            ->with('book',$book)
-            ->with('chapters',$chapters)
-            ->with('isMark',$isMark)
-            ->with('isRating',$isRating)
-            ->with('ratingScore',$book->ratingScore);
+         
 
 
         }
 
-        else{
-            return view('client.homepage.book_detail')
-            ->with('comments',$comments)
-            ->with('book',$book)
-            ->with('chapters',$chapters)
-            ->with('isMark',$isMark)
-            ->with('isRating',$isRating)
-            ->with('ratingScore',$book->ratingScore);
+        return view('client.homepage.book_detail')
+        ->with('comments',$comments)
+        ->with('book',$book)
+        ->with('chapters',$chapters)
+        ->with('isMark',$isMark)
+        ->with('isRating',$isRating)
+        ->with('ratingScore',$book->ratingScore)
+        ->with('booksWithSameType',$booksWithSameType);
 
-        }
+        
        
 
     }
@@ -160,6 +176,37 @@ class PagesController extends Controller
 
 
     public function read_book($book_slug,$chapter_slug){
+
+
+        $book = Book::where('slug','=',$book_slug)->first();
+
+        if(Auth::check()){
+
+            $existHistory = readingHistory::where('userID','=',Auth::user()->id)->where('bookID','=',$book->id)->first();
+            if($existHistory){
+
+                $existHistory->update([
+                    'total' => $existHistory->total + 1
+                ]);
+
+                $existHistory->save();
+            }
+            else{
+                $newHistory = readingHistory::create([
+                    'bookID'=>$book->id,
+                    'userID'=>Auth::user()->id,
+                    'total'=>1
+                ]);
+                $newHistory->save();
+            }
+
+        }
+        
+        $book->update([
+            'totalReading' => $book->totalReading + 1
+        ]);
+        $book->save();
+
         $chapter = Chapter::where('slug','=',$chapter_slug)->where('deleted_at','=',null)->firstOrFail();
 
         $chapters = Chapter::where('book_id','=',$chapter->book_id)->where('deleted_at','=',null)->get();
@@ -180,31 +227,14 @@ class PagesController extends Controller
        
     }
 
-    public function read_post($forum_slug,$forum_post_slug){
-        if ($forum_post_slug == 'dang-bai-viet'){
-            return view('forum_posts.create',[
-                'forum_slug' => $forum_slug
-            ]);
-        }
-        else{
-            $forum_id = Forum::where('slug','=',$forum_slug)->where('deleted_at','=',null)->pluck('id')->first();
-            $forumPost = ForumPosts::where('slug','=',$forum_post_slug)->where('forumID','=',$forum_id)->where('deleted_at','=',null)->firstOrFail();;
-    
-        
-          
-            return view('forum_posts.detail',[
-                'forumPost' => $forumPost,
-            ]);
-        }
-        
-    }
+ 
 
     public function post_navigation_page(){
 
         $book_types = BookType::all();
         $document_types = DocumentType::all();
 
-        return view('client.add-navigate-page')
+        return view('client.homepage.add-navigate-page')
         ->with('book_types',$book_types)
         ->with('document_types',$document_types);
     }
@@ -259,7 +289,8 @@ class PagesController extends Controller
         // // return view('client.homepage.search_page', compact('searchResults', 're'));
 
         return response()->json([
-            'res' => $searchResults
+            'res' => $searchResults,
+            'total' => $searchResults->count()
         ]);
     }
 
@@ -270,60 +301,48 @@ class PagesController extends Controller
 
         $option_id = 0;
         $type_id = 0;
-
+        $total = 0;
         $items = collect();
-        if ($type_slug){
-            switch ($option) {
-                case 'the-loai-sach':
-                    $option_id = 0;
-                    $type_id = BookType::where('slug','=',$type_slug)->pluck('id')->firstOrFail();
-                    $items = Book::where('type_id','=',$type_id)->where('deleted_at','=',null)->where('status','=',1)->get();          
-                    break;
-                case 'the-loai-tai-lieu':
-                    $option_id = 1;
-                    $type_id = DocumentType::where('slug','=',$type_slug)->pluck('id')->firstOrFail();
-                    $items = Document::where('type_id','=',$type_id)->where('deleted_at','=',null)->where('status','=',1)->get();
-                    break;
-    
-                default:
-                    $option_id = -1;
-                    $type_id = -1;
-    
-            }
+       
+        switch ($option) {
+            case 'the-loai-sach':
+                $option_id = 0;
+                $type_id = BookType::where('slug','=',$type_slug)->pluck('id')->firstOrFail();
+                $items = Book::where('type_id','=',$type_id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1);    
+                $total = $items->get()->count();      
+                break;
+            case 'the-loai-tai-lieu':
+                $option_id = 1;
+                $type_id = DocumentType::where('slug','=',$type_slug)->pluck('id')->firstOrFail();
+                $items = Document::where('type_id','=',$type_id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1);
+                $total = $items->get()->count();      
+                break;
+            case null:
+                $option_id = 0;
+                $type_id = -1;
+                $items = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1);    
+                $total = $items->get()->count();    
+                break;
+            default:
+                $option_id = -1;
+                $type_id = -1;
+                $items = null;    
+                $total = 0;      
         }
+        
       
 
         return view('client.homepage.search_type_page')
-        ->with('items',$items)
+        ->with('items',$items->paginate(18))
         ->with('document_types',$document_types)
         ->with('book_types',$book_types)
         ->with('option_id',$option_id)
-        ->with('type_id',$type_id);
+        ->with('type_id',$type_id)
+        ->with('total',$total);
 
     }
 
-    public function search_type_result(Request $request){
-        $option = $request->option;
-        $type_slug = $request->type_slug;
-
-        switch ($option) {
-            case 'the-loai-sach':
-                $type_id = BookType::where('slug','=',$type_slug)->pluck('id')->firstOrFail();
-                $searchResults = Book::where('type_id','=',$type_id)->where('deleted_at','=',null)->where('status','=',1)->get();          
-                break;
-            case 'the-loai-tai-lieu':
-                $type_id = DocumentType::where('slug','=',$type_slug)->pluck('id')->firstOrFail();
-                $searchResults = Document::where('type_id','=',$type_id)->where('deleted_at','=',null)->where('status','=',1)->get();
-                break;
-            default:
-                $searchResults = '';
-        }
-        
-        return response()->json([
-            'res' => $searchResults
-        ]);
-      
-    }
+   
 
 
     public function forum_home_page(){
@@ -385,7 +404,7 @@ class PagesController extends Controller
 
         $comments = PostComment::where('postID','=',$post_id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
 
-        return view('client.forum_posts.detail')
+        return view('client.forum.forum_posts.detail')
         ->with('comments',$comments)
         ->with('forum_slug',$forum_slug)
         ->with('post',$post);
@@ -495,4 +514,8 @@ class PagesController extends Controller
         ->with('chapters',$chapters);
 
     }
+
+  
+
+
 }

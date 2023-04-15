@@ -1,4 +1,4 @@
-@extends('client/layouts.app')
+@extends('client/homepage.layouts.app')
 @section('pageTitle', 'Chọn tài liệu điện tử muốn thêm')
 @section('content')
   <div class="components-preview wide-md mx-auto mt-5">

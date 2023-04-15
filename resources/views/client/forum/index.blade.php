@@ -1,5 +1,6 @@
-@extends('client/layouts.app')
+@extends('client/forum.layouts.app')
 @section('pageTitle', 'Diễn đàn')
+
 @section('content')
 <div class="nk-block nk-block-lg">
     <div class="row">
@@ -7,20 +8,20 @@
             <div class="row g-gs">
                 @foreach ( $forums as $forum )
                 <div class="col-lg-12">
-                    <a class="card card-bordered text-soft">
+                    <div class="card card-bordered text-soft">
                         <div class="p-2">
-                                <div class="row g-gs">
-                                    <div class="col-1">
+                                <div class="d-flex">
+                                    <div class="">
                                         <div class="nk-tnx-type-icon bg-success-dim text-success">                                      
                                                 <em class="icon ni ni-folders-fill"></em>                                    
                                         </div>
                                     </div>
-                                    <div class="col-11 ps-0">
+                                    <div class="flex-grow-1 ">
                                         <div class="d-flex flex-column">
-                                            <h6 class="title" data-slug ={{ $forum->slug }}>
+                                            <a class="title text-dark fw-bold" href="/dien-dan/{{ $forum->slug }}">
                                                 {{ $forum->name }}
                                     
-                                            </h6>
+                                            </a>
                                             <p>{{ $forum->description }}</p>
                                             <div class="d-flex justify-between">
                                                 <p>{{ $forum->numberOfPosts	 }} bài viết</p>
@@ -32,13 +33,13 @@
                                                 <p>{{ $forum -> created_at->format('d/m/Y') }}</p>
                                             </div>
                                       
-                                    </div>
+                                        </div>
                                 </div>
                             
                         </div>
                             
                         </div>
-                    </a>
+                    </div>
                 </div><!-- .col -->
                 @endforeach
             
@@ -81,24 +82,6 @@
 
 <script>
 
-$('.title').hover(
-    
-    function () {
-        $(this).css('cursor','pointer');
-    }, 
-     
-    function () {
-        $(this).css('cursor','normal');
-    }
- );
- 
-    $('.title').click(function(){
-
-        var slug = $(this).attr('data-slug');
-
-        window.location.href="/dien-dan/" + slug;
-
-    })
 </script>
 
 @endsection

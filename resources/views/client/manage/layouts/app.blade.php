@@ -36,14 +36,14 @@
         <div class="nk-main ">      
             <div class="nk-wrap nk-wrap-nosidebar">         
                 <div class="nk-header nk-header-fixed is-light">
-                    @include('client/manage/layouts.header')
+                    @include('client/manage.layouts.header')
                 </div>
 
                 <div class="nk-content">
                         <div class="nk-content-inner">
                             <div class="nk-content-body">
                                 <div class="nk-fmg">
-                                @include('client/manage/layouts.sidebar')
+                                @include('client/manage.layouts.sidebar')
                             
                                 @yield('content')
 

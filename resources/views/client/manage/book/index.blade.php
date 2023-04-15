@@ -1,4 +1,4 @@
-@extends('client/manage/layouts.app')
+@extends('client/manage.layouts.app')
 @section('pageTitle', 'Danh sách sách điện tử')
 @section('content')
 <div class="nk-fmg-body">

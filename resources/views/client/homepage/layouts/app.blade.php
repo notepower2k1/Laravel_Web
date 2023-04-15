@@ -11,6 +11,8 @@
     
 
     <link rel="stylesheet" href="{{ asset('assets/css/dashlite.css?ver=3.1.2') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/loading.css') }}">
+
     <link id="skin-default" rel="stylesheet" href="{{ asset('assets/css/theme.css?ver=3.1.2') }}">
     <link
     href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css"
@@ -21,29 +23,42 @@
    
     @yield('additional-style')
 
-
+    <style>
+        .book_sameType:hover{
+            background-color:#062788;
+        }
+    </style>
 </head>
-<body class="nk-body bg-lighter ">
+<body class="nk-body bg-lighter preload">
     <div class="nk-app-root">
+        <div class="loader-wrapper">
+            <span class="loader"><span class="loader-inner"></span></span>
+        </div>  
         <div class="nk-main ">      
             <div class="nk-wrap">         
-                <div class="nk-header is-light">
-                    @include('client/layouts.header')
+                <div class="nk-header nk-header-fixed is-light shadow-sm">
+                    @include('client/homepage.layouts.header')
                 </div>
 
                 <div class="nk-content">
-                    <div class="container-fluid">
-                        <div class="nk-content-inner">
-                            
-                            <div class="nk-content-body">
-                                @yield('content')
-                            </div>
+                    <div class="nk-content-inner">
+
+                        
+                        
+                        <div class="nk-content-body">                   
+                            @yield('content')
+
+                            @if(Request::is('/','dien-dan/*','tim-kiem','the-loai','the-loai/*','sach/*','tai-lieu/*','sach-theo-doi','trang-ca-nhan','them-tai-lieu'))
+
+                            @else
+                            @include('client/homepage.layouts.contentFooter')
+                            @endif
                         </div>
                     </div>
                 </div>
             </div>
            
-            {{-- @include('admin/layouts.footer') --}}
+            @include('client/homepage.layouts.footer')
         </div>
   
 
@@ -61,6 +76,12 @@
     @yield('additional-scripts')
 
     <script>
+        
+        $(window).on("load",function(){
+            $(".loader-wrapper").fadeOut("slow");
+            $("body").removeClass("preload");
+        });
+   
         $(document).on('click','#mark_all_bookMark_notifications',function(){
     
             $.ajax({

@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\loginHistory;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\URL;
 
 class LoginController extends Controller
 {
@@ -30,20 +32,25 @@ class LoginController extends Controller
      *
      * @var string
      */
-    // protected $redirectTo = RouteServiceProvider::HOME;
+    protected $redirectTo = '/';
+
+    public function redirectTo()
+    {
+        return Session::get('backUrl') ? Session::get('backUrl') :   $this->redirectTo;
+    }
 
     public function authenticated(){
 
         if(Auth::user()->role == '1'){
-            return redirect('admin/dashboard')->with('status','Welcome to Admin Dashboard');
+            return redirect('admin/dashboard');
         }
         else if(Auth::user()->role == '0')
-        {
-            return redirect('/')->with('status','Login sucessfully!!!');
-
+        {  
+            return Session::get('backUrl') ? Session::get('backUrl') : $this->redirectTo;
         }
         else{
-            return redirect('/');
+            return Session::get('backUrl') ? Session::get('backUrl') : $this->redirectTo;
+
         }
     }
     /**
@@ -54,6 +61,8 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+        Session::put('backUrl', URL::previous());
+
     }
 
 
@@ -73,14 +82,17 @@ class LoginController extends Controller
                 return redirect('login')->with('fail', 'Tài khoản của bạn đã bị khóa');
             }
 
-            else{
-                loginHistory::create([
-                    'userID' => Auth::user()->id,
-                    'created_at' => Carbon::now()
-                ]);
-                $this->authenticated();
+            if(Auth::user()->role == '1'){
+                return redirect('admin/dashboard');
             }
-          
+            else if(Auth::user()->role == '0')
+            {  
+                return redirect (Session::get('backUrl') ? Session::get('backUrl') : $this->redirectTo);
+            }
+            else{
+                return redirect (Session::get('backUrl') ? Session::get('backUrl') : $this->redirectTo);
+    
+            }
         }
     
         return redirect('login')->with('fail', 'Tài khoản hoặc mật khẩu sai!!!');

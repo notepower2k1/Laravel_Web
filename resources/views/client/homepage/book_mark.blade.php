@@ -1,4 +1,4 @@
-@extends('client/layouts.app')
+@extends('client/homepage.layouts.app')
 @section('content')
 <div class="nk-block nk-block-lg">
     <div class="nk-block-head">

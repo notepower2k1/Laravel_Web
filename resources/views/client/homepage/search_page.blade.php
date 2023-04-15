@@ -1,51 +1,69 @@
-@extends('client/layouts.app')
+@extends('client/homepage.layouts.app')
+@section('additional-style')
+<style>
+    .item-search:hover{
+        background-color:#062788;
+    }
+ 
+    </style>
+@endsection
 @section('content')
-<div class="card card-bordered card-preview">
-    <div class="card-inner">
-        <div class="row g-4">
-            <div class="col-12">
-                <div class="form-control-wrap">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon1">
-                            <em class="icon ni ni-search"></em></span>
-                        </div>
-                            <input type="text" name="query" class="form-control col-sm-8"  placeholder="Nhập tên sách hoặc tài liệu !!" aria-label="Search">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-primary btn-dim" id="search-btn" >Tìm kiếm sách điện tử</button>
-                            <button class="btn btn-outline-primary btn-dim dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><span id='option_show'>Loại tài liệu</span><em class="icon mx-n1 ni ni-chevron-down"></em></button>
-                            <div class="dropdown-menu dropdown-menu-end" style="">
-                                <ul class="link-list-opt no-bdr">
-                                    <li><a href="#" class="search-option" data-value=1 >Sách điện tử</a></li>
-                                    <li><a href="#" class="search-option" data-value=2 >Tài liệu tham khảo</a></li>                                                                 
-                                </ul>
-                            </div>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="form-control-wrap form-control-lg shadow-sm bg-white rounded">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">
+                        <em class="icon ni ni-search"></em></span>
+                    </div>
+                    <input type="text" name="query" class="form-control col-sm-8"  placeholder="Nhập tên sách hoặc tài liệu !!" aria-label="Search">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-success btn-dim dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><span id='option_show'>Loại tài liệu</span><em class="icon mx-n1 ni ni-chevron-down"></em></button>
+                        <div class="dropdown-menu dropdown-menu-end" style="">
+                            <ul class="link-list-opt no-bdr">
+                                <li><a href="#" class="search-btn" data-value=1 >Sách điện tử</a></li>
+                                <li><a href="#" class="search-btn" data-value=2 >Tài liệu tham khảo</a></li>                                                                 
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
-
-           
-        </div>
-        </div>        
-    </div>
-</div>
-<div id="spinner" style="display:none">
-    <div class="d-flex justify-content-center">
-        <div class="spinner-border" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-    </div>
-</div>
-<div class="nk-block mt-4">
-    <div class="row g-gs" id="result-box">
-       
-       
-      
-
+        </div>    
     </div>
     
-</div>                                  
+    <div class="nk-block mt-4">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between position-relative">
+                <div class="nk-block-head-content">
+    
+                    <h3 class="nk-block-title page-title">Tìm kiếm: <span id="total-search">0</span> kết quả</h3>    
+                </div>
+                <div class="nk-block-head-content">
+                    <ul class="nk-block-tools g-1">                   
+                        <li class="d-lg-none me-n1">
+                            <a class="btn btn-trigger btn-icon toggle" data-target="files-aside"><em class="icon ni ni-menu-alt-r" style="cursor: pointer"></em>
+                            </a>
+                        </li>
+                    </ul>
+                </div>      
+            </div>
+        </div>
+        <div class="nk-content">
+            <div class="row g-gs" id="result-box">
+            </div>
+        </div>
+    </div> 
+      
+    <div id="spinner" style="display:none">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>  
+</div>
+                               
 @endsection
 
 @section('additional-scripts')
@@ -81,24 +99,7 @@ function toSlug(str) {
 	return str;
 }
 
-
-
-$(".search-option").click(function(){
-
-    $(".search-option").parent().removeClass("active");
-
-    var option_text = $(this).text();
-    var option_value = $(this).attr('data-value');
-
-    $("#search-btn").text("Tìm kiếm " + option_text.toLowerCase());
-    $("#search-btn").attr('data-value',option_value);
-    
-    
-    $(this).parent().addClass("active");
-
-});
-
-$("#search-btn").click(function(){
+$(".search-btn").click(function(){
 
     var option_value = $(this).attr('data-value');
     var input_value = $("input[type=text]").val();
@@ -130,26 +131,33 @@ $("#search-btn").click(function(){
                 .done(function(res) {
                     $('#spinner').hide();
 
+                    $('#total-search').text(res.total);
                     if(res.res.length > 0 ){
-                        renderArea.empty(); 
-
+                        renderArea.empty();                
                         for(item of res.res){
+                      
                         var openEnderContent = 
-                        '<div class="col-xxl-2 col-lg-2 col-sm-6" id="new_div">' +
-                            '<div class="card card-bordered product-card">' +
-                                '<div class="product-thumb">' + 
-                                    `<a href="${item.url}">` +
-                                        `<img class="card-img-top" src="${item.searchable.url}" alt="image"  width="400px" height="300px">` +
-                                    '</a>' +               
-                                '</div>'
-                                +
-                                '<div class="card-inner text-center">' +
-                                    `<h5 class="product-title"><a href="/sach/${item.searchable.id}/${item.searchable.slug}">${item.searchable.name}</a></h5>` +
-                                    `<div class="product-price text-primary h5">${item.searchable.author}</div>` +
-                                '</div>' +
-                            '</div>'+
-                        '</div>';
 
+                       '<div class="col-lg-3 col-md-6 mt-3">' +
+                                           ' <div class="card card-bordered product-card shadow">'+
+                                                '<div class="product-thumb">'+
+                                                    `<img class="card-img-top" src="${item.searchable.url}" alt="" width="300px" height="400px">` +                                                                             
+                                                       ' <div class="product-actions item-search w-100 h-100">' +
+                                                           ' <div class="pricing-body w-100 h-100 d-flex text-center align-items-center">' +
+                                                               ' <div class="row">' +
+                                                                   ' <div class="pricing-amount">' +
+                                                                      `<h6 class="bill text-white">${item.searchable.name}</h6>` +
+                                                                      `<p class="text-white">Tác giả: ${item.searchable.author}</p>` +                                                               
+                                                                   ' </div>'+
+                                                                   ' <div class="pricing-action">'+
+                                                                        `<a href="${item.url}" class="btn btn-outline-light">Chi tiết</a>`+
+                                                                '    </div>'+
+                                                               ' </div>'+                                                                              
+                                                           ' </div>'+
+                                                        '</div>'+
+                                              '  </div>'+                                         
+                                '</div>'+
+                       ' </div>';
 
                         
                         renderArea.append(openEnderContent);

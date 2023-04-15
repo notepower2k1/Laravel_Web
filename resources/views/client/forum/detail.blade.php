@@ -1,12 +1,20 @@
-@extends('client/layouts.app')
+@extends('client/forum.layouts.app')
 @section('pageTitle', `{{$forum->name}}`)
-@section('content')
-<div class="nk-content-wrap">
-    <div class="nk-block nk-block-lg">
+
+@section('navbar-Footer')
+<div class="card card-bordered shadow">
+    <nav class="ms-4">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/dien-dan">Diễn đàn</a></li>
+            <li class="breadcrumb-item active"><span class="text-dark fw-bold">{{ $forum->name }}</span></li>
+        </ul>
+    </nav>
+    <div class="card-inner">   
         <div class="nk-block-head nk-block-head-sm">
+           
             <div class="nk-block-between">
                 <div class="nk-block-head-content">
-                    <h3 class="nk-block-title page-title">Bài viết</h3>
+                    <h3 class="nk-block-title page-title">{{ $forum->name }}</h3>
                     <div class="nk-block-des text-soft">
                         <p>Số bài viết: {{$forum->numberOfPosts}}</p>
                     </div>
@@ -33,80 +41,77 @@
                                         </div>
                                     </div>
                                 </li>
+                                @if (Auth::check())
+
                                 <li class="nk-block-tools-opt d-none d-sm-block">
                                     <a href="#" data-bs-toggle="modal" data-bs-target="#modalForm" class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Thêm bài viết</span></a>
                                 </li>
+                                
                                 <li class="nk-block-tools-opt d-block d-sm-none">
                                     <a href="#" class="btn btn-icon btn-primary"><em class="icon ni ni-plus"></em></a>
                                 </li>
+                                @endif
                             </ul>
                         </div>
                     </div><!-- .toggle-wrap -->
                 </div><!-- .nk-block-head-content -->
             </div><!-- .nk-block-between -->
         </div>
-        <div class="row">
+    </div>
+</div>
+@endsection
+@section('content')
+
+<div class="nk-content-wrap">
+    <div class="nk-block nk-block-lg">
+     
+        <div class="row">        
             <div class="col-lg-8">
-    
                 <div class="row g-gs">
-                @foreach ( $forums_posts as $post)
-                <div class="col-sm-6 col-xl-4" id="post-{{ $post->id }}">
-                    <div class="card card-bordered h-100">
-                        <div class="card-inner">
-                            <div class="project">
-                                <div class="project-head">
-                                    <a href="/thanh-vien/{{ $post->users->id }}" class="project-title">
-                                        <div class="user-avatar sq bg-purple">
-                                            <img src={{ $post->users->profile->url }} alt="image" />
-                                        </div>
-                                        <div class="project-info">
-                                            <h6 class="title">
-                                                {{ $post->users->profile->displayName }}
-                                            </h6>
-                                            <span class="sub-text">
-                                                @if ($post->users->role == 1)
-                                                    Quản trị viên
-                                                @else
-                                                    Thành viên
-                                                @endif
-                                            </span>
-                                        </div>
-                                    </a>
-    
-                                    @if (Auth::check() && Auth::user()->id === $post->users->id)
-                                    <div class="drodown">
-                                        <a href="#" class="dropdown-toggle btn btn-sm btn-icon btn-trigger mt-n1 me-n1" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                            <ul class="link-list-opt no-bdr">
-                                                <li><a href="/cap-nhat-bai-viet/{{ $post->forums->slug }}/{{ $post->id }}"><em class="icon ni ni-edit"></em><span>Chỉnh sửa bài viết</span></a></li>
-                                                <li><a href="#" data-id={{ $post->id }} class="delete-btn"><em class="icon ni ni-check-round-cut"></em><span>Xóa bài viết</span></a></li>
-                                            </ul>
+                    @foreach ( $forums_posts as $post )
+                    <div class="col-lg-12" id="post-{{ $post->id }}">
+                        <div class="card card-bordered text-soft">
+                           <div class="p-2">
+                                <div class="d-flex">
+                                    <div class="">
+                                        <div class="nk-tnx-type-icon bg-success-dim text-success">                                      
+                                            <em class="icon ni ni-folders-fill"></em>                                    
                                         </div>
                                     </div>
-                                    @endif
-                                   
-                                </div>
-                                <div class="project-details">
-                                    <a href="/dien-dan/{{ $post->forums->slug }}/{{ $post->slug }}/{{ $post->id }}">{{$post->topic }}</a>
-                                </div>
-                                <div class="project-meta">
-                                    <span class="badge badge-dim bg-info"><em class="icon ni ni-comments"></em><span>{{ $post->totalComments }}</span></span>
-    
-                                    <span class="badge badge-dim bg-success"><em class="icon ni ni-clock"></em><span>{{ $post->time }}</span></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-    
-                
-                @endforeach
-                <div class="col-md-12">                          
+                                    <div class="flex-grow-1">                                
+                                            <div class="forum-topic d-flex justify-between mb-2">
+                                                <a class="text-dark fw-bold" href="/dien-dan/{{ $post->forums->slug }}/{{ $post->slug }}/{{ $post->id }}">{{$post->topic }}</a>
 
-                    {{ $forums_posts->links('vendor.pagination.custom',['elements' => $forums_posts]) }}
-                </div>
-                </div>
-            </div>
+                                                @if (Auth::check() && Auth::user()->id === $post->users->id)
+                                                <div class="drodown">
+                                                    <a href="#" class="dropdown-toggle btn btn-sm btn-icon btn-trigger mt-n1 me-n1" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                                                    <div class="dropdown-menu dropdown-menu-end">
+                                                        <ul class="link-list-opt no-bdr">
+                                                            <li><a href="/cap-nhat-bai-viet/{{ $post->forums->slug }}/{{ $post->id }}"><em class="icon ni ni-edit"></em><span>Chỉnh sửa bài viết</span></a></li>
+                                                            <li><a href="#" data-id={{ $post->id }} class="delete-btn"><em class="icon ni ni-check-round-cut"></em><span>Xóa bài viết</span></a></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>  
+                                                @endif
+                                            </div>
+                                        
+                                            <div class="d-flex justify-between">
+                                                <span class="badge badge-dim bg-azure-dim text-azure"><em class="icon ni ni-user"></em><span>{{ $post->users->profile->displayName }}</span></span>
+                                                <span class="badge badge-dim bg-info"><em class="icon ni ni-comments"></em><span>{{ $post->totalComments }}</span></span>
+                                                <span class="badge badge-dim bg-success" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $post->created_at }}"><em class="icon ni ni-clock"></em><span>{{ $post->time }}</span></span>
+                                            </div>                                      
+                                    </div>                               
+                                </div>           
+                           </div>
+                                           
+                           
+                        </div>
+                    </div><!-- .col -->
+                    @endforeach
+                
+                 
+                </div><!-- .row -->
+            </div>  
             <div class="col-lg-4">
                 <div class="card card-bordered card-full">
                     <div class="card-inner border-bottom">
@@ -188,9 +193,7 @@
                     <button id="add-btn" class="btn btn-lg btn-primary">Thêm bài viết</button>
                 </div>
             </div>
-            <div class="modal-footer bg-light">
-                <span class="sub-text">Modal Footer Text</span>
-            </div>
+           
         </div>
     </div>
 </div>

@@ -1,4 +1,4 @@
-@extends('client/layouts.app')
+@extends('client/forum.layouts.app')
 @section('pageTitle', 'Cập nhật bài viết')
 @section('content')
 <div class="nk-fmg-body">
