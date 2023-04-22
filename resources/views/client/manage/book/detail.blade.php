@@ -72,8 +72,7 @@
                                 <div class="product-details entry me-xxl-3">
                                     <hr class="hr">
                                     <h3>Giới thiệu</h3>
-                                    <div id="divhtmlContent" >{{ $book->description }}</div>   
-
+                                    {!! clean($book->description ) !!}
                                 </div>
                             </div><!-- .col -->
                         </div><!-- .row -->                   

@@ -1,5 +1,12 @@
 @extends('client/forum.layouts.app')
 @section('pageTitle', `${{$post->topic}}`)
+<style>
+   
+    .open-relies-btn:hover{
+        cursor: pointer;
+    }
+  
+</style>
 @section('content')
 <div class="nk-block">
   <nav>
@@ -82,12 +89,28 @@
                                             @if(Auth::check() && Auth::user()->id == $comment->users->id)
                                                              
                                             <div class="col-4">                                   
-                                                <div class="d-flex flex-row-reverse">    
-                                                    <button class="btn btn-icon delete-comment-btn" data-id={{ $comment->id }}>
-                                                        <em class="icon ni ni-cross"></em>                     
-
-                                                    </button>
-                          
+                                                <div class="d-flex flex-row-reverse">                              
+                                                    <div class="dropdown">
+                                                        <a class="dropdown-toggle" href="#" type="button" data-bs-toggle="dropdown">
+                                                            <em class="icon ni ni-more-v"></em>
+                                                        </a>
+                                                        <div class="dropdown-menu">
+                                                          <ul class="link-list-opt">
+                                                            <li><a class="delete-comment-btn" data-id={{ $comment->id }} href="#">
+                                                                <em class="icon ni ni-cross"></em>      
+                                                                <span>Xóa bình luận</span>
+                                                                </a>
+                                                            </li>
+                                                            <li><a class="report-comment-btn" data-id={{ $comment->id }} data-type=10 data-user={{ $comment->users->profile->displayName  }} 
+                                                                    data-bs-toggle="modal" data-bs-target="#reportFormComment"
+                                                                    href="#">
+                                                                    <em class="icon ni ni-flag"></em>
+                                                                    <span>Báo cáo bình luận</span>
+                                                            </a>
+                                                            </li>
+                                                          </ul>
+                                                        </div>
+                                                      </div>                                         
                                                 </div>                               
                                             </div>
                                             @endif
@@ -102,9 +125,16 @@
                                 <div id="create-reply-box-{{$comment->id}}">
 
                                 </div>
+
+                                @if($comment->totalReplies > 0)
+                                <div class="mt-2">
+                                    <p class="open-relies-btn fw-bold" data-id="{{ $comment->id }}">Xem {{ $comment->totalReplies }} phản hồi</p>
+                                </div>
+                                @endif
+
                                 @foreach ($comment->replies as $reply)
                                     @if(is_null($reply->deleted_at))
-                                    <div class="media mt-4" id="reply-{{$reply->id}}">
+                                    <div class="media mt-4 replies-item replies-item-{{ $reply->commentID }}" id="reply-{{$reply->id}}">
                                         <a class="pr-3" href="#"><img class="rounded-circle" alt="Bootstrap Media Another Preview" src="{{ $reply->users->profile->url }}" width="70px" /></a>
                                         
                                         <div class="media-body">
@@ -119,12 +149,31 @@
 
                                                         <div class="col-4">                                   
                                                             <div class="d-flex flex-row-reverse">    
-                                                                <a href="#" class="btn btn-icon delete-reply-btn" data-id={{ $reply->id }} >
-                                                                    <em class="icon ni ni-cross"></em>                     
-            
-                                                                </a>
-                                      
-                                                            </div>                               
+                                                                <div class="dropdown">
+                                                                    <a class="dropdown-toggle" href="#" type="button" data-bs-toggle="dropdown">
+                                                                        <em class="icon ni ni-more-v"></em>
+                                                                    </a>
+                                                                    <div class="dropdown-menu">
+                                                                      <ul class="link-list-opt">
+                                                                        <li><a href="#" class="delete-reply-btn" data-id={{ $reply->id }} >
+                                                                            <em class="icon ni ni-cross"></em>      
+                                                                            <span>Xóa bình luận</span>
+                                                                            </a>
+                                                                        </li>
+                                                                        <li>           
+                                                                            <a class="report-comment-btn" data-id={{ $comment->id }} data-type=11 data-user={{ $comment->users->profile->displayName  }} 
+                                                                                data-bs-toggle="modal" data-bs-target="#reportFormComment"
+                                                                                href="#">
+                                                                                <em class="icon ni ni-flag"></em>
+                                                                                <span>Báo cáo bình luận</span>
+                                                                            </a>
+                                                                        </li>
+                                                                      </ul>
+                                                                    </div>
+                                                                  </div>
+                                                            </div>   
+                                                            
+                                                            
                                                         </div>
                                                         @endif
                                                     </div>
@@ -216,6 +265,46 @@
   </div>
 </div>
 
+<div class="modal fade" id="reportFormComment" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Báo cáo bình luận</h5>
+                <button id="close-btn" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <em class="icon ni ni-cross"></em>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-validate is-alter" novalidate="novalidate">
+                    @csrf
+
+                    <input type="hidden" class="form-control" id="type_id" name="type_id" value=0>
+                    <input type="hidden" class="form-control" id="identifier_id" name="identifier_id" value=0>
+               
+                    <div class="form-group">
+                        <label class="form-label" for="user-name">Bình luận bởi</label>
+                        <div class="form-control-wrap">
+                            <input type="text" class="form-control" id="user-name" name="user-name" required="" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="description">Lý do</label>
+                        <div class="form-control-wrap">
+                            <textarea class="form-control form-control-sm" id="description" name="description" placeholder="Lý do của bạn" required></textarea>
+                        </div>
+                      
+                    </div>
+                    <div class="form-group text-right">
+                        <button id="submitReportFormComment" class="btn btn-lg btn-primary">Báo cáo</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer bg-light">
+                <span class="sub-text">Báo cáo bởi {{ Auth::user()->profile->displayName }}</span>
+            </div>
+        </div>
+    </div>
+</div>
 @endif
 @endsection
 @section('additional-scripts')
@@ -238,6 +327,10 @@
     });
 
     $(function () {
+
+        $('.replies-item').css('display', 'none');
+
+
         tinymce.init({
         entity_encoding : "raw",
         selector: '#mytextarea',
@@ -286,6 +379,13 @@
 
     })
     
+    $(document).on('click','.open-relies-btn',function() {
+
+        const comment_id = $(this).data('id');
+
+        $(`.replies-item-${comment_id}`).fadeToggle();
+    });
+
     $(document).on('click','#comment-btn',function(){
         var content = tinymce.activeEditor.getContent("myTextarea");
         var post_id = {!! $post->id !!};
@@ -627,5 +727,89 @@
             }
         })
     })
+
+    //Comments && Replies report
+    $(document).on('click','.report-comment-btn',function(e){
+        e.preventDefault();
+        const form = $('#reportFormComment');
+
+        const identifier_id = $(this).data('id');
+        const type_id = $(this).data('type');
+        const userName = $(this).data('user');
+
+        form.find('input[name="user-name"]').val(userName);
+        form.find('input[name="type_id"]').val(type_id);
+        form.find('input[name="identifier_id"]').val(identifier_id);
+        
+
+        console.log(identifier_id,type_id,userName);
+    })
+
+    $('#submitReportFormComment').click(function () {
+        Swal.fire({
+            icon: 'info',
+            html:
+                'Tài khoản của bạn có thể bị <b>khóa</b> nếu bạn cố tình báo cáo sai',
+            showCloseButton: true,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'Báo cáo',
+            cancelButtonText: `Không báo cáo`,
+            }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                const form = $('#reportFormComment');
+
+                const type_id = form.find('input[name="type_id"]').val();
+                const identifier_id = form.find('input[name="identifier_id"]').val();
+                const description = form.find('textarea[name="description"]').val();
+
+
+  
+                
+                if(description){
+                            $.ajax({
+                        url:'/bao-cao',
+                        type:"POST",
+                        data:{
+                            'description': description,
+                            'identifier_id':identifier_id,
+                            'type_id':type_id
+                        }
+                        })
+                        .done(function(res) {
+                        
+                            Swal.fire({
+                                    icon: 'success',
+                                    title: `${res.report}`,
+                                    showConfirmButton: false,
+                                    timer: 2500
+                                });     
+
+                            
+                            setTimeout(()=>{
+                                form.find('#close-btn').click();
+                            }, 2500);
+                        })
+
+                        .fail(function(jqXHR, textStatus, errorThrown) {
+                        // If fail
+                        console.log(textStatus + ': ' + errorThrown);
+                        })
+                }
+                else{
+                    Swal.fire('Vui lòng nhập lý do!!!', '', 'info')
+                }
+
+              
+
+
+
+            } else if (result.isDenied) {
+                Swal.fire('Báo cáo thất bại', '', 'info')
+            }
+        })
+
+    });
 </script>
 @endsection

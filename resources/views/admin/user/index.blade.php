@@ -12,6 +12,48 @@
                     <div class="nk-block nk-block-lg">             
                         <div class="card card-bordered card-preview">
                             <div class="card-inner">
+                                <div class="filter-box">
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                          <em class="icon ni ni-calendar-alt"></em>
+                                          <span>Lọc theo ngày</span>
+                                        </label>
+                                        <div class="form-control-wrap">
+                                            <div class="input-daterange date-picker-range input-group">  
+                                                @if(isset($fromDate))                                                                  
+                                                <input type="text" class="form-control" name="from-date" value="{{ $fromDate }}"/>
+                                                @else
+                                                <input type="text" class="form-control" name="from-date"/>
+                                                @endif
+                                                <div class="input-group-addon">
+                                                  <em class="icon ni ni-arrow-long-right"></em>
+                                                </div>       
+                                                @if(isset($toDate))             
+                                                <input type="text" class="form-control" name="to-date" value="{{ $toDate }}"/>
+                                                @else
+                                                <input type="text" class="form-control" name="to-date"/>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="button-box">
+                                        <button class="btn btn-dim btn-warning" id="filter-btn">
+                                          <em class="icon ni ni-filter"></em>
+                                          <span>Lọc</span>̣</button>
+                                        
+                                          @if(isset($fromDate))
+                                          <a class="btn btn-dim btn-info" href="/admin/user/">
+                                            <em class="icon ni ni-reload"></em>
+                                            <span>Reset</span></a>
+                                          @else
+                                          <button class="btn btn-dim btn-info" disabled>
+                                            <em class="icon ni ni-reload"></em>
+                                          <span>Reset</span></a>
+                                          @endif
+  
+                                    </div>
+                                  </div>
+                                  <hr>
                                 <table class="datatable-init nowrap nk-tb-list nk-tb-ulist mt-2" data-auto-responsive="false" data-export-title="Export">
                                     <thead>
                                         <tr class="nk-tb-item nk-tb-head">
@@ -52,7 +94,7 @@
                                                 </ul>
                                             </td>
                                             <td class="nk-tb-col tb-col-md">
-                                                <span>10 Feb 2020</span>                                            
+                                                <span>{{ $user->lastLogin }}</span>                                            
                                             </td>   
                                             <td class="nk-tb-col tb-col-md" id ="status-{{ $user->id }}">
                                                 @if($user->status == 1)
@@ -64,12 +106,12 @@
                                             <td class="nk-tb-col nk-tb-col-tools">
                                               <ul class="nk-tb-actions gx-1">                                            
                                                   <li class="nk-tb-action-hidden">
-                                                      <button class="btn btn-trigger btn-icon btn-email" data-email={{ $user->email }}  data-name="{{ $user->name }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Send Email">
+                                                      <button class="btn btn-trigger btn-icon btn-email" data-email={{ $user->email }}  data-name="{{ $user->name }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Gửi email">
                                                           <em class="icon ni ni-mail-fill"></em>
                                                       </button>
                                                   </li>
                                                   <li class="nk-tb-action-hidden">
-                                                      <button class="btn btn-trigger btn-icon btn-suspend" data-id={{ $user->id }} data-value={{ $user->status }} data-bs-toggle="tooltip" data-bs-placement="top" title="Suspend">
+                                                      <button class="btn btn-trigger btn-icon btn-suspend" data-id={{ $user->id }} data-value={{ $user->status }} data-bs-toggle="tooltip" data-bs-placement="top" title="Đình chỉ">
                                                           <em class="icon ni ni-user-cross-fill"></em>
                                                       </button>
                                                   </li>
@@ -78,9 +120,9 @@
                                                           <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
                                                           <div class="dropdown-menu dropdown-menu-end">
                                                               <ul class="link-list-opt no-bdr">
-                                                                  <li><a href="#" class="delete-button" data-id={{ $user->id }}>
+                                                                  {{-- <li><a href="#" class="delete-button" data-id={{ $user->id }}>
                                                                     <em class="icon ni ni-trash"></em><span>Xóa người dùng</span>
-                                                                  </a>
+                                                                  </a> --}}
 
                                                                   </li>
                                                                   <li><a href="#"  data-id={{ $user->id }} class="recovery-password-a-tag"><em class="icon ni ni-edit"></em><span>Đổi mật khẩu</span></a>
@@ -132,9 +174,7 @@
                     </div>
                 </form>
             </div>
-            <div class="modal-footer bg-light">
-                <span class="sub-text">Modal Footer Text</span>
-            </div>
+          
         </div>
     </div>
 </div>
@@ -221,7 +261,7 @@
         var user_id = $(this).data('id');
         var status = $(this).data('value');
 
-        var message = (status == 0) ? 'Bạn có chắc muốn khóa tài khoản của người dùng này?' : 'Bạn có chắc muốn mở khóa tài khoản của người dùng này?'
+        var message = (status == 0) ? 'Bạn có chắc muốn mở khóa tài khoản của người dùng này?' : 'Bạn có chắc muốn khóa tài khoản của người dùng này?'
         
         Swal.fire({
         title: `${message}`,
@@ -253,11 +293,11 @@
                 var contentHTML = '';
 
                 
-                if(res.status == 0){
-                    contentHTML = '<span class="tb-status text-success">Active</span>' 
+                if(res.status == 1){
+                    contentHTML = '<span class="tb-status text-success">Hoạt động</span>' 
                 }
-                else if (res.status == 1){
-                    contentHTML = '<span class="tb-status text-danger">Suspend</span>' 
+                else if (res.status == 0){
+                    contentHTML = '<span class="tb-status text-danger">Đình chỉ</span>' 
                 }
 
                 $("#status-" + user_id).empty();
@@ -347,7 +387,33 @@
 
 
   
-  
+    function customFormatDate(date){
+        const month = date.slice(0,2);
+        const day = date.slice(3,5);
+        const year = date.slice(6,10)
+    
+        return year+month+day;
+    }
+
+  $('#filter-btn').click(function() {
+    
+    const fromDate = $('.filter-box').find('input[type="text"][name="from-date"]').val();
+    const toDate = $('.filter-box').find('input[type="text"][name="to-date"]').val();
+
+    if(fromDate == '' || toDate == '') {
+      Swal.fire({
+        icon: 'error',
+        title: `Không thể để trống!!!`,
+        showConfirmButton: false,
+        timer: 2500
+      });
+    }
+    if(fromDate && toDate){
+      window.location.href = `/admin/user/filter/${customFormatDate(fromDate)}/${customFormatDate(toDate)}`;
+    }
+    
+
+  })
 
 
   

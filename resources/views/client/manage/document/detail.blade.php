@@ -92,8 +92,7 @@
                             <div class="product-details entry me-xxl-3">
                                 <hr class="hr">
                                 <h3>Giới thiệu</h3>
-                                <div id="divhtmlContent" >{{ $document->description }}</div>   
-
+                                {!! clean($document->description ) !!}
                             </div>
                         </div><!-- .col -->
                     </div><!-- .row -->

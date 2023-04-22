@@ -36,7 +36,7 @@ class UserController extends Controller
         switch($request->status){
             case 0:
                 $user->status = 1;
-                $message = 'Khóa tài khoản thành viên thành công';
+                $message = 'Thành viên đã được mở khóa tài khoản';
 
                 Book::where('userCreatedID','=',$user->id)->update([
                     'deleted_at' => Carbon::now()
@@ -82,7 +82,7 @@ class UserController extends Controller
                 break;
             case 1:
                 $user->status = 0;
-                $message = 'Thành viên đã được mở khóa tài khoản';
+                $message = 'Khóa tài khoản thành viên thành công';
                 Book::where('userCreatedID','=',$user->id)->update([
                     'deleted_at' => null
                 ]);
@@ -140,7 +140,14 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'password' => ['required', 'string', 'min:8'],
+            'password' => [ 'required',
+            'min:6',
+            'regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%]).*$/',
+            ],
+        ],[
+            'password.required' => 'Bạn không thể để trống mật khẩu',
+            'password.min' => 'Mật khẩu quá ngắn',
+            'password.regex' =>'Mật khẩu phải có chữ viết hoa, số và không có ký tự đặc biệt'
         ]);
        
         $user = User::findOrFail($id)
@@ -244,5 +251,30 @@ class UserController extends Controller
         return response()->json([
             'res' => $totalLoginsPerMonth,
         ]); 
+    }
+
+
+    public function decodeDate($date){
+        
+        $temp = substr_replace($date,"-",4,0);
+        $temp = substr_replace($temp,"-",7,0);
+        return $temp;
+    }
+
+
+    public function getFilterValue($fromDate,$toDate){
+
+        
+        $start_date = new Carbon($this->decodeDate($fromDate));
+        $end_date = new Carbon($this->decodeDate($toDate));
+
+        $users = User::whereBetween('created_at', [$start_date, $end_date])->get();
+        
+        return view('admin.user.index')
+        ->with('fromDate',$start_date->format('m/d/Y'))
+        ->with('toDate',$end_date->format('m/d/Y'))
+        ->with('users', $users);
+
+
     }
 }

@@ -19,13 +19,16 @@
     rel="stylesheet" />
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
-    
+
    
     @yield('additional-style')
 
     <style>
         .book_sameType:hover{
             background-color:#062788;
+        }
+        textarea {
+            resize: none;
         }
     </style>
 </head>
@@ -41,14 +44,11 @@
                 </div>
 
                 <div class="nk-content">
-                    <div class="nk-content-inner">
-
-                        
-                        
+                    <div class="nk-content-inner">                    
                         <div class="nk-content-body">                   
                             @yield('content')
 
-                            @if(Request::is('/','dien-dan/*','tim-kiem','the-loai','the-loai/*','sach/*','tai-lieu/*','sach-theo-doi','trang-ca-nhan','them-tai-lieu'))
+                            @if(Request::is('/','dien-dan/*','tim-kiem','the-loai','the-loai/*','sach/*','tai-lieu/*','sach-theo-doi','trang-ca-nhan','them-tai-lieu','thanh-vien/*'))
 
                             @else
                             @include('client/homepage.layouts.contentFooter')

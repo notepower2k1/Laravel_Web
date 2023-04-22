@@ -24,6 +24,9 @@
     @yield('additional-style')
 
     <style>
+        textarea {
+            resize: none;
+        }
         .book_sameType:hover{
             background-color:#062788;
         }
@@ -92,6 +95,41 @@
             $(".loader-wrapper").fadeOut("slow");
             $("body").removeClass("preload");
         });
+
+
+        $("#search-topic-form").find("input[type='text']").on("keydown", function(event) {
+            if(event.which == 13){
+                var topic = $(this).val();  
+                if(topic){
+                    window.location.href = `/dien-dan/bai-viet/${topic}`;
+                }
+                else{
+                    Swal.fire({
+                            icon: 'info',
+                            title: `Vui lòng nhập ít nhất 1 ký tự`,
+                            showConfirmButton: false,
+                            timer: 2500
+                    });
+                    $('#search-topic-form').find("input[type='text']").focus();
+                }
+            }
+        });
+        $('#search-topic-btn').on("click",function(){
+
+            var topic = $('#search-topic-form').find("input[type='text']").val();  
+            if(topic){
+                window.location.href = `/dien-dan/bai-viet/${topic}`;
+            }
+            else{
+                Swal.fire({
+                        icon: 'info',
+                        title: `Vui lòng nhập ít nhất 1 ký tự`,
+                        showConfirmButton: false,
+                        timer: 2500
+                });
+                $('#search-topic-form').find("input[type='text']").focus();
+            }
+        })
     </script>
     @yield('additional-scripts')
 

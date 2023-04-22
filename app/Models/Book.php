@@ -9,7 +9,7 @@ use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 use Illuminate\Support\Facades\Storage;
 
-class Book extends Model implements Searchable
+class Book extends Model
 {
     use HasFactory;
     protected $table = 'books';
@@ -49,16 +49,7 @@ class Book extends Model implements Searchable
         return $imageURL;
     }
 
-    public function getSearchResult(): SearchResult
-    {   
-        $url = 'sach/'.$this->id.'/'.$this->slug;
-
-       
-        return new SearchResult(
-            $this,
-            $this->name,
-            $url
-        );
-    }
+  
+  
 
 }

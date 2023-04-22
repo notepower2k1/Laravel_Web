@@ -41,6 +41,9 @@ class ForumController extends Controller
         $request->validate([
             'name' => 'required',
             'description' => 'required',
+        ],[
+           'name.required' => 'Diễn đàn phải có tên',
+           'description.required' => 'Diễn đàn phải có mô tả'
         ]);
 
 
@@ -99,7 +102,11 @@ class ForumController extends Controller
         $request->validate([
             'name' => 'required',
             'description' => 'required',
+        ],[
+           'name.required' => 'Diễn đàn phải có tên',
+           'description.required' => 'Diễn đàn phải có mô tả'
         ]);
+
 
         $slug =  Str::slug($request->name);
 

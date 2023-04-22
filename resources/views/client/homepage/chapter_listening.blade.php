@@ -241,10 +241,11 @@
             $("option[value='Microsoft HoaiMy Online (Natural) - Vietnamese (Vietnam)']").text('Giọng nữ');
             $("option[value='Microsoft NamMinh Online (Natural) - Vietnamese (Vietnam)']").text('Giọng nam');
 
+            const settingLog = window.localStorage.getItem('settingListening');
 
 
-            if(readCookie('settingListening')){
-                var setting = readCookie('settingListening');
+            if(setting){
+                var setting = JSON.parse(settingLog);
 
                 var voice = setting.voice;
                 var pitch = parseFloat(setting.pitch);
@@ -273,53 +274,59 @@
                
             }
 
-              const current_book_id = {!! $chapter->books->id !!}
-              var chapter_id =  {!! $chapter->id !!}
-              var log = readCookie('readingLog');
-              //update cookie
-              if(log){             
-                  objIndex = log.findIndex((obj => obj.book_id == current_book_id));
-                  //book exist
-                  if(objIndex > -1){
-                      var currentChapterList = log[objIndex].chapter_id;
-                      if(currentChapterList.includes(chapter_id)){
+            const current_book_id = {!! $chapter->books->id !!}
+            var chapter_id =  {!! $chapter->id !!}
 
-                      }
-                      else{
-                          const updateChapterList = [...currentChapterList,chapter_id]
-                          log[objIndex].chapter_id = updateChapterList;
+            var readingLog = window.localStorage.getItem('readingLog');
 
-                          createCookie('readingLog',log);
-                      }
-                      
+            var log = JSON.parse(readingLog);
+
+
+          //update cookie
+          if(log){             
+              objIndex = log.findIndex((obj => obj.book_id == current_book_id));
+              //book exist
+              if(objIndex > -1){
+                  var currentChapterList = log[objIndex].chapter_id;
+                  if(currentChapterList.includes(chapter_id)){
+
                   }
-                  //book not exist
                   else{
-                      var chapter_list = [];
-                      chapter_list.push(chapter_id);
+                      const updateChapterList = [...currentChapterList,chapter_id]
+                      log[objIndex].chapter_id = updateChapterList;
 
-                      var reading_object = {
-                      'book_id' : current_book_id,
-                      'chapter_id' : chapter_list        
-                      };       
-                      const updateLog = [...log,reading_object]
-                      createCookie('readingLog',updateLog);
-
-                  }        
+                      window.localStorage.setItem('readingLog',JSON.stringify(log));
+                  }
+                  
               }
-              //create new cookie
+              //book not exist
               else{
                   var chapter_list = [];
                   chapter_list.push(chapter_id);
+
                   var reading_object = {
                   'book_id' : current_book_id,
                   'chapter_id' : chapter_list        
-                  };            
-                  var reading_log = [];
-                  reading_log.push(reading_object);
-                  createCookie('readingLog',reading_log);
+                  };       
+                  const updateLog = [...log,reading_object]
+                  window.localStorage.setItem('readingLog',JSON.stringify(updateLog));
 
-              }
+              }        
+          }
+          //create new cookie
+          else{
+              var chapter_list = [];
+              chapter_list.push(chapter_id);
+              var reading_object = {
+              'book_id' : current_book_id,
+              'chapter_id' : chapter_list        
+              };            
+              var reading_log = [];
+              reading_log.push(reading_object);
+              window.localStorage.setItem('readingLog',JSON.stringify(reading_log));
+
+          }
+
         })
 
         $(document).on('change','#change-chapter',function(){ //2 step
@@ -494,32 +501,10 @@
 
 
 
-        function createCookie(name, value, days) {
-            var expires;
-
-            if (days) {
-                var date = new Date();
-                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-                expires = "; expires=" + date.toGMTString();
-            } else {
-                expires = "";
-            }
-            document.cookie = encodeURIComponent(name) + "=" + JSON.stringify(value) + expires + "; path=/";
-        }
-
-        function readCookie(name) {
-            var result = document.cookie.match(new RegExp(name + '=([^;]+)'));
-            result && (result = JSON.parse(result[1]));
-            return result;
-        }
-
-        function eraseCookie(name) {
-            createCookie(name, "", -1);
-        }
-
+      
         $('#save-setting').click(function(){
-            eraseCookie('settingListening');
-           
+            window.localStorage.removeItem("settingListening");
+
 
             var setting ={
             'voice':window.speechSynthesis.getVoices().find(voice => voice.voiceURI === voiceInEl.value).voiceURI,
@@ -527,7 +512,7 @@
             'speed':rateInEl.value,
             'volume':volumeInEl.value
             }
-            createCookie('settingListening',setting);
+            window.localStorage.setItem("settingListening", JSON.stringify(setting));
             Swal.fire({
                             icon: 'success',
                             title: `Lưu cài đặt thành công!!!`,

@@ -26,19 +26,19 @@
                     <ul class="nk-menu nk-menu-main">             
                          
                         
-                        <li>
-                            <div class="form-control-wrap">
+                        <li>                                                
+                            <div class="form-control-wrap" id="search-topic-form">
                                 <div class="input-group">
                                     <input type="text" class="form-control form-control-lg" placeholder="Chủ đề bài đăng...." style="background-color:black;color:white">
                                     <div class="input-group-append">
-                                        <button class="btn btn-outline-dark btn-dim">
+                                        <button class="btn btn-outline-dark btn-dim" id="search-topic-btn">
                                             <span class="nk-menu-text">
                                                 <em class="icon ni ni-search"></em>
                                             </span>
                                         </button>
                                     </div>
                                 </div>
-                            </div>
+                            </div>                          
                         </li>
                     </ul><!-- .nk-menu -->
                 </div><!-- .nk-header-menu -->

@@ -1,14 +1,7 @@
 @extends('admin/layouts.app')
 @section('pageTitle', 'Danh sách diễn đàn')
 @section('additional-style')
-<style>
-  .sorting_disabled:after{
-    content: none !important;
-  }
-  .sorting_disabled:before{
-    content: none !important;
-    }
-</style>
+
 @endsection
 @section('content')
       <div class="nk-block nk-block-lg">
@@ -95,7 +88,6 @@
                                                                   <li><a href="#" class="delete-button" data-id="{{ $forum->id }}" data-name="{{ $forum->name }}">
                                                                     <em class="icon ni ni-trash"></em><span>Xóa</span>
                                                                   </a>
-
                                                                   </li>
                                                                   <li><a href="/admin/forum/{{$forum->id}}/edit"><em class="icon ni ni-edit"></em><span>Cập nhật</span></a></li>
                                                                   <li class="divider"></li>

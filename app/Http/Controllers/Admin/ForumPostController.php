@@ -27,7 +27,25 @@ class ForumPostController extends Controller
        
     }
 
+    public function deletedItem()
+    {
+       $forum_posts = ForumPosts::where('deleted_at','!=',null)->get();
+       return view('admin.forum_post.deleted')->with('forum_posts', $forum_posts);
+    }
 
+    public function recoveryItem(Request $request){
+
+        $itemList = $request->data;
+
+        //0 - document && 1 - Book
+        foreach($itemList as $item){
+            $post = ForumPosts::findOrFail($item);
+            $post->deleted_at = null;
+            $post ->save(); 
+        }
+
+
+    }
 
    
   /**
@@ -52,8 +70,13 @@ class ForumPostController extends Controller
         $slug =  Str::slug($request->topic);
 
         $request->validate([
-            'topic' => 'required',
+            'topic' => 'required|min:10|max:255',
             'content' => 'required',
+        ],[
+            'topic.required' => 'Bài viết nên có chủ đề',
+            'topic.min' => 'Chủ đề bài viết quá ngắn',
+            'topic.max' => 'Chủ đề bài viết quá dài',
+            'content.required' => 'Bài viết phải có nội dung'
         ]);
         
 
@@ -84,7 +107,7 @@ class ForumPostController extends Controller
      */
     public function show($id) //like "show details"
     {
-        $forum_posts = ForumPosts::where('forumID','=', $id)->get();
+        $forum_posts = ForumPosts::where('forumID','=', $id)->where('deleted_at','=',null)->get();
 
         return view('admin.forum_post.show')
         ->with('forum_posts',$forum_posts)
@@ -115,9 +138,13 @@ class ForumPostController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'topic' => 'required',
+            'topic' => 'required|min:10|max:255',
             'content' => 'required',
-
+        ],[
+            'topic.required' => 'Bài viết nên có chủ đề',
+            'topic.min' => 'Chủ đề bài viết quá ngắn',
+            'topic.max' => 'Chủ đề bài viết quá dài',
+            'content.required' => 'Bài viết phải có nội dung'
         ]);
 
         $slug =  Str::slug($request->topic);
@@ -221,5 +248,61 @@ class ForumPostController extends Controller
             ->with('totalPostsPerMonth',$totalPostsPerMonth)
             ->with('totalByTypes', $totalByTypes);
             
+    }
+
+    public function decodeDate($date){
+        
+        $temp = substr_replace($date,"-",4,0);
+        $temp = substr_replace($temp,"-",7,0);
+        return $temp;
+    }
+
+
+    public function getFilterValue($fromDate,$toDate){
+
+        
+        $start_date = new Carbon($this->decodeDate($fromDate));
+        $end_date = new Carbon($this->decodeDate($toDate));
+
+        $forum_posts = ForumPosts::whereBetween('created_at', [$start_date, $end_date])->where('deleted_at','=',null)->get();
+        
+        return view('admin.forum_post.index')
+        ->with('fromDate',$start_date->format('m/d/Y'))
+        ->with('toDate',$end_date->format('m/d/Y'))
+        ->with('forum_posts', $forum_posts);
+
+
+    }
+
+    public function getFilterValueShow($id,$fromDate,$toDate){
+
+        
+        $start_date = new Carbon($this->decodeDate($fromDate));
+        $end_date = new Carbon($this->decodeDate($toDate));
+
+        $forum_posts = ForumPosts::where('forumID','=', $id)->where('deleted_at','=',null)->whereBetween('created_at', [$start_date, $end_date])->get();
+ 
+        return view('admin.forum_post.show')
+        ->with('fromDate',$start_date->format('m/d/Y'))
+        ->with('toDate',$end_date->format('m/d/Y'))
+        ->with("forum_id",$id)
+        ->with('forum_posts', $forum_posts);
+
+
+    }
+    public function getFilterValueDeleted($fromDate,$toDate){
+
+        
+        $start_date = new Carbon($this->decodeDate($fromDate));
+        $end_date = new Carbon($this->decodeDate($toDate));
+
+        $forum_posts = ForumPosts::whereBetween('deleted_at', [$start_date, $end_date])->where('deleted_at','!=',null)->get();
+        
+        return view('admin.forum_post.deleted')
+        ->with('fromDate',$start_date->format('m/d/Y'))
+        ->with('toDate',$end_date->format('m/d/Y'))
+        ->with('forum_posts', $forum_posts);
+
+
     }
 }

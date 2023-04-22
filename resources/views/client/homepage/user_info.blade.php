@@ -31,19 +31,19 @@
                         <div class="row text-center">
                             <div class="col-4">
                                 <div class="profile-stats">
-                                    <span class="amount">0</span>
+                                    <span class="amount">{{ $books->count() }}</span>
                                     <span class="sub-text">Sách đã đăng</span>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="profile-stats">
-                                    <span class="amount">20</span>
+                                    <span class="amount">{{ $documents->count() }}</span>
                                     <span class="sub-text">Tài liệu đã đăng</span>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="profile-stats">
-                                    <span class="amount">3</span>
+                                    <span class="amount">{{ $posts->count() }}</span>
                                     <span class="sub-text">Bài viết đã đăng</span>
                                 </div>
                             </div>

@@ -74,8 +74,8 @@
                            <div class="p-2">
                                 <div class="d-flex">
                                     <div class="">
-                                        <div class="nk-tnx-type-icon bg-success-dim text-success">                                      
-                                            <em class="icon ni ni-folders-fill"></em>                                    
+                                        <div class="nk-tnx-type-icon bg-info-dim text-info">                                      
+                                            <em class="icon ni ni-chat-fill"></em>                                    
                                         </div>
                                     </div>
                                     <div class="flex-grow-1">                                
@@ -125,8 +125,8 @@
                     <ul class="nk-activity">
                         @foreach ($lastPosts as $lastPost)
                         <li class="nk-activity-item">
-                            <div class="nk-activity-media user-avatar bg-success">
-                                <a href="/thanh-vien/{{ $lastPost->users->id }}"><img src={{ $lastPost->users->profile->url }} alt="image" /></a>
+                            <div class="nk-tnx-type-icon bg-info-dim text-info">                                      
+                                <em class="icon ni ni-chat-fill"></em>                                    
                             </div>
                             <div class="nk-activity-data">
                                 <div class="label">

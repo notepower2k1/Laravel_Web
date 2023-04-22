@@ -18,6 +18,7 @@ use App\Models\report;
 use App\Models\BookComment;
 use App\Models\DocumentComment;
 use App\Models\PostComment;
+use App\Models\previewDocumentImages;
 use App\Models\readingHistory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -26,11 +27,12 @@ use Spatie\Searchable\ModelSearchAspect;
 use Drnxloc\LaravelHtmlDom\HtmlDomParser;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Str;
+use Smalot\PdfParser\Parser;
+use PhpScience\TextRank\TextRankFacade;
 
 class PagesController extends Controller
 {
-   
     public function home_page(){
             
         $books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get();
@@ -62,21 +64,21 @@ class PagesController extends Controller
 
         switch ($option) {
             case 'sach-hay-nen-doc':
-                $books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('ratingScore', 'desc')->paginate(18);
+                $books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('ratingScore', 'desc')->paginate(12);
                 $title = 'Sách hay nên đọc';
                 break;
             case 'sach-hay-xem-nhieu':
-                $books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('totalReading', 'desc')->paginate(18);
+                $books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('totalReading', 'desc')->paginate(12);
                 $title = 'Sách hay xem nhiều';
 
                 break;
             case 'sach-moi-cap-nhat':
-                $books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('updated_at', 'desc')->paginate(18);
+                $books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('updated_at', 'desc')->paginate(12);
                 $title = 'Sách mới cập nhật';
 
                 break;  
             default:
-                $books = Book::where('deleted_at','=',null)->where('status','=',1)->where('isPublic','=',1)->paginate(18);
+                $books = Book::where('deleted_at','=',null)->where('status','=',1)->where('isPublic','=',1)->paginate(12);
                 $title = 'Tất cả sách';
 
         }
@@ -125,7 +127,20 @@ class PagesController extends Controller
         $isMark = false;
         $isRating = false;
     
-        
+        $ratingPersons = ratingBook::where('bookID','=',$book_id)->get();
+
+        $percentOfScoreList = DB::select("SELECT 
+        SUM(IF(base = 5, percent, 0)) AS '5', 
+        SUM(IF(base = 4, percent, 0)) AS '4', 
+        SUM(IF(base = 3, percent, 0)) AS '3', 
+        SUM(IF(base = 2, percent, 0)) AS '2', 
+        SUM(IF(base = 1, percent, 0)) AS '1'
+        FROM(
+        SELECT  FLOOR(score) as 'base' , round((count(id) / (SELECT COUNT(id) from rating_books where bookID = $book_id))*100,0) as
+                    'percent' FROM 
+                    `rating_books` WHERE bookID = $book_id GROUP BY base  
+        ORDER BY `base`) as sub");
+
         if(Auth::check()){
 
             $book_marks_id = bookMark::where('userID','=',Auth::user()->id)->pluck('bookID')->toArray();
@@ -147,7 +162,14 @@ class PagesController extends Controller
 
         }
 
+        $user_books = Book::where('userCreatedID','=',$book->users->id)->where('deleted_at','=',null)->where('isPublic','=',1)->where('id','!=',$book->id)->get();
+        $user_documents = Document::where('userCreatedID','=',$book->users->id)->where('deleted_at','=',null)->where('isPublic','=',1)->get();
+
         return view('client.homepage.book_detail')
+        ->with('user_books',$user_books)
+        ->with('user_documents',$user_documents)
+        ->with('ratingPersons', $ratingPersons)
+        ->with('percentOfScoreList',head($percentOfScoreList))
         ->with('comments',$comments)
         ->with('book',$book)
         ->with('chapters',$chapters)
@@ -156,7 +178,6 @@ class PagesController extends Controller
         ->with('ratingScore',$book->ratingScore)
         ->with('booksWithSameType',$booksWithSameType);
 
-        
        
 
     }
@@ -166,15 +187,65 @@ class PagesController extends Controller
         $document = Document::findOrFail($document_id);
         $comments = DocumentComment::where('documentID','=',$document_id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(10);
 
+
+        $user_books = Book::where('userCreatedID','=',$document->users->id)->where('deleted_at','=',null)->where('isPublic','=',1)->get();
+        $user_documents = Document::where('userCreatedID','=',$document->users->id)->where('deleted_at','=',null)->where('id','!=',$document->id)->where('isPublic','=',1)->get();
+
+        $documentsWithSameType = Document::where('type_id','=',$document->type_id)->where('id','!=',$document->id)->get();
+
+        $previewImages = previewDocumentImages::where('documentID','=',$document_id)->get();
+
+
         return view('client.homepage.document_detail')
+        ->with('previewImages',$previewImages)
+        ->with('user_books',$user_books)
+        ->with('user_documents',$user_documents)
         ->with('comments',$comments)
-        ->with('document',$document);
+        ->with('document',$document)
+        ->with('documentsWithSameType',$documentsWithSameType);
+
     
     }
 
-   
+ 
+     
+    public function summarizePage(){
+
+        return view('client.homepage.summarize_page');
+
+    }
+
+    public function summarizeText(Request $request){
+
+        $text = $request -> input('text');
+        $api = new TextRankFacade();
+
+        $analyzedKeyWords = $request -> analyzedKeyWords;
+        $expectedSentences = $request -> expectedSentences;
+
+        $summarizeType = 0;
+
+        $result = $api->summarizeTextFreely($text,$analyzedKeyWords,$expectedSentences,$summarizeType);
+
+        return response()->json([
+            'result' => $result,
+        ]);
+
+    }   
+
+    public function getKeywords(Request $request){
+        $text = $request -> input('text');
 
 
+        $api = new TextRankFacade();
+        $keywords = $api->getOnlyKeyWords($text); 
+
+        return response()->json([
+            'keywords' => $keywords
+        ]);
+    }
+
+  
     public function read_book($book_slug,$chapter_slug){
 
 
@@ -248,52 +319,78 @@ class PagesController extends Controller
 
     public function search_name_page(){
 
-        return view('client.homepage.search_page');
+        $books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->pluck('name')->toArray();
+        $documents = Document::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->pluck('name')->toArray();
+
+        return view('client.homepage.search_page')
+        ->with('documents',$documents)
+        ->with('books',$books);
     }
 
     public function search_name(Request $request){
 
         $searchterm = $request->input('query');
+        $slug =  Str::slug($searchterm);
 
         $option = $request->option;
 
         switch ($option) {
-            case 1:
-                $searchResults = (new Search())
-                ->registerModel(Book::class, function (ModelSearchAspect $modelSearchAspect){
-                    $modelSearchAspect
-                    ->addSearchableAttribute('slug')->where('deleted_at','=',null)->where('status','=',1); // only return results that exactly match
-                })//apply search on field name and description
-                //Config partial match or exactly match
-                ->perform($searchterm);
+            case 1:         
+                $items = Book::where('name','like','%'.$searchterm.'%')->orWhere('slug','like','%'.$slug.'%')->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
                 break;
-            case 2:
-                $searchResults = (new Search())
-                //Config partial match or exactly match
-                ->registerModel(Document::class, function (ModelSearchAspect $modelSearchAspect){
-                    $modelSearchAspect
-                    ->addSearchableAttribute('slug')->where('deleted_at','=',null)->where('status','=',1); // only return results that exactly match
-                })
-                ->perform($searchterm);
+            case 2:              
+                $items = Document::where('name','like','%'.$searchterm.'%')->orWhere('slug','like','%'.$slug.'%')->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
+
                 break;  
-            default:
-                $searchResults = (new Search())
-                ->registerModel(Book::class, function (ModelSearchAspect $modelSearchAspect){
-                    $modelSearchAspect
-                    ->addSearchableAttribute('slug')->where('deleted_at','=',null)->where('status','=',1); // only return results that exactly match
-                })//apply search on field name and description
-                //Config partial match or exactly match
-                ->perform($searchterm);
+            default:             
+                $items = Book::where('name','like','%'.$searchterm.'%')->orWhere('slug','like','%'.$slug.'%')->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
                 break;
         }
-        // // return view('client.homepage.search_page', compact('searchResults', 're'));
+
+        $contentList = array();
+        foreach($items as $item){
+            $href = '';
+
+            if($option == 0){
+                $href = 'sach/'.$item->id.'/'.$item->slug;
+            }
+            else if ($option == 1){
+                $href = 'tai-lieu/'.$item->id.'/'.$item->slug;
+            }
+            else{
+                $href = 'sach/'.$item->id.'/'.$item->slug;
+            }
+
+            $content = '<div class="col-lg-3 col-md-6 mt-3">'.
+            ' <div class="card card-bordered product-card shadow">'.
+                 '<div class="product-thumb">'.
+                     '<img class="card-img-top" src="'.$item->url.'" alt="" width="300px" height="400px">'.                                                                            
+                        ' <div class="product-actions item-search w-100 h-100">'.
+                            ' <div class="pricing-body w-100 h-100 d-flex text-center align-items-center">'.
+                                ' <div class="row">'.
+                                    ' <div class="pricing-amount">'.
+                                       '<h6 class="bill text-white">' .$item->name.'</h6>'. 
+                                       '<p class="text-white">Tác giả:'. $item->author .'</p>'.                                                   
+                                    ' </div>'.
+                                    ' <div class="pricing-action">'.
+                                         '<a href="'.$href.'" class="btn btn-outline-light">Chi tiết</a>'.
+                                 '    </div>'.
+                                ' </div>'.                                                                          
+                            ' </div>'.
+                         '</div>'.
+               '  </div>'.                                         
+            '</div>'.
+            ' </div>';
+
+            array_push($contentList, $content);
+        }
+        
 
         return response()->json([
-            'res' => $searchResults,
-            'total' => $searchResults->count()
+            'res' => $contentList,
+            'total' => count($contentList)
         ]);
     }
-
     public function search_type_page($option = null,$type_slug = null){
 
         $book_types = BookType::all();
@@ -398,6 +495,17 @@ class PagesController extends Controller
             ->with('forums_posts',$forums_posts)
             ->with('forum',$forum);
     }
+
+    public function forum_search_page($topic){
+        $forums_posts = ForumPosts::where('topic','like','%'.$topic.'%')->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(9);
+        $lastPosts = ForumPosts::where('deleted_at','=',null)->orderBy('created_at', 'desc')->take(10)->get();
+        $total = $forums_posts->count();
+        return view('client.forum.search')
+        ->with('total',$total)
+        ->with('topic',$topic)
+        ->with('lastPosts', $lastPosts)
+        ->with('forums_posts',$forums_posts);
+    }
     public function post_detail($forum_slug,$post_slug,$post_id){
 
         $post = ForumPosts::findOrFail($post_id);
@@ -434,10 +542,10 @@ class PagesController extends Controller
         
 
         $filename = $name.'.'.$extension;
-        $tempImage = tempnam(sys_get_temp_dir(), $filename);
-        copy($url, $tempImage);
+        $tempFile = tempnam(sys_get_temp_dir(), $filename);
+        copy($url, $tempFile);
 
-        return response()->download($tempImage, $filename)->deleteFileAfterSend(true);;
+        return response()->download($tempFile, $filename)->deleteFileAfterSend(true);;
         
        
         // return response()->json([
@@ -448,30 +556,12 @@ class PagesController extends Controller
        
     }
    
-    public function download_document_page($document_id){
+    public function download_document_page($document_file,$document_id){
 
         $id = $document_id;
         return view('client.homepage.document_download_page')->with('id',$id);
     }
 
-    public function preview_document(Request $request){
-
-        $document = Document::findOrFail($request->id);
-
-        // $storage_path = 'documentFile/';
-        // $file_name = $document->file;
-        // $url = 'https://storage.googleapis.com/do-an-tot-nghiep-f897b.appspot.com/'.$storage_path.$file_name;
-
-        $url = $document-> documentUrl;
-
-        // $full_url = "https://docs.google.com/gview?url=".$url."&embedded=true";
-
-        return response()->json([
-            'url' => $url
-        ]);
-
-
-   }
 
    public function report_action(Request $request){
 

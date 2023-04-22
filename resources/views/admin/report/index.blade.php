@@ -2,68 +2,109 @@
 @section('pageTitle', 'Báo cáo')
 @section('content')
 
-      <div class="nk-block nk-block-lg">
-                        <div class="nk-block-head">
-                            <div class="nk-block-head-content">
-                                    <a href="/admin/report/done" class="btn btn-lg btn-success">Đã xử lý</a>    
-                                    <a href="/admin/report/waiting" class="btn  btn-lg btn-info">Chưa xử lý</a>                     
-                            </div>
+<div class="nk-block nk-block-lg">
+    <div class="nk-block-head">
+        <div class="nk-block-head-content">
+                <a href="/admin/report/done" class="btn btn-lg btn-success">Đã xử lý</a>    
+        </div>
+    </div>
+    <div class="card card-bordered card-preview">
+        <div class="card-inner">
+            <div class="filter-box">
+                <div class="form-group">
+                    <label class="form-label">
+                      <em class="icon ni ni-calendar-alt"></em>
+                      <span>Lọc theo ngày thêm</span>
+                    </label>
+                    <div class="form-control-wrap">
+                        <div class="input-daterange date-picker-range input-group">  
+                            @if(isset($fromDate))                                                                  
+                            <input type="text" class="form-control" name="from-date" value="{{ $fromDate }}"/>
+                            @else
+                            <input type="text" class="form-control" name="from-date"/>
+                            @endif
+                            <div class="input-group-addon">
+                              <em class="icon ni ni-arrow-long-right"></em>
+                            </div>       
+                            @if(isset($toDate))             
+                            <input type="text" class="form-control" name="to-date" value="{{ $toDate }}"/>
+                            @else
+                            <input type="text" class="form-control" name="to-date"/>
+                            @endif
                         </div>
-                        <div class="card card-bordered card-preview">
-                            <div class="card-inner">
-                                <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false" data-export-title="Export">
-                                    <thead>
-                                        <tr class="nk-tb-item nk-tb-head">
-                                            <th class="nk-tb-col"><span class="sub-text">Ngày báo cáo</span></th>
-                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">Loại báo cáo</span></th>
-                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">Người báo cáo</span></th>
-                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">Tình trạng</span></th>
-                                            <th class="nk-tb-col nk-tb-col-tools text-end">
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                      @foreach ($reports as $report)
+                    </div>
+                </div>
+                <div class="button-box">
+                    <button class="btn btn-dim btn-warning" id="filter-btn">
+                      <em class="icon ni ni-filter"></em>
+                      <span>Lọc</span>̣</button>
+                    
+                      @if(isset($fromDate))
+                      <a class="btn btn-dim btn-info" href="/admin/report/">
+                        <em class="icon ni ni-reload"></em>
+                        <span>Reset</span></a>
+                      @else
+                      <button class="btn btn-dim btn-info" disabled>
+                        <em class="icon ni ni-reload"></em>
+                      <span>Reset</span></a>
+                      @endif
 
-                                        <tr class="nk-tb-item" id ="row-{{ $report->id }}">
+                </div>
+              </div>
+              <hr>
+            <table class="datatable-init nowrap nk-tb-list nk-tb-ulist mt-2" data-auto-responsive="false" data-export-title="Export">
+                <thead>
+                    <tr class="nk-tb-item nk-tb-head">
+                        <th class="nk-tb-col"><span class="sub-text">Ngày báo cáo</span></th>
+                        <th class="nk-tb-col tb-col-md"><span class="sub-text">Loại báo cáo</span></th>
+                        <th class="nk-tb-col tb-col-md"><span class="sub-text">Người báo cáo</span></th>
+                        <th class="nk-tb-col tb-col-md"><span class="sub-text">Tình trạng</span></th>
+                        <th class="nk-tb-col nk-tb-col-tools text-end">
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($reports as $report)
 
-                                        
-                                            <td class="nk-tb-col">
-                                                <div class="user-card">                                           
-                                                    <div class="user-info">
-                                                        <span class="tb-lead">{{ $report->created_at}}</span>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="nk-tb-col tb-col-md">
-                                              <span>{{  $report->types->name }}</span>
-                                            </td>
-                                            <td class="nk-tb-col tb-col-md">
-                                              <span>{{ $report->users->email  }}</span>
+                    <tr class="nk-tb-item" id ="row-{{ $report->id }}">
 
-                                            </td>   
-                                            <td class="nk-tb-col tb-col-md">    
-                                                
-                                                <div class="form-check form-switch">
-                                                    <input type="checkbox" 
-                                                    class="form-check-input"
-                                                    role="switch"
-                                                    data-id="{{ $report->id }}"
-                                                    {{ $report->status ? 'checked':'' }}   />
-                                                </div>
-                                            </td>                                                                                                                                                                                                                  
-                                            <td class="nk-tb-col nk-tb-col-tools">
-                                                <button class="btn btn-icon btn-lg ni ni-eye detail-btn" data-id="{{ $report->id }}"></button>
-                                                <button class="d-none" id="show-modal-btn"  data-bs-toggle="modal" data-bs-target="#modalTabs"></button>
-                                            </td>
-                                        </tr><!-- .nk-tb-item  -->
-                                      @endforeach
-
-                                    </tbody>
-                                </table>
+                    
+                        <td class="nk-tb-col">
+                            <div class="user-card">                                           
+                                <div class="user-info">
+                                    <span class="tb-lead">{{ $report->created_at}}</span>
+                                </div>
                             </div>
-                        </div><!-- .card-preview -->
-                    </div> <!-- nk-block -->
+                        </td>
+                        <td class="nk-tb-col tb-col-md">
+                            <span>{{  $report->types->name }}</span>
+                        </td>
+                        <td class="nk-tb-col tb-col-md">
+                            <span>{{ $report->users->email  }}</span>
+
+                        </td>   
+                        <td class="nk-tb-col tb-col-md">    
+                            
+                            <div class="form-check form-switch">
+                                <input type="checkbox" 
+                                class="form-check-input"
+                                role="switch"
+                                data-id="{{ $report->id }}"
+                                {{ $report->status ? 'checked':'' }}   />
+                            </div>
+                        </td>                                                                                                                                                                                                                  
+                        <td class="nk-tb-col nk-tb-col-tools">
+                            <button class="btn btn-icon btn-lg ni ni-eye detail-btn" data-id="{{ $report->id }}"></button>
+                            <button class="d-none" id="show-modal-btn"  data-bs-toggle="modal" data-bs-target="#modalTabs"></button>
+                        </td>
+                    </tr><!-- .nk-tb-item  -->
+                    @endforeach
+
+                </tbody>
+            </table>
+        </div>
+    </div><!-- .card-preview -->
+</div> <!-- nk-block -->
 @endsection
 
 @section('modal')
@@ -83,18 +124,22 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active show" id="tabItem1" role="tabpanel">
-                        <h6 class="title" id="report-title">Báo cáo về sách</h6>
-                        <ul class="link-list" id="item-detail-ul">
-                        </ul>
-                        <p><strong>Lý do: </strong><span id="report-reason"></span></p>
-
-                        <a href="#" class="btn btn-primary" id="item-detail-url">Chi tiết</a>
+                        <h4 class="title" id="report-title">Báo cáo về sách</h4>
+                        <hr class="shadow hr">
+                        <div id="item-detail-ul">
+                        </div>         
+                        <hr class="shadow hr">
+                        <h5><strong>Lý do báo cáo: </strong><span id="report-reason"></span></h5>
+                        <hr class="shadow hr">
+                        <a href="#" class="btn btn-dim btn-danger" id="item-detail-url">Thông tin chi tiết</a>
                     </div>
                     <div class="tab-pane" id="tabItem2" role="tabpanel">
                         <h6 class="title">Thông tin người báo cáo</h6>
-                        <ul class="link-list" id="user-detail-ul">                           
-                        </ul>   
-                        <a href="#" class="btn btn-primary" id="user-detail-url">Chi tiết</a>
+                        <hr class="shadow hr">
+                        <div id="user-detail-ul">
+                        </div>             
+                        <hr class="shadow hr">
+                        <a href="#" class="btn btn-dim btn-danger" id="user-detail-url">Thông tin chi tiết</a>
                     </div>
                 </div>
             </div>
@@ -104,162 +149,173 @@
 @endsection
 @section('additional-scripts')
 <script src="{{ asset('assets/js/libs/datatable-btns.js?ver=3.1.2') }}"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.jquery.min.js"></script>
 <script src="{{ asset('assets/js/example-sweetalert.js?ver=3.1.2') }}" aria-hidden="true"></script>
 
 <script>
   //custom datatable
 
-  $(function(){
-    $('.form-check-input').change(function() {
-      
-      var status = $(this).prop('checked') == true ? 1 : 0;
-      var report_id = $(this).data('id');
-
-      
-      $.ajax({
-        type:"GET",
-        url:'/admin/report/update/changeStatus',
-        data: {'status':status,'id':report_id}   
-        })
-        .done(function() {
-        // If successful
-            Swal.fire({
-                      icon: 'success',
-                      title: `Đổi trạng thái thành công`,
-                      showConfirmButton: false,
-                      timer: 2500
-                  });
-
-        })
-        .fail(function(jqXHR, textStatus, errorThrown) {
-        // If fail
-        console.log(textStatus + ': ' + errorThrown);
-        })
-  })
-
-  $('.detail-btn').click(function(){
-
-    var report_id = $(this).data('id');
-    var renderArea = $('#item-detail-ul');
-    var renderArea2 = $('#user-detail-ul');
-
-    $.ajax({
-        type:"GET",
-        url:'/admin/report/detail',
-        data: {'id':report_id}   
-        })
-        .done(function(res) {
-        // If successful
-            renderArea.empty(); 
-            renderArea2.empty(); 
-
-            var report_detail = res.report_detail;
-            var type = report_detail.type_id;
-            var item = res.item;
-            var subItem = res.subItem;
-            var itemUser = res.itemUser;
-
-            var reportUser = res.reportUser;
-            var openEnderContent = ""
-
-            switch(type) {
-                case 1:
-                    $('#report-title').text('Báo cáo về sách');
-                    $("#item-detail-url").attr("href", `/sach/${item.id}/${item.slug}`);
-
-                    var created_at = new Date(item.created_at).toLocaleString('en-GB');
-                    openEnderContent = 
-                    `<li>Tên sách: ${item.name} </li>`+
-                    `<li>Thể loại: ${subItem.name}</li>`+
-                    `<li>Tác giả: ${item.author} </li>`+
-                    `<li>Người thêm: ${itemUser.email} </li>`+
-                    `<li>Ngày thêm: ${created_at} </li>`;
-                    break;
-                case 2:
-                    $('#report-title').text('Báo cáo về chương sách');
-                    $("#item-detail-url").attr("href",`/doc-sach/${subItem.slug}/${item.slug}`);
-
-                    var created_at = new Date(item.created_at).toLocaleString('en-GB');
-
-                     openEnderContent = 
-                    `<li>Sách: ${subItem.name} </li>`+
-                    `<li>Chương số: ${item.code} </li>`+
-                    `<li>Tên chương: ${item.name}</li>`+
-                    `<li>Ngày thêm: ${created_at} </li>`;
-                    break;
-                case 3:
-                    $('#report-title').text('Báo cáo về tài liệu');
-                    $("#item-detail-url").attr("href", `/tai-lieu/${item.id}/${item.slug}`);
-
-                    var created_at = new Date(item.created_at).toLocaleString('en-GB');
-
-                    openEnderContent = 
-                    `<li>Tên tài liệu: ${item.name} </li>`+
-                    `<li>Thể loại: ${subItem.name}</li>`+
-                    `<li>Tác giả: ${item.author} </li>`+
-                    `<li>Người thêm: ${itemUser.email} </li>`+
-                    `<li>Ngày thêm: ${created_at} </li>`;
-                    break;
-                case 4:
-                    $('#report-title').text('Báo cáo về bài viết');
-                    $("#item-detail-url").attr("href", `/dien-dan/${subItem.slug}/${item.slug}/${item.id}`)
-
-                    var created_at = new Date(item.created_at).toLocaleString('en-GB');
-
-                     openEnderContent = 
-                    `<li>Diễn đàn: ${subItem.name} </li>`+
-                    `<li>Chủ đề: ${item.topic} </li>`+
-                    `<li>Người thêm: ${itemUser.email} </li>`+
-                    `<li>Ngày thêm: ${created_at} </li>`;
-                    break;
-                case 5:
-                    $('#report-title').text('Báo cáo về người dùng');
-                    $("#item-detail-url").attr("href", `/thanh-vien/${item.id}`);
-
-                    var created_at = new Date(item.created_at).toLocaleString('en-GB');
-
-                    openEnderContent = 
-                    `<li>Họ và tên: ${item.name} </li>`+
-                    `<li>Biệt danh: ${subItem.displayName} </li>`+
-                    `<li>Email: ${item.email}</li>`+ 
-                    `<li>Ngày tham gia: ${created_at} </li>`;
-                    break;
-
-                default:
-                    openEnderContent = ""
-                }
+$(function(){
+    $('#DataTables_Table_0').DataTable().destroy();
+    
+    $('#DataTables_Table_0').DataTable( {
+      dom: 'Blfrtip',
+      columnDefs: [     
+          {
+              targets: [3],
+              orderable: false     
+          }
+      ],
+      "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "Tất cả"] ],
+      "language": {
+          "lengthMenu": "Hiển thị: _MENU_ đối tượng",
+          "search": "Tìm kiếm _INPUT_",
+          'info':"",
+          "zeroRecords": "Không tìm thấy dữ liệu",
+          "infoEmpty": "Không có dữ liệu hợp lệ",
+          "infoFiltered": "(Lọc từ _MAX_ dữ liệu)",
+          "paginate": {
+            "first":      "Đầu tiên",
+            "last":       "Cuối cùng",
+            "next":       "Tiếp theo",
+            "previous":   "Trước đó"
+        },
+       buttons: {
+            colvis: 'Thay đổi số cột'
+        }
+      },
+      buttons: [
             
-                $("#user-detail-url").attr("href", `/thanh-vien/${reportUser.id}`);
+            {
+                extend: 'colvis',
+                columns: ':not(.noVis)'
+            },
+      
+            {
+                extend: 'copyHtml5',
+                exportOptions: {
+                    columns: [0,1,2]
+                }
+            },
+            {
+                extend: 'excelHtml5',
+                exportOptions: {
+                    columns: [0,1,2]
+                }
+            },
+            {
+                extend: 'pdfHtml5',
+                exportOptions: {
+                    columns: [0,1,2]
+                }
+            },
+            {
+                extend: 'csvHtml5',
+                exportOptions: {
+                    columns: [0,1,2]
+                }
+            },
+            
+        ],
+    
+    });
 
-                var created_at = new Date(reportUser.created_at).toLocaleString('en-GB');
-                var openEnderContent2 = 
-                    `<li> 
-                    <img src=${res.avatar} alt="..." width='200px' />
-                    </li>`+
-                    `<li>Họ và tên: ${reportUser.name} </li>`+
-                    `<li>Email: ${reportUser.email}</li>`+ 
-                    `<li>Ngày tham gia: ${created_at} </li>`;
+    $('#DataTables_Table_0_wrapper').addClass('d-flex row');
+    $('#DataTables_Table_0_length').addClass('mt-2');
+    $('#DataTables_Table_0_filter').addClass('mt-2');
 
-                renderArea.append(openEnderContent);
-                renderArea2.append(openEnderContent2);
+    $('#DataTables_Table_0 tbody').on('change','.form-check-input',function(){
+        
+        var report_id = $(this).data('id');
 
-                $('#report-reason').text(`${report_detail.description}`)
+        
+        $.ajax({
+            type:"GET",
+            url:'/admin/report/update/changeStatus',
+            data: {'status':1,'id':report_id}   
+            })
+            .done(function() {
+            // If successful
+                Swal.fire({
+                        icon: 'success',
+                        title: `Xử lý báo cáo thành công`,
+                        showConfirmButton: false,
+                        timer: 2500
+                    });
+                $("#row-" + report_id).fadeOut();
+  
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            console.log(textStatus + ': ' + errorThrown);
+            })
+    })
+
+    $('#DataTables_Table_0 tbody').on('click','.detail-btn',function(){
+        var report_id = $(this).data('id');
+        var renderArea = $('#item-detail-ul');
+        var renderArea2 = $('#user-detail-ul');
+
+        $.ajax({
+            type:"GET",
+            url:'/admin/report/detail',
+            data: {'id':report_id}   
+            })
+            .done(function(res) {
+            // If successful
+                renderArea.empty(); 
+                renderArea2.empty(); 
+
+                $('#report-title').text(`${res.title}`);
+                $("#item-detail-url").attr("href", `${res.itemUrl}`);
+
+                    
+                
+                $("#user-detail-url").attr("href", `${res.userUrl}`);
+
+                renderArea.append(`${res.content}`);
+                renderArea2.append(`${res.userContent}`);
+
+                $('#report-reason').text(`${res.reason}`)
 
                 $('#show-modal-btn').click();
 
 
 
-        })
-        .fail(function(jqXHR, textStatus, errorThrown) {
-        // If fail
-        console.log(textStatus + ': ' + errorThrown);
-        })
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            console.log(textStatus + ': ' + errorThrown);
+            })
+    })
+})
+
+    function customFormatDate(date){
+        const month = date.slice(0,2);
+        const day = date.slice(3,5);
+        const year = date.slice(6,10)
+    
+        return year+month+day;
+    }
+
+  $('#filter-btn').click(function() {
+    
+    const fromDate = $('.filter-box').find('input[type="text"][name="from-date"]').val();
+    const toDate = $('.filter-box').find('input[type="text"][name="to-date"]').val();
+
+    if(fromDate == '' || toDate == '') {
+      Swal.fire({
+        icon: 'error',
+        title: `Không thể để trống!!!`,
+        showConfirmButton: false,
+        timer: 2500
+      });
+    }
+    if(fromDate && toDate){
+      window.location.href = `/admin/report/filter/${customFormatDate(fromDate)}/${customFormatDate(toDate)}`;
+    }
+    
+
   })
- 
-});
-
-
 
 </script>
 @endsection

@@ -301,10 +301,11 @@
     $(function() {
 
       
-   
+      const settingLog = window.localStorage.getItem('setting');
+     
+      if(settingLog){
+        var setting = JSON.parse(settingLog);
 
-      if(readCookie('setting')){
-        var setting = readCookie('setting');
         var color = setting.color;
         var font = setting.font;
         var lightheight = setting.lightheight;
@@ -332,7 +333,12 @@
    
       const current_book_id = {!! $chapter->books->id !!}
       var chapter_id =  {!! $chapter->id !!}
-      var log = readCookie('readingLog');
+
+      var readingLog = window.localStorage.getItem('readingLog');
+
+      var log = JSON.parse(readingLog);
+
+
       //update cookie
       if(log){             
           objIndex = log.findIndex((obj => obj.book_id == current_book_id));
@@ -346,7 +352,7 @@
                   const updateChapterList = [...currentChapterList,chapter_id]
                   log[objIndex].chapter_id = updateChapterList;
 
-                  createCookie('readingLog',log);
+                  window.localStorage.setItem('readingLog',JSON.stringify(log));
               }
               
           }
@@ -360,7 +366,7 @@
               'chapter_id' : chapter_list        
               };       
               const updateLog = [...log,reading_object]
-              createCookie('readingLog',updateLog);
+              window.localStorage.setItem('readingLog',JSON.stringify(updateLog));
 
           }        
       }
@@ -374,7 +380,7 @@
           };            
           var reading_log = [];
           reading_log.push(reading_object);
-          createCookie('readingLog',reading_log);
+          window.localStorage.setItem('readingLog',JSON.stringify(reading_log));
 
       }
 
@@ -382,33 +388,34 @@
   });
 
 
-    function createCookie(name, value, days) {
-        var expires;
+    // function createCookie(name, value, days) {
+    //     var expires;
 
-        if (days) {
-            var date = new Date();
-            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            expires = "; expires=" + date.toGMTString();
-        } else {
-            expires = "";
-        }
-        document.cookie = encodeURIComponent(name) + "=" + JSON.stringify(value) + expires + "; path=/";
-    }
+    //     if (days) {
+    //         var date = new Date();
+    //         date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    //         expires = "; expires=" + date.toGMTString();
+    //     } else {
+    //         expires = "";
+    //     }
+    //     document.cookie = encodeURIComponent(name) + "=" + JSON.stringify(value) + expires + "; path=/";
+    // }
 
-    function readCookie(name) {
-      var result = document.cookie.match(new RegExp(name + '=([^;]+)'));
-      result && (result = JSON.parse(result[1]));
-      return result;
-    }
+    // function readCookie(name) {
+    //   var result = document.cookie.match(new RegExp(name + '=([^;]+)'));
+    //   result && (result = JSON.parse(result[1]));
+    //   return result;
+    // }
 
-    function eraseCookie(name) {
-        createCookie(name, "", -1);
-    }
+    // function eraseCookie(name) {
+    //     createCookie(name, "", -1);
+    // }
 
     $('#save-setting').click(function(){
 
 
-      eraseCookie('setting');
+      window.localStorage.removeItem("setting");
+
       var color = $('.color-control.checked').find('label').data('bg');
       var font = $('#change-font').val();
       var lightheight = $('#change-lineheight').val();
@@ -421,7 +428,9 @@
         'fontsize':currentFontSize
 
       }
-      createCookie('setting',setting);
+      // createCookie('setting',setting);
+      window.localStorage.setItem("setting", JSON.stringify(setting));
+
       Swal.fire({
                         icon: 'success',
                         title: `Lưu cài đặt thành công!!!`,

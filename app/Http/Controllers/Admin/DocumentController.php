@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\Document;
 use App\Models\DocumentType;
+use App\Models\previewDocumentImages;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use ZipArchive;
@@ -17,11 +18,7 @@ use Illuminate\Support\Facades\DB;
 class DocumentController extends Controller
 {
 
-    function setNameForImage(){
-        $now_date = Carbon::now()->toDateTimeString();
-        $string = str_replace(' ', '-', $now_date);
-        return preg_replace('/[^A-Za-z0-9\-]/', '', $string);  
-    }
+  
     
 
     public function index()
@@ -31,7 +28,25 @@ class DocumentController extends Controller
        
        return view('admin.document.index')->with('documents', $documents);
     }
+    public function deletedItem(){
+        $documents = Document::where('deleted_at','!=',null)->where('status','=',1)->get();
+       
+       return view('admin.document.deleted')->with('documents', $documents);
+    }
 
+    public function recoveryItem(Request $request){
+
+        $itemList = $request->data;
+
+        //0 - document && 1 - Book
+        foreach($itemList as $item){
+            $document = Document::findOrFail($item);
+            $document->deleted_at = null;
+            $document ->save(); 
+        }
+
+
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -57,25 +72,33 @@ class DocumentController extends Controller
             'name' => 'required',
             'file_document' => 'required|mimetypes:application/pdf',
             'description' => 'required',
-            'image' => 'required|mimes:jpg,png,jpeg|max:5048',
+            'image' => 'image|max:2048|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
             'language' => 'required',
-            'author' => 'required'
+            'author' => 'required',
+        ],[
+            'name.required' => 'Bạn cần phải nhập tên tài liệu',
+            'author.required' => 'Bạn cần phải nhập tên tác giả',
+            'description.required' => 'Bạn cần phải nhập mô tả tài liệu',
+            'image.image' => 'Bạn nên đưa đúng định dạng ảnh bìa',
+            'image.max' => 'Dung lượng ảnh quá lớn',
+            'image.dimensions' => 'Kích thước ảnh nhỏ nhất là 100x100 và lớn nhất là 2000x2000',
+            'file_document.required' => 'Tài liệu phải có file đính kèm',
+            'file_document.mimetypes' => 'Tài liệu đình kèm nên là file .pdf'
         ]);
 
+    
 
         $slug =  Str::slug($request->name);
-    
+            
+        $previewImagefiles = $request->file('previewImages');
         $image = $request->file('image'); //image file from frontend
         $document_file = $request->file('file_document');
 
-        $generatedImageName = '';
        
-        $generatedImageName = 'image'.$this->setNameForImage().'-'
-        .$slug.'.'
-        .$request->image->extension();
+        $generatedImageName = $slug.$image->hashName();
         
    
-        $generatedFileName = $this->setNameForImage() . '-' . $slug . '.' . $request->file_document->extension();
+        $generatedFileName = $slug.$document_file->hashName();
 
         $numberOfPages = 0;
 
@@ -90,7 +113,7 @@ class DocumentController extends Controller
         }
 
 
-        $document = Document::create([
+        $document_id = Document::insertGetId([
             'name' => $request->name,
             'description' => $request->description,
             'isPublic' => 0,
@@ -106,11 +129,10 @@ class DocumentController extends Controller
             'totalDownloading'=>0,
             'numberOfPages' => $numberOfPages,
             'status' =>1,
-            'totalComments'=>0
-
-
+            'totalComments'=>0,
+            "created_at" =>  \Carbon\Carbon::now(), 
+            "updated_at" => \Carbon\Carbon::now(),
         ]);
-        $document->save();
         // upload image
 
         if($image){
@@ -133,6 +155,33 @@ class DocumentController extends Controller
         app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_document_path . $generatedFileName]);
         unlink($localfolder . $generatedFileName);
         }
+
+        //upload previewImage
+
+        $firebase_storage_preview_path = 'documentPreviewImage/';
+
+        foreach ($previewImagefiles as $previewImage){
+            $localfolder = public_path('firebase-temp-uploads') .'/';
+
+            
+            $generatedPreviewImageName =  $slug.$previewImage->hashName();
+           
+            
+            $image = previewDocumentImages::create([
+                'image' => $generatedPreviewImageName,
+                'documentID' => $document_id
+            ]);
+
+
+            if ($previewImage->move($localfolder, $generatedPreviewImageName)) {
+                $uploadedfile = fopen($localfolder.$generatedPreviewImageName, 'r');
+        
+                app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_preview_path . $generatedPreviewImageName]);
+                unlink($localfolder . $generatedPreviewImageName);
+            }
+        }
+      
+
         return redirect('/admin/document');    
     }
 
@@ -182,10 +231,17 @@ class DocumentController extends Controller
         $request->validate([
             'name' => 'required',
             'description' => 'required',
-            'image' => 'mimes:jpg,png,jpeg|max:5048',
+            'image' => 'image|max:2048|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
             'author' => 'required',
             'isCompleted' => 'required'
 
+        ],[
+            'name.required' => 'Bạn cần phải nhập tên tài liệu',
+            'author.required' => 'Bạn cần phải nhập tên tác giả',
+            'description.required' => 'Bạn cần phải nhập mô tả tài liệu',
+            'image.image' => 'Bạn nên đưa đúng định dạng ảnh bìa',
+            'image.max' => 'Dung lượng ảnh quá lớn',
+            'image.dimensions' => 'Kích thước ảnh nhỏ nhất là 100x100 và lớn nhất là 2000x2000',
         ]);
 
         $slug =  Str::slug($request->name);
@@ -200,9 +256,8 @@ class DocumentController extends Controller
             $image = $request->file('image'); //image file from frontend
 
             //upload new image
-            $generatedImageName = 'image'.$this->setNameForImage().'-'
-            .$slug.'.'
-            .$request->image->extension();
+            $generatedImageName = $slug.$image->hashName();
+
 
             $firebase_storage_path = 'documentImage/';
 
@@ -322,5 +377,45 @@ class DocumentController extends Controller
             ->with('totalDocumentsPerMonth',$totalDocumentsPerMonth)
             ->with('totalByTypes', $totalByTypes);
             
+    }
+
+    public function decodeDate($date){
+        
+        $temp = substr_replace($date,"-",4,0);
+        $temp = substr_replace($temp,"-",7,0);
+        return $temp;
+    }
+
+
+    public function getFilterValue($fromDate,$toDate){
+
+        
+        $start_date = new Carbon($this->decodeDate($fromDate));
+        $end_date = new Carbon($this->decodeDate($toDate));
+
+        $documents = Document::whereBetween('created_at', [$start_date, $end_date])->where('deleted_at','=',null)->where('status','=',1)->get();
+        
+        return view('admin.document.index')
+        ->with('fromDate',$start_date->format('m/d/Y'))
+        ->with('toDate',$end_date->format('m/d/Y'))
+        ->with('documents', $documents);
+
+
+    }
+
+    public function getFilterValueDeleted($fromDate,$toDate){
+
+        
+        $start_date = new Carbon($this->decodeDate($fromDate));
+        $end_date = new Carbon($this->decodeDate($toDate));
+
+        $documents = Document::whereBetween('deleted_at', [$start_date, $end_date])->where('deleted_at','!=',null)->where('status','=',1)->get();
+        
+        return view('admin.document.deleted')
+        ->with('fromDate',$start_date->format('m/d/Y'))
+        ->with('toDate',$end_date->format('m/d/Y'))
+        ->with('documents', $documents);
+
+
     }
 }

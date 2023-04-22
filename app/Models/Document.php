@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 
-class Document extends Model implements Searchable
+class Document extends Model
 {
     use HasFactory;
     protected $table = 'documents';
@@ -62,15 +62,6 @@ class Document extends Model implements Searchable
 
     }
 
-    public function getSearchResult(): SearchResult
-    {
-        $url = 'tai-lieu/'.$this->id.'/'.$this->slug;
-    
-        return new SearchResult(
-            $this,
-            $this->name,
-            $url
-        );
-    }
+   
 
 }

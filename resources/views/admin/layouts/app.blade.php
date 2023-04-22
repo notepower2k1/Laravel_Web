@@ -28,6 +28,14 @@
             height: calc(100% - 88px) !important;
             overflow-y: scroll;
         }
+       
+        .sorting_disabled:after{
+            content: none !important;
+        }
+        .sorting_disabled:before{
+            content: none !important;
+        }
+
     </style>
     
 

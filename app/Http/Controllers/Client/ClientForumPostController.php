@@ -14,11 +14,6 @@ class ClientForumPostController extends Controller
 {
 
     
-    function setNameForImage(){
-        $now_date = Carbon::now()->toDateTimeString();
-        $string = str_replace(' ', '-', $now_date);
-        return preg_replace('/[^A-Za-z0-9\-]/', '', $string);  
-    }
     
     public function index()
     {
@@ -53,8 +48,13 @@ class ClientForumPostController extends Controller
         $slug =  Str::slug($request->topic);
 
         $request->validate([
-            'topic' => 'required',
+            'topic' => 'required|min:10|max:255',
             'content' => 'required',
+        ],[
+            'topic.required' => 'Bài viết nên có chủ đề',
+            'topic.min' => 'Chủ đề bài viết quá ngắn',
+            'topic.max' => 'Chủ đề bài viết quá dài',
+            'content.required' => 'Bài viết phải có nội dung'
         ]);
         
 
@@ -116,9 +116,13 @@ class ClientForumPostController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'topic' => 'required',
+            'topic' => 'required|min:10|max:255',
             'content' => 'required',
-
+        ],[
+            'topic.required' => 'Bài viết nên có chủ đề',
+            'topic.min' => 'Chủ đề bài viết quá ngắn',
+            'topic.max' => 'Chủ đề bài viết quá dài',
+            'content.required' => 'Bài viết phải có nội dung'
         ]);
 
         $slug =  Str::slug($request->topic);

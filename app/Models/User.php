@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Carbon\Carbon;
 
 class User extends Authenticatable
 {
@@ -41,7 +42,20 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    protected $appends = ['lastLogin'];
+    
+    public function getLastLoginAttribute()
+    {
+        Carbon::setLocale('vi'); 
 
+        $login = loginHistory::where('userID','=',$this->id)->orderBy('created_at', 'desc')->first();
+
+        $dt = new Carbon($login->created_at);
+        $now = Carbon::now();
+
+        return $dt->diffForHumans($now);
+
+    }
     public function profile() {
         return $this->hasOne(Profile::class,'userID');
     }

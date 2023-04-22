@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class ratingBook extends Model
 {
@@ -14,6 +15,18 @@ class ratingBook extends Model
     public $incrementing = false;
 
     protected $fillable = ['bookID','score','userID'];
+
+    protected $appends = ['time'];
+
+    public function getTimeAttribute()
+    {
+        Carbon::setLocale('vi'); 
+
+        $dt = new Carbon($this->created_at);
+        $now = Carbon::now();
+
+        return $dt->diffForHumans($now);
+    }
 
 
     public function books() {

@@ -76,6 +76,25 @@ class AppServiceProvider extends ServiceProvider
 
         return $matrix;
     }
+
+    public function getMatrix2(){
+
+        $bookRatings = readingHistory::all();
+        $matrix = array();
+
+        foreach($bookRatings as $book){
+            $users = User::where('id','=',$book->userID)->get();
+
+            foreach($users as $user){
+                $matrix[$user->name][$this->getBookSlug($book->bookID)] = $book->total;
+
+            }
+
+        }    
+
+        return $matrix;
+    }
+
     public function getRecommendation($matrix,$person){
 
         $total = array();
@@ -115,6 +134,8 @@ class AppServiceProvider extends ServiceProvider
     } 
 
     public function getRecommendationByRating(){
+
+        //Ranks by history log
         $matrix = $this->getMatrix();
 
         $list = $this->getRecommendation($matrix,Auth::user()->name);
@@ -129,21 +150,20 @@ class AppServiceProvider extends ServiceProvider
         return $listUserNotReadBook;
     }
     public function getRecommendationByType(){
-        $listbooks = Book::all()->pluck('id')->toArray();
 
-        $listUserReadBookID = readingHistory::where('userID',Auth::user()->id)->pluck('bookID')->toArray(); 
+        //Ranks by total reading
+        $matrix = $this->getMatrix2();
 
-        $listUserNotReadBookID = array_diff($listbooks, $listUserReadBookID);
+        $list = $this->getRecommendation($matrix,Auth::user()->name);
 
-        $listUserNotReadBookID = array_values($listUserNotReadBookID);
 
         $listUserNotReadBook = collect();
-
-        foreach ($listUserNotReadBookID as $bookID){
-            $book = Book::findOrFail($bookID);
+        foreach ($list as $item=>$total){
+            $book = Book::where('slug','=',$item)->first();
             $listUserNotReadBook->push($book);
         }
-    
+
+
         $userID = Auth::user()->id;
 
         $rankTypeBook = DB::select("SELECT books.type_id, 
@@ -153,21 +173,58 @@ class AppServiceProvider extends ServiceProvider
         ORDER BY total desc
         limit 2");
 
-        $listUserNotReadBookWithTypeRank = collect();
+        $listUserNotReadBookByTypeRank = collect();
 
         foreach ($rankTypeBook as $rank){
             $temp = $listUserNotReadBook->where('type_id',$rank->type_id);
 
 
             if($temp->count() > 0 ){
-                $listUserNotReadBookWithTypeRank->push($temp);
+                $listUserNotReadBookByTypeRank->push($temp);
 
             }
         }
+        return $listUserNotReadBookByTypeRank->first();
 
-        $listUserNotReadBookByTypeRank = $listUserNotReadBookWithTypeRank->SortByDesc('totalReading');
+        // $listbooks = Book::all()->pluck('id')->toArray();
 
-        return $listUserNotReadBookByTypeRank;
+        // $listUserReadBookID = readingHistory::where('userID',Auth::user()->id)->pluck('bookID')->toArray(); 
+
+        // $listUserNotReadBookID = array_diff($listbooks, $listUserReadBookID);
+
+        // $listUserNotReadBookID = array_values($listUserNotReadBookID);
+
+        // $listUserNotReadBook = collect();
+
+        // foreach ($listUserNotReadBookID as $bookID){
+        //     $book = Book::findOrFail($bookID);
+        //     $listUserNotReadBook->push($book);
+        // }
+    
+        // $userID = Auth::user()->id;
+
+        // $rankTypeBook = DB::select("SELECT books.type_id, 
+        // SUM(`total`) as 'total' FROM reading_histories join books 
+        // on reading_histories.bookID = books.id WHERE `userID` = $userID
+        // GROUP BY `books`.`type_id` 
+        // ORDER BY total desc
+        // limit 2");
+
+        // $listUserNotReadBookWithTypeRank = collect();
+
+        // foreach ($rankTypeBook as $rank){
+        //     $temp = $listUserNotReadBook->where('type_id',$rank->type_id);
+
+
+        //     if($temp->count() > 0 ){
+        //         $listUserNotReadBookWithTypeRank->push($temp);
+
+        //     }
+        // }
+
+        // $listUserNotReadBookByTypeRank = $listUserNotReadBookWithTypeRank->SortByDesc('totalReading');
+
+        // return $listUserNotReadBookByTypeRank;
     }
     /**
      * Bootstrap any application services.

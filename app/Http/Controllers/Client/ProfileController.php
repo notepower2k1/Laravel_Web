@@ -10,7 +10,7 @@ use App\Models\Profile;
 use App\Models\User;
 use App\Models\Book;
 use App\Models\Document;
-
+use App\Models\ForumPosts;
 use Carbon\Carbon;
 
 class ProfileController extends Controller
@@ -51,8 +51,13 @@ class ProfileController extends Controller
     {
 
         $request->validate([
-            'displayName' => 'required',
+            'displayName' => 'required|min:3|max:255',
             'gender' => 'required',
+        ],[
+            'displayName.required' => 'Không thể để trống tên hiển thị',
+            'displayName.min' => 'Tên hiển thị quá ngắn',
+            'displayName.max' => 'Tên hiển thị quá dài',
+            'gender.required' => 'Nên chọn giới tính'
         ]);
 
         $profile = Profile::findOrFail($id)
@@ -69,7 +74,12 @@ class ProfileController extends Controller
     {
 
         $request->validate([
-            'image' => 'mimes:jpg,png,jpeg|max:5048',
+            'image' => 'required|image|max:2048|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
+        ],[
+            'image.required' => 'Bạn cần phải có ảnh bìa',
+            'image.image' => 'Bạn nên đưa đúng định dạng ảnh bìa',
+            'image.max' => 'Dung lượng ảnh quá lớn',
+            'image.dimensions' => 'Kích thước ảnh nhỏ nhất là 100x100 và lớn nhất là 2000x2000'
         ]);
 
         $image = $request->file('image'); //image file from frontend
@@ -98,9 +108,12 @@ class ProfileController extends Controller
     public function user_info($user_id){
 
         $user = User::where('deleted_at','=',null)->findOrFail($user_id);
-        $books = Book::where('userCreatedID','=',$user->id)->where('isPublic','=',1)->paginate(3,'*', 'books');
-        $documents = Document::where('userCreatedID','=',$user->id)->where('isPublic','=',1)->paginate(3,'*', 'documents');
+        $books = Book::where('userCreatedID','=',$user->id)->where('deleted_at','=',null)->where('isPublic','=',1)->paginate(3,'*', 'books');
+        $documents = Document::where('userCreatedID','=',$user->id)->where('deleted_at','=',null)->where('isPublic','=',1)->paginate(3,'*', 'documents');
+        $posts = ForumPosts::where('userCreatedID','=',$user->id)->where('deleted_at','=',null)->get();
+
         return view('client.homepage.user_info')
+        ->with('posts',$posts)
         ->with('books',$books)
         ->with('documents',$documents)
         ->with('user',$user);

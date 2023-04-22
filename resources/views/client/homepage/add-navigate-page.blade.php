@@ -196,8 +196,15 @@
                                                     <canvas id="the-canvas" style="border:1px solid black;width:200px;height:300px" ></canvas>
                                                 </div>
 
-                                                <label class="form-file-label" for="imageFileInput">Chọn ảnh bìa</label>
+                                                <label for="imageFileInput">Chọn ảnh bìa</label>
                                                 <input type="file" id="imageFileInput" name="image" accept="image/*" required >
+
+                                                <div>
+                                                    <input type="file"  style="display: none" class="form-control" name="previewImages[]" id="previewImageInput" multiple />
+
+                                                    <div id="renderArea" style="display: none">
+                                                </div>
+                                               
                                             </div>
                                         </div>
                                         <div class="nk-stepper-step text-center">
@@ -1137,55 +1144,113 @@
         let file = new File([dataArr], 'image.jpeg', { type: mime });
 
 
-        const fileInput = document.getElementById('imageFileInput');
-
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(file);
-        fileInput.files = dataTransfer.files;
+        return file;
 
     };
 
+    function fetch1Page(pdf){
+        var pageNumber = 1;
+        pdf.getPage(pageNumber).then(function (page) {
+          // console.log('Page loaded');
+
+          var scale = 1.5;
+          console.log(page);
+          var viewport = page.getViewport({ scale: scale });
+
+          var canvas = document.getElementById('the-canvas');
+          var context = canvas.getContext('2d');
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+
+          var renderContext = {
+            canvasContext: context,
+            viewport: viewport
+          };
+
+          var renderTask = page.render(renderContext);
+
+          renderTask.promise.then(function () {
+              
+              const base64Image = canvas.toDataURL('image/jpeg');
+
+              const file = base64ToFile(base64Image);
+
+
+              const dataTransfer = new DataTransfer();
+              dataTransfer.items.add(file);
+
+              const fileInput = document.getElementById('imageFileInput');
+
+              fileInput.files = dataTransfer.files;
+            
+          });
+        });
+    }
+
+    function fetch5Pages(pdf){
+
+      $('#renderArea').empty();
+      let numPages = pdf.numPages;
+
+      if (numPages > 6) {
+        numPages = 6;
+      }      
+      for (let i = 2; i <= numPages; i++) {
+
+          pdf.getPage(i).then(function (page) {
+            let scale = 1.5;
+            let viewport = page.getViewport({ scale });
+            let outputScale = window.devicePixelRatio || 1;
+
+            let canvas = document.createElement('canvas');
+            let context = canvas.getContext("2d");
+
+            canvas.width = Math.floor(viewport.width * outputScale);
+            canvas.height = Math.floor(viewport.height * outputScale);
+            canvas.style.width = Math.floor(viewport.width) + "px";
+            canvas.style.height = Math.floor(viewport.height) + "px";
+
+            document.getElementById('renderArea').appendChild(canvas);
+
+            let transform = outputScale !== 1 
+                ? [outputScale, 0, 0, outputScale, 0, 0] 
+                : null;
+
+            let renderContext = {
+                canvasContext: context,
+                transform,
+                viewport
+            };
+
+            var renderTask = page.render(renderContext);
+
+            
+            renderTask.promise.then(function () {
+              
+              uploadPreviewImage();
+
+            
+            });
+
+          })
+        
+      }
+    }
     pdf.onchange = function (ev) {
       if (file = document.getElementById('file_document').files[0]) {
         fileReader = new FileReader();
         fileReader.onload = function (ev) {
-          console.log(ev);
+          // console.log(ev);
 
           var loadingTask = pdfjsLib.getDocument(fileReader.result);
 
           loadingTask.promise
             .then(function (pdf) {
-              console.log('PDF loaded');
-
+              // console.log('PDF loaded');
               // Fetch the first page
-              var pageNumber = 1;
-              pdf.getPage(pageNumber).then(function (page) {
-                console.log('Page loaded');
-
-                var scale = 1.5;
-                console.log(page);
-                var viewport = page.getViewport({ scale: scale });
-
-                var canvas = document.getElementById('the-canvas');
-                var context = canvas.getContext('2d');
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-
-                var renderContext = {
-                  canvasContext: context,
-                  viewport: viewport
-                };
-
-                var renderTask = page.render(renderContext);
-
-                renderTask.promise.then(function () {
-                    
-                    const base64Image = canvas.toDataURL('image/jpeg');
-
-                    base64ToFile(base64Image);
-                  
-                });
-              });
+              fetch1Page(pdf);
+              fetch5Pages(pdf);
+       
             }, function (error) {
               console.log(error);
             });
@@ -1193,6 +1258,34 @@
         fileReader.readAsArrayBuffer(file);
       }
     }
+    
+
+
+    function uploadPreviewImage() {
+
+      var renderArea = document.getElementById('renderArea');
+
+      var renderCanvas = renderArea.querySelectorAll('canvas')
+
+      const dataTransfer = new DataTransfer();
+      renderCanvas.forEach(element => {
+          const base64Image = element.toDataURL('image/jpeg');
+        
+
+          const file = base64ToFile(base64Image);
+          dataTransfer.items.add(file);
+
+      });
+      
+
+    
+
+      const fileInput = document.getElementById('previewImageInput');
+
+      fileInput.files = dataTransfer.files;
+
+      
+    };
 
 </script>
 @endsection

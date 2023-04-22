@@ -80,7 +80,15 @@
                             <em class="icon ni ni-download"></em>
                             Nên tải</span>
                     </a>
-                </li><!-- .nk-menu-item -->               
+                </li><!-- .nk-menu-item -->     
+                <li class="nk-menu-item {{ Request::is('/tom-tat-tai-lieu/*') ? 'active' : '' }}">
+                    <a href="/tom-tat-tai-lieu" class="nk-menu-link">
+                        
+                        <span class="nk-menu-text">
+                            <em class="icon ni ni-package-fill"></em>
+                            Tóm tắt</span>
+                    </a>
+                </li><!-- .nk-menu-item -->              
                 <li class="nk-menu-item {{ Request::is('/dien-dan') ? 'active' : '' }}">
                     <a href="/dien-dan" class="nk-menu-link">
                         <span class="nk-menu-text">

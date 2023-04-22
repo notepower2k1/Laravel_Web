@@ -15,11 +15,7 @@ use Illuminate\Support\Facades\DB;
 
 class BookController extends Controller
 {
-    function setNameForImage(){
-        $now_date = Carbon::now()->toDateTimeString();
-        $string = str_replace(' ', '-', $now_date);
-        return preg_replace('/[^A-Za-z0-9\-]/', '', $string);  
-    }
+    
 
   
 
@@ -30,6 +26,25 @@ class BookController extends Controller
        return view('admin.book.index')->with('books', $books);
     }
 
+    public function deletedItem()
+    {
+       $books = Book::where('deleted_at','!=',null)->where('status','=',1)->get();
+       return view('admin.book.deleted')->with('books', $books);
+    }
+
+    public function recoveryItem(Request $request){
+
+        $itemList = $request->data;
+
+        //0 - document && 1 - Book
+        foreach($itemList as $item){
+            $book = Book::findOrFail($item);
+            $book->deleted_at = null;
+            $book ->save(); 
+        }
+
+
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -57,6 +72,16 @@ class BookController extends Controller
             'description' => 'required',
             'image' => 'required|image|max:2048|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
             'language' => 'required'
+        ],
+        [
+            'name.required' => 'Bạn cần phải nhập tên sách',
+            'name.unique' => 'Sách đã tồn tại',
+            'author.required' => 'Bạn cần phải nhập tên tác giả',
+            'description.required' => 'Bạn cần phải nhập mô tả sách',
+            'image.required' => 'Sách cần có ảnh bìa',
+            'image.image' => 'Bạn nên đưa đúng định dạng ảnh bìa',
+            'image.max' => 'Dung lượng ảnh quá lớn',
+            'image.dimensions' => 'Kích thước ảnh nhỏ nhất là 100x100 và lớn nhất là 2000x2000'
         ]);
 
 
@@ -64,9 +89,8 @@ class BookController extends Controller
     
         $image = $request->file('image'); //image file from frontend
 
-        $generatedImageName = 'image'.$this->setNameForImage().'-'
-        .$slug.'.'
-        .$request->image->extension();
+        $generatedImageName = $slug.$image->hashName();
+
 
    
         $book = Book::create([
@@ -87,7 +111,6 @@ class BookController extends Controller
             'totalComments' => 0,
             'status' =>1
         ]);
-        $book->save();
 
         $firebase_storage_path = 'bookImage/';
         $localfolder = public_path('firebase-temp-uploads') .'/';
@@ -150,8 +173,15 @@ class BookController extends Controller
             'name' => 'required',
             'author' => 'required',
             'description' => 'required',
-            'image' => 'mimes:jpg,png,jpeg|max:2048|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
+            'image' => 'image|max:2048|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
             'isCompleted' => 'required'
+        ],[
+            'name.required' => 'Bạn cần phải nhập tên sách',
+            'author.required' => 'Bạn cần phải nhập tên tác giả',
+            'description.required' => 'Bạn cần phải nhập mô tả sách',
+            'image.image' => 'Bạn nên đưa đúng định dạng ảnh bìa',
+            'image.max' => 'Dung lượng ảnh quá lớn',
+            'image.dimensions' => 'Kích thước ảnh nhỏ nhất là 100x100 và lớn nhất là 2000x2000'
         ]);
 
         $slug =  Str::slug($request->name);
@@ -180,9 +210,8 @@ class BookController extends Controller
             $image = $request->file('image'); //image file from frontend
 
             //upload new image
-            $generatedImageName = 'image'.$this->setNameForImage().'-'
-            .$slug.'.'
-            .$request->image->extension();
+            $generatedImageName = $slug.$image->hashName();
+
 
 
             $localfolder = public_path('firebase-temp-uploads') .'/';
@@ -299,4 +328,38 @@ class BookController extends Controller
             
     }
 
+    public function decodeDate($date){
+        
+        $temp = substr_replace($date,"-",4,0);
+        $temp = substr_replace($temp,"-",7,0);
+        return $temp;
+    }
+
+
+    public function getFilterValue($fromDate,$toDate){
+
+        
+        $start_date = new Carbon($this->decodeDate($fromDate));
+        $end_date = new Carbon($this->decodeDate($toDate));
+
+        $books = Book::whereBetween('created_at', [$start_date, $end_date])->where('deleted_at','=',null)->where('status','=',1)->get();
+        
+        return view('admin.book.index')
+        ->with('fromDate',$start_date->format('m/d/Y'))
+        ->with('toDate',$end_date->format('m/d/Y'))
+        ->with('books', $books);
+
+
+    }
+    public function getFilterValueDeleted($fromDate,$toDate){
+        $start_date = new Carbon($this->decodeDate($fromDate));
+        $end_date = new Carbon($this->decodeDate($toDate));
+
+        $books = Book::whereBetween('deleted_at', [$start_date, $end_date])->where('deleted_at','!=',null)->where('status','=',1)->get();
+        
+        return view('admin.book.deleted')
+        ->with('fromDate',$start_date->format('m/d/Y'))
+        ->with('toDate',$end_date->format('m/d/Y'))
+        ->with('books', $books);
+    }
 }   

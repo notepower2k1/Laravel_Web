@@ -46,10 +46,10 @@ class LoginController extends Controller
         }
         else if(Auth::user()->role == '0')
         {  
-            return Session::get('backUrl') ? Session::get('backUrl') : $this->redirectTo;
+            return redirect (Session::get('backUrl') ? Session::get('backUrl') : $this->redirectTo);
         }
         else{
-            return Session::get('backUrl') ? Session::get('backUrl') : $this->redirectTo;
+            return redirect (Session::get('backUrl') ? Session::get('backUrl') : $this->redirectTo);
 
         }
     }
@@ -71,6 +71,9 @@ class LoginController extends Controller
         $request->validate([
             'name' => 'required',
             'password' => 'required',
+        ],[
+            'name.required' => 'Không thể để trống tên tài khoản',
+            'password.required' => 'Không thê trống mật khẩu'
         ]);
      
         $credentials = $request->only('name', 'password');
@@ -82,6 +85,11 @@ class LoginController extends Controller
                 return redirect('login')->with('fail', 'Tài khoản của bạn đã bị khóa');
             }
 
+            loginHistory::create([
+                'userID' => Auth::user()->id,
+                'created_at' => Carbon::now()
+            ]);
+            
             if(Auth::user()->role == '1'){
                 return redirect('admin/dashboard');
             }

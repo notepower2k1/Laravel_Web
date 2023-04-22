@@ -16,11 +16,7 @@ use Illuminate\Support\Str;
 class ClientBookController extends Controller
 {
 
-    function setNameForImage(){
-        $now_date = Carbon::now()->toDateTimeString();
-        $string = str_replace(' ', '-', $now_date);
-        return preg_replace('/[^A-Za-z0-9\-]/', '', $string);  
-    }
+ 
     
   
     
@@ -57,10 +53,21 @@ class ClientBookController extends Controller
     {
 
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|unique:books',
             'author' => 'required',
             'description' => 'required',
             'image' => 'required|image|max:2048|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
+            'language' => 'required'
+        ],
+        [
+            'name.required' => 'Bạn cần phải nhập tên sách',
+            'name.unique' => 'Sách đã tồn tại',
+            'author.required' => 'Bạn cần phải nhập tên tác giả',
+            'description.required' => 'Bạn cần phải nhập mô tả sách',
+            'image.required' => 'Sách cần có ảnh bìa',
+            'image.image' => 'Bạn nên đưa đúng định dạng ảnh bìa',
+            'image.max' => 'Dung lượng ảnh quá lớn',
+            'image.dimensions' => 'Kích thước ảnh nhỏ nhất là 100x100 và lớn nhất là 2000x2000'
         ]);
 
 
@@ -68,19 +75,9 @@ class ClientBookController extends Controller
     
         $image = $request->file('image'); //image file from frontend
 
-        $generatedImageName = 'image'.$this->setNameForImage().'-'
-        .$slug.'.'
-        .$request->image->extension();
+        $generatedImageName = $slug.$image->hashName();
 
-        $firebase_storage_path = 'bookImage/';
-        $localfolder = public_path('firebase-temp-uploads') .'/';
-
-        if ($image->move($localfolder, $generatedImageName)) {
-        $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
-
-        app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
-        unlink($localfolder . $generatedImageName);
-        }
+      
 
         $book = Book::create([
             'name' => $request->name,
@@ -100,7 +97,16 @@ class ClientBookController extends Controller
             'totalComments' => 0,
             'status' =>0
         ]);
-        $book->save();
+        
+        $firebase_storage_path = 'bookImage/';
+        $localfolder = public_path('firebase-temp-uploads') .'/';
+
+        if ($image->move($localfolder, $generatedImageName)) {
+        $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
+
+        app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
+        unlink($localfolder . $generatedImageName);
+        }
 
         return redirect('/quan-ly');
 
@@ -148,13 +154,19 @@ class ClientBookController extends Controller
      */
     public function update(Request $request, $id)
     {
-
         $request->validate([
             'name' => 'required',
             'author' => 'required',
             'description' => 'required',
-            'image' => 'mimes:jpg,png,jpeg|max:2048|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
+            'image' => 'image|max:2048|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
             'isCompleted' => 'required'
+        ],[
+            'name.required' => 'Bạn cần phải nhập tên sách',
+            'author.required' => 'Bạn cần phải nhập tên tác giả',
+            'description.required' => 'Bạn cần phải nhập mô tả sách',
+            'image.image' => 'Bạn nên đưa đúng định dạng ảnh bìa',
+            'image.max' => 'Dung lượng ảnh quá lớn',
+            'image.dimensions' => 'Kích thước ảnh nhỏ nhất là 100x100 và lớn nhất là 2000x2000'
         ]);
 
         $slug =  Str::slug($request->name);
@@ -168,9 +180,8 @@ class ClientBookController extends Controller
             $image = $request->file('image'); //image file from frontend
 
             //upload new image
-            $generatedImageName = 'image'.$this->setNameForImage().'-'
-            .$slug.'.'
-            .$request->image->extension();
+            $generatedImageName = $slug.$image->hashName();
+
 
             $firebase_storage_path = 'bookImage/';
 
@@ -280,11 +291,14 @@ class ClientBookController extends Controller
 
         $book = Book::findOrFail($request->id);
         $book->ratingScore = round($average, 2);
-    
+
+        $ratingPersons = ratingBook::where('bookID','=',$request->id)->get();
+
         $book->save();
         return response()->json([
             'success' => 'Cảm ơn bạn đã đánh giá!!!!',
-            'currentScore' => $book->ratingScore
+            'currentScore' => $book->ratingScore,
+            'totalOfRating' =>$ratingPersons->count()
         ]);
         
        

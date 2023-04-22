@@ -6,7 +6,12 @@
     width: 100%;
     height: 500px;
 }
-
+    .open-relies-btn:hover{
+        cursor: pointer;
+    }
+    .delete-reply-btn,.create-reply-btn,.delete-comment-btn:hover{
+        cursor: pointer;
+    }
 </style>  
 @endsection
 @section('content')
@@ -15,236 +20,421 @@
     <div class="nk-content-inner">
         <div class="nk-content-body">
             <div class="nk-block">
-                <div class="card card-bordered">
-                    <div class="card-inner">
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="product-gallery" >    
-                                    <img src="{{ $document->url }}" class="w-100" alt="">                                     
-                                </div>
-                            </div><!-- .col -->
-                            <div class="col-lg-6 d-flex align-items-end">
-                                <div class="product-info mb-5 me-xxl-5">
-                                        <h2 class="product-title">{{ $document->name }}
-                                        
-                                            @if(Auth::check())
-
-                                            <button type="button" class="btn btn-icon btn-lg ms-1" data-bs-toggle="modal" data-bs-target="#reportForm">
-                                                <em class="icon ni ni-alert" style="color:red"></em>
-                                            </button>
-
-                                            @endif
-                                        </h2>    
-                                      
-                                        
-                                    <p class="product-title">Tác giả: {{ $document->author }}</p>                                                           
-                                    <div class="product-meta">
-                                        <ul class="d-flex g-3 gx-5">
-                                            <li>
-                                                <div class="fs-14px text-muted">Lượt tải</div>
-                                                <div class="fs-16px fw-bold text-secondary" id="totalDownload">{{ $document->totalDownloading }}</div>
-                                            </li>
-                                            <li>
-                                                <div class="fs-14px text-muted">Số trang</div>
-                                                <div class="fs-16px fw-bold text-secondary">{{ $document->numberOfPages }}</div>
-                                            </li>
-                                            <li>
-                                                <div class="fs-14px text-muted">Định dạng</div>
-                                                <div class="fs-16px fw-bold text-secondary">.{{ $document->extension }}</div>
-                                            </li>
-                                      
+                <div class="row">
+                    <div class="card card-bordered">
+                        <div class="card-inner">
+                        
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="product-gallery" >    
+                                                <img src="{{ $document->url }}" class="w-100" alt="">                                     
+                                            </div>
+                                        </div><!-- .col -->
+                                        <div class="col-lg-6 d-flex align-items-end">
+                                            <div class="product-info mb-5 me-xxl-5">
+                                                    <h2 class="product-title">{{ $document->name }}
+                                                    
+                                                        @if(Auth::check())
+            
+                                                        <button type="button" class="btn btn-icon btn-lg ms-1" data-bs-toggle="modal" data-bs-target="#reportForm">
+                                                            <em class="icon ni ni-alert" style="color:red"></em>
+                                                        </button>
+            
+                                                        @endif
+                                                    </h2>    
+                                                
+                                                    
+                                                <p class="product-title">Tác giả: {{ $document->author }}</p>                                                           
+                                                <div class="product-meta">
+                                                    <ul class="d-flex g-3 gx-5">
+                                                        <li>
+                                                            <div class="fs-14px text-muted">Lượt tải</div>
+                                                            <div class="fs-16px fw-bold text-secondary" id="totalDownload">{{ $document->totalDownloading }}</div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="fs-14px text-muted">Số trang</div>
+                                                            <div class="fs-16px fw-bold text-secondary">{{ $document->numberOfPages }}</div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="fs-14px text-muted">Định dạng</div>
+                                                            <div class="fs-16px fw-bold text-secondary">.{{ $document->extension }}</div>
+                                                        </li>
+                                                
+                                                        
+                                                    </ul>
+                                                </div>
+                                                <div class="product-meta">
+                                                    <h6 class="title">Ngôn ngữ: 
+                                                        @if ($document->language === 1)
+                                                        <span class="text-success fs-14px">Tiếng việt</span>
+                                                        @else
+                                                        <span class="text-info fs-14px">Tiếng anh</span>
+            
+                                                        @endif 
+                                                    </h6>
+                                                
+                                                </div><!-- .product-meta -->
+                                                <div class="product-meta">
+                                                    <h6 class="title">Tình trạng: 
+            
+                                                        @if ($document->isCompleted === 1)
+                                                        <span class="text-success fs-14px fw-bold">Đã hoàn thành</span>
+                                                        @else
+                                                        <span class="text-info fs-14px fw-bold">Chưa hoàn thành</span>
+            
+                                                        @endif 
+                                                    </h6>
+                                                
+                                                </div><!-- .product-meta -->
+                                                <div class="product-meta">
+                                                    <h6 class="title">Thể loại</h6>
+                                                    <ul class="d-flex flex-wrap ailgn-center g-2 pt-1">                                     
+                                                        <li class="ms-n1">
+                                                            <a href="/the-loai/the-loai-tai-lieu/{{$document->types->slug}}" class="btn btn-primary">{{ $document->types->name }}</a>
+                                                        </li>         
+                                                    </ul>
+                                                </div><!-- .product-meta -->
+                                                <div class="product-meta">
+                                                    <ul class="d-flex flex-wrap ailgn-center g-2 pt-1">
+                                                        
+                                                        <li class="ms-n1">
+                                                            @if(Auth::check())
+                                                            <button class="btn btn-xl btn-primary" id="download-btn"><em class="icon ni ni-download"></em><span>Tải xuống</span></button>
+                                                            @else
+                                                            <a href="/login" class="btn btn-xl btn-primary"><em class="icon ni ni-download"></em><span>Tải xuống</span></a>
+            
+                                                            @endif
+                                                        </li>
+                                                      
+                                                    </ul>
+                                                </div><!-- .product-meta -->
+                                            </div><!-- .product-info -->
                                             
-                                        </ul>
+                                            
+                                        </div><!-- .col -->
                                     </div>
-                                    <div class="product-meta">
-                                        <h6 class="title">Ngôn ngữ: 
-                                            @if ($document->language === 1)
-                                            <span class="text-success fs-14px">Tiếng việt</span>
-                                            @else
-                                            <span class="text-info fs-14px">Tiếng anh</span>
-
-                                            @endif 
-                                        </h6>
-                                      
-                                    </div><!-- .product-meta -->
-                                    <div class="product-meta">
-                                        <h6 class="title">Tình trạng: 
-
-                                            @if ($document->isCompleted === 1)
-                                            <span class="text-success fs-14px fw-bold">Đã hoàn thành</span>
-                                            @else
-                                            <span class="text-info fs-14px fw-bold">Chưa hoàn thành</span>
-
-                                            @endif 
-                                        </h6>
-                                      
-                                    </div><!-- .product-meta -->
-                                    <div class="product-meta">
-                                        <h6 class="title">Thể loại</h6>
-                                        <ul class="d-flex flex-wrap ailgn-center g-2 pt-1">                                     
-                                            <li class="ms-n1">
-                                                <a href="/the-loai/the-loai-tai-lieu/{{$document->types->slug}}" class="btn btn-primary">{{ $document->types->name }}</a>
-                                            </li>         
-                                        </ul>
-                                    </div><!-- .product-meta -->
-                                    <div class="product-meta">
-                                        <ul class="d-flex flex-wrap ailgn-center g-2 pt-1">
-                                            {{-- <li class="ms-n1">
-                                                @if($book->numberOfChapter === 0)
-                                                <button class="btn btn-xl btn-primary disabled"><em class="icon ni ni-arrow-right-circle"></em><span>Đọc ngay</span></button>
-                                                @else
-                                                <button class="btn btn-xl btn-primary"><em class="icon ni ni-arrow-right-circle"></em><span>Đọc ngay</span></button>
-                                                @endif
-                                            </li> --}}
-                                            <li class="ms-n1">
-                                                @if(Auth::check())
-                                                <button class="btn btn-xl btn-primary" id="download-btn"><em class="icon ni ni-download"></em><span>Tải xuống</span></button>
-                                                @else
-                                                <a href="/login" class="btn btn-xl btn-primary"><em class="icon ni ni-download"></em><span>Tải xuống</span></a>
-
-                                                @endif
-                                            </li>
-                                            <li class="ms-n1">
-                                                @if($document->numberOfPages > 50)
-                                                <button id="preview-btn" class="btn btn-xl btn-primary" disabled><em class="icon ni ni-eye"></em><span>Không thể xem trước</span></button>
-                                                @else
-                                                <button id="preview-btn" class="btn btn-xl btn-primary" data-bs-toggle="modal" data-bs-target="#modalDefault" ><em class="icon ni ni-eye"></em><span>Xem trước</span></button>
-                                                @endif
-
-                                            </li>
-                                        </ul>
-                                    </div><!-- .product-meta -->
-                                </div><!-- .product-info -->
-                                
-                                
-                            </div><!-- .col -->
-                        </div><!-- .row -->
-                        <div class="row g-gs flex-lg-row-reverse">                      
-                            <div class="col-lg-12">
-                                <div class="product-details entry me-xxl-3">
-                                    <hr class="hr">
-                                    <h3>Giới thiệu</h3>
-                                    <div id="divhtmlContent" >{{ $document->description }}</div>   
-
                                 </div>
-                            </div><!-- .col -->
-                        </div><!-- .row -->
 
-                        <div class="row g-gs flex-lg-row-reverse">                      
-                            <div class="col-lg-12">
-                                <div class="product-details entry me-xxl-3">
-                                    <hr class="hr">
-                                    <h3>Bình luận</h3>
-                                    <div class="list-group mt-3">
-                                        <div class="bg-light p-2">
-                                        @if(Auth::check())
-
-                                            <div class="d-flex flex-row align-items-start">
-                                                <img class="rounded-circle" src="{{ Auth::user()->profile->url }}" width="40" id="comment_avatar">
-                                                <textarea class="form-control ml-1 shadow-none textarea" id="comment_area"></textarea>
-                                            </div>
-                                            <div class="mt-2 d-flex flex-row-reverse">
-
-                                                <button class="btn btn-primary" id="comment-btn" type="button">
-                                                    <em class="icon ni ni-comments"></em>
-                                                    <span>Bình luận</span>
-                                                </button>
-                                            </div>
-                                        </div>  
-                                        @endif
-                                        @if ($comments)
-                                        <div id="comment-box">
-                                            <p>{{ $document->totalComments }} bình luận</p>
-                                            @foreach ($comments as $comment)
-                                                <div id="comment-{{ $comment->id }}">
-                                                        <div class="d-flex flex-column comment-section">
-                                                            <div class="bg-white p-2">
-                                                                <div class="d-flex flex-row user-info"><img class="rounded-circle" src="{{ $comment->users->profile->url }}" width="40">
-                                                                    <div class="d-flex flex-column justify-content-start ms-2">
-                                                                        <span class="d-block font-weight-bold name">{{ $comment->users->profile->displayName }}</span>
-                                                                        <span class="date text-black-50">{{ $comment->created_at }}</span>
+                                <div class="col-12">
+                                    <ul class="nav nav-tabs">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" data-bs-toggle="tab" href="#tabItem5"><span>Giới thiệu</span></a>
+                                        </li>                            
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#tabItem7"><span>Bình luận
+                                                <span class="badge badge-dim bg-primary">{{ $document->totalComments }}</span> </span></a>
+                                        </li>   
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#tabItem8"><span>Xem trước</span>
+                                                <span class="badge badge-dim bg-primary">{{ $previewImages->count() }}</span> </span>
+                                            </a>
+                                        </li>                             
+                                    </ul>
+                                    <div class="tab-content">
+                                        <div class="tab-pane active" id="tabItem5">
+                                            <div class="row">                      
+                                                <div class="col-lg-8">
+                                                    <div class="product-details entry me-xxl-3">
+                                                        {!! clean($document->description) !!}
+                                                    </div>
+                                                </div><!-- .col -->
+                                                <div class="col-lg-4 col-xl-4 col-xxl-3">
+                                                    <div class="card card-bordered">
+                                                        <div class="card-inner-group">
+                                                            <div class="card-inner">
+                                                                <div class="user-card user-card-s2">
+                                                                    <div class="user-avatar lg bg-primary">
+                                                                        <img src="{{ $document->users->profile->url }}" alt="">
+                                                                    </div>
+                                                                    <div class="user-info">
+                                                                        {{-- <div class="badge bg-light rounded-pill ucap">Platinam</div> --}}
+                                                                        <h5>{{ $document->users->profile->displayName }}</h5>
+                                                                        {{-- <span class="sub-text">info@softnio.com</span> --}}
                                                                     </div>
                                                                 </div>
-                                                                <div class="mt-2">
-                                                                    <p contenteditable="false" id="comment-text-{{ $comment->id }}">
-                                                                        {{ $comment->content }}
-                                                                    </p>
+                                                            </div>                                                   
+                                                            <div class="card-inner">
+                                                                <div class="row text-center">
+                                                                    <div class="col-6">
+                                                                        <div class="profile-stats">
+                                                                            <span class="amount">{{ $user_books->count() }}</span>
+                                                                            <span class="sub-text">Số sách</span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-6">
+                                                                        <div class="profile-stats">
+                                                                            <span class="amount">{{ $user_documents->count() }}</span>
+                                                                            <span class="sub-text">Số tài liệu</span>
+                                                                        </div>
+                                                                    </div>                                                        
                                                                 </div>
-                                                            </div>
-
-                                                            <div class="bg-white">
-                                                                <div class="d-flex flex-row fs-12">
-                                                                    <button class="btn btn-outline-light create-reply-btn" data-id={{ $comment->id }}>
+                                                            </div><!-- .card-inner -->
+                                                            <div class="card-inner">
+                                                                <div class="slider-init" data-slick='{"arrows": true, "dots": false, "slidesToShow": 1, "slidesToScroll": 1, "infinite":false, "responsive":[ {"breakpoint": 992,"settings":{"slidesToShow": 2}}, {"breakpoint": 768,"settings":{"slidesToShow": 1}} ]}'>                                                               
+                                                                    @foreach ( $user_books as $user_book)
+                                                                        @if($loop->index <3)
+                                                                            <div class="col">
+                                                                                <div class="card card-bordered">
+                                                                                    <img src="{{ $user_book->url }}" class="card-img-top" style="width:360px;height:300px">
+                                                                                    <div class="card-inner">
+                                                                                        <a href="/sach/{{ $user_book->id }}/{{ $user_book->slug }}" class="card-title text-dark fw-bold">{{ $user_book->name }}</a>
+                                                                                        <p class="card-text">
+                                                                                            <span class="badge bg-outline-primary">{{ $user_book->types->name }}</span>
+        
+                                                                                        </p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>     
+                                                                        @endif 
+                                                                    @endforeach
+                                                                    @foreach ( $user_documents as $user_document)
+                                                                        @if($loop->index <3)
+                                                                            <div class="col">
+                                                                                <div class="card card-bordered">
+                                                                                    <img src="{{ $user_document->url }}" class="card-img-top" style="width:360px;height:300px">
+                                                                                    <div class="card-inner">
+                                                                                        <a href="/tai-lieu/{{ $user_document->id }}/{{ $user_document->slug }}" class="card-title text-dark fw-bold" >{{ $user_document->name }}</a>
+                                                                                        <p class="card-text">
+                                                                                            <span class="badge bg-outline-primary">{{ $user_document->types->name }}</span>
+                                                                                        </p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>     
+                                                                        @endif 
+                                                                    @endforeach                                         
+                                                                </div>
+                                                            </div><!-- .card-inner -->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div><!-- .row -->
+                                        </div>
+                                
+                                        <div class="tab-pane" id="tabItem7">
+                                            <div class="row g-gs flex-lg-row-reverse">                      
+                                                <div class="col-lg-12">
+                                                    <div class="product-details entry me-xxl-3">
+                                                        <h5>{{ $document->totalComments }} bình luận</h5>
+                                                        <div class="list-group mt-3">
+                                                            @if(Auth::check())
+                    
+                                                            <div class="p-2">
+                                                                <div class="d-flex flex-row align-items-start">                                                     
+                                                                    <img class="rounded-circle shadow me-2" src="{{ Auth::user()->profile->url }}" width="100" id="comment_avatar">
+        
+                                                                    <textarea class="form-control rounded-pill p-4  textarea bg-light" id="comment_area"></textarea>
+                                                                </div>
+                                                                <div class="mt-2 d-flex flex-row-reverse">
+                    
+                                                                    <button class="btn btn-primary" id="comment-btn" type="button">
                                                                         <em class="icon ni ni-comments"></em>
+                                                                        <span>Bình luận</span>
                                                                     </button>
-                                                                    @if(Auth::check() && Auth::user()->id == $comment->users->id)
-
-                                                                    <button class="btn btn-outline-light delete-comment-btn" data-id={{ $comment->id }}>
-                                                                        <em class="icon ni ni-trash"></em>
-                                                                    </button>
-                                                                    {{-- <button class="btn btn-icon edit-comment-btn" data-id={{ $comment->id }}>
-                                                                        <em class="icon ni ni-edit"></em>
-                                                                    </button> --}}
-                                                                    <div class="custom-control custom-checkbox custom-control-pro custom-control-pro-icon no-control">
-                                                                        <input type="checkbox" class="custom-control-input edit-comment-btn" name="edit-comment-btn" id="edit-comment-btn-{{ $comment->id }}" value={{ $comment->id }}>
-                                                                        <label class="custom-control-label" name="edit-comment-btn" for="edit-comment-btn-{{ $comment->id }}"><em class="icon ni ni-edit"></em></label>
-                                                                    </div>
-                                                                    @endif
                                                                 </div>
-                                                               
-                                                                       
-                                                                </ul>
+                                                            </div>  
+                                                            <hr>
+                                                            @endif
+                                                            @if ($comments)
+                                                            <div id="comment-box">
+                    
+                                                                @foreach ($comments as $comment)
+                                                                    <div id="comment-{{ $comment->id }}">
+                                                                            <div class="d-flex flex-column comment-section">
+                                                                                <div class="bg-white p-2">
+                                                                                        <div class="d-flex user-info">
+                                                                                            <img class="rounded-circle" src="{{ $comment->users->profile->url }}" width="60px">
+                                                                                            <div class="">
+                                                                                                <span class="d-block font-weight-bold name">{{ $comment->users->profile->displayName }}</span>
+                                                                                                <div class="date text-black-50">
+                                                                                                    <em class="icon ni ni-clock"></em>
+                                                                                                    <span>{{ $comment->time }}</span>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        
+                                                                                    
+                                                                                    
+                                                                                    <div class="mt-2">
+                                                                                        <p contenteditable="false" id="comment-text-{{ $comment->id }}">
+                                                                                            {{ $comment->content }}
+                                                                                        </p>
+                                                                                    </div>
+                                                                                </div>
+                    
+                                                                                
+                                                                                    <div class="bg-white">
+                                                                                        <div class="d-flex flex-row justify-content-between">
+                                                                                            @if($comment->totalReplies > 0)
+                                                                                                <div class="ms-2">
+                                                                                                    <p class="open-relies-btn fw-bold" data-id="{{ $comment->id }}">Xem {{ $comment->totalReplies }} phản hồi</p>
+                                                                                                </div>
+                                                                                            @endif
+                                                                                            @if(Auth::check())
+                                                                                            <div class="ms-2">
+                                                                                                <span class="create-reply-btn" data-id={{ $comment->id }}>
+                                                                                                    <em class="icon ni ni-reply fs-16px me-2"></em>
+                                                                                                </span>
+                                                                                                @if(Auth::user()->id == $comment->users->id)
+                            
+                                                                                                <span class="delete-comment-btn" data-id={{ $comment->id }}>
+                                                                                                    <em class="icon ni ni-trash fs-16px me-2 "></em>
+                                                                                                </span>
+    
+                                                                                                <span class="report-comment-btn" data-id={{ $comment->id }} data-type=8 data-user={{ $comment->users->profile->displayName  }} data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                                    <em class="icon ni ni-flag fs-16px me-2 "></em>
+                                                                                                </span>
+                                                                                                
+                                                                                                <div class="custom-control custom-checkbox custom-control-pro custom-control-pro-icon no-control">
+                                                                                                    <input type="checkbox" class="custom-control-input edit-comment-btn" name="edit-comment-btn" id="edit-comment-btn-{{ $comment->id }}" value={{ $comment->id }}>
+                                                                                                    <label class="" name="edit-comment-btn" for="edit-comment-btn-{{ $comment->id }}">
+                                                                                                        <em class="icon ni ni-edit fs-16px"></em>
+                                                                                                    </label>
+                                                                                                </div>
+                                                                                                
+                                                                                                @endif
+                                                                                            </div>
+                                                                                            
+                                                                                            @endif
+                                                                                        </div>
+                                                                                        
+                                                                                                
+                                                                                        
+                                                                                    </div>
+                                                                                
+                                                                            </div> 
+                                                                            <hr>
+                                                                            @foreach ($comment->replies as $reply)
+                                                                            @if(is_null($reply->deleted_at))
+                                                                            <div class="ms-5 replies-item replies-item-{{ $reply->commentID }}" id="reply-{{ $reply->id }}">
+                                                                                <div class="d-flex flex-column comment-section">
+                                                                                    <div class="bg-white p-2">
+                                                                                        <div class="d-flex flex-row user-info"><img class="rounded-circle" src="{{ $reply->users->profile->url }}" width="40">
+                                                                                            <div class="d-flex flex-column justify-content-start ms-2">
+                                                                                                <span class="d-block font-weight-bold name">{{ $reply->users->profile->displayName }}</span>
+                                                                                                <div class="date text-black-50">
+                                                                                                    <em class="icon ni ni-clock"></em>
+                                                                                                    <span>{{ $reply->time }}</span>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="mt-2">
+                                                                                            <p contenteditable="false" id="reply-text-{{ $reply->id }}">
+                                                                                                {{ $reply->content }}
+                                                                                            </p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    
+                                                                                    @if(Auth::check() && Auth::user()->id == $reply->users->id)
+                    
+                                                                                    <div class="ms-2">
+                                                                                        <div class="d-flex flex-row">
+                                                                                            <span class="delete-reply-btn" data-id={{ $reply->id }}>
+                                                                                                <em class="icon ni ni-trash fs-16px me-2"></em>
+                                                                                            </span>
+                                                                                            <span class="report-comment-btn" data-id={{ $reply->id }} data-type=9 data-user={{ $reply->users->profile->displayName  }} data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                                <em class="icon ni ni-flag fs-16px me-2 "></em>
+                                                                                            </span>
+                                                                                            <div class="custom-control custom-checkbox custom-control-pro custom-control-pro-icon no-control">
+                                                                                                <input type="checkbox" class="custom-control-input edit-reply-btn" name="edit-reply-btn" id="edit-reply-btn-{{ $reply->id }}" value={{ $reply->id }}>
+                                                                                                <label class="" name="edit-reply-btn" for="edit-reply-btn-{{ $reply->id }}">
+                                                                                                    <em class="icon ni ni-edit fs-16px">
+                                                                                                    </em>
+                                                                                                    </label>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    @endif
+                                                                                </div> 
+                                                                                <hr>
+                                                                            </div>
+        
+                                                                            @endif
+                                                                            
+        
+                                                                        @endforeach
+                                                                    </div>
+                                                                
+                                                                @endforeach
+                                                            </div>
+                                                            @endif
                                                             
+                                                        
+                                                                
+                                                        </div>
+                                                    </div>
+                                                </div><!-- .col -->
+                                            </div><!-- .row -->
+                                        </div>
+                                        <div class="tab-pane" id="tabItem8">
+                                            <div class="nk-block">
+                                                <div class="row g-gs">
+
+                                                    @foreach ($previewImages as $previewImage)
+                                                        <div class="col-sm-6 col-lg-4 col-xxl-3">
+                                                            <div class="gallery card card-bordered">
+                                                                <a class="gallery-image popup-image" href="{{ $previewImage->url }}">
+                                                                    <img class="w-100 rounded-top" src="{{ $previewImage->url }}" alt="image">
+                                                                </a>                                                     
                                                             </div>
                                                         </div> 
-                                                        @foreach ($comment->replies as $reply)
-                                                        @if(is_null($reply->deleted_at))
-                                                        <div class="ms-5" id="reply-{{ $reply->id }}">
-                                                            <div class="d-flex flex-column comment-section">
-                                                                <div class="bg-white p-2">
-                                                                    <div class="d-flex flex-row user-info"><img class="rounded-circle" src="{{ $reply->users->profile->url }}" width="40">
-                                                                        <div class="d-flex flex-column justify-content-start ms-2">
-                                                                            <span class="d-block font-weight-bold name">{{ $reply->users->profile->displayName }}</span>
-                                                                            <span class="date text-black-50">{{ $reply->created_at }}</span>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="mt-2">
-                                                                        <p contenteditable="false" id="reply-text-{{ $reply->id }}">
-                                                                            {{ $reply->content }}
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                                @if(Auth::check() && Auth::user()->id == $reply->users->id)
-    
-                                                                <div class="bg-white">
-                                                                    <div class="d-flex flex-row fs-12">
-                                                                        <button class="btn btn-outline-light delete-reply-btn" data-id={{ $reply->id }}>
-                                                                            <em class="icon ni ni-trash"></em>
-                                                                        </button>
-                                                                        <div class="custom-control custom-checkbox custom-control-pro custom-control-pro-icon no-control">
-                                                                            <input type="checkbox" class="custom-control-input edit-reply-btn" name="edit-reply-btn" id="edit-reply-btn-{{ $reply->id }}" value={{ $reply->id }}>
-                                                                            <label class="custom-control-label" name="edit-reply-btn" for="edit-reply-btn-{{ $reply->id }}"><em class="icon ni ni-edit"></em></label>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                @endif
-                                                            </div> 
-                                                        </div>
-                                                        @endif
                                                     @endforeach
+                                                   
+                                                  
                                                 </div>
+                                            </div><!-- .nk-block --> 
+                                         
                                            
-                                            @endforeach
                                         </div>
-                                        @endif
-                                        
-                                    
-                                            
                                     </div>
+                                </div>    
+                            
+                        </div>                  
+                    </div>
+
+                    <div class="card card-bordered">
+                        <div class="card-inner">
+                            <div class="nk-block-head nk-block-head-sm">
+                                <div class="nk-block-between">
+                                    <div class="nk-block-head-content">
+                                        <h5 class="nk-block-title">Tài liệu cùng thể loại</h5>
+                                    </div><!-- .nk-block-head-content -->                           
+                                </div><!-- .nk-block-between -->
+                            </div><!-- .nk-block-head -->
+                            <hr>
+                        
+                            <div class="nk-block">
+                                <div class="slider-init" data-slick='{"slidesToShow": 4, "slidesToScroll": 2, "infinite":false, "responsive":[ {"breakpoint": 992,"settings":{"slidesToShow": 2}}, {"breakpoint": 768,"settings":{"slidesToShow": 1}} ]}'>
+                                    @foreach ($documentsWithSameType as $documentWithSameType)
+                                        <div class="col" >
+                                            <div class="card card-bordered product-card shadow">
+                                                <div class="product-thumb">                                  
+                                                    <img class="card-img-top" src="{{ $documentWithSameType->url }}" alt=""  width="300px" height="350px">          
+                                                    <div class="product-actions book_sameType h-100 w-100">
+                                                        <div class="pricing-body d-flex text-center align-items-center w-100 h-100">   
+                                                            <div class="row">
+                                                                <div class="pricing-amount">
+                                                                    <h6 class="text-white">{{ $documentWithSameType->name }}</h6>
+                                                                    <p class="text-white">Tác giả: {{ $documentWithSameType->author }}</p>
+                                                                    <p class="text-white">Số trang: {{ $documentWithSameType->numberOfPages }}</p>
+                                                                </div>
+                                                                <div class="pricing-action">
+                                                                    <a href="/tai-lieu/{{$documentWithSameType->id}}/{{$documentWithSameType->slug}}" class="btn btn-outline-light">Chi tiết</a>
+                                                                </div>
+                                                            </div>                                        
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            
+                                            </div>
+                                        </div>
+                                    @endforeach
+                        
+                        
                                 </div>
-                            </div><!-- .col -->
-                        </div><!-- .row -->
-                     
+                            </div><!-- .nk-block -->  
+                        </div>    
                     </div>
                 </div>
             </div>
@@ -295,34 +485,49 @@
         </div>
     </div>
 </div>
-@endif
-<div class="modal fade" tabindex="-1" id="modalDefault">
-    
-    <div class="modal-dialog modal-lg" role="document">
-        
+
+<div class="modal fade" id="reportFormComment" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close" id="close-modal">
-                <em class="icon ni ni-cross"></em>
-            </a>
             <div class="modal-header">
-                <h5 class="modal-title">Xem trước</h5>
+                <h5 class="modal-title">Báo cáo bình luận</h5>
+                <button id="close-btn" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <em class="icon ni ni-cross"></em>
+                </button>
             </div>
-            <div class="modal-body embed-responsive embed-responsive-16by9">
-                <div id="spinner" style="display:none">
-                    <div class="d-flex align-items-center">
-                        <strong>Đang tải...</strong>
-                        <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
-                      </div>
-                </div>
-                
-                <iframe  id="preview-iframe" class="doc embed-responsive-item" frameborder='0'></iframe>
+            <div class="modal-body">
+                <form class="form-validate is-alter" novalidate="novalidate">
+                    @csrf
+
+                    <input type="hidden" class="form-control" id="type_id" name="type_id" value=0>
+                    <input type="hidden" class="form-control" id="identifier_id" name="identifier_id" value=0>
+               
+                    <div class="form-group">
+                        <label class="form-label" for="user-name">Bình luận bởi</label>
+                        <div class="form-control-wrap">
+                            <input type="text" class="form-control" id="user-name" name="user-name" required="" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="description">Lý do</label>
+                        <div class="form-control-wrap">
+                            <textarea class="form-control form-control-sm" id="description" name="description" placeholder="Lý do của bạn" required></textarea>
+                        </div>
+                      
+                    </div>
+                    <div class="form-group text-right">
+                        <button id="submitReportFormComment" class="btn btn-lg btn-primary">Báo cáo</button>
+                    </div>
+                </form>
             </div>
-            <div class="modal-footer">
-                <span class="modal-title">Thử lại nếu chưa hiện dữ liệu</span><em class="icon ni ni-info"></em>
+            <div class="modal-footer bg-light">
+                <span class="sub-text">Báo cáo bởi {{ Auth::user()->profile->displayName }}</span>
             </div>
         </div>
     </div>
 </div>
+@endif
+
 @endsection
 
 @endsection
@@ -348,58 +553,19 @@
 
         const id = {!! $document->id !!};
 
-        window.location.href = `/tai-lieu/download/${id}`;
+        const file = @json($document->file);
+        window.location.href = `/tai-lieu/download/${file}/${id}`;
     })
 
 
-    $("#preview-btn").click(function(e){
-        e.preventDefault();
+   
 
-        var id = {!! $document->id !!}
-     
-            $.ajax({
-                type:"GET",
-                url:'/preview-document',
-                data : {
-                    "id": id
-                },
-                })
-                .done(function(res) {
-                    $('#spinner').show();
-
-                // If successful           
-                    var url = res.url;
-                    $('#preview-iframe').attr('src',url+'#toolbar=0&navpanes=0');
-
-            
-                    setTimeout(()=>{
-                        $('#modal-btn').click();
-                    }, 2000);
-                
-
-
-                })
-                .fail(function(jqXHR, textStatus, errorThrown) {
-                // If fail
-                console.log(textStatus + ': ' + errorThrown);
-                })
-      
-       
-      
-
-    })
-
-    $("#close-modal").click(function(e){
-        $('#preview-iframe').attr('src','');
-    });
-
-    $('#preview-iframe').on("load", function () {
-        $('#spinner').hide();
-    }); 
+ 
 
   
-
+    //report Document
     $('#report-btn').click(function(e){
+
         e.preventDefault();
         Swal.fire({
             icon: 'info',
@@ -463,6 +629,90 @@
             }
         })
     })
+
+
+     //Comments && Replies report
+     $(document).on('click','.report-comment-btn',function(e){
+        e.preventDefault();
+        const form = $('#reportFormComment');
+
+        const identifier_id = $(this).data('id');
+        const type_id = $(this).data('type');
+        const userName = $(this).data('user');
+
+        form.find('input[name="user-name"]').val(userName);
+        form.find('input[name="type_id"]').val(type_id);
+        form.find('input[name="identifier_id"]').val(identifier_id);
+    })
+
+    $('#submitReportFormComment').click(function (e) {
+
+        e.preventDefault();
+        Swal.fire({
+            icon: 'info',
+            html:
+                'Tài khoản của bạn có thể bị <b>khóa</b> nếu bạn cố tình báo cáo sai',
+            showCloseButton: true,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'Báo cáo',
+            cancelButtonText: `Không báo cáo`,
+            }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                const form = $('#reportFormComment');
+
+                const type_id = form.find('input[name="type_id"]').val();
+                const identifier_id = form.find('input[name="identifier_id"]').val();
+                const description = form.find('textarea[name="description"]').val();
+
+
+  
+                
+                if(description){
+                            $.ajax({
+                        url:'/bao-cao',
+                        type:"POST",
+                        data:{
+                            'description': description,
+                            'identifier_id':identifier_id,
+                            'type_id':type_id
+                        }
+                        })
+                        .done(function(res) {
+                        
+                            Swal.fire({
+                                    icon: 'success',
+                                    title: `${res.report}`,
+                                    showConfirmButton: false,
+                                    timer: 2500
+                                });     
+
+                            
+                            setTimeout(()=>{
+                                form.find('#close-btn').click();
+                            }, 2500);
+                        })
+
+                        .fail(function(jqXHR, textStatus, errorThrown) {
+                        // If fail
+                        console.log(textStatus + ': ' + errorThrown);
+                        })
+                }
+                else{
+                    Swal.fire('Vui lòng nhập lý do!!!', '', 'info')
+                }
+
+              
+
+
+
+            } else if (result.isDenied) {
+                Swal.fire('Báo cáo thất bại', '', 'info')
+            }
+        })
+
+    });
 
     $(document).on('keyup','textarea',function() {
             var comment_value = $("#comment_area").val();

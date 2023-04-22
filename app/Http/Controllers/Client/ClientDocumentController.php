@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Document;
 use App\Models\DocumentType;
+use App\Models\previewDocumentImages;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use ZipArchive;
@@ -14,28 +15,9 @@ use Illuminate\Support\Str;
 
 class ClientDocumentController extends Controller
 {
-    function PageCount_DOCX($file) {
-        $pageCount = 0;
-    
-        $zip = new ZipArchive();
-    
-        if($zip->open($file) === true) {
-            if(($index = $zip->locateName('docProps/app.xml')) !== false)  {
-                $data = $zip->getFromIndex($index);
-                $xml = new SimpleXMLElement($data);
-                $pageCount = $xml->Pages;
-            }
-            $zip->close();
-        }
-    
-        return $pageCount;
-    }
+   
 
-    function setNameForImage(){
-        $now_date = Carbon::now()->toDateTimeString();
-        $string = str_replace(' ', '-', $now_date);
-        return preg_replace('/[^A-Za-z0-9\-]/', '', $string);  
-    }
+ 
     
 
     public function index()
@@ -71,25 +53,33 @@ class ClientDocumentController extends Controller
             'name' => 'required',
             'file_document' => 'required|mimetypes:application/pdf',
             'description' => 'required',
-            'image' => 'mimes:jpg,png,jpeg|max:5048',
+            'image' => 'image|max:2048|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
             'language' => 'required',
-            'author' => 'required'
+            'author' => 'required',
+        ],[
+            'name.required' => 'Bạn cần phải nhập tên tài liệu',
+            'author.required' => 'Bạn cần phải nhập tên tác giả',
+            'description.required' => 'Bạn cần phải nhập mô tả tài liệu',
+            'image.image' => 'Bạn nên đưa đúng định dạng ảnh bìa',
+            'image.max' => 'Dung lượng ảnh quá lớn',
+            'image.dimensions' => 'Kích thước ảnh nhỏ nhất là 100x100 và lớn nhất là 2000x2000',
+            'file_document.required' => 'Tài liệu phải có file đính kèm',
+            'file_document.mimetypes' => 'Tài liệu đình kèm nên là file .pdf'
         ]);
 
 
         $slug =  Str::slug($request->name);
     
+        $previewImagefiles = $request->file('previewImages');
         $image = $request->file('image'); //image file from frontend
         $document_file = $request->file('file_document');
 
-        $generatedImageName = '';
        
-        $generatedImageName = 'image'.$this->setNameForImage().'-'
-        .$slug.'.'
-        .$request->image->extension();
+        $generatedImageName = $slug.$image->hashName();
+
         
    
-        $generatedFileName = $this->setNameForImage() . '-' . $slug . '.' . $request->file_document->extension();
+        $generatedFileName = $slug.$document_file->hashName();
 
         $numberOfPages = 0;
 
@@ -104,7 +94,7 @@ class ClientDocumentController extends Controller
         }
 
 
-        $document = Document::create([
+        $document_id = Document::insertGetId([
             'name' => $request->name,
             'description' => $request->description,
             'isPublic' => 0,
@@ -120,12 +110,13 @@ class ClientDocumentController extends Controller
             'totalDownloading'=>0,
             'numberOfPages' => $numberOfPages,
             'totalComments' => 0,
-            'status' =>0
+            'status' =>0,
+            "created_at" =>  \Carbon\Carbon::now(), 
+            "updated_at" => \Carbon\Carbon::now(),
 
 
 
         ]);
-        $document->save();
         //upload image
 
         if($image){
@@ -148,6 +139,30 @@ class ClientDocumentController extends Controller
         app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_document_path . $generatedFileName]);
         unlink($localfolder . $generatedFileName);
         }
+
+        $firebase_storage_preview_path = 'documentPreviewImage/';
+
+        foreach ($previewImagefiles as $previewImage){
+            $localfolder = public_path('firebase-temp-uploads') .'/';
+
+            
+            $generatedPreviewImageName =  $slug.$previewImage->hashName();
+           
+            
+            $image = previewDocumentImages::create([
+                'image' => $generatedPreviewImageName,
+                'documentID' => $document_id
+            ]);
+
+
+            if ($previewImage->move($localfolder, $generatedPreviewImageName)) {
+                $uploadedfile = fopen($localfolder.$generatedPreviewImageName, 'r');
+        
+                app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_preview_path . $generatedPreviewImageName]);
+                unlink($localfolder . $generatedPreviewImageName);
+            }
+        }
+
         return redirect('/quan-ly');
 
     }
@@ -197,10 +212,17 @@ class ClientDocumentController extends Controller
         $request->validate([
             'name' => 'required',
             'description' => 'required',
-            'image' => 'mimes:jpg,png,jpeg|max:5048',
+            'image' => 'image|max:2048|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
             'author' => 'required',
             'isCompleted' => 'required'
 
+        ],[
+            'name.required' => 'Bạn cần phải nhập tên tài liệu',
+            'author.required' => 'Bạn cần phải nhập tên tác giả',
+            'description.required' => 'Bạn cần phải nhập mô tả tài liệu',
+            'image.image' => 'Bạn nên đưa đúng định dạng ảnh bìa',
+            'image.max' => 'Dung lượng ảnh quá lớn',
+            'image.dimensions' => 'Kích thước ảnh nhỏ nhất là 100x100 và lớn nhất là 2000x2000',
         ]);
 
         $slug =  Str::slug($request->name);
@@ -215,9 +237,8 @@ class ClientDocumentController extends Controller
             $image = $request->file('image'); //image file from frontend
 
             //upload new image
-            $generatedImageName = 'image'.$this->setNameForImage().'-'
-            .$slug.'.'
-            .$request->image->extension();
+            $generatedImageName = $slug.$image->hashName();
+
 
             $firebase_storage_path = 'documentImage/';
 

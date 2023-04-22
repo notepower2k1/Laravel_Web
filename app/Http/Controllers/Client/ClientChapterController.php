@@ -50,6 +50,9 @@ class ClientChapterController extends Controller
         $request->validate([
             'code' => 'required',
             'content' => 'required'
+        ],[
+            'code.required' => 'Bạn nên nhập chương số',
+            'content.required' => 'Chương nên có nội dung'
         ]);
         
         $name = '';
@@ -145,6 +148,9 @@ class ClientChapterController extends Controller
         $request->validate([
             'code' => 'required',
             'content' => 'required'
+        ],[
+            'code.required' => 'Bạn nên nhập chương số',
+            'content.required' => 'Chương nên có nội dung'
         ]);
         
         $word_count = 0;

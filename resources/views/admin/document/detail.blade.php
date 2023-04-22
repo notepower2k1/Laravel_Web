@@ -72,8 +72,7 @@
                                 <div class="product-details entry me-xxl-3">
                                     <hr class="hr">
                                     <h3>Giới thiệu</h3>
-                                    <div id="divhtmlContent" >{{ $document->description }}</div>   
-
+                                    {!! clean($document->description ) !!}
                                 </div>
                             </div><!-- .col -->
                         </div><!-- .row -->
@@ -90,12 +89,6 @@
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <script>
-          $(function () {
-        var value = document.getElementById('divhtmlContent').textContent;
-        document.getElementById('divhtmlContent').innerHTML =
-        marked.parse(value);
-  
-    });
 
     $("#download-btn").click(function(e){
         e.preventDefault();

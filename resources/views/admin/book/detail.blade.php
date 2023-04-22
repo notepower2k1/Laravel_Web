@@ -51,7 +51,7 @@
                                 <div class="product-details entry me-xxl-3">
                                     <hr class="hr">
                                     <h3>Giới thiệu</h3>
-                                    <div id="divhtmlContent" >{{ $book->description }}</div>   
+                                    {!! clean($book->description ) !!}
 
                                 </div>
                             </div><!-- .col -->
@@ -69,13 +69,4 @@
 @endsection
 @section('additional-scripts')
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
-<script>
-          $(function () {
-        var value = document.getElementById('divhtmlContent').textContent;
-        document.getElementById('divhtmlContent').innerHTML =
-        marked.parse(value);
-  
-    });
- </script>
 @endsection

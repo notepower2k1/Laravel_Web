@@ -19,14 +19,35 @@ class ChapterController extends Controller
     public function index()
     {
 
+        $books = Book::where('deleted_at','=',null)->where('status','=',1)->get();
         $chapters = Chapter::where('deleted_at','=',null)->get();
 
         return view('admin.chapter.index')
+        ->with('books',$books)
         ->with('chapters',$chapters);
    
       
     }
 
+    public function deletedItem()
+    {
+        
+       $chapters = Chapter::where('deleted_at','!=',null)->get();
+       return view('admin.chapter.deleted')->with('chapters', $chapters);
+    }
+
+    public function recoveryItem(Request $request){
+
+        $itemList = $request->data;
+
+        foreach($itemList as $item){
+            $chapter = Chapter::findOrFail($item);
+            $chapter->deleted_at = null;
+            $chapter ->save(); 
+        }
+
+
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -51,6 +72,9 @@ class ChapterController extends Controller
         $request->validate([
             'code' => 'required',
             'content' => 'required'
+        ],[
+            'code.required' => 'Bạn nên nhập chương số',
+            'content.required' => 'Chương nên có nội dung'
         ]);
         
         $name = '';
@@ -143,6 +167,9 @@ class ChapterController extends Controller
         $request->validate([
             'code' => 'required',
             'content' => 'required'
+        ],[
+            'code.required' => 'Bạn nên nhập chương số',
+            'content.required' => 'Chương nên có nội dung'
         ]);
 
         $word_count = 0;
@@ -261,4 +288,60 @@ class ChapterController extends Controller
             
     }
 
+    public function decodeDate($date){
+        
+        $temp = substr_replace($date,"-",4,0);
+        $temp = substr_replace($temp,"-",7,0);
+        return $temp;
+    }
+
+
+    public function getFilterValue($fromDate,$toDate){
+
+        $books = Book::where('deleted_at','=',null)->where('status','=',1)->get();
+
+        $start_date = new Carbon($this->decodeDate($fromDate));
+        $end_date = new Carbon($this->decodeDate($toDate));
+
+        $chapters = Chapter::whereBetween('created_at', [$start_date, $end_date])->where('deleted_at','=',null)->get();
+        
+        return view('admin.chapter.index')
+        ->with('books',$books)
+        ->with('fromDate',$start_date->format('m/d/Y'))
+        ->with('toDate',$end_date->format('m/d/Y'))
+        ->with('chapters', $chapters);
+
+
+    }
+
+    public function getFilterValueShow($id,$fromDate,$toDate){
+
+        $start_date = new Carbon($this->decodeDate($fromDate));
+        $end_date = new Carbon($this->decodeDate($toDate));
+
+        $chapters = Chapter::where('book_id','=',$id)->whereBetween('created_at', [$start_date, $end_date])->where('deleted_at','=',null)->get();
+        
+        return view('admin.chapter.show')
+        ->with('book_id',$id)
+        ->with('fromDate',$start_date->format('m/d/Y'))
+        ->with('toDate',$end_date->format('m/d/Y'))
+        ->with('chapters', $chapters);
+
+
+    }
+    public function getFilterValueDeleted($fromDate,$toDate){
+
+        
+        $start_date = new Carbon($this->decodeDate($fromDate));
+        $end_date = new Carbon($this->decodeDate($toDate));
+
+        $chapters = Chapter::whereBetween('deleted_at', [$start_date, $end_date])->where('deleted_at','!=',null)->get();
+        
+        return view('admin.chapter.deleted')
+        ->with('fromDate',$start_date->format('m/d/Y'))
+        ->with('toDate',$end_date->format('m/d/Y'))
+        ->with('chapters', $chapters);
+
+
+    }
 }

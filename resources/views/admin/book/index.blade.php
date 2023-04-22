@@ -1,14 +1,6 @@
 @extends('admin/layouts.app')
 @section('pageTitle', 'Danh sách sách điện tử')
 @section('additional-style')
-<style>
-  .sorting_disabled:after{
-    content: none !important;
-  }
-  .sorting_disabled:before{
-    content: none !important;
-    }
-</style>
 @endsection
 @section('content')
                     <div class="nk-block nk-block-lg">
@@ -22,6 +14,48 @@
                         </div>
                         <div class="card card-bordered card-preview">
                             <div class="card-inner">
+                                <div class="filter-box">
+                                  <div class="form-group">
+                                      <label class="form-label">
+                                        <em class="icon ni ni-calendar-alt"></em>
+                                        <span>Lọc theo ngày thêm</span>
+                                      </label>
+                                      <div class="form-control-wrap">
+                                          <div class="input-daterange date-picker-range input-group">  
+                                              @if(isset($fromDate))                                                                  
+                                              <input type="text" class="form-control" name="from-date" value="{{ $fromDate }}"/>
+                                              @else
+                                              <input type="text" class="form-control" name="from-date"/>
+                                              @endif
+                                              <div class="input-group-addon">
+                                                <em class="icon ni ni-arrow-long-right"></em>
+                                              </div>       
+                                              @if(isset($toDate))             
+                                              <input type="text" class="form-control" name="to-date" value="{{ $toDate }}"/>
+                                              @else
+                                              <input type="text" class="form-control" name="to-date"/>
+                                              @endif
+                                          </div>
+                                      </div>
+                                  </div>
+                                  <div class="button-box">
+                                      <button class="btn btn-dim btn-warning" id="filter-btn">
+                                        <em class="icon ni ni-filter"></em>
+                                        <span>Lọc</span>̣</button>
+                                      
+                                        @if(isset($fromDate))
+                                        <a class="btn btn-dim btn-info" href="/admin/book/">
+                                          <em class="icon ni ni-reload"></em>
+                                          <span>Reset</span></a>
+                                        @else
+                                        <button class="btn btn-dim btn-info" disabled>
+                                          <em class="icon ni ni-reload"></em>
+                                        <span>Reset</span></a>
+                                        @endif
+
+                                  </div>
+                                </div>
+                                <hr>
                                 <table class="datatable-init-export nowrap nk-tb-list nk-tb-ulist mt-2" data-auto-responsive="false" data-export-title="Export">
                                     <thead>
                                         <tr class="nk-tb-item nk-tb-head">
@@ -138,9 +172,10 @@
                                                                   <li><a href="#" class="delete-button" data-id="{{ $book->id }}" data-name="{{ $book->name }}">
                                                                     <em class="icon ni ni-trash"></em><span>Xóa</span>
                                                                   </a>
+                                                                  </li>
                                                                   <li><a href="/admin/book/{{$book->id}}"><em class="icon ni ni-eye"></em><span>Chi tiết</span></a></li>
 
-                                                                  </li>
+                                                                 
                                                                   <li><a href="/admin/book/{{$book->id}}/edit"><em class="icon ni ni-edit"></em><span>Cập nhật</span></a></li>
                                                                   <li class="divider"></li>
                                                                   <li><a href="/admin/book/chapter/{{$book->id}}"><em class="icon ni ni-list-index"></em><span>Xem chương ({{ $book->numberOfChapter }})</span></a></li>
@@ -319,7 +354,34 @@
         })
     })
   });
+  
+  function customFormatDate(date){
+    const month = date.slice(0,2);
+    const day = date.slice(3,5);
+    const year = date.slice(6,10)
+   
+    return year+month+day;
+  }
 
+  $('#filter-btn').click(function() {
+    
+    const fromDate = $('.filter-box').find('input[type="text"][name="from-date"]').val();
+    const toDate = $('.filter-box').find('input[type="text"][name="to-date"]').val();
+
+    if(fromDate == '' || toDate == '') {
+      Swal.fire({
+        icon: 'error',
+        title: `Không thể để trống!!!`,
+        showConfirmButton: false,
+        timer: 2500
+      });
+    }
+    if(fromDate && toDate){
+      window.location.href = `/admin/book/filter/${customFormatDate(fromDate)}/${customFormatDate(toDate)}`;
+    }
+    
+
+  })
 
 
 </script>

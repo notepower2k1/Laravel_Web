@@ -42,7 +42,10 @@ use App\Http\Controllers\ProfileController as ControllersProfileController;
 Route::group(['middleware' => ['isVerified']],function(){
     
 
-Route::get('/test',[PagesController::class,'test']);
+Route::get('/summarizeText',[PagesController::class,'summarizeText']);
+Route::get('/getKeywords',[PagesController::class,'getKeywords']);
+
+Route::get("/tom-tat-tai-lieu",[PagesController::class,'summarizePage']);
 
 Route::get('/',[PagesController::class,'home_page']);
 
@@ -51,10 +54,12 @@ Route::get('/tai-lieu/all/{option?}',[PagesController::class,'document_page_more
 
 
 
+
     
 Route::get("/sach/{book_id}/{book_slug}",[PagesController::class,'book_detail'])->where('book_id', '[0-9]+');
 Route::get("/tai-lieu/{document_id}/{document_slug}",[PagesController::class,'document_detail'])->where('document_id', '[0-9]+');
-Route::get("/tai-lieu/download/{document_id}",[PagesController::class,'download_document_page']);
+
+Route::get("/tai-lieu/download/{document_file}/{document_id}",[PagesController::class,'download_document_page']);
 Route::get("/tai-tai-lieu",[PagesController::class,'download_document']);
 // Route::get("/tai-tai-lieu",[PagesController::class,'download_document']);
 
@@ -71,6 +76,7 @@ Route::get("/the-loai/{option?}/{type_slug?}",[PagesController::class,'search_ty
 Route::get("/the-loai-ket-qua",[PagesController::class,'search_type_result']);
 
 Route::get("/dien-dan",[PagesController::class,'forum_home_page']);
+Route::get("/dien-dan/bai-viet/{topic}",[PagesController::class,'forum_search_page']);
 Route::get("/dien-dan/{forum_slug}/",[PagesController::class,'forum_detail']);
 Route::get("/dien-dan/{forum_slug}/all/{type_slug?}",[PagesController::class,'forum_detail_filter']);
 
@@ -109,36 +115,55 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
     //All the routes that belongs to the group goes here
     Route::resource("/book",BookController::class,['except' => ['destroy']]);
     Route::get("/statistics/book/{year?}",[BookController::class,'statistics_book_page']);
+    Route::get("/deleted/book",[BookController::class,'deletedItem']);
+    Route::get("/deleted/book/filter/{fromDate}/{toDate}",[BookController::class,'getFilterValueDeleted']);
 
-    Route::get("/customDelete/{book_id}",[BookController::class,'customDelete']);
+    Route::get("/deleted/book/recovery",[BookController::class,'recoveryItem']);
+
+    Route::get("/book/customDelete/{book_id}",[BookController::class,'customDelete']);
     Route::get("/book/update/changeStatus",[BookController::class,'changeBookStatus']);
-    
-    
+    Route::get("/book/filter/{fromDate}/{toDate}",[BookController::class,'getFilterValue']);
+
     
     Route::resource("/book/chapter",ChapterController::class, ['except' => ['create', 'index','destroy']]);
-    
+    Route::get("/book/chapter/{book_id}/filter/{fromDate}/{toDate}",[ChapterController::class,'getFilterValueShow']);
+
     Route::get("/statistics/chapter/{year?}",[ChapterController::class,'statistics_chapter_page']);
 
     Route::get("/book/chapter/customDelete/{chapter_id}",[ChapterController::class,'customDelete']);
-
     Route::get("/book/chapter/create/{book_id}",[ChapterController::class,'create'])->where('book_id', '[0-9]+');
     Route::get("/chapter",[ChapterController::class,'index']);
-    
-    
-    Route::resource("/forum",ForumController::class,['except' => ['destroy']]);
+    Route::get("/deleted/chapter",[ChapterController::class,'deletedItem']);
+    Route::get("/deleted/chapter/filter/{fromDate}/{toDate}",[ChapterController::class,'getFilterValueDeleted']);
 
-    Route::get("/customDelete/{forum_id}",[ForumController::class,'customDelete']);
+    Route::get("/deleted/chapter/recovery",[ChapterController::class,'recoveryItem']);
+    Route::get("/chapter/filter/{fromDate}/{toDate}",[ChapterController::class,'getFilterValue']);
+
+    Route::resource("/forum",ForumController::class,['except' => ['destroy']]);
+    Route::get("/forum/customDelete/{forum_id}",[ForumController::class,'customDelete']);
     Route::get("/forum/update/changeStatus",[ForumController::class,'changeForumStatus']);
     
 
     Route::resource("/document",DocumentController::class,['except' => ['destroy']]);
+    Route::get("/deleted/document",[DocumentController::class,'deletedItem']);
+    Route::get("/deleted/document/filter/{fromDate}/{toDate}",[DocumentController::class,'getFilterValueDeleted']);
+
+    Route::get("/deleted/document/recovery",[DocumentController::class,'recoveryItem']);
+
     Route::get("/statistics/document/{year?}",[DocumentController::class,'statistics_document_page']);
 
-    Route::get("/customDelete/{document_id}",[DocumentController::class,'customDelete']);
+    Route::get("/document/customDelete/{document_id}",[DocumentController::class,'customDelete']);
 
     Route::get("/document/update/changeStatus",[DocumentController::class,'changeDocumentStatus']);
-    
+    Route::get("/document/filter/{fromDate}/{toDate}",[DocumentController::class,'getFilterValue']);
+
     Route::resource("/forum/post",ForumPostController::class,['except' => ['create', 'index','destroy']]);
+    Route::get("/forum/post/{forum_id}/filter/{fromDate}/{toDate}",[ForumPostController::class,'getFilterValueShow']);
+
+    Route::get("/deleted/post",[ForumPostController::class,'deletedItem']);
+    Route::get("/deleted/post/filter/{fromDate}/{toDate}",[ForumPostController::class,'getFilterValueDeleted']);
+
+    Route::get("/deleted/post/recovery",[ForumPostController::class,'recoveryItem']);
     Route::get("/statistics/post/{year?}",[ForumPostController::class,'statistics_post_page']);
 
     Route::get("/forum/post/customDelete/{post_id}",[ForumPostController::class,'customDelete']);
@@ -146,13 +171,18 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
     Route::get("/forum/post/create/{forum_id}",[ForumPostController::class,'create'])->where('forum_id', '[0-9]+');
     Route::get("/post",[ForumPostController::class,'index']);
 
+    Route::get("/post/filter/{fromDate}/{toDate}",[ForumPostController::class,'getFilterValue']);
+
     Route::get("/report",[ReportController::class,'index']);
     Route::get("/statistics/report/{year?}",[ReportController::class,'statistics_report_page']);
 
-    Route::get("/report/waiting",[ReportController::class,'report_wait_page']);
     Route::get("/report/done",[ReportController::class,'report_done_page']);
+    Route::get("/report/done/filter/{fromDate}/{toDate}",[ReportController::class,'getFilterValueDone']);
+
     Route::get("/report/update/changeStatus",[ReportController::class,'changeReportStatus']);
     Route::get("/report/detail",[ReportController::class,'detail']);
+
+    Route::get("/report/filter/{fromDate}/{toDate}",[ReportController::class,'getFilterValue']);
 
     Route::get("/user",[UserController::class,'index']);
     Route::get("/statistics/user/{year?}",[UserController::class,'statistics_user_page']);
@@ -161,6 +191,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
     Route::get("/user/update/changeStatus",[UserController::class,'changeUserStatus']);
     Route::put("/user/{user_id}",[UserController::class,'update']);
     Route::get("/user/deleteUser",[UserController::class,'deleteUser']);
+    Route::get("/user/filter/{fromDate}/{toDate}",[UserController::class,'getFilterValue']);
+
 });
 
 Route::group(['prefix' => 'quan-ly',  'middleware' => ['auth']], function()

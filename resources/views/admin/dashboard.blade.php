@@ -505,7 +505,8 @@
                     <div class="p-2">
                         <table class="datatable-init nowrap nk-tb-list nk-tb-ulist">
                             <thead>
-                                <tr class="nk-tb-item nk-tb-head">                              
+                                <tr class="nk-tb-item nk-tb-head">      
+                                    <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ảnh bìa</span></th>                        
                                     <th class="nk-tb-col"><span class="sub-text">Tiêu đề</span></th>
                                     <th class="nk-tb-col tb-col-lg"><span class="sub-text">Tác giả</span></th>
                                     <th class="nk-tb-col tb-col-lg"><span class="sub-text">Danh mục</span></th>
@@ -519,6 +520,10 @@
                               @foreach ($today_book as $book)
                                 <tr class="nk-tb-item" id ="row-book-{{ $book->id }}">                                                                  
                                    
+                                    <td class="nk-tb-col tb-col-lg">
+                                        <img class="image-fluid" src={{$book->url}} alt="..." style="width:100px" />
+                                    </td>
+
                                     <td class="nk-tb-col">
                                         <div class="user-card">                                           
                                             <div class="user-info">
@@ -535,11 +540,13 @@
                                     </td>
                                     <td class="nk-tb-col tb-col-mb">
                                         <span>{{ $book->users->name }}</span>
-                                      </td>
-                                      <td class="nk-tb-col tb-col-md">
+                                    </td>
+
+                                    <td class="nk-tb-col tb-col-md">
                                         <span>{{ $book->created_at }}</span>
-                                      </td>
-                                      <td class="nk-tb-col tb-col-md">
+                                    </td>
+
+                                    <td class="nk-tb-col tb-col-md">
                                         @if($book->status == 1)
                                         <span class="badge badge-dot badge-dot-xs bg-success">
                                             Đã duyệt

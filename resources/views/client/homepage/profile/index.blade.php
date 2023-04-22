@@ -171,6 +171,14 @@
                 <a href="#" class="close" data-bs-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
                 <div class="modal-body modal-body-lg">
                     <h5 class="title">Cập nhật thông tin cá nhân</h5>
+                    @if($errors->any())
+                    <div class="alert alert-warning">
+                        @foreach ($errors->all() as $error)
+                            <div class="">{{ $error }}</div>
+                        @endforeach
+        
+                    </div>
+                    @endif
                     <ul class="nk-nav nav nav-tabs">
                         <li class="nav-item">
                             <a class="nav-link active" data-bs-toggle="tab" href="#personal">Thông tin cá nhân</a>

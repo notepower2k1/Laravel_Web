@@ -77,19 +77,8 @@
       
     <div class="col-md-12 mt-4 d-flex justify-content-end">                          
     
-            {{ $books->links('vendor.pagination.custom',['elements' => $books]) }}
+        {{ $books->links('vendor.pagination.custom',['elements' => $books]) }}
     </div>
 </div>
 
-@endsection
-@section('additional-scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
-
-<script>
-    $(function () {
-        $(".rateYo").rateYo({
-            starWidth: "20px"
-        });
-    });
-</script>
 @endsection
