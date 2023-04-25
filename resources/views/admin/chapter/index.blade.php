@@ -10,10 +10,13 @@
             <a class="btn btn-primary dropdown-toggle" href="#" type="button" data-bs-toggle="dropdown">Thêm chương cho sách:</a>
             <div class="dropdown-menu">
                 <ul class="link-list-plain ">
-                    @foreach ($books as $book )
+                    {{-- @foreach ($books as $book )
                         <li><a href="/admin/book/chapter/create/{{$book->id}}"><span>{{ $book->name }}</span></a></li>
 
-                    @endforeach
+                    @endforeach --}}
+                    <li class="active"></li>
+                    <li><a href="#"><span>My Account</span></a></li>
+                    <li><a href="#"><span>Sign out</span></a></li>
                 </ul>
             </div>
             </div>

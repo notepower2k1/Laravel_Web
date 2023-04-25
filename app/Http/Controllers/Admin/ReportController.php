@@ -24,14 +24,14 @@ class ReportController extends Controller
 
     public function index()
     {
-       $reports = report::where('status','=',0)->latest('created_at')->get();
+       $reports = report::where('status','=',1)->latest('created_at')->get();
        return view('admin.report.index')->with('reports', $reports);
 
     }
 
     public function report_done_page()
     {
-        $reports = report::where('status','=',1)->orderBy('created_at', 'desc')->get();
+        $reports = report::where('status','=',0)->orderBy('created_at', 'desc')->get();
    
         return view('admin.report.report_done')->with('reports', $reports);
     }
@@ -422,7 +422,7 @@ class ReportController extends Controller
 
         $totalByTypes = DB::select("SELECT Count(reports.id) as 'total', report_types.name as 'status'
         from reports join report_types on reports.type_id = report_types.id 
-        where reports.status = 1
+        where reports.status = 0
         and reports.deleted_at is null
 
         GROUP by report_types.name");
@@ -449,17 +449,17 @@ class ReportController extends Controller
                 SELECT DATE_FORMAT(reports.created_at, '%b') AS month, 
                 COUNT(reports.id) as total FROM reports 
                 WHERE Year(reports.created_at) = $year  and reports.deleted_at is null and 
-                reports.status = 1
+                reports.status = 0
 
                 GROUP BY DATE_FORMAT(reports.created_at, '%m-%Y')
         ) as sub");
         
-        $totalReportsInYear = Report::whereYear('created_at', '=', $year)->where('status','=',1)->where('deleted_at','=',null)->get();
+        $totalReportsInYear = Report::whereYear('created_at', '=', $year)->where('status','=',0)->where('deleted_at','=',null)->get();
 
         $totalReportsPerDate = DB::select("SELECT Count(reports.id) as 'total', DATE(reports.created_at) as 'date'
         from reports 
         WHERE YEAR(reports.created_at) = $year and reports.deleted_at is null and
-        reports.status = 1
+        reports.status = 0
         GROUP by DATE(reports.created_at)");
         
          return view('admin.report.statistics')
@@ -486,7 +486,7 @@ class ReportController extends Controller
         $start_date = new Carbon($this->decodeDate($fromDate));
         $end_date = new Carbon($this->decodeDate($toDate));
 
-        $reports = Report::whereBetween('created_at', [$start_date, $end_date])->where('status','=',0)->get();
+        $reports = Report::whereBetween('created_at', [$start_date, $end_date])->where('status','=',1)->get();
         
         return view('admin.report.index')
         ->with('fromDate',$start_date->format('m/d/Y'))
@@ -500,7 +500,7 @@ class ReportController extends Controller
         $start_date = new Carbon($this->decodeDate($fromDate));
         $end_date = new Carbon($this->decodeDate($toDate));
 
-        $reports = Report::whereBetween('updated_at', [$start_date, $end_date])->where('status','=',1)->get();
+        $reports = Report::whereBetween('updated_at', [$start_date, $end_date])->where('status','=',0)->get();
         
         return view('admin.report.report_done')
         ->with('fromDate',$start_date->format('m/d/Y'))

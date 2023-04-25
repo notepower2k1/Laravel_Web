@@ -46,17 +46,27 @@
                             <a href="html/apps-kanban.html" class="nk-menu-link"><span class="nk-menu-text">Kanban Board</span></a>
                         </li>
                     </ul><!-- .nk-menu-sub -->
-                </li> --}}             
-                <li class="nk-menu-item {{ Request::is('/tim-kiem') ? 'active' : '' }}">
-                    <a href="/tim-kiem" class="nk-menu-link">
-                        <span class="nk-menu-text">
-                            <em class="icon ni ni-search"></em>
-                            Tìm kiếm               
-                        </span>
-                       
-                    </a>
-                </li><!-- .nk-menu-item -->
-                <li class="nk-menu-item {{ Request::is('/the-loai') ? 'active' : '' }}">
+                </li> --}}    
+                
+                @if(!Request::is('tim-kiem'))
+                    <li class="nk-menu-item">
+                        {{-- <a href="/tim-kiem" class="nk-menu-link">
+                            <span class="nk-menu-text">
+                                <em class="icon ni ni-search"></em>
+                                Tìm kiếm               
+                            </span>
+                        
+                        </a> --}}
+                        <a href="#" class="nk-menu-link" data-bs-toggle="modal" data-bs-target="#modalSearchHomePage">
+                            <span class="nk-menu-text">
+                                <em class="icon ni ni-search"></em>
+                                Tìm kiếm               
+                            </span>
+                        </a>
+
+                    </li><!-- .nk-menu-item -->
+                @endif
+                <li class="nk-menu-item {{ Request::is('the-loai') ? 'active' : '' }}">
                     <a href="/the-loai" class="nk-menu-link">
                         
                         <span class="nk-menu-text">
@@ -65,7 +75,7 @@
                         </span>
                     </a>
                 </li><!-- .nk-menu-item -->           
-                <li class="nk-menu-item {{ Request::is('/the-loai') ? 'active' : '' }}">
+                <li class="nk-menu-item {{ Request::is('sach/all/sach-hay-nen-doc') ? 'active' : '' }}">
                     <a href="/sach/all/sach-hay-nen-doc" class="nk-menu-link">
                         
                         <span class="nk-menu-text">
@@ -73,7 +83,7 @@
                             Khuyên đọc</span>
                     </a>
                 </li><!-- .nk-menu-item -->             
-                <li class="nk-menu-item {{ Request::is('/tai-lieu/*') ? 'active' : '' }}">
+                <li class="nk-menu-item {{ Request::is('tai-lieu/all/tai-lieu-hay-nhat') ? 'active' : '' }}">
                     <a href="/tai-lieu/all/tai-lieu-hay-nhat" class="nk-menu-link">
                         
                         <span class="nk-menu-text">
@@ -81,14 +91,14 @@
                             Nên tải</span>
                     </a>
                 </li><!-- .nk-menu-item -->     
-                <li class="nk-menu-item {{ Request::is('/tom-tat-tai-lieu/*') ? 'active' : '' }}">
+                {{-- <li class="nk-menu-item {{ Request::is('/tom-tat-tai-lieu/*') ? 'active' : '' }}">
                     <a href="/tom-tat-tai-lieu" class="nk-menu-link">
                         
                         <span class="nk-menu-text">
                             <em class="icon ni ni-package-fill"></em>
                             Tóm tắt</span>
                     </a>
-                </li><!-- .nk-menu-item -->              
+                </li>--}}
                 <li class="nk-menu-item {{ Request::is('/dien-dan') ? 'active' : '' }}">
                     <a href="/dien-dan" class="nk-menu-link">
                         <span class="nk-menu-text">

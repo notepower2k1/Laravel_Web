@@ -52,7 +52,8 @@
                         <label>Tác giả<sup>*</sup></label>
                         <input type="text" required
                         name="author"
-                        class="form-control mb-4 col-6">
+                        class="form-control mb-4 col-6"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="Nếu nhiều tác giả, mỗi tác giả cách nhau một dấu phẩy (,)">
 
 
                         <label>Thể loại<sup>*</sup></label>

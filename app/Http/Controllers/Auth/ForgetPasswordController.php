@@ -51,7 +51,7 @@ class ForgetPasswordController extends Controller
     
                 $mailData = [
                     'title' => 'Xin chào '. $request->UserName . '!!!',
-                    'body' =>  'Mật khẩu mới của bạn là: '.$new_password,
+                    'body' =>   $new_password,
                     'content' => 'Vui lòng không tiếc lộ cho ai khác mật khẩu của bạn, 
                     Bạn nên đổi mật khẩu mới sau khi nhận được mail này.'
                 ];    

@@ -17,7 +17,7 @@
                         <span class="input-group-text" id="basic-addon1">
                         <em class="icon ni ni-search"></em></span>
                     </div>
-                    <input type="text" name="query" id="search" class="typeahead form-control col-sm-8" placeholder="Nhập tên sách hoặc tài liệu !!" aria-label="Search">                 
+                    <input type="text" name="query" id="search" class="form-control col-sm-8" placeholder="Nhập tên sách hoặc tài liệu !!" aria-label="Search">                 
                     <div class="input-group-append">
                         <button class="btn btn-outline-primary btn-dim" id="search-btn" data-value="1">Tìm kiếm sách điện tử</button>
                         <button class="btn btn-outline-success btn-dim dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><span id='option_show'>Loại tài liệu</span><em class="icon mx-n1 ni ni-chevron-down"></em></button>
@@ -74,6 +74,7 @@ const documentNames = @json($documents);
 var typingTimer;                //timer identifier
 var doneTypingInterval = 1000;  //time in ms, 5 seconds for example
 
+
 //on keyup, start the countdown
 $('#search').on('keyup', function () {
   clearTimeout(typingTimer);
@@ -95,15 +96,17 @@ function doneTyping () {
     const option_value = $('#search-btn').attr('data-value');
 
     if(inputValue){
+
         var fullName = []
         if(option_value == 1){
             fullName =  bookNames.filter(function(name){
-            return name.toLowerCase().includes(inputValue.toLowerCase());
+
+            return name.toLowerCase().normalize().includes(inputValue.toLowerCase().normalize());
             });
         }
         if(option_value == 2){
             fullName =  documentNames.filter(function(name){
-            return name.toLowerCase().includes(inputValue.toLowerCase());
+            return name.toLowerCase().normalize().includes(inputValue.toLowerCase().normalize());
             });
         }
 

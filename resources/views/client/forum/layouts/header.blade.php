@@ -72,7 +72,6 @@
                                 </div>
                                 <div class="dropdown-inner">
                                     <ul class="link-list">
-                                        <li><a href="/trang-ca-nhan"><em class="icon ni ni-user-alt"></em><span>Trang cá nhân</span></a></li>
                                         <li>
                                             @if(Auth::user()->role == 1)
                                             <a href="/admin/dashboard"><em class="icon ni ni-activity-alt"></em><span>Trang quản lý</span></a>

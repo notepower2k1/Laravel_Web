@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -27,9 +27,6 @@
         textarea {
             resize: none;
         }
-        .book_sameType:hover{
-            background-color:#062788;
-        }
         #navbar-background{
             background-image: url('https://raw.githubusercontent.com/notepower2k1/MyImage/main/banner/forum_banner_1.png');
             background-position: center center;
@@ -49,7 +46,6 @@
             <span class="loader"><span class="loader-inner"></span></span>
         </div>  
         <div class="nk-main">    
-          
             <div class="nk-wrap">         
                 <div class="shadow-sm">
                     @include('client/forum.layouts.header')

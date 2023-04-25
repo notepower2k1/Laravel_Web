@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Models\Book;
 use App\Models\BookType;
 use App\Models\Chapter;
+use App\Models\ratingBook;
+use App\Models\readingHistory;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -136,7 +138,12 @@ class BookController extends Controller
     {
         $book = Book::findOrFail($id);
 
+        $reading_history = readingHistory::where('bookID','=',$id)->get();
+        $rating_books = ratingBook::where('bookID','=',$id)->get();
+
         return view('admin.book.detail')
+        ->with('reading_history',$reading_history)
+        ->with('rating_books',$rating_books)
         ->with('book',$book);
         
     }

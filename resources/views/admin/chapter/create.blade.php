@@ -58,10 +58,7 @@
 
 
 
-    $(() => {
-      
-
-        
+    $(() => { 
         tinymce.init({
         entity_encoding : "raw",
         selector: '#mytextarea',

@@ -5,14 +5,13 @@
     
     .high_reading_books{
         margin-top: 80px;
+        
     }
     .high_rating_books:hover{
         cursor: pointer;
-        animation: taadaa 2s;
     }
     .new_books:hover{
         cursor: pointer;
-        animation: taadaa 2s;
 
     }
 
@@ -132,7 +131,7 @@
                         @foreach ($high_rating_books as $book)
                             <div class="col high_rating_books" >
                                 <div class="card card-bordered product-card shadow">
-                                    <div class="product-thumb">
+                                    <div class="product-thumb shine">
                                         <a href="/sach/{{$book->id}}/{{$book->slug}}">
                                             <img class="card-img-top" src="{{ $book->url }}" alt="" width="300px" height="350px">
                                         </a>
@@ -168,55 +167,63 @@
     </section>
 
     <section class="mt-4">
+       
         <div class="card card-bordered" style="background-color:#8bd0de">
+            
             <div class="card-inner">
-                <div class="row">
-                    <div class="col-lg-2 col-md-12">
-                        <div class="preview-icon-box">
-                            <div class="preview-icon-wrap">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 90">
-                                    <rect x="15" y="5" width="56" height="70" rx="6" ry="6" fill="#e3e7fe" stroke="#6576ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></rect>
-                                    <path d="M69.88,85H30.12A6.06,6.06,0,0,1,24,79V21a6.06,6.06,0,0,1,6.12-6H59.66L76,30.47V79A6.06,6.06,0,0,1,69.88,85Z" fill="#fff" stroke="#6576ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-                                    <polyline points="60 16 60 31 75 31.07" fill="none" stroke="#6576ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polyline>
-                                    <line x1="58" y1="50" x2="32" y2="50" fill="none" stroke="#c4cefe" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></line>
-                                    <line x1="46" y1="38" x2="32" y2="38" fill="none" stroke="#c4cefe" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></line>
-                                    <line x1="68" y1="44" x2="32" y2="44" fill="none" stroke="#c4cefe" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></line>
-                                    <line x1="68" y1="56" x2="32" y2="56" fill="none" stroke="#c4cefe" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></line>
-                                    <line x1="58" y1="62" x2="32" y2="62" fill="none" stroke="#c4cefe" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></line>
-                                    <line x1="68" y1="68" x2="32" y2="68" fill="none" stroke="#c4cefe" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></line>
-                                    <line x1="58" y1="75" x2="32" y2="75" fill="none" stroke="#c4cefe" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></line>
-                                </svg>
+                <div class="nk-block-between mb-2">
+                    <div class="nk-block-head-content">
+                        <h5 class="nk-block-title">Sách mới cập nhật</h5>
+                    </div><!-- .nk-block-head-content -->
+                    <div class="nk-block-head-content">
+                        <div class="toggle-wrap nk-block-tools-toggle">
+                            <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1" data-target="pageMenu1"><em class="icon ni ni-more-v"></em></a>
+                            <div class="toggle-expand-content" data-content="pageMenu1">
+                                <ul class="nk-block-tools g-3">
+                                    <li class="nk-block-tools-opt">
+                                        <a href="/sach/all/sach-moi-cap-nhat" class="d-md-none">Xem thêm</a>
+                                        <a href="/sach/all/sach-moi-cap-nhat" class="d-none d-md-inline-flex"><span>Xem thêm</span></a>
+                                    </li>
+                                </ul>
                             </div>
-                            <a href="/sach/all/sach-moi-cap-nhat" class="text-white">Mới cập nhật</a>
                         </div>
-                    </div>
-                    <div class="col-lg-10 col-md-12">
-                        <div class="slider-init" data-slick='{"arrows": false, "dots": true, "slidesToShow": 3, "slidesToScroll": 3, "infinite":false, "responsive":[ {"breakpoint": 992,"settings":{"slidesToShow": 2}}, {"breakpoint": 768,"settings":{"slidesToShow": 1}} ]}'>
-                            
-                            @foreach ($new_books as $book)
+                    </div><!-- .nk-block-head-content -->
+                </div><!-- .nk-block-between -->
 
-                            <div class="col new_books" data-id="{{ $book->id }}" data-slug="{{ $book->slug }}">
-                                <div class="card card-bordered ">
-                                    <div class="card-inner">
-                                        <div class="row">
-                                            <div class="col-5 text-white text-center p-2" style="background-color:#8bd0de">
-                                                <p class="fw-bold">{{ Str::title(\Carbon\Carbon::parse($book->created_at)->locale('vi')->translatedFormat('l') ) }}</p>
-                                                <p class="fw-bold">Ngày {{ \Carbon\Carbon::parse($book->created_at)->locale('vi')->translatedFormat('d M') }}</p>
-                                            </div>
-                                            <div class="col-7 text-center">
-                                                <p class="card-text">{{ $book->name }}</p>
-
+                <div class="nk-block">
+                    <div class="row g-gs">
+                        <div class="col-2">
+                           <a href="/sach/{{ $new_books->first()->id }}/{{ $new_books->first()->slug }}"><img src="{{ $new_books->first()->url }}" alt="image"></a>              
+                        </div>
+                        <div class="col-10">
+                            <div class="slider-init" data-slick='{"arrows": false, "dots": true, "slidesToShow": 3, "slidesToScroll": 3, "infinite":false, "responsive":[ {"breakpoint": 992,"settings":{"slidesToShow": 2}}, {"breakpoint": 768,"settings":{"slidesToShow": 1}} ]}'>
+                                
+                                @foreach ($new_books as $book)
+    
+                                <div class="col new_books" data-id="{{ $book->id }}" data-slug="{{ $book->slug }}">
+                                    <div class="card card-bordered ">
+                                        <div class="card-inner">
+                                            <div class="row">
+                                                <div class="col-5 text-white text-center p-2" style="background-color:#8bd0de">
+                                                    <p class="fw-bold">{{ Str::title(\Carbon\Carbon::parse($book->created_at)->locale('vi')->translatedFormat('l') ) }}</p>
+                                                    <p class="fw-bold">Ngày {{ \Carbon\Carbon::parse($book->created_at)->locale('vi')->translatedFormat('d M') }}</p>
+                                                </div>
+                                                <div class="col-7 text-center">
+                                                    <p class="card-text">{{ $book->name }}</p>
+    
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                @endforeach
+                            
                             </div>
-                            @endforeach
-                        
                         </div>
+                    
                     </div>
-                
                 </div>
+               
             
             </div>
         </div>  
@@ -231,8 +238,8 @@
                     </div><!-- .nk-block-head-content -->
                     <div class="nk-block-head-content">
                         <div class="toggle-wrap nk-block-tools-toggle">
-                            <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1" data-target="pageMenu"><em class="icon ni ni-more-v"></em></a>
-                            <div class="toggle-expand-content" data-content="pageMenu">
+                            <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1" data-target="pageMenu2"><em class="icon ni ni-more-v"></em></a>
+                            <div class="toggle-expand-content" data-content="pageMenu2">
                                 <ul class="nk-block-tools g-3">
                                     <li class="nk-block-tools-opt">
                                         <a href="/sach/all/sach-hay-xem-nhieu" class="d-md-none">Xem thêm</a>
@@ -276,96 +283,98 @@
 </div>
 
 
-<section class="mt-4" id="document-section">
-    <div class="container p-5">
-        <div class="nk-block-head nk-block-head-sm mb-5">
-            <div class="nk-block-between">
-                <div class="nk-block-head-content border border-dark p-4">
-                    <a href="/tai-lieu/all" class="nk-block-title text-white ff-mono fw-bold">Tài liệu tham khảo</a>
-                </div><!-- .nk-block-head-content -->
-            </div><!-- .nk-block-between -->
-        </div><!-- .nk-block-head -->
-        <div class="slider-init" data-slick='{"slidesToShow": 4 , "slidesToScroll": 2, "infinite":false, "responsive":[ {"breakpoint": 992,"settings":{"slidesToShow": 2}}, {"breakpoint": 768,"settings":{"slidesToShow": 1}} ]}'>
-            @foreach ($documents as $document)
-                <div class="col document-card d-flex justify-content-center">
-                    <div class="card card-bordered product-card shadow ">
-                        <div class="product-thumb">
-                            <a href="/tai-lieu/{{$document->id}}/{{$document->slug}}">
-                                <img class=" document-card-image" src="{{ $document->url }}" alt="" width="300px" height="350px">
-                            </a>                       
-                        </div>            
+    <section class="mt-4" id="document-section">
+        <div class="container p-5">
+            <div class="nk-block-head nk-block-head-sm mb-5">
+                <div class="nk-block-between">
+                    <div class="nk-block-head-content border border-dark p-4">
+                        <a href="/tai-lieu/all" class="nk-block-title text-white ff-mono fw-bold">Tài liệu tham khảo</a>
+                    </div><!-- .nk-block-head-content -->
+                </div><!-- .nk-block-between -->
+            </div><!-- .nk-block-head -->
+            <div class="slider-init" data-slick='{"slidesToShow": 4 , "slidesToScroll": 2, "infinite":false, "responsive":[ {"breakpoint": 992,"settings":{"slidesToShow": 2}}, {"breakpoint": 768,"settings":{"slidesToShow": 1}} ]}'>
+                @foreach ($documents as $document)
+                    <div class="col document-card d-flex justify-content-center">
+                        <div class="card card-bordered product-card shadow ">
+                            <div class="product-thumb shine">
+                                <a href="/tai-lieu/{{$document->id}}/{{$document->slug}}">
+                                    <img class=" document-card-image" src="{{ $document->url }}" alt="" width="300px" height="350px">
+                                </a>                       
+                            </div>            
+                        </div>
                     </div>
-                </div>
-            @endforeach
-        </div>
-    </div><!-- .nk-block -->  
+                @endforeach
+            </div>
+        </div><!-- .nk-block -->  
 
-</section>
+    </section>
 
-<section class="mt-4">
-    <div class="container">
-            <div class="card card-bordered">
-                <div class="card-inner">
-                    <div class="nk-block-head nk-block-head-sm">
-                        <div class="nk-block-between">
-                            <div class="nk-block-head-content">
-                                <h5 class="nk-block-title">Tài liệu hay</h5>
-                            </div><!-- .nk-block-head-content -->
-                            <div class="nk-block-head-content">
-                                <div class="toggle-wrap nk-block-tools-toggle">
-                                    <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1" data-target="pageMenu"><em class="icon ni ni-more-v"></em></a>
-                                    <div class="toggle-expand-content" data-content="pageMenu">
-                                        <ul class="nk-block-tools g-3">
-                                            <li class="nk-block-tools-opt">
-                                                <a href="/tai-lieu/all/tai-lieu-hay-nhat" class="d-md-none">Xem thêm</a>
-                                                <a href="/tai-lieu/all/tai-lieu-hay-nhat" class="d-none d-md-inline-flex"><span>Xem thêm</span></a>
-                                            </li>
-                                        </ul>
+    <section class="mt-4">
+        <div class="container">
+                <div class="card card-bordered">
+                    <div class="card-inner">
+                        <div class="nk-block-head nk-block-head-sm">
+                            <div class="nk-block-between">
+                                <div class="nk-block-head-content">
+                                    <h5 class="nk-block-title">Tài liệu hay</h5>
+                                </div><!-- .nk-block-head-content -->
+                                <div class="nk-block-head-content">
+                                    <div class="toggle-wrap nk-block-tools-toggle">
+                                        <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1" data-target="pageMenu3"><em class="icon ni ni-more-v"></em></a>
+                                        <div class="toggle-expand-content" data-content="pageMenu3">
+                                            <ul class="nk-block-tools g-3">
+                                                <li class="nk-block-tools-opt">
+                                                    <a href="/tai-lieu/all/tai-lieu-hay-nhat" class="d-md-none">Xem thêm</a>
+                                                    <a href="/tai-lieu/all/tai-lieu-hay-nhat" class="d-none d-md-inline-flex"><span>Xem thêm</span></a>
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
-                                </div>
-                            </div><!-- .nk-block-head-content -->
-                        </div><!-- .nk-block-between -->
-                    </div><!-- .nk-block-head -->
-                    <hr>
-                
-                    <div class="nk-block">
-                        <div class="slider-init" data-slick='{"slidesToShow": 4, "slidesToScroll": 2, "infinite":false, "responsive":[ {"breakpoint": 992,"settings":{"slidesToShow": 2}}, {"breakpoint": 768,"settings":{"slidesToShow": 1}} ]}'>
-                            @foreach ($high_downloading_documents as $document)
-                                <div class="col" >
-                                    <div class="card card-bordered product-card shadow">
-                                        <div class="product-thumb">                                  
-                                            <img class="card-img-top" src="{{ $document->url }}" alt=""  width="300px" height="350px">          
-                                            <div class="product-actions high_downloading_documents h-100 w-100">
-                                                <div class="pricing-body d-flex text-center align-items-center w-100 h-100">   
-                                                    <div class="row">
-                                                        <div class="pricing-amount">
-                                                            <h6 class="text-white">{{ $document->name }}</h6>
-                                                            <p class="text-white">Tác giả: {{ $document->author }}</p>
-                                                            <p class="text-white">Số trang: {{ $document->numberOfPages }}</p>
-                                                            <p class="text-white">Lượt tải: {{ $document->totalDownloading }}</p>
-                                                        </div>
-                                                        <div class="pricing-action">
-                                                            <a href="/tai-lieu/{{$document->id}}/{{$document->slug}}" class="btn btn-outline-light">Chi tiết</a>
-                                                        </div>
-                                                    </div>                                        
-                                                    
+                                </div><!-- .nk-block-head-content -->
+                            </div><!-- .nk-block-between -->
+                        </div><!-- .nk-block-head -->
+                        <hr>
+                    
+                        <div class="nk-block">
+                            <div class="slider-init" data-slick='{"slidesToShow": 4, "slidesToScroll": 2, "infinite":false, "responsive":[ {"breakpoint": 992,"settings":{"slidesToShow": 2}}, {"breakpoint": 768,"settings":{"slidesToShow": 1}} ]}'>
+                                @foreach ($high_downloading_documents as $document)
+
+
+                                    <div class="col" >
+                                        <div class="card card-bordered product-card shadow">
+                                            <div class="product-thumb">                                  
+                                                <img class="card-img-top" src="{{ $document->url }}" alt=""  width="300px" height="350px">          
+                                                <div class="product-actions high_downloading_documents h-100 w-100">
+                                                    <div class="pricing-body text-center w-100 h-100">   
+                                                        <div class="h-100 d-flex flex-column justify-content-center">
+                                                            <div class="pricing-amount">
+                                                                <h6 class="text-white">{{ $document->name }}</h6>
+                                                                <p class="text-white">Tác giả: {{ $document->author }}</p>
+                                                                <p class="text-white">Số trang: {{ $document->numberOfPages }}</p>
+                                                                <p class="text-white">Lượt tải: {{ $document->totalDownloading }}</p>
+                                                            </div>
+                                                            <div class="pricing-action">
+                                                                <a href="/tai-lieu/{{$document->id}}/{{$document->slug}}" class="btn btn-outline-light">Chi tiết</a>
+                                                            </div>
+                                                        </div>                                        
+                                                        
+                                                    </div>
                                                 </div>
                                             </div>
+                                        
                                         </div>
-                                    
                                     </div>
-                                </div>
-                            @endforeach
-                
-                
-                        </div>
-                    </div><!-- .nk-block -->  
-                </div>    
-            </div>
-    </div>
-</section>
+                                @endforeach
+                    
+                    
+                            </div>
+                        </div><!-- .nk-block -->  
+                    </div>    
+                </div>
+        </div>
+    </section>
 
-
+   
 @endsection
 @section('additional-scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>

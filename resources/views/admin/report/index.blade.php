@@ -90,7 +90,7 @@
                                 class="form-check-input"
                                 role="switch"
                                 data-id="{{ $report->id }}"
-                                {{ $report->status ? 'checked':'' }}   />
+                                {{ $report->status ? '':'checked' }}   />
                             </div>
                         </td>                                                                                                                                                                                                                  
                         <td class="nk-tb-col nk-tb-col-tools">
@@ -231,7 +231,7 @@ $(function(){
         $.ajax({
             type:"GET",
             url:'/admin/report/update/changeStatus',
-            data: {'status':1,'id':report_id}   
+            data: {'status':0,'id':report_id}   
             })
             .done(function() {
             // If successful

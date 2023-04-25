@@ -12,27 +12,24 @@ use App\Models\Chapter;
 use App\Models\Forum;
 use App\Models\ForumPosts;
 use App\Models\BookType;
+use App\Models\Comment;
 use App\Models\DocumentType;
-use App\Models\User;
 use App\Models\report;
-use App\Models\BookComment;
-use App\Models\DocumentComment;
-use App\Models\PostComment;
 use App\Models\previewDocumentImages;
 use App\Models\readingHistory;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use Spatie\Searchable\Search;
-use Spatie\Searchable\ModelSearchAspect;
-use Drnxloc\LaravelHtmlDom\HtmlDomParser;
-use Illuminate\Support\Facades\Storage;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Smalot\PdfParser\Parser;
 use PhpScience\TextRank\TextRankFacade;
 
 class PagesController extends Controller
 {
+
+    
+    
     public function home_page(){
             
         $books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get();
@@ -43,7 +40,7 @@ class PagesController extends Controller
 
         $new_books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('updated_at')->take(8);
 
-        $documents = Document::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get()->take(8);
+        $documents = Document::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('created_at')->take(4);
 
         $high_downloading_documents = Document::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('totalDownloading')->take(8);
 
@@ -121,7 +118,7 @@ class PagesController extends Controller
             
         $book = Book::findOrFail($book_id);
         $chapters = Chapter::where('book_id','=',$book_id)->where('deleted_at','=',null)->paginate(10);
-        $comments = BookComment::where('bookID','=',$book_id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(10);
+        $comments = Comment::where('type_id','=',2)->where('identifier_id','=',$book_id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(10);
 
         $booksWithSameType = Book::where('type_id','=',$book->type_id)->where('id','!=',$book->id)->get();
         $isMark = false;
@@ -185,7 +182,7 @@ class PagesController extends Controller
     public function document_detail($document_id,$document_slug){
             
         $document = Document::findOrFail($document_id);
-        $comments = DocumentComment::where('documentID','=',$document_id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(10);
+        $comments = Comment::where('type_id','=',1)->where('identifier_id','=',$document_id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(10);
 
 
         $user_books = Book::where('userCreatedID','=',$document->users->id)->where('deleted_at','=',null)->where('isPublic','=',1)->get();
@@ -253,22 +250,36 @@ class PagesController extends Controller
 
         if(Auth::check()){
 
-            $existHistory = readingHistory::where('userID','=',Auth::user()->id)->where('bookID','=',$book->id)->first();
-            if($existHistory){
+            $existHistory = readingHistory::where('userID','=',Auth::user()->id)->where('bookID','=',$book->id)->orderBy('id','desc')->first();
 
-                $existHistory->update([
-                    'total' => $existHistory->total + 1
-                ]);
+            if($existHistory){     
 
-                $existHistory->save();
+                $existHistoryDate = new Carbon($existHistory->created_at);
+
+                if($existHistoryDate->isToday()){     
+
+                    $existHistory->update([
+                        'total' => $existHistory->total + 1
+                    ]);
+                    
+                }
+                
+                else{
+                    readingHistory::create([
+                        'bookID'=>$book->id,
+                        'userID'=>Auth::user()->id,
+                        'total'=>1
+                    ]);
+                }
+               
+
             }
             else{
-                $newHistory = readingHistory::create([
+                readingHistory::create([
                     'bookID'=>$book->id,
                     'userID'=>Auth::user()->id,
                     'total'=>1
                 ]);
-                $newHistory->save();
             }
 
         }
@@ -319,8 +330,14 @@ class PagesController extends Controller
 
     public function search_name_page(){
 
-        $books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->pluck('name')->toArray();
-        $documents = Document::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->pluck('name')->toArray();
+        $bookNames = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->pluck('name')->toArray();
+        $bookAuthors = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->distinct()->pluck('author')->toArray();
+
+        $documentNames = Document::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->pluck('name')->toArray();
+        $documentAuthors = Document::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->distinct()->pluck('author')->toArray();
+
+        $books = array_merge($bookNames, $bookAuthors);
+        $documents = array_merge($documentNames, $documentAuthors);
 
         return view('client.homepage.search_page')
         ->with('documents',$documents)
@@ -336,14 +353,14 @@ class PagesController extends Controller
 
         switch ($option) {
             case 1:         
-                $items = Book::where('name','like','%'.$searchterm.'%')->orWhere('slug','like','%'.$slug.'%')->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
+                $items = Book::where('name','like','%'.$searchterm.'%')->orWhere('slug','like','%'.$slug.'%')->orWhere('author','like','%'.$searchterm.'%')->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
                 break;
             case 2:              
-                $items = Document::where('name','like','%'.$searchterm.'%')->orWhere('slug','like','%'.$slug.'%')->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
+                $items = Document::where('name','like','%'.$searchterm.'%')->orWhere('slug','like','%'.$slug.'%')->orWhere('author','like','%'.$searchterm.'%')->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
 
                 break;  
             default:             
-                $items = Book::where('name','like','%'.$searchterm.'%')->orWhere('slug','like','%'.$slug.'%')->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
+                $items = Book::where('name','like','%'.$searchterm.'%')->orWhere('slug','like','%'.$slug.'%')->orWhere('author','like','%'.$searchterm.'%')->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
                 break;
         }
 
@@ -351,14 +368,14 @@ class PagesController extends Controller
         foreach($items as $item){
             $href = '';
 
-            if($option == 0){
-                $href = 'sach/'.$item->id.'/'.$item->slug;
+            if($option == 1){
+                $href = '/sach/'.$item->id.'/'.$item->slug;
             }
-            else if ($option == 1){
-                $href = 'tai-lieu/'.$item->id.'/'.$item->slug;
+            else if ($option == 0){
+                $href = '/tai-lieu/'.$item->id.'/'.$item->slug;
             }
             else{
-                $href = 'sach/'.$item->id.'/'.$item->slug;
+                $href = '/sach/'.$item->id.'/'.$item->slug;
             }
 
             $content = '<div class="col-lg-3 col-md-6 mt-3">'.
@@ -366,8 +383,8 @@ class PagesController extends Controller
                  '<div class="product-thumb">'.
                      '<img class="card-img-top" src="'.$item->url.'" alt="" width="300px" height="400px">'.                                                                            
                         ' <div class="product-actions item-search w-100 h-100">'.
-                            ' <div class="pricing-body w-100 h-100 d-flex text-center align-items-center">'.
-                                ' <div class="row">'.
+                            ' <div class="pricing-body text-center w-100 h-100">'.
+                                ' <div class="h-100 d-flex flex-column justify-content-center">'.
                                     ' <div class="pricing-amount">'.
                                        '<h6 class="bill text-white">' .$item->name.'</h6>'. 
                                        '<p class="text-white">Tác giả:'. $item->author .'</p>'.                                                   
@@ -388,7 +405,8 @@ class PagesController extends Controller
 
         return response()->json([
             'res' => $contentList,
-            'total' => count($contentList)
+            'total' => count($contentList,
+            )
         ]);
     }
     public function search_type_page($option = null,$type_slug = null){
@@ -440,6 +458,43 @@ class PagesController extends Controller
     }
 
    
+    public function search_author_page($option,$author){
+        $total = 0;
+        $items = collect();
+        $option_id = 0;
+
+        switch ($option) {
+            case 'tac-gia-sach':
+                $option_id = 0;
+
+                $items = Book::where('author','like',"%{$author}%")->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1);    
+                $total = $items->get()->count();      
+                break;
+            case 'tac-gia-tai-lieu':
+                $option_id = 1;
+
+                $items = Document::where('author','like',"%{$author}%")->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1);
+                $total = $items->get()->count();      
+                break;
+            default:
+                $option_id = -1;
+
+                $items = null;    
+                $total = 0;      
+        }
+        
+        if($items){
+            $items = $items->paginate(18);
+        }
+
+        return view('client.homepage.search_author')
+        ->with('option_id',$option_id)
+        ->with('items',$items)
+        ->with('total',$total);  
+
+    
+
+    }
 
 
     public function forum_home_page(){
@@ -510,7 +565,7 @@ class PagesController extends Controller
 
         $post = ForumPosts::findOrFail($post_id);
 
-        $comments = PostComment::where('postID','=',$post_id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
+        $comments = Comment::where('type_id','=',3)->where('identifier_id','=',$post_id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
 
         return view('client.forum.forum_posts.detail')
         ->with('comments',$comments)

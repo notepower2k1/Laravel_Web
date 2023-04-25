@@ -13,15 +13,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('book_comment_replies', function (Blueprint $table) {
+        Schema::create('comments', function (Blueprint $table) {
             $table->increments('id');
             $table->longText('content');
-            $table->unsignedInteger('commentID');
-            $table->foreign('commentID')
-            ->references('id')->on('book_comments')->onDelete('cascade');
+            $table->unsignedInteger('identifier_id');
+            $table->unsignedInteger('type_id');
+            $table->foreign('type_id')
+            ->references('id')->on('comment_types')->onDelete('cascade');
             $table->unsignedbigInteger('userID');
             $table->foreign('userID')
             ->references('id')->on('users')->onDelete('cascade');
+            $table->integer('totalReplies');
             $table->timestamp('deleted_at')->nullable();;
             $table->timestamps();
         });
@@ -34,6 +36,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('book_comment_replies');
+        Schema::dropIfExists('comments');
     }
 };

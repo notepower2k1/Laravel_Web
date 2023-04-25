@@ -195,7 +195,9 @@ class DocumentController extends Controller
     {
         $document = Document::findOrFail($id);
 
+        $previewImages = previewDocumentImages::where('documentID','=',$id)->get();
         return view('admin.document.detail')
+        ->with('previewImages',$previewImages)
         ->with('document',$document);
         
     }

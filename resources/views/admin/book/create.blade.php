@@ -32,7 +32,8 @@
             <label class="mt-4">Tác giả<sup>*</sup></label>
             <input type="text" required
             name="author"
-            class="form-control mb-4 col-6" value="{{ old('author') }}"  autocomplete="author">	 			 	
+            class="form-control mb-4 col-6" value="{{ old('author') }}"  autocomplete="author"
+            data-bs-toggle="tooltip" data-bs-placement="top" title="Nếu nhiều tác giả, mỗi tác giả cách nhau một dấu phẩy (,)">		 	
         
 
             <label>Ảnh bìa<sup>*</sup></label>

@@ -32,13 +32,7 @@
                             <em class="icon ni ni-comments"></em>
                             <span class="nk-fmg-menu-text">Lịch sử bình luận</span>
                         </a>
-                    </li>
-                    <li class="{{ (request()->is('quan-ly/phan-hoi')) ? 'active': '' }}">
-                        <a class="nk-fmg-menu-item" href="/quan-ly/phan-hoi">
-                            <em class="icon ni ni-reply-all"></em>
-                            <span class="nk-fmg-menu-text">Lịch sử phản hồi</span>
-                        </a>
-                    </li>
+                    </li>                  
                 </ul>
             </div>
             <div class="nk-fmg-aside-bottom">

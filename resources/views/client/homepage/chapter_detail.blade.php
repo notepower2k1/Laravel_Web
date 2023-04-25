@@ -25,6 +25,16 @@
     <div class="card-inner">
       <div class="d-flex mb-3">
         <div class="p-2 ">
+          @if($previous)
+          <a href="{{ $previous->slug }}"  class="btn btn-icon btn-lg btn-primary">
+             <em class="icon ni ni-arrow-long-left"></em>
+            </a>
+          @else
+          <button  class="btn btn-icon btn-lg btn-primary" disabled><em class="icon ni ni-arrow-long-left"></em></button>
+          @endif
+        </div>
+        <div class="ms-auto p-2">
+        
           @if($next)
           <a href="{{ $next->slug }}" class="btn btn-icon btn-lg btn-primary">
             <em class="icon ni ni-arrow-long-right"></em>
@@ -33,28 +43,9 @@
           <button class="btn btn-icon btn-lg btn-primary" disabled><em class="icon ni ni-arrow-long-right"></em></button>
           @endif
         </div>
-        <div class="ms-auto p-2">
-          @if($previous)
-          <a href="{{ $previous->slug }}"  class="btn btn-icon btn-lg btn-primary">
-             <em class="icon ni ni-arrow-long-left"></em>
-            </a>
-          @else
-          <button  class="btn btn-icon btn-lg btn-primary" disabled><em class="icon ni ni-arrow-long-left"></em></button>
-          @endif
-
-        </div>
       </div>
       
-      <div class="feature-box">
-      
-
-          {{-- <div class="form-group">
-           
-          </div> --}}
-        
     
-      
-     </div>
       <div class="title">
       @if($chapter->name)
       <h3 class="text-left">       
@@ -65,7 +56,10 @@
           {{$chapter->code}}
         </h3>
         @endif
+
+       
       </div>
+
       <div class="d-flex bg-light">
         <div class="p-2 flex-fill bg-light">
           <em class="icon ni ni-book"></em>
@@ -83,6 +77,14 @@
           <em class="icon ni ni-clock"></em>          
           <span>{{ $chapter->updated_at }}</span>
         </div>
+
+        @if(Auth::check())
+
+        <button type="button" class="btn btn-icon btn-lg ms-1" data-bs-toggle="modal" data-bs-target="#reportForm">
+          <em class="icon ni ni-alert" style="color:red"></em>
+        </button>
+
+        @endif
       </div>
       <div class="border px-4 pt-3" id="divhtmlContent" 
         
@@ -90,7 +92,28 @@
 
       {!! clean($chapter->content) !!}
 
-    </div>   
+    </div>  
+    <div class="d-flex mt-3">
+      <div class="p-2 ">
+        @if($previous)
+        <a href="{{ $previous->slug }}"  class="btn btn-icon btn-lg btn-primary">
+           <em class="icon ni ni-arrow-long-left"></em>
+          </a>
+        @else
+        <button  class="btn btn-icon btn-lg btn-primary" disabled><em class="icon ni ni-arrow-long-left"></em></button>
+        @endif
+      </div>
+      <div class="ms-auto p-2">
+      
+        @if($next)
+        <a href="{{ $next->slug }}" class="btn btn-icon btn-lg btn-primary">
+          <em class="icon ni ni-arrow-long-right"></em>
+        </a>
+        @else
+        <button class="btn btn-icon btn-lg btn-primary" disabled><em class="icon ni ni-arrow-long-right"></em></button>
+        @endif
+      </div>
+    </div> 
   </div>
   </div><!-- .nk-block -->
   <div class="nk-add-product toggle-slide toggle-slide-right toggle-screen-any" data-content="addProduct" data-toggle-screen="any" data-toggle-overlay="true" data-toggle-body="true" data-simplebar="init"><div class="simplebar-wrapper" style="margin: -24px;"><div class="simplebar-height-auto-observer-wrapper"><div class="simplebar-height-auto-observer"></div></div><div class="simplebar-mask"><div class="simplebar-offset" style="right: 0px; bottom: 0px;"><div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content" style="height: 100%; overflow: hidden scroll;"><div class="simplebar-content" style="padding: 24px;">
@@ -287,14 +310,61 @@
 
 
 @endsection
+@section('modal')
+@if(Auth::check())
 
+<div class="modal fade" id="reportForm" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Báo cáo tài liệu</h5>
+                <button id="close-btn" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <em class="icon ni ni-cross"></em>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-validate is-alter" novalidate="novalidate">
+                    @csrf
+                    <input type="hidden" class="form-control" id="type_id" name="type_id" value=2>
+                    <input type="hidden" class="form-control" id="identifier_id" name="identifier_id" value={{ $chapter->id }}>
+
+                    <div class="form-group">
+                        <label class="form-label" for="chapter-code">Tên chương</label>
+                        <div class="form-control-wrap">
+                            <input type="text" class="form-control" id="chapter-code" required="" value='{{ $chapter->code }}' readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="description">Lý do</label>
+                        <div class="form-control-wrap">
+                            <textarea class="form-control form-control-sm" id="description" name="description" placeholder="Lý do của bạn" required></textarea>
+                        </div>
+                      
+                    </div>
+                    <div class="form-group text-right">
+                        <button id="report-btn" class="btn btn-lg btn-primary">Báo cáo</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer bg-light">
+                <span class="sub-text">Báo cáo bởi {{ Auth::user()->profile->displayName }}</span>
+            </div>
+
+        </div>
+    </div>
+</div>
+@endif
 @section('additional-scripts')
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script>
 
-  
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+    });
 
   
     
@@ -388,29 +458,7 @@
   });
 
 
-    // function createCookie(name, value, days) {
-    //     var expires;
-
-    //     if (days) {
-    //         var date = new Date();
-    //         date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-    //         expires = "; expires=" + date.toGMTString();
-    //     } else {
-    //         expires = "";
-    //     }
-    //     document.cookie = encodeURIComponent(name) + "=" + JSON.stringify(value) + expires + "; path=/";
-    // }
-
-    // function readCookie(name) {
-    //   var result = document.cookie.match(new RegExp(name + '=([^;]+)'));
-    //   result && (result = JSON.parse(result[1]));
-    //   return result;
-    // }
-
-    // function eraseCookie(name) {
-    //     createCookie(name, "", -1);
-    // }
-
+    
     $('#save-setting').click(function(){
 
 
@@ -448,10 +496,6 @@
 
     })
 
-    // $("#change-color").change(function(){ //2 step
-    //       var color = $(this).val();
-    //       $("#divhtmlContent").css("background-color",'#'+color);
-    // });
 
     $("#change-font").change(function(){ //2 step
       var font = $(this).val();
@@ -518,6 +562,71 @@
 
       })
 
+      $('#report-btn').click(function(e){
+
+        e.preventDefault();
+        Swal.fire({
+            icon: 'info',
+            html:
+                'Tài khoản của bạn có thể bị <b>khóa</b> nếu bạn cố tình báo cáo sai',
+            showCloseButton: true,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'Báo cáo',
+            cancelButtonText: `Không báo cáo`,
+            }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+
+                var form = $('#reportForm');
+
+                var type_id = form.find('input[name="type_id"]').val();
+                var identifier_id = form.find('input[name="identifier_id"]').val();
+                var description = form.find('textarea[name="description"]').val();
+                
+                if(description){
+                        $.ajax({
+                        url:'/bao-cao',
+                        type:"POST",
+                        data:{
+                            'description': description,
+                            'identifier_id':identifier_id,
+                            'type_id':type_id
+                        }
+                        })
+                        .done(function(res) {
+                        
+                            Swal.fire({
+                                    icon: 'success',
+                                    title: `${res.report}`,
+                                    showConfirmButton: false,
+                                    timer: 2500
+                                });     
+
+                            
+                            setTimeout(()=>{
+                                $('#close-btn').click();
+                            }, 2500);
+                        })
+
+                        .fail(function(jqXHR, textStatus, errorThrown) {
+                        // If fail
+                        console.log(textStatus + ': ' + errorThrown);
+                        })
+                }
+                else{
+                    Swal.fire('Vui lòng nhập lý do!!!', '', 'info')
+                }
+
+              
+
+
+
+            } else if (result.isDenied) {
+                Swal.fire('Báo cáo thất bại', '', 'info')
+            }
+        })
+        })
 
 
  </script>

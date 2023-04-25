@@ -30,21 +30,37 @@
                             <div class="col-12">                       
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <div class="product-gallery" >    
-                                            <img src="{{ $book->url }}" class="w-100" alt="">                                     
+                                        <div class="mt-4">
+                                            <a 
+                                            class="book-container"
+                                            href="#"
+                                            target="_blank"
+                                            rel="noreferrer noopener"
+                                            >
+                                            <div class="book">
+                                                <img
+                                                alt=""
+                                                src="{{ $book->url }}"
+                                                />
+                                            </div>
+                                            </a>
                                         </div>
                                     </div><!-- .col -->
-                                    <div class="col-lg-6 d-flex align-items-end">
+                                    <div class="col-lg-6 d-flex align-items-end mt-4">
                                         <div class="product-info mb-5 me-xxl-5">
-                                            <h2 class="product-title">{{ $book->name }}
+                                            <h3 class="product-title">{{ $book->name }}
                                                 @if(Auth::check())
     
                                                 <button type="button" class="btn btn-icon btn-lg ms-1" data-bs-toggle="modal" data-bs-target="#reportFormBook">
                                                     <em class="icon ni ni-alert" style="color:red"></em>
                                                 </button>
                                                 @endif
-                                            </h2>                                        
-                                            <p class="product-title">Tác giả: {{ $book->author }}</p>
+                                            </h3>                         
+                                            <h6 class="title">Tác giả: 
+                                                @foreach(explode(",",$book->author) as $author)                                                                       
+                                                    <span class="badge rounded-pill bg-outline-success"><a  class="text-success" href="/tac-gia/tac-gia-sach/{{ $author }}">{{ $author }}</a></span>
+                                                @endforeach        
+                                                </h6>                
                                             <div class="product-rating">
                                                 @if(!$isRating && Auth::check())
                                                 <div id="rateYo"></div>
@@ -145,7 +161,8 @@
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" data-bs-toggle="tab" href="#tabItem7"><span>Bình luận
-                                            <span class="badge badge-dim bg-primary">{{ $book->totalComments }}</span> </span></a>
+                                            <span class="badge badge-dim bg-primary" id="total-comment-span">{{ $book->totalComments }}</span> </span></a>
+
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" data-bs-toggle="tab" href="#tabItem8"><span>Đánh giá</span></a>
@@ -265,21 +282,26 @@
                                                     <h5>{{ $book->totalComments }} bình luận</h5>
                                                     <div class="list-group mt-3">
                                                         @if(Auth::check())
-                
-                                                        <div class="p-2">
-                                                            <div class="d-flex flex-row align-items-start">                                                     
-                                                                <img class="rounded-circle shadow me-2" src="{{ Auth::user()->profile->url }}" width="100" id="comment_avatar">
-    
-                                                                <textarea class="form-control rounded-pill p-4  textarea bg-light" id="comment_area"></textarea>
+                                                        <div class="d-flex">                                                     
+                                                            <img class="rounded-circle shadow me-2" src="{{ Auth::user()->profile->url }}" width="100" id="comment_avatar">
+
+                                                            <div class="nk-chat-editor border rounded-pill flex-grow-1 bg-light">
+                                                                <div class="nk-chat-editor-form">
+                                                                    <div class="form-control-wrap">
+                                                                        <textarea class="form-control form-control-simple no-resize bg-light textarea" id="comment_area" placeholder="Viết bình luận của bạn..."></textarea>
+                                                                    </div>
+                                                                </div>
+                                                                <ul class="nk-chat-editor-tools g-2">
+                                                                    <li>
+                                                                        <a href="#" class="btn btn-sm btn-icon btn-trigger text-primary"><em class="icon ni ni-happyf-fill"></em></a>
+                                                                    </li>
+                                                                    <li>
+                                                                        <button class="btn btn-round btn-primary btn-icon" id="comment-btn"><em class="icon ni ni-send-alt"></em></button>
+                                                                    </li>
+                                                                </ul>
                                                             </div>
-                                                            <div class="mt-2 d-flex flex-row-reverse">
-                
-                                                                <button class="btn btn-primary" id="comment-btn" type="button">
-                                                                    <em class="icon ni ni-comments"></em>
-                                                                    <span>Bình luận</span>
-                                                                </button>
-                                                            </div>
-                                                        </div>  
+                                                        </div>
+                                                      
                                                         <hr>
                                                         @endif
                                                         @if ($comments)
@@ -328,7 +350,7 @@
                                                                                                 <em class="icon ni ni-trash fs-16px me-2 "></em>
                                                                                             </span>
 
-                                                                                            <span class="report-comment-btn" data-id={{ $comment->id }} data-type=6 data-user={{ $comment->users->profile->displayName  }} data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                            <span class="report-comment-btn" data-id={{ $comment->id }} data-type=6 data-user="{{ $comment->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
                                                                                                 <em class="icon ni ni-flag fs-16px me-2 "></em>
                                                                                             </span>
                                                                                             
@@ -379,7 +401,7 @@
                                                                                         <span class="delete-reply-btn" data-id={{ $reply->id }}>
                                                                                             <em class="icon ni ni-trash fs-16px me-2"></em>
                                                                                         </span>
-                                                                                        <span class="report-comment-btn" data-id={{ $reply->id }} data-type=7 data-user={{ $reply->users->profile->displayName  }} data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                        <span class="report-comment-btn" data-id={{ $reply->id }} data-type=7 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
                                                                                             <em class="icon ni ni-flag fs-16px me-2 "></em>
                                                                                         </span>
                                                                                         <div class="custom-control custom-checkbox custom-control-pro custom-control-pro-icon no-control">
@@ -802,12 +824,10 @@
                 data:{
                     'item_id': book_id,
                     'content': content,
-                    'option':1
+                    'option':2
                 }
             })
             .done(function(res) {
-                
-            
                 Swal.fire({
                         icon: 'success',
                         title: `${res.success}`,
@@ -816,7 +836,9 @@
                     });      
 
                 $("#comment_area").val('');
-                $("#comment-box").load(" #comment-box > *");
+                $("#tabItem7").load(" #tabItem7 > *");
+                $("#total-comment-span").load(" #total-comment-span > *");
+
             })
             .fail(function(jqXHR, textStatus, errorThrown) {
             // If fail
@@ -1022,7 +1044,7 @@
                 if (result.isConfirmed) {
                     $.ajax({
                     type:"GET",
-                    url:'/xoa-binh-luan/1/' + comment_id,
+                    url:'/xoa-binh-luan/' + comment_id,
                     data : {
                     },
                     })
@@ -1034,8 +1056,10 @@
                             showConfirmButton: false,
                             timer: 2500
                     });
+                    $("#comment-" + comment_id).fadeOut();
 
-                    $("#comment-box").load(" #comment-box > *");
+                    $("#tabItem7").load(" #tabItem7 > *");
+                    $("#total-comment-span").load(" #total-comment-span > *");
 
                     })
                     .fail(function(jqXHR, textStatus, errorThrown) {
@@ -1063,7 +1087,7 @@
                 if (result.isConfirmed) {
                     $.ajax({
                     type:"GET",
-                    url:'/xoa-phan-hoi/1/' + reply_id,
+                    url:'/xoa-phan-hoi/' + reply_id,
                     data : {
                     },
                     })
@@ -1075,8 +1099,9 @@
                             showConfirmButton: false,
                             timer: 2500
                     });
-
-                    $("#comment-box").load(" #comment-box > *");
+                    $("#reply-" + reply_id).fadeOut();
+                    $("#tabItem7").load(" #tabItem7 > *");
+                    $("#total-comment-span").load(" #total-comment-span > *");
 
                    
                     })
@@ -1099,17 +1124,23 @@
             $("#reply-box").remove();
         }
         else{
-            var htmlrender = '<div class="ms-5 p-2" id="reply-box" >'+
-            '<div class="d-flex flex-row align-items-start">'+
-                '<textarea class="form-control ml-1 shadow-none textarea" id="reply_area"></textarea>'+
-            '</div>'+
-            '   <div class="mt-2 d-flex flex-row-reverse">'+
-                `<button class="btn btn-primary" id="reply-btn" type="button" data-id=${comment_id}>`+
-                    '<em class="icon ni ni-comments"></em>'+
-                    '<span>Phản hồi</span>'+
-                '</button>'+
-            '</div>'+
-        '</div> ';
+          
+        var htmlrender = 
+        `<div class="nk-chat-editor border rounded-pill  bg-light" id="reply-box">
+                <div class="nk-chat-editor-form">
+                    <div class="form-control-wrap">
+                        <textarea class="form-control form-control-simple no-resize bg-light" id="reply_area" placeholder="Viết phản hồi của bạn..."></textarea>
+                    </div>
+                </div>
+                <ul class="nk-chat-editor-tools g-2">
+                    <li>
+                        <a href="#" class="btn btn-sm btn-icon btn-trigger text-primary"><em class="icon ni ni-happyf-fill"></em></a>
+                    </li>
+                    <li>
+                        <button class="btn btn-round btn-primary btn-icon" id="reply-btn" data-id=${comment_id}><em class="icon ni ni-send-alt"></em></button>
+                    </li>
+                </ul>
+        </div>`;
        
 
         $('#comment-'+comment_id).append(htmlrender);
@@ -1132,7 +1163,6 @@
                 data:{
                     'comment_id': comment_id,
                     'content': content,
-                    'option':1
                 }
             })
             .done(function(res) {
@@ -1144,7 +1174,9 @@
                         timer: 2500
                     });      
 
-                $("#comment-box").load(" #comment-box > *");
+                $("#tabItem7").load(" #tabItem7 > *");
+                $("#total-comment-span").load(" #total-comment-span > *");
+
             })
             .fail(function(jqXHR, textStatus, errorThrown) {
             // If fail
@@ -1178,7 +1210,6 @@
                     type:"PUT",
                     data:{
                         'content': content,
-                        'option':1
                     }
                 })
                 .done(function(res) {
@@ -1190,7 +1221,9 @@
                             timer: 2500
                         });      
 
-                    $("#comment-box").load(" #comment-box > *");
+                    $("#tabItem7").load(" #tabItem7 > *");
+                    $("#total-comment-span").load(" #total-comment-span > *");
+
                 })
                 .fail(function(jqXHR, textStatus, errorThrown) {
                 // If fail
@@ -1207,7 +1240,9 @@
                     timer: 2500
                 });      
 
-                $("#comment-box").load(" #comment-box > *");
+                $("#tabItem7").load(" #tabItem7 > *");
+                $("#total-comment-span").load(" #total-comment-span > *");
+
             }
         }
 
@@ -1238,7 +1273,6 @@
                     type:"PUT",
                     data:{
                         'content': content,
-                        'option':1
                     }
                 })
                 .done(function(res) {
@@ -1250,7 +1284,9 @@
                             timer: 2500
                         });      
 
-                    $("#comment-box").load(" #comment-box > *");
+                    $("#tabItem7").load(" #tabItem7 > *");
+                    $("#total-comment-span").load(" #total-comment-span > *");
+
                 })
                 .fail(function(jqXHR, textStatus, errorThrown) {
                 // If fail
@@ -1267,7 +1303,9 @@
                     timer: 2500
                 });      
 
-                $("#comment-box").load(" #comment-box > *");
+                $("#tabItem7").load(" #tabItem7 > *");
+                $("#total-comment-span").load(" #total-comment-span > *");
+
             }
         }
 

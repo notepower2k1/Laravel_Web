@@ -104,6 +104,9 @@ class ChapterController extends Controller
         $book->numberOfChapter = $book->numberOfChapter + 1;
         $book ->save();
         
+        $book->update([
+            'updated_at' => Carbon::now()->toDateTimeString(),
+        ]);
         //update status book_mark
         $book_mark = bookMark::where('bookID','=',$request->book_id)->update([
             'status' => 1

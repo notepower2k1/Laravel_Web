@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
 
-class BookCommentReply extends Model
+class Reply extends Model
 {
     use HasFactory;
-    protected $table = 'book_comment_replies';
+    protected $table = 'replies';
     protected $primaryKey = 'id';
     public  $timestamps = true;
     public $incrementing = false;
@@ -28,7 +28,7 @@ class BookCommentReply extends Model
     protected $fillable = ['commentID','userID','content'];
 
     public function comments() {
-        return $this->belongsTo(BookComment::class,'commentID','id');
+        return $this->belongsTo(Comment::class,'commentID','id');
     }
 
     public function users() {

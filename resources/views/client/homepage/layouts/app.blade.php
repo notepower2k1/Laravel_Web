@@ -12,6 +12,8 @@
 
     <link rel="stylesheet" href="{{ asset('assets/css/dashlite.css?ver=3.1.2') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/loading.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/shine.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/book3d.css') }}">
 
     <link id="skin-default" rel="stylesheet" href="{{ asset('assets/css/theme.css?ver=3.1.2') }}">
     <link
@@ -30,6 +32,8 @@
         textarea {
             resize: none;
         }
+
+        
     </style>
 </head>
 <body class="nk-body bg-lighter preload">
@@ -66,7 +70,9 @@
   
     
     @yield('modal')
-   
+    
+    @include('client/homepage.layouts.search_navbar')
+
     <script src=" {{ asset('assets/js/bundle.js?ver=3.1.2') }}"></script>
     <script src="{{ asset('assets/js/scripts.js?ver=3.1.2') }}"></script>
     {{-- <script src="{{ asset('assets/js/charts/gd-default.js?ver=3.1.2') }}"></script> --}}
@@ -176,6 +182,137 @@
             console.log(textStatus + ': ' + errorThrown);
             });    
         })
+
+       
+
+       
       </script>
+
+
+        @if(!Request::is('tim-kiem'))
+        <script>
+         var typingTimer;                //timer identifier
+        var doneTypingInterval = 1000;  //time in ms, 5 seconds for example
+
+
+        //on keyup, start the countdown
+        $('#modalSearchHomePage').on('keyup','#search', function () {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(doneTyping, doneTypingInterval);
+        });
+
+        //on keydown, clear the countdown 
+        $('#modalSearchHomePage').on('keydown','#search', function () {
+        clearTimeout(typingTimer);
+        });
+
+        //user is "finished typing," do something
+        function doneTyping () {
+
+            const bookNames = @json($bookContentsForSearch);
+            const documentNames = @json($documentContentsForSearch);
+
+            const renderBox = $('#modalSearchHomePage').find('#renderArea-ul');
+
+            renderBox.empty();
+            const inputValue = $('#modalSearchHomePage').find('#search').val();
+
+
+            const option_value = $('#modalSearchHomePage').find('ul').find('.active').find('a').data('value');
+
+            
+            console.log(option_value);
+            if(inputValue){
+
+                var fullValue = []
+                if(option_value == '1'){
+                    // fullName =  bookNames.filter(function(name){
+
+                    //     return name.toLowerCase().normalize().includes(inputValue.toLowerCase().normalize());
+                    // });
+
+                    bookNames.forEach((obj, i) => {
+                        
+                        const name = obj.name.toLowerCase().normalize();
+                        const author = obj.author.toLowerCase().normalize();
+
+                        const inputNormalize = inputValue.toLowerCase().normalize();
+
+                        if(name.includes(inputNormalize) || author.includes(inputNormalize)){
+                            fullValue.push(obj);
+                        }
+
+                     
+
+                    });
+                }
+                if(option_value == '2'){
+                    documentNames.forEach((obj, i) => {
+                        
+                        const name = obj.name.toLowerCase().normalize();
+                        const author = obj.author.toLowerCase().normalize();
+
+                        const inputNormalize = inputValue.toLowerCase().normalize();
+
+                        if(name.includes(inputNormalize) || author.includes(inputNormalize)){
+                            fullValue.push(obj);
+                        }
+
+                    });
+                }
+
+                
+                fullValue.forEach(value => {
+
+                    var item = '';
+                    if(option_value==1){
+                        item = `<li><a href="/sach/${value.id}/${value.slug}" class="search-items text-blue"><span>Sách: ${value.name} / Tác giả: ${value.author}</span></a></li>`;
+                    }
+                    else{
+                        item = `<li><a href="/tai-lieu/${value.id}/${value.slug}" class="search-items text-danger"><span>Tài liệu: ${value.name} / Tác giả: ${value.author}</span></a></li>`;
+
+                    }
+                    renderBox.append(item).hide().show('slow');
+                });
+
+                
+            }
+        }
+
+
+
+        $('#modalSearchHomePage').on('click','.search-items',function(){
+
+            const text = $(this).find('span').text();
+            $('#modalSearchHomePage').find('#search').val(text);
+
+            const renderBox = $('#modalSearchHomePage').find('#renderArea-ul');
+
+            renderBox.empty();
+            item = `<li><div class="d-flex align-items-center">
+                    <strong>Đang chuyển hướng...</strong>
+                    <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
+                    </div></li>`;
+
+            renderBox.append(item).hide().show('slow');
+
+            $('#modalSearchHomePage').find('#search').attr('disabled', 'disabled');
+            $('#modalSearchHomePage').find('#renderArea-ul').addClass('mt-3');
+
+        })
+
+        
+        $('#modalSearchHomePage').on('click','.search-option',function(){
+            $('#modalSearchHomePage').find(".search-option").parent().removeClass("active");
+            var option_text = $(this).text();
+            var option_value = $(this).attr('data-value');
+       
+            
+            
+            $(this).parent().addClass("active");
+            $('#modalSearchHomePage').find('#search').val("");
+        });
+      </script>
+      @endif
 </body>
 </html>

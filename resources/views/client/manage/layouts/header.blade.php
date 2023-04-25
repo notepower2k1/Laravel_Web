@@ -4,15 +4,14 @@
          
           <div class="nk-header-brand d-xl-none">
               <a href="/" class="logo-link">
-                <img class="logo-light logo-img" src="https://firebasestorage.googleapis.com/v0/b/do-an-tot-nghiep-f897b.appspot.com/o/logo%2Fimage_2023-03-20_162700220.png?alt=media&token=5bbe33d0-757e-46e4-a632-12fdd6c9aa86" srcset="https://firebasestorage.googleapis.com/v0/b/do-an-tot-nghiep-f897b.appspot.com/o/logo%2Fimage_2023-03-20_162700220.png?alt=media&token=5bbe33d0-757e-46e4-a632-12fdd6c9aa86 2x" alt="logo">
-                <img class="logo-dark logo-img" src="https://firebasestorage.googleapis.com/v0/b/do-an-tot-nghiep-f897b.appspot.com/o/logo%2Fimage_2023-03-20_162700220.png?alt=media&token=5bbe33d0-757e-46e4-a632-12fdd6c9aa86" srcset="https://firebasestorage.googleapis.com/v0/b/do-an-tot-nghiep-f897b.appspot.com/o/logo%2Fimage_2023-03-20_162700220.png?alt=media&token=5bbe33d0-757e-46e4-a632-12fdd6c9aa86 2x" alt="logo-dark">
-              </a>
+                <img class="logo-light logo-img" src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png" alt="logo">
+                <img class="logo-dark logo-img" src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png" alt="logo-dark">
           </div><!-- .nk-header-brand -->
           <div class="nk-header-news d-none d-xl-block">
               <div class="nk-news-list">
                 <a href="/" class="logo-link">
-                    <img class="logo-light logo-img" src="https://firebasestorage.googleapis.com/v0/b/do-an-tot-nghiep-f897b.appspot.com/o/logo%2Fimage_2023-03-20_162700220.png?alt=media&token=5bbe33d0-757e-46e4-a632-12fdd6c9aa86" srcset="https://firebasestorage.googleapis.com/v0/b/do-an-tot-nghiep-f897b.appspot.com/o/logo%2Fimage_2023-03-20_162700220.png?alt=media&token=5bbe33d0-757e-46e4-a632-12fdd6c9aa86 2x" alt="logo">
-                    <img class="logo-dark logo-img" src="https://firebasestorage.googleapis.com/v0/b/do-an-tot-nghiep-f897b.appspot.com/o/logo%2Fimage_2023-03-20_162700220.png?alt=media&token=5bbe33d0-757e-46e4-a632-12fdd6c9aa86" srcset="{https://firebasestorage.googleapis.com/v0/b/do-an-tot-nghiep-f897b.appspot.com/o/logo%2Fimage_2023-03-20_162700220.png?alt=media&token=5bbe33d0-757e-46e4-a632-12fdd6c9aa86 2x" alt="logo-dark">
+                    <img class="logo-light logo-img" src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png" alt="logo">
+                    <img class="logo-dark logo-img" src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png" alt="logo-dark">
                 </a>
               </div>
           </div><!-- .nk-header-news -->

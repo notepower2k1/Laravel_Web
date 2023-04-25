@@ -13,9 +13,9 @@ use App\Http\Controllers\Admin\MailController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\CommentController;
 
 use App\Http\Controllers\Admin\DashboardController;
-
 use App\Http\Controllers\Client\ProfileController;
 use App\Http\Controllers\Client\PagesController;
 use App\Http\Controllers\Client\ClientUserController;
@@ -24,10 +24,9 @@ use App\Http\Controllers\Client\ClientChapterController;
 use App\Http\Controllers\Client\ClientDocumentController;
 use App\Http\Controllers\Client\ClientDashboard;
 use App\Http\Controllers\Client\ClientForumPostController;
-use App\Http\Controllers\Client\CommentController;
+use App\Http\Controllers\Client\ClientCommentController;
 
 use App\Http\Controllers\Auth\ForgetPasswordController;
-use App\Http\Controllers\ProfileController as ControllersProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,6 +45,7 @@ Route::get('/summarizeText',[PagesController::class,'summarizeText']);
 Route::get('/getKeywords',[PagesController::class,'getKeywords']);
 
 Route::get("/tom-tat-tai-lieu",[PagesController::class,'summarizePage']);
+
 
 Route::get('/',[PagesController::class,'home_page']);
 
@@ -73,7 +73,7 @@ Route::get("/tim-kiem",[PagesController::class,'search_name_page']);
 Route::get("/tim-kiem-ket-qua",[PagesController::class,'search_name']);
 
 Route::get("/the-loai/{option?}/{type_slug?}",[PagesController::class,'search_type_page']);
-Route::get("/the-loai-ket-qua",[PagesController::class,'search_type_result']);
+Route::get("/tac-gia/{option}/{author}",[PagesController::class,'search_author_page']);
 
 Route::get("/dien-dan",[PagesController::class,'forum_home_page']);
 Route::get("/dien-dan/bai-viet/{topic}",[PagesController::class,'forum_search_page']);
@@ -86,16 +86,16 @@ Route::get("/thanh-vien/{user_id}",[ProfileController::class,'user_info']);
 
 Route::get('/preview-document', [PagesController::class, 'preview_document']);
 
-Route::post("/binh-luan",[CommentController::class,'user_comment']);
-Route::post("/phan-hoi",[CommentController::class,'user_reply']);
+Route::post("/binh-luan",[ClientCommentController::class,'user_comment']);
+Route::post("/phan-hoi",[ClientCommentController::class,'user_reply']);
 
-Route::get("/xoa-binh-luan/{option}/{item_id}",[CommentController::class,'delete_user_comment']);
-Route::get("/xoa-phan-hoi/{option}/{item_id}",[CommentController::class,'delete_reply_comment']);
+Route::get("/xoa-binh-luan/{item_id}",[ClientCommentController::class,'delete_user_comment']);
+Route::get("/xoa-phan-hoi/{item_id}",[ClientCommentController::class,'delete_reply_comment']);
 
 
-Route::put("/cap-nhat-binh-luan/{item_id}",[CommentController::class,'edit_user_comment']);
-Route::put("/cap-nhat-phan-hoi/{item_id}",[CommentController::class,'edit_user_reply']);
-Route::post('/upload', [CommentController::class,'uploadCommentImage']);
+Route::put("/cap-nhat-binh-luan/{item_id}",[ClientCommentController::class,'edit_user_comment']);
+Route::put("/cap-nhat-phan-hoi/{item_id}",[ClientCommentController::class,'edit_user_reply']);
+Route::post('/upload', [ClientCommentController::class,'uploadCommentImage']);
 
 Route::get("/notification-update",[NotificationController::class,'changeStatus']);
 Route::get("/notification-all-update",[NotificationController::class,'changeAllStatus']);
@@ -111,6 +111,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
 
     Route::get('/dashboard',[DashboardController::class,'index']);
     Route::get('/dashboard/get/LoginHistory',[DashboardController::class,'getLoginHistory']);
+
+
+   
 
     //All the routes that belongs to the group goes here
     Route::resource("/book",BookController::class,['except' => ['destroy']]);
@@ -193,6 +196,20 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
     Route::get("/user/deleteUser",[UserController::class,'deleteUser']);
     Route::get("/user/filter/{fromDate}/{toDate}",[UserController::class,'getFilterValue']);
 
+
+    Route::resource("/comment",CommentController::class,['except' => ['create', 'store','edit','update','destroy']]);
+    Route::get("/comment/getContent/{item_id}",[CommentController::class,'get_content']);
+    Route::get("/comment/delete/{item_id}",[CommentController::class,'delete_user_comment']);
+    Route::get("/comment/filter/{fromDate}/{toDate}",[CommentController::class,'getFilterValue']);
+
+    Route::get("/deleted/comment",[CommentController::class,'deletedItem']);
+    Route::get("/deleted/comment/filter/{fromDate}/{toDate}",[CommentController::class,'getFilterValueDeleted']);
+
+    Route::get("/comment/replies/{item_id}",[CommentController::class,'reply_index']);
+    Route::get("/comment/replies/delete/{item_id}",[CommentController::class,'delete_user_reply']);
+
+    Route::get("/comment/replies/getContent/{item_id}",[CommentController::class,'get_replies_content']);
+
 });
 
 Route::group(['prefix' => 'quan-ly',  'middleware' => ['auth']], function()
@@ -226,8 +243,8 @@ Route::group(['prefix' => 'quan-ly',  'middleware' => ['auth']], function()
     Route::get("/tai-lieu/update/changeStatus",[ClientDocumentController::class,'changeDocumentStatus']);
 
     Route::get("/bai-viet",[ClientForumPostController::class,'index']);
-    Route::get("/binh-luan",[CommentController::class,'index']);
-    Route::get("/phan-hoi",[CommentController::class,'reply_index']);
+    Route::get("/binh-luan",[ClientCommentController::class,'index']);
+    Route::get("/binh-luan/phan-hoi/{comment_id}",[ClientCommentController::class,'reply_index']);
 
 
 });

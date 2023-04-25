@@ -37,21 +37,24 @@
     <div class="nk-sidebar-content">
         <div class="nk-sidebar-menu" data-simplebar>
             <ul class="nk-menu">
-                <li class="nk-menu-item {{ Request::is('/admin/dashboard') ? 'active' : '' }}">
+                <li class="nk-menu-item {{ Request::is('admin/dashboard') ? 'active' : '' }}">
                     <a href="/admin/dashboard" class="nk-menu-link">
                         <span class="nk-menu-icon"><em class="icon ni ni-dashboard"></em></span>
                         <span class="nk-menu-text">Dashboard</span>
                     </a>
                 </li><!-- .nk-menu-item -->
                 
+               
                 <li class="nk-menu-heading">
                     <h6 class="overline-title text-primary-alt">Tài nguyên</h6>
                 </li><!-- .nk-menu-heading -->
 
-                <li class="nk-menu-item {{ Request::is('/admin/wait-verification') ? 'active' : '' }}">
+                <li class="nk-menu-item {{ Request::is('admin/wait-verification') ? 'active' : '' }}">
                     <a href="/admin/wait-verification" class="nk-menu-link">
                         <span class="nk-menu-icon"><em class="icon ni ni-clipboad-check"></em></span>
                         <span class="nk-menu-text">Danh sách phê duyệt</span>
+                        <span class="badge rounded-pill bg-outline-primary">{{ $wait_verified_totals }}</span>
+
                     </a>
                 </li><!-- .nk-menu-item -->
                 <li class="nk-menu-item has-sub">
@@ -60,13 +63,13 @@
                         <span class="nk-menu-text">Sách</span>
                     </a>
                     <ul class="nk-menu-sub">               
-                        <li class="nk-menu-item {{ Request::is('/admin/book') ? 'active' : '' }}">
+                        <li class="nk-menu-item {{ Request::is('admin/book') ? 'active' : '' }}">
                             <a href="{{route('book.index')}}" class="nk-menu-link"><span class="nk-menu-text">Dữ liệu</span></a>
                         </li>
-                        <li class="nk-menu-item {{ Request::is('/admin/statistics/book/*') ? 'active' : '' }}">
+                        <li class="nk-menu-item {{ Request::is('admin/statistics/book/*') ? 'active' : '' }}">
                             <a href="/admin/statistics/book/{{ \Carbon\Carbon::now()->year }}" class="nk-menu-link"><span class="nk-menu-text">Thống kê</span></a>
                         </li>
-                        <li class="nk-menu-item {{ Request::is('/admin/deleted/book') ? 'active' : '' }}">
+                        <li class="nk-menu-item {{ Request::is('admin/deleted/book') ? 'active' : '' }}">
                             <a href="/admin/deleted/book" class="nk-menu-link"><span class="nk-menu-text">Dữ liệu đã xóa</span></a>
                         </li>
                     </ul><!-- .nk-menu-sub -->
@@ -78,13 +81,13 @@
                         <span class="nk-menu-text">Chương</span>
                     </a>
                     <ul class="nk-menu-sub">
-                        <li class="nk-menu-item {{ Request::is('/admin/chapter/*') ? 'active' : '' }}">
+                        <li class="nk-menu-item {{ Request::is('admin/chapter/*') ? 'active' : '' }}">
                             <a href="/admin/chapter" class="nk-menu-link"><span class="nk-menu-text">Dữ liệu</span></a>
                         </li>
-                        <li class="nk-menu-item {{ Request::is('/admin/statistics/chapter/*') }}">
+                        <li class="nk-menu-item {{ Request::is('admin/statistics/chapter/*') }}">
                             <a href="/admin/statistics/chapter/{{ \Carbon\Carbon::now()->year }}" class="nk-menu-link"><span class="nk-menu-text">Thống kê</span></a>
                         </li>
-                        <li class="nk-menu-item {{ Request::is('/admin/deleted/chapter') ? 'active' : '' }}">
+                        <li class="nk-menu-item {{ Request::is('admin/deleted/chapter') ? 'active' : '' }}">
                             <a href="/admin/deleted/chapter" class="nk-menu-link"><span class="nk-menu-text">Dữ liệu đã xóa</span></a>
                         </li>
                     </ul><!-- .nk-menu-sub -->
@@ -96,13 +99,13 @@
                       <span class="nk-menu-text">Tài liệu</span>
                   </a>
                   <ul class="nk-menu-sub">
-                      <li class="nk-menu-item {{ Request::is('/admin/document/*') ? 'active' : '' }}">
+                      <li class="nk-menu-item {{ Request::is('admin/document/*') ? 'active' : '' }}">
                           <a href="{{route('document.index')}}" class="nk-menu-link"><span class="nk-menu-text">Dữ liệu</span></a>
                       </li>
-                      <li class="nk-menu-item {{ Request::is('/admin/statistics/document/*') ? 'active' : '' }}">
+                      <li class="nk-menu-item {{ Request::is('admin/statistics/document/*') ? 'active' : '' }}">
                         <a href="/admin/statistics/document/{{ \Carbon\Carbon::now()->year }}" class="nk-menu-link"><span class="nk-menu-text">Thống kê</span></a>
                       </li>
-                      <li class="nk-menu-item {{ Request::is('/admin/deleted/document') ? 'active' : '' }}">
+                      <li class="nk-menu-item {{ Request::is('admin/deleted/document') ? 'active' : '' }}">
                         <a href="/admin/deleted/document" class="nk-menu-link"><span class="nk-menu-text">Dữ liệu đã xóa</span></a>
                     </li>
                   </ul><!-- .nk-menu-sub -->
@@ -113,7 +116,7 @@
                     <span class="nk-menu-text">Diễn đàn</span>
                 </a>
                 <ul class="nk-menu-sub">
-                    <li class="nk-menu-item {{ Request::is('/admin/forum/*') ? 'active' : '' }}">
+                    <li class="nk-menu-item {{ Request::is('admin/forum/*') ? 'active' : '' }}">
                         <a href="{{route('forum.index')}}" class="nk-menu-link"><span class="nk-menu-text">Dữ liệu</span></a>
                     </li>
                     <li class="nk-menu-item">
@@ -127,17 +130,35 @@
                   <span class="nk-menu-text">Bài đăng</span>
               </a>
               <ul class="nk-menu-sub">
-                  <li class="nk-menu-item  {{ Request::is('/admin/post/*') ? 'active' : '' }}">
+                  <li class="nk-menu-item  {{ Request::is('admin/post/*') ? 'active' : '' }}">
                       <a href="/admin/post" class="nk-menu-link"><span class="nk-menu-text">Dữ liệu</span></a>
                   </li>
-                  <li class="nk-menu-item {{ Request::is('/admin/statistics/post/*') ? 'active' : '' }}">
+                  <li class="nk-menu-item {{ Request::is('admin/statistics/post/*') ? 'active' : '' }}">
                       <a href="/admin/statistics/post/{{ \Carbon\Carbon::now()->year }}" class="nk-menu-link"><span class="nk-menu-text">Thống kê</span></a>
                   </li>
-                  <li class="nk-menu-item {{ Request::is('/admin/deleted/post') ? 'active' : '' }}">
+                  <li class="nk-menu-item {{ Request::is('admin/deleted/post') ? 'active' : '' }}">
                     <a href="/admin/deleted/post" class="nk-menu-link"><span class="nk-menu-text">Dữ liệu đã xóa</span></a>
                 </li>
               </ul><!-- .nk-menu-sub -->
           </li><!-- .nk-menu-item -->
+
+          <li class="nk-menu-item has-sub">
+            <a href="#" class="nk-menu-link nk-menu-toggle">
+                <span class="nk-menu-icon"><em class="icon ni ni-comments"></em></span>
+                <span class="nk-menu-text">Bình luận</span>
+            </a>
+            <ul class="nk-menu-sub">
+                <li class="nk-menu-item  {{ Request::is('admin/comment/*') ? 'active' : '' }}">
+                    <a href="/admin/comment" class="nk-menu-link"><span class="nk-menu-text">Dữ liệu</span></a>
+                </li>
+                {{-- <li class="nk-menu-item {{ Request::is('admin/statistics/post/*') ? 'active' : '' }}">
+                    <a href="/admin/statistics/post/{{ \Carbon\Carbon::now()->year }}" class="nk-menu-link"><span class="nk-menu-text">Thống kê</span></a>
+                </li> --}}
+                <li class="nk-menu-item {{ Request::is('admin/deleted/comment') ? 'active' : '' }}">
+                  <a href="/admin/deleted/comment" class="nk-menu-link"><span class="nk-menu-text">Dữ liệu đã xóa</span></a>
+                </li>
+            </ul><!-- .nk-menu-sub -->
+        </li><!-- .nk-menu-item -->
 
             <li class="nk-menu-heading">
             <h6 class="overline-title text-primary-alt">Người dùng</h6>
@@ -148,10 +169,10 @@
                         <span class="nk-menu-text">Người dùng</span>
                     </a>
                     <ul class="nk-menu-sub">
-                        <li class="nk-menu-item {{ Request::is('/admin/user/*') ? 'active' : '' }}">
+                        <li class="nk-menu-item {{ Request::is('admin/user/*') ? 'active' : '' }}">
                             <a href="/admin/user" class="nk-menu-link"><span class="nk-menu-text">Dữ liệu</span></a>
                         </li>
-                        <li class="nk-menu-item {{ Request::is('/admin/statistics/user/*') }}">
+                        <li class="nk-menu-item {{ Request::is('admin/statistics/user/*') }}">
                             <a href="/admin/statistics/user/{{ \Carbon\Carbon::now()->year }}" class="nk-menu-link"><span class="nk-menu-text">Thống kê</span></a>
                         </li>
                     </ul><!-- .nk-menu-sub -->
@@ -160,12 +181,13 @@
                     <a href="/admin/report" class="nk-menu-link nk-menu-toggle">
                         <span class="nk-menu-icon"><em class="icon ni ni-alert"></em></span>
                         <span class="nk-menu-text">Báo cáo</span>
+                        <span class="badge rounded-pill bg-outline-primary">{{ $report_not_done_totals }}</span>
                     </a>
                     <ul class="nk-menu-sub">
-                        <li class="nk-menu-item {{ Request::is('/admin/report/*') ? 'active' : '' }}">
+                        <li class="nk-menu-item {{ Request::is('admin/report/*') ? 'active' : '' }}">
                             <a href="/admin/report" class="nk-menu-link"><span class="nk-menu-text">Dữ liệu</span></a>
                         </li>
-                        <li class="nk-menu-item {{ Request::is('/admin/statistics/report/*') }}">
+                        <li class="nk-menu-item {{ Request::is('admin/statistics/report/*') }}">
                             <a href="/admin/statistics/report/{{ \Carbon\Carbon::now()->year }}" class="nk-menu-link"><span class="nk-menu-text">Thống kê</span></a>
                         </li>
                     </ul><!-- .nk-menu-sub -->

@@ -60,7 +60,7 @@
                                     <div class="product-meta">
 
                                         <h6 class="title">Flle đính kèm</h6>
-                                        <a href="#" class="btn btn-primary" id="download-btn">File</a>
+                                        <a href="{{ $document->documentUrl }}" class="btn btn-primary">File</a>
                                     </div><!-- .product-meta -->
                                 </div><!-- .product-info -->
                                 
@@ -76,7 +76,25 @@
                                 </div>
                             </div><!-- .col -->
                         </div><!-- .row -->
-                     
+                    </div>
+                </div>
+
+                <div class="card card-bordered">
+                    <div class="card-inner">
+                        <div class="row g-gs">
+
+                            @foreach ($previewImages as $previewImage)
+                                <div class="col-sm-6 col-lg-4 col-xxl-3">
+                                    <div class="gallery card card-bordered">
+                                        <a class="gallery-image popup-image" href="{{ $previewImage->url }}">
+                                            <img class="w-100 rounded-top" src="{{ $previewImage->url }}" alt="image">
+                                        </a>                                                     
+                                    </div>
+                                </div> 
+                            @endforeach
+                           
+                          
+                        </div>
                     </div>
                 </div>
             </div>
@@ -88,31 +106,5 @@
 @section('additional-scripts')
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-<script>
 
-    $("#download-btn").click(function(e){
-        e.preventDefault();
-        var id = {!! $document->id !!}
-        $.ajax({
-                type:"GET",
-                url:'/tai-tai-lieu',
-                data : {
-                    "id": id
-                },
-                })
-                .done(function() {
-                // If successful           
-                    window.open(`/tai-tai-lieu?id=${id}`, "_blank");
-
-
-                    
-                })
-                .fail(function(jqXHR, textStatus, errorThrown) {
-                // If fail
-                console.log(textStatus + ': ' + errorThrown);
-                })
-       
-        
-    })
- </script>
 @endsection

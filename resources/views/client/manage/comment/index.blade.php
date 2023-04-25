@@ -15,183 +15,74 @@
         </div>
         <div class="nk-fmg-quick-list nk-block" style="min-height:100vh">
           <div class="card card-bordered card-preview">
-            <div class="card-inner">
-              <ul class="nav nav-tabs nav-tabs-s2">
-                <li class="nav-item">
-                    <a class="nav-link active" data-bs-toggle="tab" href="#tabItem5"><em class="icon ni ni-book"></em><span>Sách</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" href="#tabItem6"><em class="icon ni ni-file-docs"></em><span>Tài liệu</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" href="#tabItem7"><em class="icon ni ni-list-fill"></em><span>Bài viết</span></a>
-                </li>
-            </ul>
-            <div class="tab-content">
-                <div class="tab-pane active" id="tabItem5">
-                  <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false" data-export-title="Export">
-                    <thead>
-                        <tr class="nk-tb-item nk-tb-head">
-                            <th class="nk-tb-col"><span class="sub-text">Ngày bình luận</span></th>
-    
-                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Sách</span></th>
-                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Số lượt phản hồi</span></th>
-                            {{-- <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ngày thêm</span></th> --}}
-                            <th class="nk-tb-col nk-tb-col-tools text-end">
-                          </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                      @foreach ($book_comments as $comment)
-    
-                        <tr class="nk-tb-item" id ="row-book-{{ $comment->id }}">
-    
-                            <td class="nk-tb-col">
-                              <span>{{  $comment->created_at  }}</span>
-                            </td>
-                            <td class="nk-tb-col tb-col-lg">
-                              <span>{{  $comment->books->name  }}</span>
-
-                            </td>
-                            <td class="nk-tb-col tb-col-lg">
-                              <span>{{  $comment->totalReplies  }}</span>
-                            </td>
-                            <td class="nk-tb-col nk-tb-col-tools">
-                              <ul class="nk-tb-actions gx-1">                       
-                                  <li>
-                                      <div class="drodown">
-                                          <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                          <div class="dropdown-menu dropdown-menu-end">
-                                              <ul class="link-list-opt no-bdr">
-                                                  <li><a href="#" class="delete-button-book" data-id="{{ $comment->id }}">
-                                                    <em class="icon ni ni-trash"></em><span>Xóa</span>
-                                                  </a>
-    
-                                                  </li>
-                                                  <li><a href="/sach/{{ $comment->books->id }}/{{ $comment->books->slug }}"><em class="icon ni ni-edit"></em><span>Xem</span></a></li>
-                                              
-                                              </ul>
-                                          </div>
-                                      </div>
-                                  </li>
-                              </ul>
+            <div class="card-inner">            
+                <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false" data-export-title="Export">
+                  <thead>
+                      <tr class="nk-tb-item nk-tb-head">
+                          <th class="nk-tb-col"><span class="sub-text">Ngày bình luận</span></th>
+  
+                          <th class="nk-tb-col tb-col-lg"><span class="sub-text">Bình luận về</span></th>
+                          <th class="nk-tb-col tb-col-lg"><span class="sub-text">Số lượt phản hồi</span></th>
+                          {{-- <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ngày thêm</span></th> --}}
+                          <th class="nk-tb-col nk-tb-col-tools text-end">
+                        </th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                    @foreach ($comments as $comment)
+  
+                      <tr class="nk-tb-item" id ="row-{{ $comment->id }}">
+  
+                          <td class="nk-tb-col">
+                            <span>{{  $comment->created_at  }}</span>
                           </td>
-                        </tr><!-- .nk-tb-item  -->
-                      @endforeach
-    
-                    </tbody>
-                  </table>
-                </div>
-                <div class="tab-pane" id="tabItem6">
-                  <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false" data-export-title="Export">
-                    <thead>
-                        <tr class="nk-tb-item nk-tb-head">
-                            <th class="nk-tb-col"><span class="sub-text">Ngày bình luận</span></th>
-    
-                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Tài liệu</span></th>
-                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Số lượt phản hồi</span></th>
-                            {{-- <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ngày thêm</span></th> --}}
-                            <th class="nk-tb-col nk-tb-col-tools text-end">
-                          </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                      @foreach ($document_comments as $comment)
-    
-                        <tr class="nk-tb-item" id ="row-document-{{ $comment->id }}">
-    
-                            <td class="nk-tb-col">
-                              <span>{{  $comment->created_at  }}</span>
-                            </td>
-                            <td class="nk-tb-col tb-col-lg">
-                              <span>{{  $comment->documents->name  }}</span>
+                          <td class="nk-tb-col tb-col-lg">
+                            @switch($comment->type_id)
+                              @case(1)
+                                <span class="badge rounded-pill bg-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $comment->identifier->name }}">{{ $comment->types->name }}</span>
+                                @break
 
-                            </td>
-                            <td class="nk-tb-col tb-col-lg">
-                              <span>{{  $comment->totalReplies  }}</span>
-                            </td>
-                            <td class="nk-tb-col nk-tb-col-tools">
-                              <ul class="nk-tb-actions gx-1">                       
-                                  <li>
-                                      <div class="drodown">
-                                          <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                          <div class="dropdown-menu dropdown-menu-end">
-                                              <ul class="link-list-opt no-bdr">
-                                                  <li><a href="#" class="delete-button-document" data-id="{{ $comment->id }}">
-                                                    <em class="icon ni ni-trash"></em><span>Xóa</span>
-                                                  </a>
-    
-                                                  </li>
-                                                  <li><a href="/tai-lieu/{{ $comment->documents->id }}/{{ $comment->documents->slug }}"><em class="icon ni ni-edit"></em><span>Xem</span></a></li>
-                                              
-                                              </ul>
-                                          </div>
-                                      </div>
-                                  </li>
-                              </ul>
-                          </td>
-                        </tr><!-- .nk-tb-item  -->
-                      @endforeach
-    
-                    </tbody>
-                  </table>
-                </div>
-                <div class="tab-pane" id="tabItem7">
-                  <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false" data-export-title="Export">
-                    <thead>
-                        <tr class="nk-tb-item nk-tb-head">
-                            <th class="nk-tb-col"><span class="sub-text">Ngày bình luận</span></th>
-    
-                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Bài viết</span></th>
-                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Số lượt phản hồi</span></th>
-                            {{-- <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ngày thêm</span></th> --}}
-                            <th class="nk-tb-col nk-tb-col-tools text-end">
-                          </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                      @foreach ($post_comments as $comment)
-    
-                        <tr class="nk-tb-item" id ="row-post-{{ $comment->id }}">
-    
-                            <td class="nk-tb-col">
-                              <span>{{  $comment->created_at  }}</span>
-                            </td>
-                            <td class="nk-tb-col tb-col-lg">
-                              <span>{{  $comment->posts->topic  }}</span>
+                              @case(2)
+                                <span class="badge rounded-pill bg-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $comment->identifier->name }}">{{ $comment->types->name }}</span>
+                                @break
 
-                            </td>
-                            <td class="nk-tb-col tb-col-lg">
-                              <span>{{  $comment->totalReplies  }}</span>
-                            </td>
-                            <td class="nk-tb-col nk-tb-col-tools">
-                              <ul class="nk-tb-actions gx-1">                       
-                                  <li>
-                                      <div class="drodown">
-                                          <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                          <div class="dropdown-menu dropdown-menu-end">
-                                              <ul class="link-list-opt no-bdr">
-                                                  <li><a href="#" class="delete-button-post" data-id="{{ $comment->id }}">
-                                                    <em class="icon ni ni-trash"></em><span>Xóa</span>
-                                                  </a>
-    
-                                                  </li>
-                                                  <li><a href="/dien-dan/{{ $comment->posts->forums->slug }}/{{ $comment->posts->slug }}/{{ $comment->posts->id  }}"><em class="icon ni ni-edit"></em><span>Xem</span></a></li>
-                                              
-                                              </ul>
-                                          </div>
-                                      </div>
-                                  </li>
-                              </ul>
+                              @case(3)
+                                <span class="badge rounded-pill bg-outline-success" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $comment->identifier->topic }}">{{  $comment->types->name }}</span>
+                                @break
+
+                              @default
+                                <span class="badge rounded-pill bg-outline-success"></span>
+                            @endswitch
+
                           </td>
-                        </tr><!-- .nk-tb-item  -->
-                      @endforeach
-    
-                    </tbody>
-                  </table>
-                </div>
-               
-            </div>
+                          <td class="nk-tb-col tb-col-lg">
+                            <span>{{  $comment->totalReplies  }}</span>
+                          </td>
+                          <td class="nk-tb-col nk-tb-col-tools">
+                            <ul class="nk-tb-actions gx-1">                       
+                                <li>
+                                    <div class="drodown">
+                                        <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <ul class="link-list-opt no-bdr">
+                                                <li><a href="#" class="delete-button-book" data-id="{{ $comment->id }}">
+                                                  <em class="icon ni ni-trash"></em><span>Xóa</span>
+                                                </a>
+  
+                                                </li>
+                                                <li><a href="/quan-ly/binh-luan/phan-hoi/{{ $comment->id }}"><em class="icon ni ni-reply-all"></em><span>Xem phản hồi</span></a></li>
+                                            
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </td>
+                      </tr><!-- .nk-tb-item  -->
+                    @endforeach
+  
+                  </tbody>
+                </table>               
             </div>
           </div><!-- .card-preview -->
         </div>
@@ -230,7 +121,7 @@
                 if (result.isConfirmed) {
                     $.ajax({
                     type:"GET",
-                    url:'/xoa-binh-luan/1/' + comment_id,
+                    url:'/xoa-binh-luan/' + comment_id,
                     data : {
                     },
                     })
@@ -243,7 +134,7 @@
                             timer: 2500
                     });
 
-                    $("#row-book-" + comment_id).fadeOut();
+                    $("#row-" + comment_id).fadeOut();
                     })
                     .fail(function(jqXHR, textStatus, errorThrown) {
                     // If fail
@@ -258,94 +149,7 @@
 
     })
 
-    $('#DataTables_Table_1 tbody').on('click','.delete-button-document',function(){
-        
-        var comment_id = $(this).data('id');
-
-        Swal.fire({
-            title: "Bạn muốn xóa bình luận này?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Xóa',
-            cancelButtonText: 'Không'
-            }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                type:"GET",
-                url:'/xoa-binh-luan/0/' + comment_id,
-                data : {
-                },
-                })
-                .done(function(res) {
-                // If successful
-                Swal.fire({
-                        icon: 'success',
-                        title: `Xóa thành công`,
-                        showConfirmButton: false,
-                        timer: 2500
-                });
-
-                $("#row-document-" + comment_id).fadeOut();
-                })
-                .fail(function(jqXHR, textStatus, errorThrown) {
-                // If fail
-                console.log(textStatus + ': ' + errorThrown);
-                });
-            
-            }
-        })
-
-
-
-
-    })
-
-
-    $('#DataTables_Table_2 tbody').on('click','.delete-button-post',function(){
-        
-        var comment_id = $(this).data('id');
-
-        Swal.fire({
-            title: "Bạn muốn xóa bình luận này?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Xóa',
-            cancelButtonText: 'Không'
-            }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                type:"GET",
-                url:'/xoa-binh-luan/2/' + comment_id,
-                data : {
-                },
-                })
-                .done(function(res) {
-                // If successful
-                Swal.fire({
-                        icon: 'success',
-                        title: `Xóa thành công`,
-                        showConfirmButton: false,
-                        timer: 2500
-                });
-
-                $("#row-post-" + comment_id).fadeOut();
-                })
-                .fail(function(jqXHR, textStatus, errorThrown) {
-                // If fail
-                console.log(textStatus + ': ' + errorThrown);
-                });
-            
-            }
-        })
-
-
-
-
-    })
+   
 
 });
 

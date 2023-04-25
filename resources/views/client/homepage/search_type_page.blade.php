@@ -86,8 +86,8 @@
                                                             <img class="card-img-top" src="{{ $item->url }}" alt="" width="300px" height="400px">    
                                                                                     
                                                             <div class="product-actions type_books w-100 h-100">
-                                                                <div class="pricing-body w-100 h-100  d-flex text-center align-items-center">      
-                                                                    <div class="row">
+                                                                <div class="pricing-body w-100 h-100 text-center">      
+                                                                    <div class="h-100 d-flex flex-column justify-content-center">
                                                                         <div class="pricing-amount">
                                                                             <h6 class="bill text-white">{{ $item->name }}</h6>
                                                                             <p class="text-white">Tác giả: {{ $item->author }}</p>
@@ -116,8 +116,8 @@
                                                             <img class="card-img-top" src="{{ $item->url }}" alt="" width="300px" height="400px">    
                                                                                     
                                                             <div class="product-actions type_documents w-100 h-100">
-                                                                <div class="pricing-body w-100 h-100  d-flex text-center align-items-center">      
-                                                                    <div class="row">
+                                                                <div class="pricing-body w-100 h-100 text-center">      
+                                                                    <div class="h-100 d-flex flex-column justify-content-center">
                                                                         <div class="pricing-amount">
                                                                             <h6 class="bill text-white">{{ $item->name }}</h6>
                                                                             <p class="text-white">Tác giả: {{ $item->author }}</p>

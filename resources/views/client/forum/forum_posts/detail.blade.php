@@ -1,5 +1,6 @@
 @extends('client/forum.layouts.app')
 @section('pageTitle', `${{$post->topic}}`)
+@section('additional-style')
 <style>
    
     .open-relies-btn:hover{
@@ -7,6 +8,7 @@
     }
   
 </style>
+@endsection
 @section('content')
 <div class="nk-block">
   <nav>
@@ -101,7 +103,7 @@
                                                                 <span>Xóa bình luận</span>
                                                                 </a>
                                                             </li>
-                                                            <li><a class="report-comment-btn" data-id={{ $comment->id }} data-type=10 data-user={{ $comment->users->profile->displayName  }} 
+                                                            <li><a class="report-comment-btn" data-id={{ $comment->id }} data-type=10 data-user='{{ $comment->users->profile->displayName  }}'
                                                                     data-bs-toggle="modal" data-bs-target="#reportFormComment"
                                                                     href="#">
                                                                     <em class="icon ni ni-flag"></em>
@@ -125,13 +127,11 @@
                                 <div id="create-reply-box-{{$comment->id}}">
 
                                 </div>
-
                                 @if($comment->totalReplies > 0)
-                                <div class="mt-2">
-                                    <p class="open-relies-btn fw-bold" data-id="{{ $comment->id }}">Xem {{ $comment->totalReplies }} phản hồi</p>
-                                </div>
+                                    <div class="mt-2">
+                                        <p class="open-relies-btn fw-bold" data-id="{{ $comment->id }}">Xem {{ $comment->totalReplies }} phản hồi</p>
+                                    </div>
                                 @endif
-
                                 @foreach ($comment->replies as $reply)
                                     @if(is_null($reply->deleted_at))
                                     <div class="media mt-4 replies-item replies-item-{{ $reply->commentID }}" id="reply-{{$reply->id}}">
@@ -327,9 +327,7 @@
     });
 
     $(function () {
-
         $('.replies-item').css('display', 'none');
-
 
         tinymce.init({
         entity_encoding : "raw",
@@ -378,11 +376,9 @@
         });
 
     })
-    
+
     $(document).on('click','.open-relies-btn',function() {
-
         const comment_id = $(this).data('id');
-
         $(`.replies-item-${comment_id}`).fadeToggle();
     });
 
@@ -406,7 +402,7 @@
                         data:{
                             'item_id': post_id,
                             'content': update_content,
-                            'option':2
+                            'option':3
                         }
                     })
                     .done(function(res) {
@@ -460,7 +456,7 @@
                 if (result.isConfirmed) {
                     $.ajax({
                     type:"GET",
-                    url:'/xoa-binh-luan/2/' + comment_id,
+                    url:'/xoa-binh-luan/' + comment_id,
                     data : {
                     },
                     })
@@ -474,6 +470,7 @@
                     });
 
                     $("#comment-" + comment_id).fadeOut();
+                    $("#comment-box").load(" #comment-box > *");
                     })
                     .fail(function(jqXHR, textStatus, errorThrown) {
                     // If fail
@@ -583,7 +580,6 @@
                     data:{
                         'comment_id': comment_id,
                         'content': update_content,
-                        'option':2
                     }
                 })
                 .done(function(res) {
@@ -636,7 +632,7 @@
                 if (result.isConfirmed) {
                     $.ajax({
                     type:"GET",
-                    url:'/xoa-phan-hoi/2/' + reply_id,
+                    url:'/xoa-phan-hoi/' + reply_id,
                     data : {
                     },
                     })
@@ -650,7 +646,7 @@
                     });
 
                     $("#reply-" + reply_id).fadeOut();
-
+                    $("#comment-box").load(" #comment-box > *")
                    
                     })
                     .fail(function(jqXHR, textStatus, errorThrown) {
@@ -728,24 +724,21 @@
         })
     })
 
-    //Comments && Replies report
     $(document).on('click','.report-comment-btn',function(e){
         e.preventDefault();
         const form = $('#reportFormComment');
-
         const identifier_id = $(this).data('id');
         const type_id = $(this).data('type');
         const userName = $(this).data('user');
-
         form.find('input[name="user-name"]').val(userName);
         form.find('input[name="type_id"]').val(type_id);
         form.find('input[name="identifier_id"]').val(identifier_id);
         
-
         console.log(identifier_id,type_id,userName);
     })
+    $('#submitReportFormComment').click(function (e) {
 
-    $('#submitReportFormComment').click(function () {
+        e.preventDefault();
         Swal.fire({
             icon: 'info',
             html:
@@ -759,12 +752,9 @@
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
                 const form = $('#reportFormComment');
-
                 const type_id = form.find('input[name="type_id"]').val();
                 const identifier_id = form.find('input[name="identifier_id"]').val();
                 const description = form.find('textarea[name="description"]').val();
-
-
   
                 
                 if(description){
@@ -785,13 +775,11 @@
                                     showConfirmButton: false,
                                     timer: 2500
                                 });     
-
                             
                             setTimeout(()=>{
                                 form.find('#close-btn').click();
                             }, 2500);
                         })
-
                         .fail(function(jqXHR, textStatus, errorThrown) {
                         // If fail
                         console.log(textStatus + ': ' + errorThrown);
@@ -800,16 +788,11 @@
                 else{
                     Swal.fire('Vui lòng nhập lý do!!!', '', 'info')
                 }
-
               
-
-
-
             } else if (result.isDenied) {
                 Swal.fire('Báo cáo thất bại', '', 'info')
             }
         })
-
     });
 </script>
 @endsection
