@@ -126,7 +126,8 @@
 
                                                                   </li>
                                                                   <li><a href="/admin/forum/post/{{$forum_post->id}}/edit"><em class="icon ni ni-edit"></em><span>Cập nhật</span></a></li>
-                                                                  
+                                                                  <li><a href="/admin/forum/post/{{$forum_post->id}}/detail"><em class="icon ni ni-eye"></em><span>Chi tiết</span></a></li>
+
                                                               </ul>
                                                           </div>
                                                       </div>

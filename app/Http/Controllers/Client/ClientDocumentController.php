@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Document;
 use App\Models\DocumentType;
+use App\Models\Follow;
 use App\Models\previewDocumentImages;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -270,6 +271,10 @@ class ClientDocumentController extends Controller
                    
 
                 ]);
+
+        Follow::where('type_id','=',1)->where('identifier_id','=',$request->id)->update([
+            'status' => 1
+        ]);
         return redirect('/quan-ly/tai-lieu');
 
     }

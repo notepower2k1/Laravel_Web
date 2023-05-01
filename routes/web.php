@@ -27,6 +27,8 @@ use App\Http\Controllers\Client\ClientForumPostController;
 use App\Http\Controllers\Client\ClientCommentController;
 
 use App\Http\Controllers\Auth\ForgetPasswordController;
+use App\Http\Controllers\Client\ClientFollowController;
+use App\Http\Controllers\Client\LikeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,10 +43,10 @@ use App\Http\Controllers\Auth\ForgetPasswordController;
 Route::group(['middleware' => ['isVerified']],function(){
     
 
-Route::get('/summarizeText',[PagesController::class,'summarizeText']);
-Route::get('/getKeywords',[PagesController::class,'getKeywords']);
+// Route::get('/summarizeText',[PagesController::class,'summarizeText']);
+// Route::get('/getKeywords',[PagesController::class,'getKeywords']);
 
-Route::get("/tom-tat-tai-lieu",[PagesController::class,'summarizePage']);
+// Route::get("/tom-tat-tai-lieu",[PagesController::class,'summarizePage']);
 
 
 Route::get('/',[PagesController::class,'home_page']);
@@ -59,9 +61,10 @@ Route::get('/tai-lieu/all/{option?}',[PagesController::class,'document_page_more
 Route::get("/sach/{book_id}/{book_slug}",[PagesController::class,'book_detail'])->where('book_id', '[0-9]+');
 Route::get("/tai-lieu/{document_id}/{document_slug}",[PagesController::class,'document_detail'])->where('document_id', '[0-9]+');
 
-Route::get("/tai-lieu/download/{document_file}/{document_id}",[PagesController::class,'download_document_page']);
+
+Route::get("/generation-link",[PagesController::class,'generate_link_download']);
+Route::get("/tai-lieu/download",[PagesController::class,'download_document_page'])->name('tai-lieu.download');
 Route::get("/tai-tai-lieu",[PagesController::class,'download_document']);
-// Route::get("/tai-tai-lieu",[PagesController::class,'download_document']);
 
 
  
@@ -74,6 +77,8 @@ Route::get("/tim-kiem-ket-qua",[PagesController::class,'search_name']);
 
 Route::get("/the-loai/{option?}/{type_slug?}",[PagesController::class,'search_type_page']);
 Route::get("/tac-gia/{option}/{author}",[PagesController::class,'search_author_page']);
+Route::get("/ngon-ngu/{option}/{language}",[PagesController::class,'search_language_page']);
+Route::get("/tinh-trang/{option}/{isCompleted}",[PagesController::class,'search_status_page']);
 
 Route::get("/dien-dan",[PagesController::class,'forum_home_page']);
 Route::get("/dien-dan/bai-viet/{topic}",[PagesController::class,'forum_search_page']);
@@ -99,9 +104,12 @@ Route::post('/upload', [ClientCommentController::class,'uploadCommentImage']);
 
 Route::get("/notification-update",[NotificationController::class,'changeStatus']);
 Route::get("/notification-all-update",[NotificationController::class,'changeAllStatus']);
-Route::get("/bookmark-status-update-no-direct",[ClientBookController::class,'changeBookMarkStatus']);
-Route::get("/bookmark-status-update",[NotificationController::class,'changeBookMarkStatus']);
-Route::get("/bookmark-status-all-update",[NotificationController::class,'changeAllbookMarkStatus']);
+Route::get("/following-status-update-no-direct",[ClientBookController::class,'changeFollowStatus']);
+Route::get("/following-status-update",[NotificationController::class,'changeFollowStatus']);
+Route::get("/following-status-all-update",[NotificationController::class,'changeAllFollowStatus']);
+
+
+
 
 Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], function()
 {
@@ -116,7 +124,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
    
 
     //All the routes that belongs to the group goes here
-    Route::resource("/book",BookController::class,['except' => ['destroy']]);
+    Route::resource("/book",BookController::class,['except' => ['destroy','show']]);
+    Route::get("/book/{id}/{year?}",[BookController::class,'show']);
+
     Route::get("/statistics/book/{year?}",[BookController::class,'statistics_book_page']);
     Route::get("/deleted/book",[BookController::class,'deletedItem']);
     Route::get("/deleted/book/filter/{fromDate}/{toDate}",[BookController::class,'getFilterValueDeleted']);
@@ -147,7 +157,9 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
     Route::get("/forum/update/changeStatus",[ForumController::class,'changeForumStatus']);
     
 
-    Route::resource("/document",DocumentController::class,['except' => ['destroy']]);
+    Route::resource("/document",DocumentController::class,['except' => ['destroy','show']]);
+    Route::get("/document/{id}/{year?}",[DocumentController::class,'show']);
+
     Route::get("/deleted/document",[DocumentController::class,'deletedItem']);
     Route::get("/deleted/document/filter/{fromDate}/{toDate}",[DocumentController::class,'getFilterValueDeleted']);
 
@@ -161,6 +173,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
     Route::get("/document/filter/{fromDate}/{toDate}",[DocumentController::class,'getFilterValue']);
 
     Route::resource("/forum/post",ForumPostController::class,['except' => ['create', 'index','destroy']]);
+    Route::get("/forum/post/{post_id}/detail",[ForumPostController::class,'detail']);
     Route::get("/forum/post/{forum_id}/filter/{fromDate}/{toDate}",[ForumPostController::class,'getFilterValueShow']);
 
     Route::get("/deleted/post",[ForumPostController::class,'deletedItem']);
@@ -216,6 +229,8 @@ Route::group(['prefix' => 'quan-ly',  'middleware' => ['auth']], function()
 {
 
     Route::get("/",[ClientDashboard::class,'index']);
+    Route::put("/xet-duyet-lai",[ClientDashboard::class,'re_verified']);
+    Route::get("/xem-thong-tin-co-ban",[ClientDashboard::class,'searchInfoByName']);
     Route::resource("/sach",ClientBookController::class,['except' => ['create','edit','destroy','show']]);
 
     Route::get("/sach/customDelete/{book_id}",[ClientBookController::class,'customDelete']);
@@ -262,9 +277,9 @@ Route::group(['middleware'=>['auth']],function(){
     Route::get("/doi-mat-khau",[ClientUserController::class,'changePassword']);
     Route::get('/them-tai-lieu',[PagesController::class,'post_navigation_page']);
 
-    Route::get("/sach-theo-doi",[PagesController::class,'book_mark_page']);
-    Route::post("/sach-theo-doi",[ClientBookController::class,'markBook']) ;
-    Route::delete("/sach-theo-doi/{book_mark_id}",[ClientBookController::class,'removeMarkBook']);
+    Route::get("/trang-theo-doi",[PagesController::class,'follow_page']);
+    Route::post("/theo-doi",[ClientFollowController::class,'following']) ;
+    Route::delete("/sach-theo-doi/{book_mark_id}",[ClientFollowController::class,'stopFollowing']);
 
     Route::post("/sach-danh-gia",[ClientBookController::class,'ratingBook']);
 
@@ -275,6 +290,10 @@ Route::group(['middleware'=>['auth']],function(){
     Route::get("/xoa-bai-viet",[ClientForumPostController::class,'detelePost']);
 
     Route::post("/bao-cao",[PagesController::class,'report_action']);
+
+    Route::post("/thich-binh-luan",[LikeController::class,'like_comment']);
+    Route::post("/thich-phan-hoi",[LikeController::class,'like_reply']);
+
 });
 });
 

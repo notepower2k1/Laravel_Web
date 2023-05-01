@@ -63,7 +63,7 @@
                         <th class="nk-tb-col"><span class="sub-text">Ngày bình luận</span></th>
                         <th class="nk-tb-col tb-col-lg"><span class="sub-text">Người bình luận</span></th>
     
-                        <th class="nk-tb-col tb-col-lg"><span class="sub-text">Loại bình luận</span></th>
+                        <th class="nk-tb-col tb-col-lg"><span class="sub-text">Bình luận về</span></th>
                         <th class="nk-tb-col tb-col-lg"><span class="sub-text">Số lượt phản hồi</span></th>
                         {{-- <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ngày thêm</span></th> --}}
                         <th class="nk-tb-col nk-tb-col-tools text-end">
@@ -72,106 +72,44 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($book_comments as $comment)
+                    @foreach ($comments as $comment)
 
-                        <tr class="nk-tb-item" id ="row-book-{{ $comment->id }}">
-                         
-                            <td class="nk-tb-col">
-                            <span>{{  $comment->created_at  }}</span>
-                            </td>
-                            <td class="nk-tb-col tb-col-lg">
-                                <span>{{ $comment->users->name }}</span>
-                            </td>
-                            <td class="nk-tb-col tb-col-lg">
-                            <span>Sách: {{  $comment->books->name  }}</span>
+                    <tr class="nk-tb-item" id ="row-{{ $comment->id }}">
         
-                            </td>
-                            <td class="nk-tb-col tb-col-lg">
-                            <span>{{  $comment->totalReplies  }}</span>
-                            </td>
-                            <td class="nk-tb-col nk-tb-col-tools">
-                            <ul class="nk-tb-actions gx-1">                       
-                                <li>
-                                    <div class="drodown">
-                                        <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                            <ul class="link-list-opt no-bdr">
-                                                <li><a href="#" class="delete-button-book" data-id="{{ $comment->id }}">
-                                                    <em class="icon ni ni-trash"></em><span>Xóa</span>
-                                                </a>
-        
-                                                </li>
-                                                <li><a href="/admin/comment/replies/1/{{ $comment->id }}"><em class="icon ni ni-edit"></em><span>Xem phản hồi</span></a></li>
-                                                <li>
-                                                    <a href="#" class="content-btn" data-bs-toggle="modal" data-bs-target="#modalContent" data-id={{ $comment->id }} data-option="1">
-                                                      <em class="icon ni ni-notice"></em><span>Nội dung</span>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </td>
-                        </tr><!-- .nk-tb-item  -->
-                    @endforeach
-                    @foreach ($document_comments as $comment)
-
-                        <tr class="nk-tb-item" id ="row-document-{{ $comment->id }}">
-                          
-                            <td class="nk-tb-col">
-                            <span>{{  $comment->created_at  }}</span>
-                            </td>
-                            <td class="nk-tb-col tb-col-lg">
-                                <span>Tài liệu: {{ $comment->users->name }}</span>
-                            </td>
-                            <td class="nk-tb-col tb-col-lg">
-                            <span>{{  $comment->documents->name  }}</span>
-                            </td>
-                            <td class="nk-tb-col tb-col-lg">
-                            <span>{{  $comment->totalReplies  }}</span>
-                            </td>
-                            <td class="nk-tb-col nk-tb-col-tools">
-                                <ul class="nk-tb-actions gx-1">                       
-                                    <li>
-                                        <div class="drodown">
-                                            <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <ul class="link-list-opt no-bdr">
-                                                    <li><a href="#" class="delete-button-document" data-id="{{ $comment->id }}">
-                                                        <em class="icon ni ni-trash"></em><span>Xóa</span>
-                                                    </a>
-
-                                                    </li>
-                                                    <li><a href="/admin/comment/replies/0/{{ $comment->id }}"><em class="icon ni ni-edit"></em><span>Xem phản hồi</span></a></li>
-                                                    <li>
-                                                        <a href="#" class="content-btn" data-bs-toggle="modal" data-bs-target="#modalContent" data-id={{ $comment->id }} data-option="0">
-                                                          <em class="icon ni ni-notice"></em><span>Nội dung</span>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </td>
-                        </tr><!-- .nk-tb-item  -->
-                    @endforeach
-                    @foreach ($post_comments as $comment)
-
-                    <tr class="nk-tb-item" id ="row-post-{{ $comment->id }}">
-                      
                         <td class="nk-tb-col">
                           <span>{{  $comment->created_at  }}</span>
                         </td>
                         <td class="nk-tb-col tb-col-lg">
-                            <span>{{ $comment->users->name }}</span>
+                          <span>{{  $comment->users->name  }}</span>
                         </td>
-    
                         <td class="nk-tb-col tb-col-lg">
-                          <span>Bài viết: {{  $comment->posts->topic  }}</span>
+                          @switch($comment->type_id)
+                            @case(1)
+        
+                              <a href="/admin/document/{{ $comment->identifier_id }}">
+                                <span class="badge rounded-pill bg-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $comment->identifier->name }}">
+                                  {{ $comment->types->name }}
+                                </span>
+                              </a>
+                             
+                              @break
+        
+                            @case(2)
+                              <a href="/admin/book/{{ $comment->identifier_id }}">
+                              <span class="badge rounded-pill bg-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $comment->identifier->name }}">{{ $comment->types->name }}</span>
+                              </a>
+                              @break
+        
+                            @case(3)
+                              <a href="#">
+                                <span class="badge rounded-pill bg-outline-success" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $comment->identifier->topic }}">{{  $comment->types->name }}</span>
+                                @break
+                              </a>
+                            @default
+                              <span class="badge rounded-pill bg-outline-success"></span>
+                          @endswitch
+        
                         </td>
-                      
                         <td class="nk-tb-col tb-col-lg">
                           <span>{{  $comment->totalReplies  }}</span>
                         </td>
@@ -182,24 +120,18 @@
                                       <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
                                       <div class="dropdown-menu dropdown-menu-end">
                                           <ul class="link-list-opt no-bdr">
-                                              <li><a href="#" class="delete-button-post" data-id="{{ $comment->id }}">
+                                              <li><a href="#" class="delete-button-book" data-id="{{ $comment->id }}">
                                                 <em class="icon ni ni-trash"></em><span>Xóa</span>
                                               </a>
-    
-                                              </li>
-                                                <li>
-                                                    <a href="#" class="content-btn" data-id={{ $comment->id }} data-option="2">
-                                                    <em class="icon ni ni-notice"></em><span>Nội dung</span>
-                                                    </a>
-                                                    <button class="d-none" data-bs-toggle="modal" data-bs-target="#modalContent" ></button>
-
-                                                </li>
-                                            <li>
-                                                <a href="/admin/comment/replies/{{ $comment->id }}"><em class="icon ni ni-edit"></em><span>Xem phản hồi</span> </a>
+                                              <li>
+                                                <a href="#" class="content-btn" data-id={{ $comment->id }}>
+                                                  <em class="icon ni ni-notice"></em><span>Nội dung</span>
+                                                </a>
+        
                                                 <button class="d-none" data-bs-toggle="modal" data-bs-target="#modalContent" ></button>
-
-                                            </li>
-
+                                              </li>
+                                              <li><a href="/admin/comment/replies/{{ $comment->id }}"><em class="icon ni ni-reply-all"></em><span>Xem phản hồi</span></a></li>
+                                          
                                           </ul>
                                       </div>
                                   </div>

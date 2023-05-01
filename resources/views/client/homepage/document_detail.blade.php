@@ -1,16 +1,22 @@
 @extends('client/homepage.layouts.app')
 @section('pageTitle', `${{$document->name}}`)
 @section('additional-style')
+<link rel="stylesheet" href="{{ asset('assets/css/book3d.css') }}">
+
 <style>
-   .doc {
-    width: 100%;
-    height: 500px;
-}
     .open-relies-btn:hover{
         cursor: pointer;
     }
-    .delete-reply-btn,.create-reply-btn,.delete-comment-btn:hover{
+    .delete-reply-btn,.create-reply-btn,.delete-comment-btn,.report-comment-btn,.like-reply-btn,.like-comment-btn,.edit-comment-btn:hover{
         cursor: pointer;
+    }
+
+    .emojionearea{
+        border:none !important;
+    }
+    .emojionearea:focus{
+        border:none !important;
+
     }
 </style>  
 @endsection
@@ -26,8 +32,8 @@
                         
                                 <div class="col-12">
                                     <div class="row">
-                                        <div class="col-lg-6">
-                                            <div class="mt-4">
+                                        <div class="col-lg-6 mt-4 mb-5">
+                                            <div class="">
                                                 <a 
                                                 class="book-container"
                                                 href="#"
@@ -43,7 +49,7 @@
                                                 </a>
                                             </div>
                                         </div><!-- .col -->
-                                        <div class="col-lg-6 d-flex align-items-end">
+                                        <div class="col-lg-6 d-flex align-items-end mt-4">
                                             <div class="product-info mb-5 me-xxl-5">
                                                     <h3 class="product-title">{{ $document->name }}
                                                     
@@ -56,12 +62,30 @@
                                                         @endif
                                                     </h3>    
                                                 
+                                            
+                                                <div class="d-flex flex-wrap">
+                                                    @foreach(explode(",",$document->author) as $author)                                                                       
+                                                    <span class="badge badge-md rounded-pill bg-outline-info me-1 mt-1"><a class="text-info" href="/tac-gia/tac-gia-tai-lieu/{{ $author }}">{{ $author }}</a></span>
+                                                    @endforeach        
+                                                    <span class="badge badge-md rounded-pill bg-outline-primary me-1 mt-1"><a class="text-primary" href="/the-loai/the-loai-tai-lieu/{{$document->types->slug}}">{{ $document->types->name }}</a>
+                                                    </span> 
+
+                                                    @if ($document->language === 1)
+                                                    <span class="badge badge-md rounded-pill bg-outline-secondary me-1 mt-1"><a class="text-secondary" href="/ngon-ngu/ngon-ngu-tai-lieu/tieng-viet">Tiếng việt</a></span>
+                                                    @else
+                                                    <span class="badge badge-md rounded-pill bg-outline-secondary me-1 mt-1"><a class="text-secondary" href="/ngon-ngu/ngon-ngu-tai-lieu/tieng-anh">Tiếng anh</a></span>
+                                                    @endif 
+        
+                                                    @if ($document->isCompleted === 1)
+                                                    <span class="badge badge-md rounded-pill bg-outline-success me-1 mt-1"><a class="text-success" href="/tinh-trang/tinh-trang-tai-lieu/da-hoan-thanh">Đã hoàn thành</a></span>
+                                                    @else
+                                                    <span class="badge badge-md rounded-pill bg-outline-success me-1 mt-1"><a class="text-success" href="/tinh-trang/tinh-trang-tai-lieu/chua-hoan-thanh">Chưa hoàn thành</a></span>
+                                                    @endif 
+                                                 
+                                                   
+                                                </div>
                                                 
-                                                <h6 class="title">Tác giả: 
-                                                @foreach(explode(",",$document->author) as $author)                                                                       
-                                                    <span class="badge rounded-pill bg-outline-success"><a class="text-success" href="/tac-gia/tac-gia-tai-lieu/{{ $author }}">{{ $author }}</a></span>
-                                                @endforeach        
-                                                </h6>                                              
+                                                                                     
                                                 <div class="product-meta">
                                                     <ul class="d-flex g-3 gx-5">
                                                         <li>
@@ -72,45 +96,18 @@
                                                             <div class="fs-14px text-muted">Số trang</div>
                                                             <div class="fs-16px fw-bold text-secondary">{{ $document->numberOfPages }}</div>
                                                         </li>
-                                                        <li>
+                                                        {{-- <li>
                                                             <div class="fs-14px text-muted">Định dạng</div>
                                                             <div class="fs-16px fw-bold text-secondary">.{{ $document->extension }}</div>
+                                                        </li> --}}
+                                                        <li>
+                                                            <div class="fs-14px text-muted">Đánh dấu</div>
+                                                            <div class="fs-16px fw-bold text-secondary" id="totalMarking">{{ $document->totalDocumentMarking }}</div>
                                                         </li>
-                                                
                                                         
                                                     </ul>
                                                 </div>
-                                                <div class="product-meta">
-                                                    <h6 class="title">Ngôn ngữ: 
-                                                        @if ($document->language === 1)
-                                                        <span class="text-success fs-14px">Tiếng việt</span>
-                                                        @else
-                                                        <span class="text-info fs-14px">Tiếng anh</span>
-            
-                                                        @endif 
-                                                    </h6>
-                                                
-                                                </div><!-- .product-meta -->
-                                                <div class="product-meta">
-                                                    <h6 class="title">Tình trạng: 
-            
-                                                        @if ($document->isCompleted === 1)
-                                                        <span class="text-success fs-14px fw-bold">Đã hoàn thành</span>
-                                                        @else
-                                                        <span class="text-info fs-14px fw-bold">Chưa hoàn thành</span>
-            
-                                                        @endif 
-                                                    </h6>
-                                                
-                                                </div><!-- .product-meta -->
-                                                <div class="product-meta">
-                                                    <h6 class="title">Thể loại</h6>
-                                                    <ul class="d-flex flex-wrap ailgn-center g-2 pt-1">                                     
-                                                        <li class="ms-n1">
-                                                            <a href="/the-loai/the-loai-tai-lieu/{{$document->types->slug}}" class="btn btn-primary">{{ $document->types->name }}</a>
-                                                        </li>         
-                                                    </ul>
-                                                </div><!-- .product-meta -->
+                                              
                                                 <div class="product-meta">
                                                     <ul class="d-flex flex-wrap ailgn-center g-2 pt-1">
                                                         
@@ -120,6 +117,18 @@
                                                             @else
                                                             <a href="/login" class="btn btn-xl btn-primary"><em class="icon ni ni-download"></em><span>Tải xuống</span></a>
             
+                                                            @endif
+                                                        </li>
+
+                                                        <li class="ms-n1">
+                                                            @if(Auth::check())
+                                                                @if(!$isMark)
+                                                                <button class="btn btn-xl btn-primary" id="document-mark-btn"><em class="icon ni ni-bookmark"></em><span id="span-text">Đánh dấu</span></button>
+                                                                @else
+                                                                <button class="btn btn-xl btn-primary" id="document-mark-btn" disabled><em class="icon ni ni-bookmark"></em><span id="span-text">Đã đánh dấu</span></button>
+                                                                @endif
+                                                            @else
+                                                            <a href="/login" class="btn btn-xl btn-primary"><em class="icon ni ni-bookmark"></em><span id="span-text">Đánh dấu</span></a>
                                                             @endif
                                                         </li>
                                                       
@@ -139,7 +148,7 @@
                                         </li>                            
                                         <li class="nav-item">
                                             <a class="nav-link" data-bs-toggle="tab" href="#tabItem7"><span>Bình luận
-                                                <span id="total-comment-span" class="badge badge-dim bg-primary">{{ $document->totalComments }}</span> </span>
+                                                <span class="badge badge-dim bg-primary total-comment-span">{{ $document->totalComments }}</span> </span>
                                             </a>
                                         </li>   
                                         <li class="nav-item">
@@ -232,29 +241,26 @@
                                             <div class="row g-gs flex-lg-row-reverse">                      
                                                 <div class="col-lg-12">
                                                     <div class="product-details entry me-xxl-3">
-                                                        <h5>{{ $document->totalComments }} bình luận</h5>
+                                                        <h5><span class="total-comment-span">{{ $document->totalComments }} </span>bình luận</h5>
                                                         <div class="list-group mt-3">
                                                             @if(Auth::check())
-                    
                                                             <div class="d-flex">                                                     
-                                                                <img class="rounded-circle shadow me-2" src="{{ Auth::user()->profile->url }}" width="100" id="comment_avatar">
+                                                                <img class="rounded-circle shadow me-2 flex-grow-2" src="{{ Auth::user()->profile->url }}" id="comment_avatar">
     
-                                                                <div class="nk-chat-editor border rounded-pill flex-grow-1 bg-light">
+                                                                <div class="nk-chat-editor border flex-grow-1 bg-light" id="main-comment-box">
                                                                     <div class="nk-chat-editor-form">
                                                                         <div class="form-control-wrap">
                                                                             <textarea class="form-control form-control-simple no-resize bg-light textarea" id="comment_area" placeholder="Viết bình luận của bạn..."></textarea>
                                                                         </div>
                                                                     </div>
-                                                                    <ul class="nk-chat-editor-tools g-2">
-                                                                        <li>
-                                                                            <a href="#" class="btn btn-sm btn-icon btn-trigger text-primary"><em class="icon ni ni-happyf-fill"></em></a>
-                                                                        </li>
-                                                                        <li>
+                                                                    <ul class="nk-chat-editor-tools g-2">                                                                                                                                                                                    
+                                                                        <li>                                                           
                                                                             <button class="btn btn-round btn-primary btn-icon" id="comment-btn"><em class="icon ni ni-send-alt"></em></button>
                                                                         </li>
                                                                     </ul>
                                                                 </div>
                                                             </div>
+                                                          
                                                             <hr>
                                                             @endif
                                                             @if ($comments)
@@ -264,21 +270,48 @@
                                                                     <div id="comment-{{ $comment->id }}">
                                                                             <div class="d-flex flex-column comment-section">
                                                                                 <div class="bg-white p-2">
-                                                                                        <div class="d-flex user-info">
-                                                                                            <img class="rounded-circle" src="{{ $comment->users->profile->url }}" width="60px">
-                                                                                            <div class="">
-                                                                                                <span class="d-block font-weight-bold name">{{ $comment->users->profile->displayName }}</span>
-                                                                                                <div class="date text-black-50">
+                                                                                        <div class="d-flex justify-content-between">
+                                                                                            <div class="d-flex user-info">
+                                                                                                <img class="rounded-circle" src="{{ $comment->users->profile->url }}" width="60px">
+                                                                                                <div class="flex-grow-1">
+                                                                                                    <span class="d-block font-weight-bold name">{{ $comment->users->profile->displayName }}</span>
                                                                                                     <em class="icon ni ni-clock"></em>
-                                                                                                    <span>{{ $comment->time }}</span>
+                                                                                                    <span class="text-muted">{{ $comment->time }}</span>
                                                                                                 </div>
                                                                                             </div>
+                                                                                          
+    
+                                                                                            <div class="dropdown">
+                                                                                                <a class="dropdown-toggle" href="#" type="button" data-bs-toggle="dropdown">
+                                                                                                    <em class="icon ni ni-more-v"></em>
+                                                                                                </a>
+                                                                                                <div class="dropdown-menu">
+                                                                                                  <ul class="link-list-opt">
+                                                                                                    <li>
+                                                                                                        <a class="delete-comment-btn" data-id={{ $comment->id }}>
+                                                                                                            <em class="icon ni ni-trash"></em>
+                                                                                                            <span>Xóa bình luận</span>
+                                                                                                        </a>
+                                                                                                      
+                                                                                                    </li>
+                                                                                                    <li> 
+                                                                                                        <a class="edit-comment-btn" data-id="{{ $comment->id }}" data-option="1">
+                                                                                                            <em class="icon ni ni-edit fs-16px"></em>
+                                                                                                            <span>Chỉnh sửa bình luận</span>
+                                                                                                        </a>
+    
+                                                                                                       
+                                                                                                    </li>
+                                                                                                  </ul>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            
                                                                                         </div>
                                                                                         
                                                                                     
                                                                                     
-                                                                                    <div class="mt-2">
-                                                                                        <p contenteditable="false" id="comment-text-{{ $comment->id }}">
+                                                                                    <div class="mt-2" id ="comment-content-{{ $comment->id }}">
+                                                                                        <p>
                                                                                             {{ $comment->content }}
                                                                                         </p>
                                                                                     </div>
@@ -286,38 +319,59 @@
                     
                                                                                 
                                                                                     <div class="bg-white">
-                                                                                        <div class="d-flex flex-row justify-content-between">
+                                                                                        <div class="d-flex align-items-center justify-content-between">
                                                                                             @if($comment->totalReplies > 0)
                                                                                                 <div class="ms-2">
                                                                                                     <p class="open-relies-btn fw-bold" data-id="{{ $comment->id }}">Xem {{ $comment->totalReplies }} phản hồi</p>
                                                                                                 </div>
-                                                                                            @endif
-                                                                                            @if(Auth::check())
-                                                                                            <div class="ms-2">
-                                                                                                <span class="create-reply-btn" data-id={{ $comment->id }}>
-                                                                                                    <em class="icon ni ni-reply fs-16px me-2"></em>
-                                                                                                </span>
-                                                                                                @if(Auth::user()->id == $comment->users->id)
-                            
-                                                                                                <span class="delete-comment-btn" data-id={{ $comment->id }}>
-                                                                                                    <em class="icon ni ni-trash fs-16px me-2 "></em>
-                                                                                                </span>
+                                                                                            @else
     
-                                                                                                <span class="report-comment-btn" data-id={{ $comment->id }} data-type=8 data-user="{{ $comment->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
-                                                                                                    <em class="icon ni ni-flag fs-16px me-2 "></em>
-                                                                                                </span>
-                                                                                                
-                                                                                                <div class="custom-control custom-checkbox custom-control-pro custom-control-pro-icon no-control">
-                                                                                                    <input type="checkbox" class="custom-control-input edit-comment-btn" name="edit-comment-btn" id="edit-comment-btn-{{ $comment->id }}" value={{ $comment->id }}>
-                                                                                                    <label class="" name="edit-comment-btn" for="edit-comment-btn-{{ $comment->id }}">
-                                                                                                        <em class="icon ni ni-edit fs-16px"></em>
-                                                                                                    </label>
-                                                                                                </div>
-                                                                                                
+                                                                                                <div></div>
+                                                                                            @endif
+                                                                                            
+                                                                                            <div class="ms-2">
+    
+                                                                                                @if($comment->likes->count() > 0)
+                                                                                                    @if(Auth::check()) 
+                                                                                                        @if($comment->likes->where("userID",'=',Auth::user()->id)->where('isLike','=',1)->count() > 0)   
+                                                                                                            <span class="like-comment-btn me-2" data-id={{ $comment->id }}>
+                                                                                                                <em class="icon ni ni-thumbs-up fs-16px text-primary">{{ $comment->totalLikes }}</em>
+                                                                                                            </span>
+                                                                                                        @else
+                                                                                                            <span class="like-comment-btn me-2" data-id={{ $comment->id }}>
+                                                                                                                <em class="icon ni ni-thumbs-up fs-16px">{{ $comment->totalLikes }}</em>
+                                                                                                            </span>
+                                                                                                        @endif
+    
+                                                                                                    @else
+                                                                                                        <span class="me-2">
+                                                                                                            <em class="icon ni ni-thumbs-up fs-16px">{{ $comment->totalLikes }}</em>
+                                                                                                        </span>
+                                                                                                    @endif
+                                                                                             
+                                                                                                @else
+                                                                                                    <span class="like-comment-btn me-2" data-id={{ $comment->id }}>
+                                                                                                        <em class="icon ni ni-thumbs-up fs-16px">{{ $comment->totalLikes }}</em>
+                                                                                                    </span>
+                                                                                                @endif
+                                                                                               
+                                                                                                @if(Auth::check())
+                                                                                                    <span class="create-reply-btn me-2" data-id={{ $comment->id }}>
+                                                                                                        <em class="icon ni ni-reply fs-16px "></em>
+                                                                                                    </span>
+                                                                                                    @if(Auth::user()->id != $comment->users->id)
+                                                        
+                                                                                                    <span class="report-comment-btn me-2" data-id={{ $comment->id }} data-type=6 data-user="{{ $comment->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                                        <em class="icon ni ni-flag fs-16px"></em>
+                                                                                                    </span>
+                                                                                                    
+                                                                                            
+                                                                                                    
+                                                                                                    @endif
                                                                                                 @endif
                                                                                             </div>
                                                                                             
-                                                                                            @endif
+                                                                                          
                                                                                         </div>
                                                                                         
                                                                                                 
@@ -331,42 +385,98 @@
                                                                             <div class="ms-5 replies-item replies-item-{{ $reply->commentID }}" id="reply-{{ $reply->id }}">
                                                                                 <div class="d-flex flex-column comment-section">
                                                                                     <div class="bg-white p-2">
-                                                                                        <div class="d-flex flex-row user-info"><img class="rounded-circle" src="{{ $reply->users->profile->url }}" width="40">
-                                                                                            <div class="d-flex flex-column justify-content-start ms-2">
-                                                                                                <span class="d-block font-weight-bold name">{{ $reply->users->profile->displayName }}</span>
-                                                                                                <div class="date text-black-50">
+                                                                                        <div class="d-flex justify-content-between">
+                                                                                            <div class="d-flex user-info">
+                                                                                                <img class="rounded-circle" src="{{ $reply->users->profile->url }}" width="60px">
+                                                                                                <div class="flex-grow-1">
+                                                                                                    <span class="d-block font-weight-bold name">{{ $reply->users->profile->displayName }}</span>
                                                                                                     <em class="icon ni ni-clock"></em>
-                                                                                                    <span>{{ $reply->time }}</span>
+                                                                                                    <span class="text-muted">{{ $reply->time }}</span>
                                                                                                 </div>
                                                                                             </div>
+                                                                                          
+    
+                                                                                            <div class="dropdown">
+                                                                                                <a class="dropdown-toggle" href="#" type="button" data-bs-toggle="dropdown">
+                                                                                                    <em class="icon ni ni-more-v"></em>
+                                                                                                </a>
+                                                                                                <div class="dropdown-menu">
+                                                                                                  <ul class="link-list-opt">
+                                                                                                    <li>
+                                                                                                        <a class="delete-reply-btn" data-id={{ $reply->id }}>
+                                                                                                            <em class="icon ni ni-trash"></em>
+                                                                                                            <span>Xóa phản hồi</span>
+                                                                                                        </a>
+                                                                                                      
+                                                                                                    </li>
+                                                                                                    <li> 
+                                                                                                        <a class="edit-comment-btn" data-id="{{ $reply->id }}" data-option="2">
+                                                                                                            <em class="icon ni ni-edit fs-16px"></em>
+                                                                                                            <span>Chỉnh sửa phản hồi</span>
+                                                                                                        </a>
+    
+                                                                                                       
+                                                                                                    </li>
+                                                                                                  </ul>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            
                                                                                         </div>
-                                                                                        <div class="mt-2">
-                                                                                            <p contenteditable="false" id="reply-text-{{ $reply->id }}">
+                                                                                        <div class="mt-2" id ="reply-content-{{ $reply->id }}">
+                                                                                            <p>
                                                                                                 {{ $reply->content }}
                                                                                             </p>
                                                                                         </div>
                                                                                     </div>
                                                                                     
-                                                                                    @if(Auth::check() && Auth::user()->id == $reply->users->id)
                     
                                                                                     <div class="ms-2">
-                                                                                        <div class="d-flex flex-row">
-                                                                                            <span class="delete-reply-btn" data-id={{ $reply->id }}>
-                                                                                                <em class="icon ni ni-trash fs-16px me-2"></em>
-                                                                                            </span>
-                                                                                            <span class="report-comment-btn" data-id={{ $reply->id }} data-type=9 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
-                                                                                                <em class="icon ni ni-flag fs-16px me-2 "></em>
-                                                                                            </span>
-                                                                                            <div class="custom-control custom-checkbox custom-control-pro custom-control-pro-icon no-control">
-                                                                                                <input type="checkbox" class="custom-control-input edit-reply-btn" name="edit-reply-btn" id="edit-reply-btn-{{ $reply->id }}" value={{ $reply->id }}>
-                                                                                                <label class="" name="edit-reply-btn" for="edit-reply-btn-{{ $reply->id }}">
-                                                                                                    <em class="icon ni ni-edit fs-16px">
-                                                                                                    </em>
-                                                                                                    </label>
-                                                                                            </div>
+                                                                                        <div class="d-flex align-items-center">
+                                                                                            @if($reply->likes->count() > 0)
+                                                                                                @if(Auth::check()) 
+                                                                                                    @if($reply->likes->where("userID",'=',Auth::user()->id)->where('isLike','=',1)->count() > 0)   
+                                                                                                        <span class="like-reply-btn me-2" data-id={{ $reply->id }}>
+                                                                                                            <em class="icon ni ni-thumbs-up fs-16px text-primary">{{ $reply->totalLikes }}</em>
+                                                                                                        </span>
+                                                                                                    @else
+                                                                                                        <span class="like-reply-btn me-2" data-id={{ $reply->id }}>
+                                                                                                            <em class="icon ni ni-thumbs-up fs-16px">{{ $reply->totalLikes }}</em>
+                                                                                                        </span>
+                                                                                                    @endif
+    
+                                                                                                @else
+                                                                                                    <span class="me-2">
+                                                                                                        <em class="icon ni ni-thumbs-up fs-16px">{{ $reply->totalLikes }}</em>
+                                                                                                    </span>
+                                                                                                @endif
+                                                                                    
+                                                                                            @else
+                                                                                                <span class="like-reply-btn me-2" data-id={{ $reply->id }}>
+                                                                                                    <em class="icon ni ni-thumbs-up fs-16px">{{ $reply->totalLikes }}</em>
+                                                                                                </span>                                                                             
+                                                                                            @endif
+                                                                                            
+                                                                                            @if(Auth::check()) 
+                                                                                                @if(Auth::user()->id != $reply->users->id)
+    
+                                                                                                    {{-- <span class="delete-reply-btn" data-id={{ $reply->id }}>
+                                                                                                        <em class="icon ni ni-trash fs-16px me-2"></em>
+                                                                                                    </span> --}}
+                                                                                                    <span class="report-comment-btn" data-id={{ $reply->id }} data-type=7 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                                        <em class="icon ni ni-flag fs-16px me-2 "></em>
+                                                                                                    </span>
+                                                                                                    {{-- <div class="custom-control custom-checkbox custom-control-pro custom-control-pro-icon no-control">
+                                                                                                        <input type="checkbox" class="custom-control-input edit-reply-btn" name="edit-reply-btn" id="edit-reply-btn-{{ $reply->id }}" value={{ $reply->id }}>
+                                                                                                        <label class="" name="edit-reply-btn" for="edit-reply-btn-{{ $reply->id }}">
+                                                                                                            <em class="icon ni ni-edit fs-16px">
+                                                                                                            </em>
+                                                                                                        </label>
+                                                                                                    </div> --}}
+                                                                                                @endif
+                                                                                            @endif
                                                                                         </div>
                                                                                     </div>
-                                                                                    @endif
+                                                                                   
                                                                                 </div> 
                                                                                 <hr>
                                                                             </div>
@@ -387,6 +497,8 @@
                                                     </div>
                                                 </div><!-- .col -->
                                             </div><!-- .row -->
+                                            <button class="d-none" data-bs-toggle="modal" data-bs-target="#editCommentForm" id="openEditComment"></button>
+    
                                         </div>
                                         <div class="tab-pane" id="tabItem8">
                                             <div class="nk-block">
@@ -548,13 +660,46 @@
         </div>
     </div>
 </div>
+
+
+<div class="modal fade" id="editCommentForm" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chỉnh sửa bình luận</h5>
+                <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <em class="icon ni ni-cross"></em>
+                </a>
+            </div>
+            <div class="modal-body">
+                <div class="nk-chat-editor border rounded-pill flex-grow-1 bg-light">
+                    <div class="nk-chat-editor-form">
+                        <div class="form-control-wrap">
+                            <textarea class="form-control form-control-simple no-resize bg-light textarea" id="editCommentArea" placeholder="Viết bình luận của bạn...">
+
+                            </textarea>
+                        </div>
+                    </div>
+                    <ul class="nk-chat-editor-tools g-2">                   
+                        <li>
+                            <button class="btn btn-round btn-primary btn-icon" id="submitEditCommentForm"><em class="icon ni ni-send-alt"></em></button>
+                        </li>
+                    </ul>
+                </div>
+            
+            </div>
+           
+        </div>
+    </div>
+</div>
 @endif
 
 @endsection
 
 @endsection
 @section('additional-scripts')
-<script src="{{ asset('js/ViewerJS/viewer.js') }}"></script>
+<script src="{{ asset('assets/js/emojionearea.min.js') }}" aria-hidden="true"></script>
+
 <script>
     
     $.ajaxSetup({
@@ -564,6 +709,17 @@
     });
     
     $(function () {
+        $('#comment_area').emojioneArea({
+            pickerPosition: "bottom",
+            filtersPosition: "bottom",
+            tones: false,
+            events: {
+                keyup: function (editor, event) {
+                    $('#comment_area').val(this.getText());
+                }
+            }
+	    });
+
         $('#comment-btn').attr('disabled', true);
         $('.replies-item').css('display', 'none');
 
@@ -576,8 +732,23 @@
 
         const id = {!! $document->id !!};
 
-        const file = @json($document->file);
-        window.location.href = `/tai-lieu/download/${file}/${id}`;
+        $.ajax({
+            url:'/generation-link',
+            type:"GET",
+            data:{
+                'id':id,
+            }
+            })
+            .done(function(res) {
+                
+                window.location.href = res.url;
+            })
+
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            console.log(textStatus + ': ' + errorThrown);
+            })
+       
     })
 
 
@@ -744,7 +915,7 @@
     $(`.replies-item-${comment_id}`).fadeToggle();
     });
 
-    $(document).on('keyup','textarea',function() {
+    $(document).on('keyup','.emojionearea-editor',function() {
             var comment_value = $("#comment_area").val();
 
             var reply_value = $("#reply_area").val();
@@ -786,10 +957,12 @@
                         showConfirmButton: false,
                         timer: 2500
                     });      
-                $("#comment_area").val('');
-
-                $("#tabItem7").load(" #tabItem7 > *");
-                $("#total-comment-span").load(" #total-comment-span > *");
+              
+                $('#main-comment-box').find("#comment_area").val('');
+                $('#main-comment-box').find('.emojionearea-editor').text('');
+                $("#comment-box").load(" #comment-box > *");
+                $('.total-comment-span').text(res.totalComments + " ");
+                
             })
             .fail(function(jqXHR, textStatus, errorThrown) {
             // If fail
@@ -818,7 +991,7 @@
                     data : {
                     },
                     })
-                    .done(function() {
+                    .done(function(res) {
                     // If successful
                     Swal.fire({
                             icon: 'success',
@@ -828,8 +1001,8 @@
                     });
 
                     $("#comment-" + comment_id).fadeOut();
-                    $("#tabItem7").load(" #tabItem7 > *");
-                    $("#total-comment-span").load(" #total-comment-span > *");
+                    $("#comment-box").load(" #comment-box > *");
+                    $('.total-comment-span').text(res.totalComments + " ");
 
                     })
                     .fail(function(jqXHR, textStatus, errorThrown) {
@@ -871,8 +1044,8 @@
                     });
 
                     $("#reply-" + reply_id).fadeOut();
-                    $("#tabItem7").load(" #tabItem7 > *");
-                    $("#total-comment-span").load(" #total-comment-span > *")
+                    $("#comment-box").load(" #comment-box > *");
+                    $('.total-comment-span').text(res.totalComments + " ");
 
                    
                     })
@@ -898,27 +1071,35 @@
         }
         else{
               
-        var htmlrender = 
-        `<div class="nk-chat-editor border rounded-pill bg-light" id="reply-box">
-                <div class="nk-chat-editor-form">
-                    <div class="form-control-wrap">
-                        <textarea class="form-control form-control-simple no-resize bg-light" id="reply_area" placeholder="Viết phản hồi của bạn..."></textarea>
-                    </div>
-                </div>
-                <ul class="nk-chat-editor-tools g-2">
-                    <li>
-                        <a href="#" class="btn btn-sm btn-icon btn-trigger text-primary"><em class="icon ni ni-happyf-fill"></em></a>
-                    </li>
-                    <li>
-                        <button class="btn btn-round btn-primary btn-icon" id="reply-btn" data-id=${comment_id}><em class="icon ni ni-send-alt"></em></button>
-                    </li>
-                </ul>
-        </div>`;
+            var htmlrender = 
+                `<div class="ms-5 nk-chat-editor border bg-light w-75" id="reply-box">
+                        <div class="nk-chat-editor-form">
+                            <div class="form-control-wrap">
+                                <textarea class="form-control form-control-simple no-resize bg-light" id="reply_area" placeholder="Viết phản hồi của bạn..."></textarea>
+                            </div>
+                        </div>
+                        <ul class="nk-chat-editor-tools g-2">              
+                            <li>
+                                <button class="btn btn-round btn-primary btn-icon" id="reply-btn" data-id=${comment_id}><em class="icon ni ni-send-alt"></em></button>
+                            </li>
+                        </ul>
+                </div>`;
        
 
         $('#comment-'+comment_id).append(htmlrender);
 
         $('#reply-btn').attr('disabled', true);
+
+        $('#reply_area').emojioneArea({
+            pickerPosition: "bottom",
+            filtersPosition: "bottom",
+            tones: false,
+            events: {
+                keyup: function (editor, event) {
+                    $('#reply_area').val(this.getText());
+                }
+            }
+	    });
 
         }
         
@@ -948,8 +1129,8 @@
                         timer: 2500
                     });      
 
-                $("#tabItem7").load(" #tabItem7 > *");
-                $("#total-comment-span").load(" #total-comment-span > *")
+                $("#comment-box").load(" #comment-box > *");
+                $('.total-comment-span').text(res.totalComments + " ");
 
             })
             .fail(function(jqXHR, textStatus, errorThrown) {
@@ -960,124 +1141,239 @@
 
     })
     
-    $(document).on('change','.edit-comment-btn',function(){
-        
-        var comment_id = $(this).val();
-        var item = $('#comment-text-'+comment_id)
+    $(document).on('click','.like-comment-btn',function(){
 
-        if ($(this).is(":checked")) {
-        
-            item.attr('contenteditable',true);
+        const commentID = $(this).data('id');
 
-            item.focus();
-        }
-        else{
+        const item = $(this);
+        $.ajax({
+            url:'/thich-binh-luan',
+            type:"POST",
+            data:{
+                'commentID': commentID,
+            }
+        })
+        .done(function(res) {
 
-            item.attr('contenteditable',false);
-            var content = $.trim(item.text());
+            const totalLike = res.totalLike;
 
-            if(content){
-                $.ajax({
-                    url:'/cap-nhat-binh-luan/'+comment_id,
-                    type:"PUT",
-                    data:{
-                        'content': content,
-
-                    }
-                })
-                .done(function(res) {
-    
-                    Swal.fire({
-                            icon: 'success',
-                            title: `${res.success}`,
-                            showConfirmButton: false,
-                            timer: 2500
-                        });      
-
-                    $("#tabItem7").load(" #tabItem7 > *");
-                    $("#total-comment-span").load(" #total-comment-span > *")
-
-                })
-                .fail(function(jqXHR, textStatus, errorThrown) {
-                // If fail
-                console.log(textStatus + ': ' + errorThrown);
-                });
-
-
+            item.find('em').text(totalLike);    
+            
+            const status = res.status;
+            
+            if(status === 1){
+                item.find('em').addClass('text-primary');
             }
             else{
-                Swal.fire({
-                    icon: 'info',
-                    title: `Không được để trống bình luận!!!`,
-                    showConfirmButton: false,
-                    timer: 2500
-                });      
-
-                $("#tabItem7").load(" #tabItem7 > *");
-                $("#total-comment-span").load(" #total-comment-span > *")
+                item.find('em').removeClass('text-primary');
 
             }
-        }
+
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+        // If fail
+        console.log(textStatus + ': ' + errorThrown);
+        });
 
     })
 
-    $(document).on('change','.edit-reply-btn',function(){
-        
-        var reply_id = $(this).val();
-        var item = $('#reply-text-'+reply_id)
 
-        if ($(this).is(":checked")) {
-        
-            item.attr('contenteditable',true);
+    $(document).on('click','.like-reply-btn',function(){
 
-            item.focus();
-        }
-        else{
+        const replyID = $(this).data('id');
 
-            item.attr('contenteditable',false);
-            var content = $.trim(item.text());
+        const item = $(this);
+        $.ajax({
+            url:'/thich-phan-hoi',
+            type:"POST",
+            data:{
+                'replyID': replyID,
+            }
+        })
+        .done(function(res) {
 
-            if(content){
-                $.ajax({
-                    url:'/cap-nhat-phan-hoi/'+reply_id,
-                    type:"PUT",
-                    data:{
-                        'content': content,
-                    }
-                })
-                .done(function(res) {
-    
-                    Swal.fire({
-                            icon: 'success',
-                            title: `${res.success}`,
-                            showConfirmButton: false,
-                            timer: 2500
-                        });      
+            const totalLike = res.totalLike;
 
-                    $("#tabItem7").load(" #tabItem7 > *");
-                    $("#total-comment-span").load(" #total-comment-span > *")
-
-                })
-                .fail(function(jqXHR, textStatus, errorThrown) {
-                // If fail
-                console.log(textStatus + ': ' + errorThrown);
-                });
-
-
+            item.find('em').text(totalLike);    
+            
+            const status = res.status;
+            
+            if(status === 1){
+                item.find('em').addClass('text-primary');
             }
             else{
-                Swal.fire({
-                    icon: 'info',
-                    title: `Không được để trống phản hồi!!!`,
-                    showConfirmButton: false,
-                    timer: 2500
-                });      
-
-                $("#tabItem7").load(" #tabItem7 > *");
-                $("#total-comment-span").load(" #total-comment-span > *")
+                item.find('em').removeClass('text-primary');
 
             }
+
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+        // If fail
+        console.log(textStatus + ': ' + errorThrown);
+        });
+
+        })
+
+
+    $(document).on('click','.edit-comment-btn',function(e) {
+
+    const item_id = $(this).data('id');
+    const option = $(this).data('option');
+
+    $('#submitEditCommentForm').data('id',item_id);
+    $('#submitEditCommentForm').data('option',option);
+
+    if(option == 1){
+        const text = $('#comment-content-' + item_id).find('p').text();
+
+
+        $('#editCommentArea').val( $.trim(text));
+    }
+    if(option == 2){
+        const text = $('#reply-content-' + item_id).find('p').text();
+
+        $('#editCommentArea').val( $.trim(text));
+    }
+    
+    $('#editCommentArea').emojioneArea({
+            pickerPosition: "bottom",
+            filtersPosition: "bottom",
+            tones: false,
+            autocomplete: false,
+            inline: true,
+            hidePickerOnBlur: false,
+            events: {
+                keyup: function (editor, event) {
+                    $('#editCommentArea').val(this.getText());
+                }
+            }
+	    });
+
+
+
+    setTimeout(function() {
+        $('#openEditComment').click();
+    },500);
+    })
+
+    $(document).on('click','#submitEditCommentForm',function(){
+
+    const item_id = $(this).data('id');
+    const option = $(this).data('option');
+
+    var item = $('#editCommentArea');
+    var content = $.trim(item.val());
+
+
+
+    if(content){
+        if(option == 1){
+            
+            $.ajax({
+            url:'/cap-nhat-binh-luan/'+item_id,
+            type:"PUT",
+            data:{
+                'content': content,
+            }
+            })
+            .done(function(res) {
+
+                Swal.fire({
+                        icon: 'success',
+                        title: `${res.success}`,
+                        showConfirmButton: false,
+                        timer: 2500
+                    });      
+
+            
+
+                $('#comment-content-' + item_id).find('p').text(content);
+
+                setTimeout(function() {
+                    $('#openEditComment').click();
+                },2500);
+            
+
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            console.log(textStatus + ': ' + errorThrown);
+            });
         }
+        if (option == 2){
+            $.ajax({
+                url:'/cap-nhat-phan-hoi/'+item_id,
+                type:"PUT",
+                data:{
+                    'content': content,
+                }
+            })
+            .done(function(res) {
+
+                Swal.fire({
+                        icon: 'success',
+                        title: `${res.success}`,
+                        showConfirmButton: false,
+                        timer: 2500
+                    });      
+
+                $('#reply-content-' + item_id).find('p').text(content);
+
+                setTimeout(function() {
+                    $('#openEditComment').click();
+                },2500);
+
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            console.log(textStatus + ': ' + errorThrown);
+            });
+        }    
+
+    }
+    else{
+        Swal.fire({
+                icon: 'info',
+                title: `Không được để trống phản hồi!!!`,
+                showConfirmButton: false,
+                timer: 2500
+        });      
+        
+    }
+    
+   
+
+
+});
+    $(document).on('click','#document-mark-btn',function(){
+        var document_id = {!! $document->id !!};
+        
+        $(this).attr("disabled", 'disabled');
+        $('#span-text').text('Đã theo dõi');
+
+             $.ajax({
+                url:'/theo-doi',
+                type:"POST",
+                data:{
+                    'item_id': document_id,
+                    'type_id':1
+                }
+            })
+            .done(function(res) {
+              
+                Swal.fire({
+                        icon: 'success',
+                        title: `${res.success}`,
+                        showConfirmButton: false,
+                        timer: 2500
+                    });      
+            
+                $('#totalMarking').text(res.totalMarking);
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            console.log(textStatus + ': ' + errorThrown);
+            })
 
     })
 </script>

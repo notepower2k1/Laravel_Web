@@ -1,8 +1,10 @@
 @extends('client/homepage.layouts.app')
 @section('pageTitle', `${{$title}}`)
 @section('additional-style')
-<style>
-    
+<link rel="stylesheet" href="{{ asset('assets/css/animatedbook.css') }}">
+
+{{-- <style>
+ 
     .high_reading_books{
         margin-top: 80px;
     }
@@ -30,12 +32,13 @@
         }
     }
    
-</style>
+</style> --}}
+
 @endsection
 
 @section('content')
 
-<div class="container">
+{{-- <div class="container">
     <div class="nk-block">
         <div class="nk-block-head nk-block-head-sm">
             <div class="nk-block-between">
@@ -79,6 +82,63 @@
     
         {{ $books->links('vendor.pagination.custom',['elements' => $books]) }}
     </div>
-</div>
+</div> --}}
 
+<div class="container">
+
+    <h2>{{ $title }}</h2>
+    <div class="nk-block">
+        <ul class="align">
+            @foreach ($books as $book)
+    
+            <li>
+                <figure class='book'>
+
+                    <!-- Front -->
+            
+                        <ul class='paperback_front'>
+                            
+                            <li>
+                                <span class="ribbon">{{ $book->ratingScore }}/5</span>
+
+                                <img src="{{ $book->url }}" alt="" width="100%" height="100%">
+                            </li>
+                            <li></li>
+                        </ul>
+            
+                    <!-- Pages -->
+            
+                        <ul class='ruled_paper'>
+                            <li></li>
+                            <li class="d-flex align-items-start  justify-content-center">
+                                <a class="atag_btn"
+                                href="/sach/{{$book->id}}/{{$book->slug}}">Chi tiết</a>
+                            </li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                        </ul>
+            
+                    <!-- Back -->
+            
+                        <ul class='paperback_back'>
+                            <li></li>
+                            <li></li>
+                        </ul>
+                        <figcaption>
+                            <h4>{{ $book->name }}</h4>
+                            <span>{{ $book->author }}</span>
+                            <p>{{ Str::limit($book->description,200) }}</p>
+                        </figcaption>
+                    </figure>
+            </li>
+            @endforeach   
+    
+        </ul>
+        <div class="col-md-12 d-flex justify-content-end">                          
+
+            {{ $books->links('vendor.pagination.custom',['elements' => $books]) }}
+        </div>
+    </div>
+</div>
 @endsection

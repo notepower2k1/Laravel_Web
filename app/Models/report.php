@@ -64,35 +64,43 @@ class report extends Model
 
                 break;
             case 6:
-                $item = BookComment::findOrFail($this->identifier_id);
-                $identifier = 'bình luận của '.$item->users->name.' về sách '.$item->books->name;
+                $item = Comment::findOrFail($this->identifier_id);
+                $book = Book::findOrFail($item->identifier_id);
+                $identifier = 'bình luận của '.$item->users->name.' về sách '.$book->name;
 
                 break;
             case 7:
-                $item = BookCommentReply::findOrFail($this->identifier_id);
-                $identifier = 'phản hồi bình luận của '.$item->users->name.' về bình luận của '.$item->comments->users->name;
+                $item = Reply::findOrFail($this->identifier_id);
+                $comment = Comment::findOrFail($item->commentID);
+                $identifier = 'phản hồi bình luận của '.$item->users->name.' về bình luận của '.$comment->users->name;
 
 
                 break;   
             case 8:
-                $item = DocumentComment::findOrFail($this->identifier_id);
-                $identifier = 'bình luận của '.$item->users->name.' về tài liệu '.$item->documents->name;
+                $item = Comment::findOrFail($this->identifier_id);
+                $document = Document::findOrFail($item->identifier_id);
+
+                $identifier = 'bình luận của '.$item->users->name.' về tài liệu '.$document->name;
 
                 break;
             case 9:
-                $item = DocumentCommentReply::findOrFail($this->identifier_id);
-                $identifier = 'phản hồi bình luận của '.$item->users->name.' về bình luận của '.$item->comments->users->name;
+                $item = Reply::findOrFail($this->identifier_id);
+                $comment = Comment::findOrFail($item->commentID);
+                $identifier = 'phản hồi bình luận của '.$item->users->name.' về bình luận của '.$comment->users->name;
 
                 break;   
             case 10:
-                $item = PostComment::findOrFail($this->identifier_id);
-                $identifier = 'bình luận của '.$item->users->name.' về bài viết '.$item->posts->topic;
+                $item = Comment::findOrFail($this->identifier_id);
+                $post = ForumPosts::findOrFail($item->identifier_id);
+
+                $identifier = 'bình luận của '.$item->users->name.' về bài viết '.$post->topic;
 
                
                 break;
             case 11:
-                $item = PostCommentReply::findOrFail($this->identifier_id);
-                $identifier = 'phản hồi bình luận của '.$item->users->name.' về bình luận của '.$item->comments->users->name;
+                $item = Reply::findOrFail($this->identifier_id);
+                $comment = Comment::findOrFail($item->commentID);
+                $identifier = 'phản hồi bình luận của '.$item->users->name.' về bình luận của '.$comment->users->name;
 
                 break;
             default:

@@ -18,47 +18,47 @@
           <li class="breadcrumb-item active">{{ $post->topic }}</li>
       </ul>
   </nav>
-  <div class="card card-bordered">
-      <div class="card-inner">
-          <div class="row g-gs flex-lg-row-reverse">
-             
-              <div class="col-lg-12">
-                  <div class="entry me-xxl-3">
-                   
-                    <div class="d-flex align-content-center">
-                      <h3>{{ $post->topic }}
+    <div class="card card-bordered">
+        <div class="card-inner">
+            <div class="row g-gs flex-lg-row-reverse">
+                
+                <div class="col-lg-12">
+                    <div class="entry me-xxl-3">
+                    
+                        <div class="d-flex align-content-center">
+                        <h3>{{ $post->topic }}
+                            
+                            @if(Auth::check())
+                            <button type="button" class="btn btn-icon btn-lg ms-1" data-bs-toggle="modal" data-bs-target="#reportForm">
+                            <em class="icon ni ni-alert" style="color:red"></em>
+                            </button>
+                            @endif
+                        </h3>
                         
-                        @if(Auth::check())
-                        <button type="button" class="btn btn-icon btn-lg ms-1" data-bs-toggle="modal" data-bs-target="#reportForm">
-                          <em class="icon ni ni-alert" style="color:red"></em>
-                        </button>
-                        @endif
-                    </h3>
-                     
-                      
+                        
+                        </div>
+                        <span class="text-mute ff-italic fw-bold">Đăng bởi: <a href="/thanh-vien/{{ $post->users->id }}" class="text-primary fs-14px">{{ $post->users->profile->displayName }}</a></span>
+                        <br>
+                        <span class="text-mute ff-italic fw-bold">Ngày đăng: {{ $post->created_at->format("H:i Y/m/d") }} </span>
+
+                        <div>
+                            {!! clean($post->content) !!}
+
+                        </div>
                     </div>
-                      <span class="text-mute ff-italic fw-bold">Đăng bởi: <a href="/thanh-vien/{{ $post->users->id }}" class="text-primary fs-14px">{{ $post->users->profile->displayName }}</a></span>
-                      <br>
-                      <span class="text-mute ff-italic fw-bold">Ngày đăng: {{ $post->created_at->format("H:i Y/m/d") }} </span>
 
-                    <div>
-                        {!! clean($post->content) !!}
+                
+                </div><!-- .col -->
+            </div><!-- .row -->
+            <div class="d-flex align-items-center border bg-gray-200 p-1 mt-3 fs-11px">
+                <em class="icon ni ni-clock"></em>
+                <span> Update vào lúc {{  $post->updated_at->format("H:i Y/m/d") }}</span>  
+            </div>
+            </div>
+        
+    </div>
 
-                    </div>
-                  </div>
-
-               
-              </div><!-- .col -->
-          </div><!-- .row -->
-          <div class="d-flex align-items-center border bg-gray-200 p-1 mt-3 fs-11px">
-            <em class="icon ni ni-clock"></em>
-            <span> Update vào lúc {{  $post->updated_at->format("H:i Y/m/d") }}</span>  
-          </div>
-        </div>
-     
-  </div>
-
-  <div class="card card-bordered">
+    <div class="card card-bordered">
         <div class="card-inner">        
             <div class=" mb-5 bg-white rounded" id="comment-box" style="overflow-y:scroll; overflow-x:hidden; max-height:1000px;">
                 <div class="row">
@@ -88,33 +88,39 @@
                                                     <a href="/thanh-vien/{{ $comment->users->id }}" class="d-block font-weight-bold name">{{ $comment->users->profile->displayName }}</a>
                                                     <span class="date text-black-50">{{ $comment->created_at }}</span>                                     
                                             </div>    
-                                            @if(Auth::check() && Auth::user()->id == $comment->users->id)
-                                                             
-                                            <div class="col-4">                                   
-                                                <div class="d-flex flex-row-reverse">                              
-                                                    <div class="dropdown">
-                                                        <a class="dropdown-toggle" href="#" type="button" data-bs-toggle="dropdown">
-                                                            <em class="icon ni ni-more-v"></em>
-                                                        </a>
-                                                        <div class="dropdown-menu">
-                                                          <ul class="link-list-opt">
-                                                            <li><a class="delete-comment-btn" data-id={{ $comment->id }} href="#">
-                                                                <em class="icon ni ni-cross"></em>      
-                                                                <span>Xóa bình luận</span>
+
+                                            @if(Auth::check())
+                                                @if(Auth::user()->id == $comment->users->id || Auth::user()->role == 1)
+                                                                
+                                                    <div class="col-4">                                   
+                                                        <div class="d-flex flex-row-reverse">                              
+                                                            <div class="dropdown">
+                                                                <a class="dropdown-toggle" href="#" type="button" data-bs-toggle="dropdown">
+                                                                    <em class="icon ni ni-more-v"></em>
                                                                 </a>
-                                                            </li>
-                                                            <li><a class="report-comment-btn" data-id={{ $comment->id }} data-type=10 data-user='{{ $comment->users->profile->displayName  }}'
-                                                                    data-bs-toggle="modal" data-bs-target="#reportFormComment"
-                                                                    href="#">
-                                                                    <em class="icon ni ni-flag"></em>
-                                                                    <span>Báo cáo bình luận</span>
-                                                            </a>
-                                                            </li>
-                                                          </ul>
-                                                        </div>
-                                                      </div>                                         
-                                                </div>                               
-                                            </div>
+                                                                <div class="dropdown-menu">
+                                                                <ul class="link-list-opt">
+                                                                    <li><a class="delete-comment-btn" data-id={{ $comment->id }} href="#">
+                                                                        <em class="icon ni ni-cross"></em>      
+                                                                        <span>Xóa bình luận</span>
+                                                                        </a>
+                                                                    </li>
+                                                                    @if(Auth::user()->id != $comment->users->id)
+                                                                    <li>
+                                                                        <a class="report-comment-btn" data-id={{ $comment->id }} data-type=10 data-user='{{ $comment->users->profile->displayName  }}'
+                                                                            data-bs-toggle="modal" data-bs-target="#reportFormComment"
+                                                                            href="#">
+                                                                            <em class="icon ni ni-flag"></em>
+                                                                            <span>Báo cáo bình luận</span>
+                                                                        </a>
+                                                                    </li>
+                                                                    @endif
+                                                                </ul>
+                                                                </div>
+                                                            </div>                                         
+                                                        </div>                               
+                                                    </div>
+                                                @endif
                                             @endif
                                         </div>		
                                     
@@ -145,36 +151,41 @@
                                                             <a href="/thanh-vien/{{ $reply->users->id }}"class="d-block font-weight-bold name">{{ $reply->users->profile->displayName }}</a>
                                                             <span class="date text-black-50">{{ $reply->created_at }}</span>
                                                         </div>
-                                                        @if(Auth::check() && Auth::user()->id == $reply->users->id)
+                                                        @if(Auth::check())
+                                                            @if(Auth::user()->id == $reply->users->id || Auth::user()->role == 1)
 
-                                                        <div class="col-4">                                   
-                                                            <div class="d-flex flex-row-reverse">    
-                                                                <div class="dropdown">
-                                                                    <a class="dropdown-toggle" href="#" type="button" data-bs-toggle="dropdown">
-                                                                        <em class="icon ni ni-more-v"></em>
-                                                                    </a>
-                                                                    <div class="dropdown-menu">
-                                                                      <ul class="link-list-opt">
-                                                                        <li><a href="#" class="delete-reply-btn" data-id={{ $reply->id }} >
-                                                                            <em class="icon ni ni-cross"></em>      
-                                                                            <span>Xóa bình luận</span>
-                                                                            </a>
-                                                                        </li>
-                                                                        <li>           
-                                                                            <a class="report-comment-btn" data-id={{ $comment->id }} data-type=11 data-user={{ $comment->users->profile->displayName  }} 
-                                                                                data-bs-toggle="modal" data-bs-target="#reportFormComment"
-                                                                                href="#">
-                                                                                <em class="icon ni ni-flag"></em>
-                                                                                <span>Báo cáo bình luận</span>
-                                                                            </a>
-                                                                        </li>
-                                                                      </ul>
+                                                            <div class="col-4">                                   
+                                                                <div class="d-flex flex-row-reverse">    
+                                                                    <div class="dropdown">
+                                                                        <a class="dropdown-toggle" href="#" type="button" data-bs-toggle="dropdown">
+                                                                            <em class="icon ni ni-more-v"></em>
+                                                                        </a>
+                                                                        <div class="dropdown-menu">
+                                                                        <ul class="link-list-opt">
+                                                                            <li><a href="#" class="delete-reply-btn" data-id={{ $reply->id }} >
+                                                                                <em class="icon ni ni-cross"></em>      
+                                                                                <span>Xóa bình luận</span>
+                                                                                </a>
+                                                                            </li>
+                                                                            @if(Auth::user()->id != $comment->users->id)
+
+                                                                            <li>           
+                                                                                <a class="report-comment-btn" data-id={{ $comment->id }} data-type=11 data-user="{{ $comment->users->profile->displayName  }}" 
+                                                                                    data-bs-toggle="modal" data-bs-target="#reportFormComment"
+                                                                                    href="#">
+                                                                                    <em class="icon ni ni-flag"></em>
+                                                                                    <span>Báo cáo bình luận</span>
+                                                                                </a>
+                                                                            </li>
+                                                                            @endif
+                                                                        </ul>
+                                                                        </div>
                                                                     </div>
-                                                                  </div>
-                                                            </div>   
-                                                            
-                                                            
-                                                        </div>
+                                                                </div>   
+                                                                
+                                                                
+                                                            </div>
+                                                            @endif
                                                         @endif
                                                     </div>
         
@@ -340,9 +351,9 @@
         plugins: [
             "advlist", "anchor", "autolink", "charmap", "code", "fullscreen", 
             "help", "image", "insertdatetime", "link", "lists", "media", 
-            "preview", "searchreplace", "table", "visualblocks",
+            "preview", "searchreplace", "table", "visualblocks","emoticons"
         ],
-        toolbar: "undo redo |  bold italic underline strikethrough | link image | forecolor ",
+        toolbar: "undo redo |  bold italic underline strikethrough | link image | forecolor | emoticons ",
         image_title: true,
         /* enable automatic uploads of images represented by blob or data URIs*/
         images_upload_url: '/upload',
@@ -517,9 +528,9 @@
                     plugins: [
                         "advlist", "anchor", "autolink", "charmap", "code", "fullscreen", 
                         "help", "image", "insertdatetime", "link", "lists", "media", 
-                        "preview", "searchreplace", "table", "visualblocks",
+                        "preview", "searchreplace", "table", "visualblocks","emoticons"
                     ],
-                    toolbar: "undo redo |  bold italic underline strikethrough | link image | forecolor ",
+                    toolbar: "undo redo |  bold italic underline strikethrough | link image | forecolor | emoticons",
                     image_title: true,
                     /* enable automatic uploads of images represented by blob or data URIs*/
                     images_upload_url: '/upload',

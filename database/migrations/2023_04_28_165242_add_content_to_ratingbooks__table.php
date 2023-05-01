@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('book_marks', function (Blueprint $table) {
-            $table->boolean('status')->default('0');
+        Schema::table('rating_books', function (Blueprint $table) {
+            $table->string('content');
 
         });
     }
@@ -26,8 +26,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('book_marks', function (Blueprint $table) {
-            $table->dropColumn('status');
+        Schema::table('rating_books', function (Blueprint $table) {
+            $table->dropColumn('content');
         });
     }
 };

@@ -24,9 +24,9 @@ return new class extends Migration
                 $table->tinyInteger('language'); //0 - VN //1 - English
                 $table->string('slug');
                 $table->float('ratingScore');
-                $table->integer('totalReading');
-                $table->integer('totalBookMarking');
-                $table->integer('totalComments');
+                $table->integer('totalReading')->default('0');
+                $table->integer('totalBookMarking')->default('0');
+                $table->integer('totalComments')->default('0');
                 $table->unsignedInteger('type_id'); 
                 $table->foreign('type_id')
                 ->references('id')->on('book_types')->onDelete('cascade');           

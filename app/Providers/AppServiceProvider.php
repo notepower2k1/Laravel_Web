@@ -9,6 +9,7 @@ use App\Models\Notification;
 use App\Models\bookMark;
 use App\Models\Book;
 use App\Models\Document;
+use App\Models\Follow;
 use App\Models\readingHistory;
 use App\Models\ratingBook;
 use App\Models\report;
@@ -259,11 +260,11 @@ class AppServiceProvider extends ServiceProvider
 
                 if(Auth::check()){   
 
-                    $bookMark_notifications = bookMark::where('userID','=',Auth::user()->id)->where('status','=',1)->get();
+                    $follow_notifications = Follow::where('userID','=',Auth::user()->id)->where('status','=',1)->get();
                     $comment_notifications = Notification::where('receiverID','=',Auth::user()->id)->where('status','=',1)->get();
 
                     $view
-                    ->with('bookMark_notifications',$bookMark_notifications)
+                    ->with('follow_notifications',$follow_notifications)
                     ->with('comment_notifications',$comment_notifications);
 
                 }

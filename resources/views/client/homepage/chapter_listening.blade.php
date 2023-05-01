@@ -1,10 +1,93 @@
 @extends('client/homepage.layouts.app')
 
 @section('additional-style')
+<style>
+  .btn2top .sticky-btn {
+  position: fixed;
+  bottom: -96px;
+  right: 60px;
+  background: dodgerblue;
+  opacity: .6;
+  border-radius: 50%;
+  transition: all 0.9s ease;
+}
+.btn2top .sticky-btn img {
+  width: 36px;
+  height: 36px;
+}
+.btn2top .sticky-btn.revealed {
+  bottom: 36px;
+  opacity: 1;
+}
+.btn2top a.sticky-btn {
+  font-family: sans-serif;
+  padding: 9px;
+  display: block;
+  transition: all 0.3s ease;
+  color: #fff;
+  text-decoration: none;
+}
+.btn2top a.sticky-btn:hover {
+  color: yellow;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+  .btn2top .sticky-btn {
+    right: 21px;
+  }  
+  .btn2top .sticky-btn.revealed {
+    bottom: 21px;
+  }
+}
+
+/*
+*************************************************
+---   SECTION   --->   WHATSAPP-STICKY  
+*************************************************
+*/
+
+
+.btn2contact .sticky-btn {
+  position: fixed;
+  bottom: -96px;
+  left: 33px;
+  background: rgba(255, 255, 255, 0.81);
+  padding: 12px;
+  border-radius: 50%;
+  transition: all 0.8s ease;
+}
+.btn2contact .sticky-btn:hover {
+  cursor: pointer;
+
+  background: rgba(255, 255, 255, 0.81);
+  transform: translateY(-3px);
+}
+.btn2contact .sticky-btn img {
+  width: 45px;
+}
+
+.btn2contact .sticky-btn.revealed {
+  bottom: 36px;
+  opacity: 1;
+}
+
+@media screen and (max-width: 768px) {
+  .btn2contact .sticky-btn {
+    left: 21px;
+  } 
+  .btn2contact .sticky-btn img {
+    width: 36px;
+  }
+  .btn2contact .sticky-btn.revealed {
+    bottom: 21px;
+  } 
+}
+</style>
 @endsection
 @section('content')
 <div class="nk-content-body">
-  <div class="nk-block-head nk-block-head-sm">
+  {{-- <div class="nk-block-head nk-block-head-sm">
       <div class="nk-block-between">
           <div class="nk-block-head-content">
                   <div class="toggle-expand-content expanded" data-content="pageMenu" style="display: block;">
@@ -22,83 +105,105 @@
                           </li>
                       </ul>
                   </div>
-          </div><!-- .nk-block-head-content -->
-      </div><!-- .nk-block-between -->
-  </div><!-- .nk-block-head -->
+          </div>
+      </div>
+  </div> --}}
   <div class="nk-block">
-    <div class="card card-bordered h-100">
+    <div class="container">
+      <div class="card card-bordered h-100">
 
     
-    <div class="card-inner">
-      <div class="d-flex mb-3">
-        <div class="p-2 ">
-          @if($next)
-          <a href="{{ $next->slug }}" class="btn btn-icon btn-lg btn-primary"><em class="icon ni ni-arrow-long-right"></em></a>
-          @else
-          <button class="btn btn-icon btn-lg btn-primary" disabled><em class="icon ni ni-arrow-long-right"></em></button>
-          @endif
-        </div>
-        <div class="ms-auto p-2">
-          @if($previous)
-          <a href="{{ $previous->slug }}"  class="btn btn-icon btn-lg btn-primary"> <em class="icon ni ni-arrow-long-left"></em></a>
-          @else
-          <button  class="btn btn-icon btn-lg btn-primary" disabled><em class="icon ni ni-arrow-long-left"></em></button>
-          @endif
+        <div class="card-inner">
 
-        </div>
-      </div>
-      
-      <div class="feature-box">
-      
-
-          {{-- <div class="form-group">
-           
-          </div> --}}
-        
+          <div class="d-flex mb-3">
+            <div class="p-2">
+              @if($next)
+              <a href="{{ $next->slug }}" class="btn btn-icon btn-lg btn-primary"><em class="icon ni ni-arrow-long-right"></em></a>
+              @else
+              <button class="btn btn-icon btn-lg btn-primary" disabled><em class="icon ni ni-arrow-long-right"></em></button>
+              @endif
+            </div>
+            <div class="ms-auto p-2">
+              @if($previous)
+              <a href="{{ $previous->slug }}"  class="btn btn-icon btn-lg btn-primary"> <em class="icon ni ni-arrow-long-left"></em></a>
+              @else
+              <button  class="btn btn-icon btn-lg btn-primary" disabled><em class="icon ni ni-arrow-long-left"></em></button>
+              @endif
     
-      
-     </div>
-      <div class="title">
-      @if($chapter->name)
-      <h3 class="text-left">       
-        {{$chapter->code}}: {{ $chapter->name }}
-        </h3>
-        @else
-        <h3 class="text-left">       
-          {{$chapter->code}}
-        </h3>
-        @endif
-      </div>
-      <div class="d-flex bg-light">
-        <div class="p-2 flex-fill bg-light">
-          <em class="icon ni ni-book"></em>
-          <a href="/sach/{{$chapter->books->id  }}/{{ $chapter->books->slug  }}">{{ $chapter->books->name }}</a>
-        </div>
-        <div class="p-2 flex-fill bg-light">
-          <em class="icon ni ni-edit"></em>          
-          <a href="/thanh-vien/{{ $chapter->books->users->id }}">{{ $chapter->books->users->profile->displayName }}</a>
-        </div>
-        <div class="p-2 flex-fill bg-light">
-          <em class="icon ni ni-text"></em>
-          <span>{{ $chapter->numberOfWords }} chữ</span>
-        </div>
-        <div class="p-2 flex-fill bg-light">
-          <em class="icon ni ni-clock"></em>          
-          <span>{{ $chapter->updated_at }}</span>
-        </div>
-      </div>
-      <div class="border px-2"
+            </div>
+          </div>
+          
+          <div class="feature-box">
+          
+    
+              {{-- <div class="form-group">
+               
+              </div> --}}
+            
         
-      style="font-size: 16px;line-height:30px;">
+          
+         </div>
+          <div class="title">
+          @if($chapter->name)
+          <h3 class="text-left">       
+            {{$chapter->code}}: {{ $chapter->name }}
+            </h3>
+            @else
+            <h3 class="text-left">       
+              {{$chapter->code}}
+            </h3>
+            @endif
+          </div>
+          <div class="d-flex bg-light">
+            <div class="p-2 flex-fill bg-light">
+              <em class="icon ni ni-book"></em>
+              <a href="/sach/{{$chapter->books->id  }}/{{ $chapter->books->slug  }}">{{ $chapter->books->name }}</a>
+            </div>
+            <div class="p-2 flex-fill bg-light">
+              <em class="icon ni ni-edit"></em>          
+              <a href="/thanh-vien/{{ $chapter->books->users->id }}">{{ $chapter->books->users->profile->displayName }}</a>
+            </div>
+            <div class="p-2 flex-fill bg-light">
+              <em class="icon ni ni-text"></em>
+              <span>{{ $chapter->numberOfWords }} chữ</span>
+            </div>
+            <div class="p-2 flex-fill bg-light">
+              <em class="icon ni ni-clock"></em>          
+              <span>{{ $chapter->updated_at }}</span>
+            </div>
 
-      <div style="white-space: break-spaces;"  id="text">
-        {{ $content }} 
+            <div class="p-2 flex-fll bg-light">
+                <button class="btn btn-sm btn-icon btn-outline-primary edit-chapter-button"><em class="icon ni ni-edit"></em></button>
 
-      </div>
-
-    </div>   
+            </div>
+          </div>
+          <div class="border px-2"
+            
+          style="font-size: 16px;line-height:30px;">
+    
+          <div style="white-space: break-spaces;"  id="text" contenteditable="true">
+            {{ $content }} 
+    
+          </div>
+    
+          </div>   
+          </div>
+        </div><!-- .nk-block -->
+    </div>
+    <div class="btn2top">
+      <a class="sticky-btn">
+        <img src="https://byjaris.com/code/icons/chevron-up.svg">
+      </a>
+    </div>
+    
+    
+    <div class="btn2contact">
+      <a target="blank" class="toggle sticky-btn" data-target="addProduct"> 
+        <img src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/svg/configure-svgrepo-com.svg">
+      </a>
+    </div>
   </div>
-  </div><!-- .nk-block -->
+
   <div class="nk-add-product toggle-slide toggle-slide-right toggle-screen-any" data-content="addProduct" data-toggle-screen="any" data-toggle-overlay="true" data-toggle-body="true" data-simplebar="init"><div class="simplebar-wrapper" style="margin: -24px;"><div class="simplebar-height-auto-observer-wrapper"><div class="simplebar-height-auto-observer"></div></div><div class="simplebar-mask"><div class="simplebar-offset" style="right: 0px; bottom: 0px;"><div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content" style="height: 100%; overflow: hidden scroll;"><div class="simplebar-content" style="padding: 24px;">
       <div class="nk-block-head">
           <div class="nk-block-head-content">
@@ -238,6 +343,41 @@
 
       
         $(function(){
+
+          $('#change-chapter').select2({});
+
+          $('.btn2top').on('click', function() {
+          window.scrollTo({top: 0})
+          });
+
+          var scroll_offset = 120;
+            $(window).scroll(function(){
+              var $this = $(window);
+
+
+              if( $this.scrollTop() > ($('#text').height() - 300) ) { 
+                $('.sticky-btn').hide();
+
+
+              }
+              else{
+                $('.sticky-btn').show();
+
+              }
+            
+              if( $('.sticky-btn').length ) {
+                if( $this.scrollTop() > scroll_offset ) { 
+                  $('.sticky-btn').addClass('revealed');
+                } else {
+                  $('.sticky-btn').removeClass('revealed');
+                }	
+              }
+
+            
+            
+
+            });
+
             $("option[value='Microsoft HoaiMy Online (Natural) - Vietnamese (Vietnam)']").text('Giọng nữ');
             $("option[value='Microsoft NamMinh Online (Natural) - Vietnamese (Vietnam)']").text('Giọng nam');
 

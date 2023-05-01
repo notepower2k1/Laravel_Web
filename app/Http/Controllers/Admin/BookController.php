@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Book;
 use App\Models\BookType;
 use App\Models\Chapter;
+use App\Models\Follow;
 use App\Models\ratingBook;
 use App\Models\readingHistory;
 use Illuminate\Support\Facades\Auth;
@@ -134,14 +135,68 @@ class BookController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id) //like "show details"
+    public function show($id,$year = null) //like "show details"
     {
+        DB::statement("SET SQL_MODE=''");
+
+        $allYears = DB::select("SELECT distinct year(books.created_at) as 'year'
+        from books");
+
+
         $book = Book::findOrFail($id);
 
         $reading_history = readingHistory::where('bookID','=',$id)->get();
         $rating_books = ratingBook::where('bookID','=',$id)->get();
 
+        $totalReadingPerMonth =  DB::select("SELECT 
+            SUM(IF(month = 'Jan', total, 0)) AS 'Tháng 1', 
+            SUM(IF(month = 'Feb', total, 0)) AS 'Tháng 2', 
+            SUM(IF(month = 'Mar', total, 0)) AS 'Tháng 3', 
+            SUM(IF(month = 'Apr', total, 0)) AS 'Tháng 4', 
+            SUM(IF(month = 'May', total, 0)) AS 'Tháng 5', 
+            SUM(IF(month = 'Jun', total, 0)) AS 'Tháng 6', 
+            SUM(IF(month = 'Jul', total, 0)) AS 'Tháng 7', 
+            SUM(IF(month = 'Aug', total, 0)) AS 'Tháng 8', 
+            SUM(IF(month = 'Sep', total, 0)) AS 'Tháng 9', 
+            SUM(IF(month = 'Oct', total, 0)) AS 'Tháng 10', 
+            SUM(IF(month = 'Nov', total, 0)) AS 'Tháng 11', 
+            SUM(IF(month = 'Dec', total, 0)) AS 'Tháng 12' 
+            FROM ( 
+                SELECT SUM(reading_histories.total) as 'total' , DATE_FORMAT(reading_histories.created_at, '%b') AS month
+                FROM reading_histories 
+                WHERE reading_histories.bookID = $id and YEAR(reading_histories.created_at) = $year
+                GROUP by reading_histories.bookID,DATE_FORMAT(reading_histories.created_at, '%m-%Y')
+            ) as sub");
+
+        
+        $totalReadingInYear = readingHistory::where('bookID','=',$id)->whereYear('created_at', '=', $year)->sum('total');
+
+
+        $totalReadingPerDate = DB::select("SELECT SUM(reading_histories.total) as 'total', DATE(reading_histories.created_at) as 'date'
+        from reading_histories 
+        WHERE reading_histories.bookID = $id and YEAR(reading_histories.created_at) = $year
+        GROUP by reading_histories.bookID,DATE(reading_histories.created_at)");
+
+        $ratingScoreBase = DB::select("SELECT 
+        SUM(IF(base = 5, total, 0)) AS 'Mức điểm 5', 
+        SUM(IF(base = 4, total, 0)) AS 'Mức điểm 4', 
+        SUM(IF(base = 3, total, 0)) AS 'Mức điểm 3', 
+        SUM(IF(base = 2, total, 0)) AS 'Mức điểm 2', 
+        SUM(IF(base = 1, total, 0)) AS 'Mức điểm 1'
+        FROM(
+        SELECT  round(rating_books.score) as 'base' , count(rating_books.id) as
+        'total' FROM   rating_books
+        WHERE rating_books.bookID = $id 
+        GROUP BY base  
+        ORDER BY `base`) as sub");
+
         return view('admin.book.detail')
+        ->with('ratingScoreBase',$ratingScoreBase)
+        ->with('statisticsYear',$year)
+        ->with('allYears',$allYears)
+        ->with('totalReadingPerMonth',$totalReadingPerMonth)
+        ->with('totalReadingPerDate',$totalReadingPerDate)
+        ->with('totalReadingInYear',$totalReadingInYear)
         ->with('reading_history',$reading_history)
         ->with('rating_books',$rating_books)
         ->with('book',$book);
@@ -198,20 +253,7 @@ class BookController extends Controller
         $firebase_storage_path = 'bookImage/';
 
         if($request->image == null){
-            $generatedImageName = $request->oldImage;
-
-
-            $book = Book::findOrFail($id)
-            ->update([
-                'name' => $request->name,
-                'author' => $request->author,
-                'description' => $request->description,
-                'slug' =>  $slug,
-                'type_id' => intval($request->book_type_id),
-                'image' => $generatedImageName,
-                'isCompleted' => $request -> isCompleted
-            ]);
-      
+            $generatedImageName = $request->oldImage; 
         }
         else{
             $image = $request->file('image'); //image file from frontend
@@ -227,24 +269,24 @@ class BookController extends Controller
 
             app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
             unlink($localfolder . $generatedImageName);
-
-
-            $book = Book::findOrFail($id)
-            ->update([
-                'name' => $request->name,
-                'author' => $request->author,
-                'description' => $request->description,
-                'slug' =>  $slug,
-                'type_id' => intval($request->book_type_id),
-                'image' => $generatedImageName,
-                'isCompleted' => $request -> isCompleted
-            ]);
-
               //delete old image
             $imageDeleted = app('firebase.storage')->getBucket()->object($firebase_storage_path.$request->oldImage)->delete();
             }
         }
-      
+        
+        
+
+        $book = Book::findOrFail($id)
+        ->update([
+            'name' => $request->name,
+            'author' => $request->author,
+            'description' => $request->description,
+            'slug' =>  $slug,
+            'type_id' => intval($request->book_type_id),
+            'image' => $generatedImageName,
+            'isCompleted' => $request -> isCompleted
+        ]);
+        
 
         return redirect("/admin/book");
 
@@ -324,13 +366,45 @@ class BookController extends Controller
         GROUP by  DATE(books.created_at)");
 
 
+        $totalReadingPerMonth =  DB::select("SELECT 
+        SUM(IF(month = 'Jan', total, 0)) AS 'Tháng 1', 
+        SUM(IF(month = 'Feb', total, 0)) AS 'Tháng 2', 
+        SUM(IF(month = 'Mar', total, 0)) AS 'Tháng 3', 
+        SUM(IF(month = 'Apr', total, 0)) AS 'Tháng 4', 
+        SUM(IF(month = 'May', total, 0)) AS 'Tháng 5', 
+        SUM(IF(month = 'Jun', total, 0)) AS 'Tháng 6', 
+        SUM(IF(month = 'Jul', total, 0)) AS 'Tháng 7', 
+        SUM(IF(month = 'Aug', total, 0)) AS 'Tháng 8', 
+        SUM(IF(month = 'Sep', total, 0)) AS 'Tháng 9', 
+        SUM(IF(month = 'Oct', total, 0)) AS 'Tháng 10', 
+        SUM(IF(month = 'Nov', total, 0)) AS 'Tháng 11', 
+        SUM(IF(month = 'Dec', total, 0)) AS 'Tháng 12' 
+        FROM ( 
+            SELECT DATE_FORMAT(reading_histories.created_at, '%b') AS month, 
+            SUM(reading_histories.total) as total FROM reading_histories 
+            WHERE Year(reading_histories.created_at) = $year
+            GROUP BY DATE_FORMAT(reading_histories.created_at, '%m-%Y')
+        ) as sub");
+
+        
+        $totalReadingInYear = readingHistory::whereYear('created_at', '=', $year)->sum('total');
+
+
+        $totalReadingPerDate = DB::select("SELECT SUM(reading_histories.total) as 'total', DATE(reading_histories.created_at) as 'date'
+        from reading_histories 
+        WHERE YEAR(reading_histories.created_at) = $year
+        GROUP by DATE(reading_histories.created_at)");
+
 
          return view('admin.book.statistics')
             ->with('allYears',$allYears)
             ->with('totalBooksInYear',$totalBooksInYear->count())
+            ->with('totalReadingInYear',$totalReadingInYear)
             ->with('totalBooksPerDate',$totalBooksPerDate)
             ->with('statisticsYear',$year)
             ->with('totalBooksPerMonth',$totalBooksPerMonth)
+            ->with('totalReadingPerMonth',$totalReadingPerMonth)
+            ->with('totalReadingPerDate',$totalReadingPerDate)
             ->with('totalByTypes', $totalByTypes);
             
     }

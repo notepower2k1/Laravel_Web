@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
+use App\Models\Comment;
 use Illuminate\Support\Str;
 
 use Illuminate\Http\Request;
@@ -27,6 +28,15 @@ class ForumPostController extends Controller
        
     }
 
+    public function detail($post_id){
+        $forum_post = ForumPosts::findOrFail($post_id);
+        $comments = Comment::where('type_id','=',3)->where('identifier_id','=',$post_id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
+
+        return view('admin.forum_post.detail')
+        ->with('comments',$comments)
+        ->with('post',$forum_post);
+
+    }
     public function deletedItem()
     {
        $forum_posts = ForumPosts::where('deleted_at','!=',null)->get();

@@ -6,7 +6,8 @@
     <li class="breadcrumb-item"><a href="/admin/forum/post/{{ $forum_id }}">Bài đăng</a></li>
     <li class="breadcrumb-item active">Thêm</li>
 
-</ul><div class="card shadow mb-4">
+</ul>
+<div class="card shadow mb-4">
     <div class="card-body">
             @if($errors->any())
             <div class="alert alert-warning">

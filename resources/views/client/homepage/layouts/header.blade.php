@@ -114,7 +114,7 @@
                     
                 <li class="dropdown notification-dropdown {{ Request::is('sach-theo-doi') ? 'd-none':'' }}" id="bookMark_notifications_box">
                     <a href="#" class="dropdown-toggle nk-quick-nav-icon" data-bs-toggle="dropdown">
-                        @if($bookMark_notifications->isEmpty())
+                        @if($follow_notifications->isEmpty())
                         <em class="icon ni ni-bookmark"></em>
                         @else
                         <div class="icon-status icon-status-info"><em class="icon ni ni-bookmark"></em></div>
@@ -122,27 +122,35 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-xl dropdown-menu-end dropdown-menu-s1">
                         <div class="dropdown-head">
-                            <span class="sub-title nk-dropdown-title">Sách theo dõi</span>
+                            <span class="sub-title nk-dropdown-title">Theo dõi</span>
                             <button class="btn btn-info" id="mark_all_bookMark_notifications">Đánh dấu đã đọc hết</button>
                         </div>
                         <div class="dropdown-body">
                             <div class="nk-notification">
-                                @foreach ($bookMark_notifications as  $bookMark_notification)
-                                    <div class="nk-notification-item bookMark-notifications dropdown-inner" data-id="{{ $bookMark_notification->id }}" style="cursor: pointer;">
+                                @foreach ($follow_notifications as  $follow_notification)
+                                    <div class="nk-notification-item bookMark-notifications dropdown-inner" data-id="{{ $follow_notification->id }}" style="cursor: pointer;">
                                         <div class="nk-notification-icon">
                                             <em class="icon icon-circle bg-warning-dim ni ni-curve-down-right"></em>
                                         </div>
                                         <div class="nk-notification-content">
-                                            <div class="nk-notification-text">Sách <a href="/sach/{{$bookMark_notification->books->id}}/{{$bookMark_notification->books->slug}}" >{{$bookMark_notification->books->name }}</a> 
-                                                có chương mới  
-                                                
-                                                @foreach ($bookMark_notification->books->chapters as $chapter)
+
+                                            @if($follow_notification->type_id == 2)
+                                            <div class="nk-notification-text">Sách <a href="/sach/{{$follow_notification->identifier->id}}/{{$follow_notification->identifier->slug}}" >{{$follow_notification->identifier->name }}</a> 
+                                                có chương mới                                            
+                                                @foreach ($follow_notification->identifier->chapters as $chapter)
                                                     @if($loop->last)
                                                         <strong>{{ $chapter->code }}</strong>
                                                     @endif
                                                 @endforeach
-
-                                                
+                                            </div>  
+                                            @endif
+                                            @if($follow_notification->type_id == 1)
+                                            <div class="nk-notification-text">Tài liệu <a href="/tai-lieu/{{$follow_notification->identifier->id}}/{{$follow_notification->identifier->slug}}" >{{$follow_notification->identifier->name }}</a> 
+                                                có cập nhật mới                                                        
+                                            </div>  
+                                            @endif
+                                            <div class="nk-notification-time">
+                                                {{ $follow_notification->time }}
                                             </div>  
                                         </div>
                                     </div>

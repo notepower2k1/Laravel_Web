@@ -1,4 +1,6 @@
 <!-- Footer -->
+
+
 <section class="mt-4 ps-4 pe-4 pt-4" style="background-color:#062788">
   <div class="slider-init" data-slick='{"arrows": true, "dots": false, "slidesToShow": 1, "slidesToScroll": 1, "infinite":false, "responsive":[ {"breakpoint": 992,"settings":{"slidesToShow": 2}}, {"breakpoint": 768,"settings":{"slidesToShow": 1}} ]}'>
       <div class="col">
@@ -83,6 +85,7 @@
       </div>
   </div>
 </section>
+
 <footer class="text-center text-lg-start shadow text-dark" style="background-color: #ffffff "> 
 
       

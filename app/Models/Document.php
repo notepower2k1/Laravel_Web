@@ -36,11 +36,13 @@ class Document extends Model
         $firebase_storage_path = 'documentImage/';       
         $imageReference = app('firebase.storage')->getBucket()->object($firebase_storage_path.$this->image);
 
-        if ($imageReference->exists()) {
+        if ($imageReference) {
             $imageURL = $imageReference->signedUrl($expiresAt);
         } else {
             $imageURL = '';
         }
+        return $imageURL;
+
         return $imageURL;
     }
 
@@ -52,7 +54,7 @@ class Document extends Model
         
         $imageReference = app('firebase.storage')->getBucket()->object($firebase_storage_path.$this -> file);
 
-        if ($imageReference->exists()) {
+        if ($imageReference) {
             $fileURL = $imageReference->signedUrl($expiresAt);
         } else {
             $fileURL = '';

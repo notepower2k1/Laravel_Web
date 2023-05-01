@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Chapter;
 use App\Models\Book;
 use App\Models\bookMark;
+use App\Models\Follow;
 use App\Models\Notification;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
@@ -87,22 +88,12 @@ class ClientChapterController extends Controller
         ]);
         
         //update status book_mark
-        $book_mark = bookMark::where('bookID','=',$request->book_id)->update([
+        Follow::where('type_id','=',2)->where('identifier_id','=',$request->book_id)->update([
             'status' => 1
         ]);
 
         //create notification
-        $book_mark_userids = bookMark::where('bookID','=',$request->book_id)->pluck('userID')->toArray();
-
-        foreach($book_mark_userids as $id){
-            $notification = Notification::create([
-                'chapter_id'=> $chapter_id,
-                'userID' => $id,
-                'status'=> 1
-            ]);
-
-            $notification->save();
-        }
+    
        
 
         return redirect('/quan-ly/chuong/'.$request->book_id);

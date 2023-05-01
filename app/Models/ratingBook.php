@@ -14,7 +14,7 @@ class ratingBook extends Model
     public  $timestamps = true;
     public $incrementing = false;
 
-    protected $fillable = ['bookID','score','userID'];
+    protected $fillable = ['bookID','score','userID','content'];
 
     protected $appends = ['time'];
 

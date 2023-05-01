@@ -13,14 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('book_marks', function (Blueprint $table) {
+        Schema::create('downloading_histories', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('bookID');
-            $table->foreign('bookID')
-            ->references('id')->on('books')->onDelete('cascade');
+            $table->unsignedInteger('documentID');
+            $table->foreign('documentID')
+            ->references('id')->on('documents')->onDelete('cascade');
             $table->unsignedbigInteger('userID');
             $table->foreign('userID')
             ->references('id')->on('users')->onDelete('cascade');
+            $table->integer('total');
             $table->timestamps();
         });
     }
@@ -32,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('book_marks');
+        Schema::dropIfExists('downloading_histories');
     }
 };

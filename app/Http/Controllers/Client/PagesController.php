@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 
 use App\Models\Book;
 use App\Models\Document;
-use App\Models\bookMark;
 use App\Models\ratingBook;
 use App\Models\Chapter;
 use App\Models\Forum;
@@ -14,12 +13,15 @@ use App\Models\ForumPosts;
 use App\Models\BookType;
 use App\Models\Comment;
 use App\Models\DocumentType;
+use App\Models\downloadingHistory;
+use App\Models\Follow;
 use App\Models\report;
 use App\Models\previewDocumentImages;
 use App\Models\readingHistory;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -124,7 +126,7 @@ class PagesController extends Controller
         $isMark = false;
         $isRating = false;
     
-        $ratingPersons = ratingBook::where('bookID','=',$book_id)->get();
+        $ratingPersons = ratingBook::where('bookID','=',$book_id)->orderBy('created_at', 'desc')->get();
 
         $percentOfScoreList = DB::select("SELECT 
         SUM(IF(base = 5, percent, 0)) AS '5', 
@@ -133,14 +135,14 @@ class PagesController extends Controller
         SUM(IF(base = 2, percent, 0)) AS '2', 
         SUM(IF(base = 1, percent, 0)) AS '1'
         FROM(
-        SELECT  FLOOR(score) as 'base' , round((count(id) / (SELECT COUNT(id) from rating_books where bookID = $book_id))*100,0) as
+        SELECT  ROUND(score) as 'base' , round((count(id) / (SELECT COUNT(id) from rating_books where bookID = $book_id))*100,0) as
                     'percent' FROM 
                     `rating_books` WHERE bookID = $book_id GROUP BY base  
         ORDER BY `base`) as sub");
 
         if(Auth::check()){
 
-            $book_marks_id = bookMark::where('userID','=',Auth::user()->id)->pluck('bookID')->toArray();
+            $book_marks_id = Follow::where('userID','=',Auth::user()->id)->where('type_id','=',2)->pluck('identifier_id')->toArray();
             $rating_book_id = ratingBook::where('userID','=',Auth::user()->id)->pluck('bookID')->toArray();
 
 
@@ -184,6 +186,14 @@ class PagesController extends Controller
         $document = Document::findOrFail($document_id);
         $comments = Comment::where('type_id','=',1)->where('identifier_id','=',$document_id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(10);
 
+        $isMark = false;
+        if(Auth::check()){
+            $document_marks_id = Follow::where('userID','=',Auth::user()->id)->where('type_id','=',1)->pluck('identifier_id')->toArray();
+            if (in_array($document_id, $document_marks_id))
+            {
+                $isMark = true;
+            }
+        }
 
         $user_books = Book::where('userCreatedID','=',$document->users->id)->where('deleted_at','=',null)->where('isPublic','=',1)->get();
         $user_documents = Document::where('userCreatedID','=',$document->users->id)->where('deleted_at','=',null)->where('id','!=',$document->id)->where('isPublic','=',1)->get();
@@ -194,6 +204,7 @@ class PagesController extends Controller
 
 
         return view('client.homepage.document_detail')
+        ->with('isMark',$isMark)
         ->with('previewImages',$previewImages)
         ->with('user_books',$user_books)
         ->with('user_documents',$user_documents)
@@ -321,11 +332,11 @@ class PagesController extends Controller
         ->with('document_types',$document_types);
     }
   
-    public function book_mark_page(){
+    public function follow_page(){
         
-        $book_marks = bookMark::where('userID','=',Auth::user()->id)->orderBy('status', 'desc')->paginate(10);
-        return view('client.homepage.book_mark')
-        ->with('book_marks',$book_marks);    
+        $follows = Follow::where('userID','=',Auth::user()->id)->orderBy('status', 'desc')->paginate(10);
+        return view('client.homepage.follow')
+        ->with('follows',$follows);    
     }
 
     public function search_name_page(){
@@ -371,12 +382,10 @@ class PagesController extends Controller
             if($option == 1){
                 $href = '/sach/'.$item->id.'/'.$item->slug;
             }
-            else if ($option == 0){
+            if ($option == 2){
                 $href = '/tai-lieu/'.$item->id.'/'.$item->slug;
             }
-            else{
-                $href = '/sach/'.$item->id.'/'.$item->slug;
-            }
+          
 
             $content = '<div class="col-lg-3 col-md-6 mt-3">'.
             ' <div class="card card-bordered product-card shadow">'.
@@ -399,6 +408,7 @@ class PagesController extends Controller
             '</div>'.
             ' </div>';
 
+            
             array_push($contentList, $content);
         }
         
@@ -487,15 +497,102 @@ class PagesController extends Controller
             $items = $items->paginate(18);
         }
 
-        return view('client.homepage.search_author')
+        return view('client.homepage.search_other')
         ->with('option_id',$option_id)
         ->with('items',$items)
         ->with('total',$total);  
-
-    
-
     }
 
+    public function search_language_page($option,$language){
+        $total = 0;
+        $items = collect();
+        $option_id = 0;
+
+        $language_id = -1;
+
+        if($language == 'tieng-viet'){
+            $language_id = 1;
+
+        } 
+        if($language == 'tieng-anh'){
+            $language_id = 0;
+
+        }
+
+        switch ($option) {
+            case 'ngon-ngu-sach':
+                $option_id = 0;
+
+                $items = Book::where('language','=',$language_id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1);    
+                $total = $items->get()->count();      
+                break;
+            case 'ngon-ngu-tai-lieu':
+                $option_id = 1;
+
+                $items = Document::where('language','=',$language_id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1);
+                $total = $items->get()->count();      
+                break;
+            default:
+                $option_id = -1;
+
+                $items = null;    
+                $total = 0;      
+        }
+        
+        if($items){
+            $items = $items->paginate(18);
+        }
+
+        return view('client.homepage.search_other')
+        ->with('option_id',$option_id)
+        ->with('items',$items)
+        ->with('total',$total);  
+    }
+
+    public function search_status_page($option,$isCompleted){
+        $total = 0;
+        $items = collect();
+        $option_id = 0;
+
+        $status = -1;
+
+        if($isCompleted == 'da-hoan-thanh'){
+            $status = 1;
+
+        } 
+        if($isCompleted == 'chua-hoan-thanh'){
+            $status = 0;
+        }
+
+        switch ($option) {
+            case 'tinh-trang-sach':
+                $option_id = 0;
+
+                $items = Book::where('isCompleted','=',$status)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1);    
+                $total = $items->get()->count();      
+                break;
+            case 'tinh-trang-tai-lieu':
+                $option_id = 1;
+
+                $items = Document::where('isCompleted','=',$status)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1);
+                $total = $items->get()->count();      
+                break;
+            default:
+                $option_id = -1;
+
+                $items = null;    
+                $total = 0;      
+        }
+        
+        if($items){
+            $items = $items->paginate(18);
+        }
+
+        return view('client.homepage.search_other')
+        ->with('option_id',$option_id)
+        ->with('items',$items)
+        ->with('total',$total);  
+    }
 
     public function forum_home_page(){
         $forums= Forum::where('status','=',1)->where('deleted_at','=',null)->get();
@@ -595,25 +692,68 @@ class PagesController extends Controller
 
         $extension = $document->extension;
         
+        if(Auth::check()){
+
+            $existHistory = downloadingHistory::where('userID','=',Auth::user()->id)->where('documentID','=',$document->id)->orderBy('id','desc')->first();
+
+            if($existHistory){     
+
+                $existHistoryDate = new Carbon($existHistory->created_at);
+
+                if($existHistoryDate->isToday()){     
+
+                    $existHistory->update([
+                        'total' => $existHistory->total + 1
+                    ]);
+                    
+                }
+                
+                else{
+                    downloadingHistory::create([
+                        'documentID'=>$document->id,
+                        'userID'=>Auth::user()->id,
+                        'total'=>1
+                    ]);
+                }
+               
+
+            }
+            else{
+                downloadingHistory::create([
+                    'documentID'=>$document->id,
+                    'userID'=>Auth::user()->id,
+                    'total'=>1
+                ]);
+            }
+
+        }
 
         $filename = $name.'.'.$extension;
         $tempFile = tempnam(sys_get_temp_dir(), $filename);
         copy($url, $tempFile);
 
+
+       
+
         return response()->download($tempFile, $filename)->deleteFileAfterSend(true);;
         
        
-        // return response()->json([
-        //     'url' => $document-> documentUrl,
-        //     'totalDownload' =>  $document->totalDownloading
-        // ]);
-        
-       
     }
-   
-    public function download_document_page($document_file,$document_id){
 
-        $id = $document_id;
+    public function generate_link_download(Request $request){
+
+        $document_id = $request->id;
+
+        $url = URL::temporarySignedRoute('tai-lieu.download', now()->addMinutes(30), ['documentID' => $document_id]);
+
+        return response()->json([
+             'url' => $url,
+        ]);
+
+    }
+    public function download_document_page(Request $request){
+
+        $id = $request->get('documentID');
         return view('client.homepage.document_download_page')->with('id',$id);
     }
 
@@ -626,7 +766,7 @@ class PagesController extends Controller
             'identifier_id' => intval($request->identifier_id),
             'type_id' => intval($request->type_id),
             'userID' => Auth::user()->id,
-            'status' =>0
+            'status' =>1
         ]);
         $report->save();
 
@@ -659,8 +799,6 @@ class PagesController extends Controller
         ->with('chapters',$chapters);
 
     }
-
-  
 
 
 }

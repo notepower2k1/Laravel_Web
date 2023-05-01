@@ -56,11 +56,12 @@
                                 <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false" data-export-title="Export">
                                     <thead>
                                         <tr class="nk-tb-item nk-tb-head">
+                                            <th class="nk-tb-col tb-col-mb"><span class="sub-text">Diễn đàn</span></th>        
+
                                             <th class="nk-tb-col"><span class="sub-text">Chủ đề</span></th>
                                             <th class="nk-tb-col tb-col-mb"><span class="sub-text">Người đăng</span></th>
                                             <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ngày đăng</span></th>
                                             <th class="nk-tb-col tb-col-lg"><span class="sub-text">Lần cập nhật cuối</span></th>        
-                                            <th class="nk-tb-col tb-col-mb"><span class="sub-text">Diễn đàn</span></th>        
                            
                                             <th class="nk-tb-col nk-tb-col-tools text-end">
                                             </th>
@@ -71,29 +72,29 @@
 
                                         <tr class="nk-tb-item" id ="row-{{ $forum_post->id }}">
 
-                                         
-                                            <td class="nk-tb-col">
-                                                <div class="user-card">                                           
-                                                    <div class="user-info">
-                                                        <span class="tb-lead">{{ $forum_post->topic }}<span class="dot dot-success d-md-none ms-1"></span></span>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="nk-tb-col tb-col-mb">
-                                              <span>{{  $forum_post->users->name }}</span>
-                                            </td>
-                                            <td class="nk-tb-col tb-col-lg">
-                                              <span>{{ $forum_post->created_at }}</span>
+                                          <td class="nk-tb-col tb-col-mb">
+                                            <span>{{ $forum_post->forums->name }}</span>
+                                          </td>       
+                                          <td class="nk-tb-col">
+                                              <div class="user-card">                                           
+                                                  <div class="user-info">
+                                                      <span class="tb-lead">{{ $forum_post->topic }}<span class="dot dot-success d-md-none ms-1"></span></span>
+                                                  </div>
+                                              </div>
+                                          </td>
+                                          <td class="nk-tb-col tb-col-mb">
+                                            <span>{{  $forum_post->users->name }}</span>
+                                          </td>
+                                          <td class="nk-tb-col tb-col-lg">
+                                            <span>{{ $forum_post->created_at }}</span>
 
-                                            </td>
-                                           
-                                            <td class="nk-tb-col tb-col-lg">
-                                              <span>{{ $forum_post->updated_at }}</span>
-                                            </td>        
+                                          </td>
+                                          
+                                          <td class="nk-tb-col tb-col-lg">
+                                            <span>{{ $forum_post->updated_at }}</span>
+                                          </td>        
                                             
-                                            <td class="nk-tb-col tb-col-mb">
-                                                <span>{{ $forum_post->forums->name }}</span>
-                                              </td>        
+                                          
                                             <td class="nk-tb-col nk-tb-col-tools">
                                               <ul class="nk-tb-actions gx-1">
                                                   {{-- <li class="nk-tb-action-hidden">
@@ -122,7 +123,8 @@
 
                                                                   </li>
                                                                   <li><a href="/admin/forum/post/{{$forum_post->id}}/edit"><em class="icon ni ni-edit"></em><span>Cập nhật</span></a></li>
-                                                                 
+                                                                  <li><a href="/admin/forum/post/{{$forum_post->id}}/detail"><em class="icon ni ni-eye"></em><span>Chi tiết</span></a></li>
+
 
                                                               </ul>
                                                           </div>

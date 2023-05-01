@@ -13,16 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('replies', function (Blueprint $table) {
+        Schema::create('follows', function (Blueprint $table) {
             $table->increments('id');
-            $table->longText('content');
-            $table->unsignedInteger('commentID');
-            $table->foreign('commentID')
-            ->references('id')->on('comments')->onDelete('cascade');
+            $table->unsignedInteger('identifier_id');
+            $table->unsignedInteger('type_id');
             $table->unsignedbigInteger('userID');
             $table->foreign('userID')
             ->references('id')->on('users')->onDelete('cascade');
-            $table->timestamp('deleted_at')->nullable();
+            $table->boolean('status')->default('0');
             $table->timestamps();
         });
     }
@@ -34,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('replies');
+        Schema::dropIfExists('follows');
     }
 };

@@ -2,28 +2,6 @@
 @section('pageTitle', 'Danh sách chương')
 @section('content')
 <div class="nk-block nk-block-lg">
-    <div class="nk-block-head">
-        <div class="nk-block-head-content">
-
-                {{-- <a href="{{ route('book.create') }}" class="btn btn-primary">Thêm chương</a> --}}
-        <div class="dropdown">
-            <a class="btn btn-primary dropdown-toggle" href="#" type="button" data-bs-toggle="dropdown">Thêm chương cho sách:</a>
-            <div class="dropdown-menu">
-                <ul class="link-list-plain ">
-                    {{-- @foreach ($books as $book )
-                        <li><a href="/admin/book/chapter/create/{{$book->id}}"><span>{{ $book->name }}</span></a></li>
-
-                    @endforeach --}}
-                    <li class="active"></li>
-                    <li><a href="#"><span>My Account</span></a></li>
-                    <li><a href="#"><span>Sign out</span></a></li>
-                </ul>
-            </div>
-            </div>
-                
-           
-        </div>
-    </div>
     <div class="card card-bordered card-preview">
         <div class="card-inner">
             <div class="filter-box">
@@ -86,8 +64,8 @@
                     <tr class="nk-tb-item" id ="row-{{ $chapter->id }}">
                         
                         <td class="nk-tb-col">
-                            <span>{{  $chapter->books->name }}</span>
-                            </td>
+                         <a href="/admin/book/{{$chapter->books->id   }}">  <span>{{  $chapter->books->name   }}</span></a> 
+                        </td>
                         <td class="nk-tb-col tb-col-mb">
                             <div class="user-card">                                             
                                 <div class="user-info">

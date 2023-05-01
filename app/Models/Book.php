@@ -41,11 +41,12 @@ class Book extends Model
         $firebase_storage_path = 'bookImage/';       
         $imageReference = app('firebase.storage')->getBucket()->object($firebase_storage_path.$this->image);
 
-        if ($imageReference->exists()) {
+        if ($imageReference) {
             $imageURL = $imageReference->signedUrl($expiresAt);
         } else {
             $imageURL = '';
         }
+
         return $imageURL;
     }
 

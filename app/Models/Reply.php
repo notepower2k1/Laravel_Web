@@ -25,7 +25,7 @@ class Reply extends Model
 
         return $dt->diffForHumans($now);
     }
-    protected $fillable = ['commentID','userID','content'];
+    protected $fillable = ['commentID','userID','content','totalLikes'];
 
     public function comments() {
         return $this->belongsTo(Comment::class,'commentID','id');
@@ -33,5 +33,9 @@ class Reply extends Model
 
     public function users() {
         return $this->belongsTo(User::class,'userID','id');
+    }
+
+    public function likes() {
+        return $this->hasMany(ReplyLike::class,'replyID','id');
     }
 }

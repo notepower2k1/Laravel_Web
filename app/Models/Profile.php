@@ -22,11 +22,12 @@ class Profile extends Model
         $firebase_storage_path = 'avatarImage/';       
         $imageReference = app('firebase.storage')->getBucket()->object($firebase_storage_path.$this->avatar);
 
-        if ($imageReference->exists()) {
+        if ($imageReference) {
             $imageURL = $imageReference->signedUrl($expiresAt);
         } else {
             $imageURL = '';
         }
+
         return $imageURL;
     }
 

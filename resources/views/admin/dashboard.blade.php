@@ -261,7 +261,7 @@
                         <div class="card-inner">
                             <div class="card-title-group">
                                 <div class="card-title">
-                                    <h6 class="title">Thống kê tài liệu thành viên tham gia trong tuần</h6>
+                                    <h6 class="title">Thống kê thành viên tham gia trong tuần</h6>
                                 </div>
                             </div>
                             <div class="data mt-2">

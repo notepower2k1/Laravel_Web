@@ -13,8 +13,10 @@
     <link rel="stylesheet" href="{{ asset('assets/css/dashlite.css?ver=3.1.2') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/loading.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/shine.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/book3d.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/emojionearea.min.css') }}">
 
+
+    
     <link id="skin-default" rel="stylesheet" href="{{ asset('assets/css/theme.css?ver=3.1.2') }}">
     <link
     href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css"
@@ -52,16 +54,16 @@
                         <div class="nk-content-body">                   
                             @yield('content')
 
-                            @if(Request::is('/','dien-dan/*','tim-kiem','the-loai','the-loai/*','sach/*','tai-lieu/*','sach-theo-doi','trang-ca-nhan','them-tai-lieu','thanh-vien/*'))
-
-                            @else
-                            @include('client/homepage.layouts.contentFooter')
-                            @endif
+                           
                         </div>
                     </div>
                 </div>
             </div>
-           
+            {{-- @if(Request::is('/','dien-dan/*','tim-kiem','the-loai','the-loai/*','sach/*','tai-lieu/*','sach-theo-doi','trang-ca-nhan','them-tai-lieu','thanh-vien/*'))
+
+                            @else
+                            @include('client/homepage.layouts.contentFooter')
+                            @endif --}}
             @include('client/homepage.layouts.footer')
         </div>
   
@@ -221,7 +223,6 @@
             const option_value = $('#modalSearchHomePage').find('ul').find('.active').find('a').data('value');
 
             
-            console.log(option_value);
             if(inputValue){
 
                 var fullValue = []

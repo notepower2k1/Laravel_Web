@@ -43,22 +43,6 @@
         border: 5px solid black;
     }
 
-    .document-card-image:hover{
-        animation: border_change 1s;
-    }
-    
-    @keyframes border_change { 
-        0% {
-            border: 5px solid black;
-
-
-        }
-
-        100% {
-            border: 5px solid white;
-
-        }
-    }
     #document-section{
         background-image: url('https://ebook.waka.vn/themes/desktop/reactjs/images/bg/bg-box-comic.jpg');
         background-position: center center;

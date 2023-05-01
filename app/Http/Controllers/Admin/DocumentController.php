@@ -7,6 +7,8 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\Document;
 use App\Models\DocumentType;
+use App\Models\downloadingHistory;
+use App\Models\Follow;
 use App\Models\previewDocumentImages;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -191,12 +193,55 @@ class DocumentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id) //like "show details"
-    {
+    public function show($id,$year=null) //like "show details"
+    {   
+        DB::statement("SET SQL_MODE=''");
+
+        $allYears = DB::select("SELECT distinct year(documents.created_at) as 'year'
+        from documents");
+
+        $totalDownloadingPerMonth =  DB::select("SELECT 
+        SUM(IF(month = 'Jan', total, 0)) AS 'Tháng 1', 
+        SUM(IF(month = 'Feb', total, 0)) AS 'Tháng 2', 
+        SUM(IF(month = 'Mar', total, 0)) AS 'Tháng 3', 
+        SUM(IF(month = 'Apr', total, 0)) AS 'Tháng 4', 
+        SUM(IF(month = 'May', total, 0)) AS 'Tháng 5', 
+        SUM(IF(month = 'Jun', total, 0)) AS 'Tháng 6', 
+        SUM(IF(month = 'Jul', total, 0)) AS 'Tháng 7', 
+        SUM(IF(month = 'Aug', total, 0)) AS 'Tháng 8', 
+        SUM(IF(month = 'Sep', total, 0)) AS 'Tháng 9', 
+        SUM(IF(month = 'Oct', total, 0)) AS 'Tháng 10', 
+        SUM(IF(month = 'Nov', total, 0)) AS 'Tháng 11', 
+        SUM(IF(month = 'Dec', total, 0)) AS 'Tháng 12' 
+        FROM ( 
+            SELECT SUM(downloading_histories.total) as 'total' , DATE_FORMAT(downloading_histories.created_at, '%b') AS month
+            FROM downloading_histories 
+            WHERE downloading_histories.documentID = $id and YEAR(downloading_histories.created_at) = $year
+            GROUP by downloading_histories.documentID,DATE_FORMAT(downloading_histories.created_at, '%m-%Y')
+        ) as sub");
+
+
+        $totalDownloadingInYear = downloadingHistory::where('documentID','=',$id)->whereYear('created_at', '=', $year)->sum('total');
+
+
+        $totalDownloadingPerDate = DB::select("SELECT SUM(downloading_histories.total) as 'total', DATE(downloading_histories.created_at) as 'date'
+        from downloading_histories 
+        WHERE downloading_histories.documentID = $id and YEAR(downloading_histories.created_at) = $year
+        GROUP by downloading_histories.documentID,DATE(downloading_histories.created_at)");
+
         $document = Document::findOrFail($id);
 
+        $downloadHistory = downloadingHistory::where('documentID','=',$id)->get();
+
         $previewImages = previewDocumentImages::where('documentID','=',$id)->get();
+
         return view('admin.document.detail')
+        ->with('totalDownloadingInYear',$totalDownloadingInYear)
+        ->with('totalDownloadingPerDate',$totalDownloadingPerDate)
+        ->with('totalDownloadingPerMonth',$totalDownloadingPerMonth)
+        ->with('allYears',$allYears)
+        ->with('statisticsYear',$year)
+        ->with('downloadHistory',$downloadHistory)
         ->with('previewImages',$previewImages)
         ->with('document',$document);
         
@@ -289,7 +334,10 @@ class DocumentController extends Controller
                     'isCompleted' => $request->isCompleted,
                 ]);
 
-
+        Follow::where('type_id','=',1)->where('identifier_id','=',$request->id)->update([
+            'status' => 1
+        ]);
+        
         return redirect('/admin/document');
        
     }
@@ -371,12 +419,44 @@ class DocumentController extends Controller
         WHERE YEAR(documents.created_at) = $year and documents.deleted_at is null
         GROUP by  DATE(documents.created_at)");
         
+        $totalDownloadingPerMonth =  DB::select("SELECT 
+        SUM(IF(month = 'Jan', total, 0)) AS 'Tháng 1', 
+        SUM(IF(month = 'Feb', total, 0)) AS 'Tháng 2', 
+        SUM(IF(month = 'Mar', total, 0)) AS 'Tháng 3', 
+        SUM(IF(month = 'Apr', total, 0)) AS 'Tháng 4', 
+        SUM(IF(month = 'May', total, 0)) AS 'Tháng 5', 
+        SUM(IF(month = 'Jun', total, 0)) AS 'Tháng 6', 
+        SUM(IF(month = 'Jul', total, 0)) AS 'Tháng 7', 
+        SUM(IF(month = 'Aug', total, 0)) AS 'Tháng 8', 
+        SUM(IF(month = 'Sep', total, 0)) AS 'Tháng 9', 
+        SUM(IF(month = 'Oct', total, 0)) AS 'Tháng 10', 
+        SUM(IF(month = 'Nov', total, 0)) AS 'Tháng 11', 
+        SUM(IF(month = 'Dec', total, 0)) AS 'Tháng 12' 
+        FROM ( 
+            SELECT DATE_FORMAT(downloading_histories.created_at, '%b') AS month, 
+            SUM(downloading_histories.total) as total FROM downloading_histories 
+            WHERE Year(downloading_histories.created_at) = $year
+            GROUP BY DATE_FORMAT(downloading_histories.created_at, '%m-%Y')
+        ) as sub");
+
+        
+        $totalDownloadingInYear = downloadingHistory::whereYear('created_at', '=', $year)->sum('total');
+
+
+        $totalDownloadingPerDate = DB::select("SELECT SUM(downloading_histories.total) as 'total', DATE(downloading_histories.created_at) as 'date'
+        from downloading_histories 
+        WHERE YEAR(downloading_histories.created_at) = $year
+        GROUP by DATE(downloading_histories.created_at)");
+
          return view('admin.document.statistics')
             ->with('allYears',$allYears)
             ->with('totalDocumentsInYear',$totalDocumentsInYear->count())
+            ->with('totalDownloadingInYear',$totalDownloadingInYear)
             ->with('totalDocumentsPerDate',$totalDocumentsPerDate)
             ->with('statisticsYear',$year)
             ->with('totalDocumentsPerMonth',$totalDocumentsPerMonth)
+            ->with('totalDownloadingPerMonth',$totalDownloadingPerMonth)
+            ->with('totalDownloadingPerDate',$totalDownloadingPerDate)
             ->with('totalByTypes', $totalByTypes);
             
     }

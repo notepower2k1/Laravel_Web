@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Book;
 use App\Models\bookMark;
 use App\Models\BookType;
+use App\Models\Follow;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\ratingBook;
@@ -207,7 +208,9 @@ class ClientBookController extends Controller
                     'type_id' => intval($request->book_type_id),
                     'image' => $generatedImageName,
                     'isCompleted' => $request -> isCompleted
-                ]);
+        ]);
+
+      
         return redirect("/quan-ly/sach");
 
     }
@@ -240,40 +243,6 @@ class ClientBookController extends Controller
       
     }
 
-    public function markBook(Request $request){
-
-        $bookMark = bookMark::create([
-            'bookID' => $request -> book_id,
-            'userID' => Auth::user()->id
-        ]);
-
-        $book = Book::findOrFail($request -> book_id);
-        $book->totalBookMarking = $book->totalBookMarking + 1;
-        $book->save();
-
-        $bookMark->save();
-        return response()->json([
-            'success' => 'Bạn đã theo dõi sách thành công!!!',
-            'totalBookMarking' => $book->totalBookMarking
-        ]);
-    }
-
-    public function removeMarkBook($id){
-        $book_mark = bookMark::findOrFail($id);
-
-        $book = Book::findOrFail($book_mark -> bookID);
-        $book->totalBookMarking = $book->totalBookMarking - 1;
-        $book->save();
-
-
-        $book_mark->delete();
-
-     
-        
-        return response()->json([
-            'success' => 'Bỏ theo dõi sách thành công'
-        ]);
-    }
 
     public function ratingBook(Request $request){
 
@@ -282,10 +251,13 @@ class ClientBookController extends Controller
         $book_rating = ratingBook::create([
             'bookID' => $request -> id,
             'userID' => Auth::user()->id,
-            'score' => $request -> score
+            'score' => $request -> score,
+            'content' => $request ->content
         ]);
         $book_rating ->save();
+
         array_push($rating_book_score,$request -> score);
+
         $rating_book_score = array_filter($rating_book_score, fn($x)=>$x !== '');
         $average = array_sum($rating_book_score)/count($rating_book_score);
 
@@ -304,10 +276,10 @@ class ClientBookController extends Controller
        
     }
 
-    public function changeBookMarkStatus(Request $request){
-        $book = bookMark::findOrFail($request->id);
-        $book->status = 0;
-        $book ->save();
+    public function changeFollowStatus(Request $request){
+        $follow = Follow::findOrFail($request->id);
+        $follow->status = 0;
+        $follow ->save();
 
 
         return response()->json([

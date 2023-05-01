@@ -173,7 +173,7 @@
                                                                     <em class="icon ni ni-trash"></em><span>Xóa</span>
                                                                   </a>
                                                                   </li>
-                                                                  <li><a href="/admin/book/{{$book->id}}"><em class="icon ni ni-eye"></em><span>Chi tiết</span></a></li>
+                                                                  <li><a href="/admin/book/{{$book->id}}/{{ \Carbon\Carbon::now()->year }}"><em class="icon ni ni-eye"></em><span>Chi tiết</span></a></li>
 
                                                                  
                                                                   <li><a href="/admin/book/{{$book->id}}/edit"><em class="icon ni ni-edit"></em><span>Cập nhật</span></a></li>

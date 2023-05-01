@@ -13,16 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('replies', function (Blueprint $table) {
+        Schema::create('reply_likes', function (Blueprint $table) {
             $table->increments('id');
-            $table->longText('content');
-            $table->unsignedInteger('commentID');
-            $table->foreign('commentID')
-            ->references('id')->on('comments')->onDelete('cascade');
+            $table->boolean('isLike');
+            $table->unsignedInteger('replyID');
+            $table->foreign('replyID')
+            ->references('id')->on('replies')->onDelete('cascade');
             $table->unsignedbigInteger('userID');
             $table->foreign('userID')
             ->references('id')->on('users')->onDelete('cascade');
-            $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });
     }
@@ -34,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('replies');
+        Schema::dropIfExists('reply_likes');
     }
 };

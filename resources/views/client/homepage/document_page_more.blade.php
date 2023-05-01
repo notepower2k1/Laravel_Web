@@ -1,14 +1,15 @@
 @extends('client/homepage.layouts.app')
 @section('additional-style')
+<link rel="stylesheet" href="{{ asset('assets/css/animateddocument.css') }}">
+
 <style>
-    .high_downloading_documents:hover{
-        background-color:rgba(34,197,94,0.9);
-    }
+ 
+    
 </style>
 @endsection
 @section('content')
 
-      
+{{--       
     <div class="container">
         <div class="nk-block">
             <div class="row">
@@ -45,7 +46,69 @@
 
         {{ $documents->links('vendor.pagination.custom',['elements' => $documents]) }}
     </div>
-    </div>
+    </div> --}}
       
+    <div class="container">
 
+        <h2>{{ $title }}</h2>
+        <div class="nk-block">
+           
+
+				<ul class="align">
+                    @foreach ($documents as $document)
+                    <li>
+                        <figure class='book'>
+        
+                            <!-- Front -->
+            
+                                <ul class='hardcover_front'>
+                                    <li>
+                                        <span class="ribbon">Best</span>
+                                        <img src="{{ $document->url }}" alt="" width="100%" height="100%">
+                                    </li>
+                                    <li></li>
+                                </ul>
+            
+                            <!-- Pages -->
+            
+                                <ul class='page'>
+                                    <li></li>
+                                    <li class="d-flex align-items-start justify-content-center">
+                                        <a class="atag_btn"
+                                        href="/tai-lieu/{{$document->id}}/{{$document->slug}}">Chi tiết</a>
+                                    </li>
+                                    <li></li>
+                                    <li></li>
+                                    <li></li>
+                                </ul>
+            
+                            <!-- Back -->
+            
+                                <ul class='hardcover_back'>
+                                    <li></li>
+                                    <li></li>
+                                </ul>
+                                <ul class='book_spine'>
+                                    <li></li>
+                                    <li></li>
+                                </ul>
+                                <figcaption>
+                                    <h4>{{ $document->name }}</h4>
+                                    <span>{{ $document->author }}</span>
+                                    <p>{{ Str::limit($document->description,200) }}</p>
+                                </figcaption>
+                        </figure>
+                    </li>
+                    @endforeach   
+                </ul>
+               
+        
+            
+            <div class="col-md-12 d-flex justify-content-end">                          
+
+                {{ $documents->links('vendor.pagination.custom',['elements' => $documents]) }}
+            </div>
+        </div>
+    </div>
+   
 @endsection

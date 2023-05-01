@@ -49,18 +49,21 @@ class Notification extends Model
         
                 break;
             case 4:
-                $item = BookComment::findOrFail($this->identifier_id);   
-                $identifier = $item->books->name;
+                $item = Comment::findOrFail($this->identifier_id);
+                $book = Book::findOrFail($item->identifier_id);
+                $identifier = $book->name;
        
                 break;
             case 5:
-                $item = DocumentComment::findOrFail($this->identifier_id); 
-                $identifier = $item->documents->name;
+                $item = Comment::findOrFail($this->identifier_id);
+                $document = Document::findOrFail($item->identifier_id);
+                $identifier = $document->name;
          
                 break;
             case 6:
-                $item = PostComment::findOrFail($this->identifier_id); 
-                $identifier = $item->posts->name;
+                $item = Comment::findOrFail($this->identifier_id);
+                $post = ForumPosts::findOrFail($item->identifier_id);
+                $identifier = $post->name;
          
                 break;
             default:

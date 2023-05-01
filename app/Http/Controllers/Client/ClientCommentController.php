@@ -48,18 +48,20 @@ class ClientCommentController extends Controller
         ]);
 
         $option = $request->option;
-
+        $content = $request->content;
+        $item_id = $request->item_id;
         $message = 'Bình luận thành công';
 
         $comment = Comment::create([
-            'content' => $request->content,
-            'identifier_id' =>$request->item_id,
+            'content' => $content,
+            'identifier_id' =>$item_id,
             'type_id'=>$option,
             'userID'=>Auth::user()->id,
-            'totalReplies'=> 0
-        
+            'totalReplies'=> 0,
+            'totalLikes' => 0,  
         ]);
 
+        $totalComments = 0;
         switch ($option) {
             case 1:        
 
@@ -68,16 +70,17 @@ class ClientCommentController extends Controller
                 $document ->save();
 
 
-                if($document->users->id != Auth::user()->id){
-                    $notification = Notification::create([             
+                if(!$document->users->id == Auth::user()->id){
+                    Notification::create([             
                         'identifier_id'=>$comment->identifier_id,
                         'type_id'=> 2, 
                         'senderID' => Auth::user()->id,
                         'receiverID'=>$comment->documents->users->id,
-                        'status'=>1
+                        'status'=>1,
                     ]);
                 }
               
+                $totalComments = $document->totalComments;
 
                 break;
             case 2:
@@ -86,16 +89,18 @@ class ClientCommentController extends Controller
                 $book->totalComments = $book->totalComments + 1;
                 $book ->save();
 
-                if($book->users->id != Auth::user()->id){
-                    $notification = Notification::create([
+                if(!$book->users->id == Auth::user()->id){
+                    Notification::create([
                         'identifier_id'=>$comment->identifier_id,
                         'type_id'=> 1, 
                         'senderID' => Auth::user()->id,
                         'receiverID'=>$comment->books->users->id,
-                        'status'=>1
+                        'status'=>1,
                     ]);
                 }
               
+                $totalComments = $book->totalComments;
+
                 break;
             case 3:
 
@@ -103,24 +108,27 @@ class ClientCommentController extends Controller
                 $post->totalComments = $post->totalComments + 1;
                 $post ->save();
 
-                if($post->users->id != Auth::user()->id){
-                    $notification = Notification::create([
+                if(!$post->users->id == Auth::user()->id){
+                    Notification::create([
                         'identifier_id'=>$comment->identifier_id,
                         'type_id'=> 3, 
                         'senderID' => Auth::user()->id,
                         'receiverID'=>$comment->posts->users->id,
-                        'status'=>1
+                        'status'=>1,
                     ]);
                 }
-               
+
+                $totalComments = $post->totalComments;
 
                 break;
             default:
                 $message = 'Bình luận không thành công';
             
         }
+
         return response()->json([
             'success' => $message,
+            'totalComments' => $totalComments
         ]);
    }
 
@@ -134,7 +142,8 @@ class ClientCommentController extends Controller
     $reply = Reply::create([
         'content' => $request->content,
         'userID'=>Auth::user()->id,
-        'commentID' => $request->comment_id
+        'commentID' => $request->comment_id,
+        'totalLikes' => 0
     ]);
 
     $comment = Comment::findOrFail($request->comment_id);
@@ -144,6 +153,7 @@ class ClientCommentController extends Controller
 
     $option = $comment->type_id;
 
+    $totalComments = 0;
 
     $message = 'Phản hồi thành công';
         switch ($option) {
@@ -154,7 +164,7 @@ class ClientCommentController extends Controller
                 $document ->save();
 
                 if($comment->users->id != Auth::user()->id){
-                    $notification = Notification::create([
+                    Notification::create([
                         'identifier_id'=>$comment->id,
                         'type_id'=> 5, 
                         'senderID' => Auth::user()->id,
@@ -163,6 +173,7 @@ class ClientCommentController extends Controller
                     ]);
                 }
 
+                $totalComments = $document->totalComments;
 
                 break;
             case 2:
@@ -174,7 +185,7 @@ class ClientCommentController extends Controller
                 $book ->save();
 
                 if($comment->users->id != Auth::user()->id){
-                    $notification = Notification::create([
+                    Notification::create([
                         'identifier_id'=>$comment->id,
                         'type_id'=> 4, 
                         'senderID' => Auth::user()->id,
@@ -182,6 +193,9 @@ class ClientCommentController extends Controller
                         'status'=>1
                     ]);
                 }
+
+                $totalComments = $book->totalComments;
+
                 break;
             case 3:              
 
@@ -190,7 +204,7 @@ class ClientCommentController extends Controller
                 $post ->save();
 
                 if($comment->users->id != Auth::user()->id){
-                    $notification = Notification::create([
+                    Notification::create([
                         'identifier_id'=>$comment->id,
                         'type_id'=> 6, 
                         'senderID' => Auth::user()->id,
@@ -198,7 +212,9 @@ class ClientCommentController extends Controller
                         'status'=>1
                     ]);
                 }
-                break;
+                $totalComments = $post->totalComments;
+
+                break;            
             default:
                 $message = 'Phản hồi không thành công';
             
@@ -208,6 +224,7 @@ class ClientCommentController extends Controller
     
     return response()->json([
         'success' => $message,
+        'totalComments' => $totalComments
     ]);
 }
 
@@ -227,6 +244,8 @@ class ClientCommentController extends Controller
 
     $total = $allRepliesOfComment->count();
 
+    $totalComments = 0;
+
 
     $option = $comment->type_id;
     switch ($option) {
@@ -242,7 +261,7 @@ class ClientCommentController extends Controller
                 $document ->save();
             }
 
-       
+                $totalComments = $document->totalComments;
             break;
         case 2:
             if($total){
@@ -257,6 +276,7 @@ class ClientCommentController extends Controller
             }
          
 
+            $totalComments = $book->totalComments;
 
             break;
         case 3:
@@ -273,12 +293,14 @@ class ClientCommentController extends Controller
                 $post ->save();
             }
          
+            $totalComments = $post->totalComments;
+
             break;
         default:
 
     }
       
-
+        return response()->json(['totalComments' => $totalComments]);
    }
 
    public function delete_reply_comment($item_id){
@@ -293,27 +315,42 @@ class ClientCommentController extends Controller
         $comment ->save();
 
         $option = $comment->type_id;
+
+        $totalComments = 0;
+
         switch ($option) {
             case 1:
                 $document = Document::findOrFail($reply->comments->identifier_id);
                 $document->totalComments = $document->totalComments - 1;
                 $document ->save();
+
+                $totalComments = $document->totalComments;
+
                 break;
             case 2:         
 
                 $book = Book::findOrFail($reply->comments->identifier_id);
                 $book->totalComments = $book->totalComments - 1;
                 $book ->save();
+
+                $totalComments = $book->totalComments;
+
                 break;
             case 3:
 
                 $post = ForumPosts::findOrFail($reply->comments->identifier_id);
                 $post->totalComments = $post->totalComments + 1;
                 $post ->save();
+
+                $totalComments = $post->totalComments;
+
                 break;
             default:
                     
         }
+
+        return response()->json(['totalComments' => $totalComments]);
+
    }
 
    public function edit_user_comment(Request $request,$item_id){
@@ -343,6 +380,7 @@ class ClientCommentController extends Controller
         ->update([
                 'content' => $request->content,
         ]);
+
         $message = 'Cập nhật phản hồi thành công';
         
 
