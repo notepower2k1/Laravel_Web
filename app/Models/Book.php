@@ -18,7 +18,7 @@ class Book extends Model
     public $incrementing = false;
 
     protected $fillable = ['name', 'author', 
-    'description' ,'isCompleted','slug','type_id','image','userCreatedID','isPublic','language','numberOfChapter','ratingScore','totalReading','totalBookMarking','totalComments','status'];
+    'description' ,'isCompleted','slug','type_id','image','userCreatedID','isPublic','language','numberOfChapter','ratingScore','totalReading','totalBookMarking','totalComments','status','file'];
 
 
     public function types() {
@@ -33,7 +33,7 @@ class Book extends Model
         return $this->hasMany(Chapter::class,'book_id','id');
     }
 
-    protected $appends = ['url'];
+    protected $appends = ['url','bookUrl'];
 
     public function getUrlAttribute()
     {
@@ -50,7 +50,22 @@ class Book extends Model
         return $imageURL;
     }
 
-  
+    public function getBookUrlAttribute()
+    {
+        $expiresAt = new \DateTime('tomorrow');
+        $firebase_storage_path = 'bookFile/';     
+        
+        $imageReference = app('firebase.storage')->getBucket()->object($firebase_storage_path.$this -> file);
+
+        if ($imageReference) {
+            $fileURL = $imageReference->signedUrl($expiresAt);
+        } else {
+            $fileURL = '';
+        }
+
+        return $fileURL;
+
+    }
   
 
 }

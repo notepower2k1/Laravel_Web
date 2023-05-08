@@ -64,7 +64,7 @@
                     <tr class="nk-tb-item" id ="row-{{ $chapter->id }}">
                         
                         <td class="nk-tb-col">
-                         <a href="/admin/book/{{$chapter->books->id   }}">  <span>{{  $chapter->books->name   }}</span></a> 
+                         <a href="/admin/book/detail/{{$chapter->books->id}}/{{ \Carbon\Carbon::now()->year }}">  <span>{{  $chapter->books->name   }}</span></a> 
                         </td>
                         <td class="nk-tb-col tb-col-mb">
                             <div class="user-card">                                             

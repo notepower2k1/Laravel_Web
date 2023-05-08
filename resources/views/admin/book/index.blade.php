@@ -173,13 +173,16 @@
                                                                     <em class="icon ni ni-trash"></em><span>Xóa</span>
                                                                   </a>
                                                                   </li>
-                                                                  <li><a href="/admin/book/{{$book->id}}/{{ \Carbon\Carbon::now()->year }}"><em class="icon ni ni-eye"></em><span>Chi tiết</span></a></li>
+                                                                  <li><a href="/admin/book/detail/{{$book->id}}/{{ \Carbon\Carbon::now()->year }}"><em class="icon ni ni-eye"></em><span>Chi tiết</span></a></li>
 
-                                                                 
+                                                                  
                                                                   <li><a href="/admin/book/{{$book->id}}/edit"><em class="icon ni ni-edit"></em><span>Cập nhật</span></a></li>
-                                                                  <li class="divider"></li>
-                                                                  <li><a href="/admin/book/chapter/{{$book->id}}"><em class="icon ni ni-list-index"></em><span>Xem chương ({{ $book->numberOfChapter }})</span></a></li>
+                                                                  @if($book->numberOfChapter > 0)
 
+                                                                  <li class="divider"></li>
+
+                                                                  <li><a href="/admin/book/chapter/{{$book->id}}"><em class="icon ni ni-list-index"></em><span>Xem chương ({{ $book->numberOfChapter }})</span></a></li>
+                                                                  @endif
                                                               </ul>
                                                           </div>
                                                       </div>
@@ -326,8 +329,6 @@
 
       var status = $(this).prop('checked') == true ? 1 : 0;
       var book_id = $(this).data('id');
-
-      
       $.ajax({ 
         type:"GET",
         url:'/admin/book/update/changeStatus',

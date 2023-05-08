@@ -39,6 +39,12 @@
                                                 <div class="fs-16px fw-bold text-secondary" id="totalBookMarking">{{ $book->totalBookMarking }}</div>
                                             </li>
                                             
+                                            @if($book->file)
+                                            <li>
+                                                <div class="fs-14px text-muted">File</div>
+                                                <div class="fs-16px fw-bold text-secondary" id="totalBookMarking"><a href="{{ $book->bookUrl }}">File</a></div>
+                                            </li>
+                                            @endif
                                         </ul>
                                     </div>
                                     

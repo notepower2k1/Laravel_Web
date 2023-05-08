@@ -63,7 +63,9 @@
             
                                 <ul class='hardcover_front'>
                                     <li>
-                                        <span class="ribbon">Best</span>
+                                        @if(\Carbon\Carbon::parse($document->created_at)->isToday())
+                                        <span class="ribbon">Mới</span>
+                                        @endif
                                         <img src="{{ $document->url }}" alt="" width="100%" height="100%">
                                     </li>
                                     <li></li>
@@ -75,7 +77,7 @@
                                     <li></li>
                                     <li class="d-flex align-items-start justify-content-center">
                                         <a class="atag_btn"
-                                        href="/tai-lieu/{{$document->id}}/{{$document->slug}}">Chi tiết</a>
+                                        href="/tai-lieu/{{$document->id}}/{{$document->slug}}">{{ Str::limit($document->description,150) }}</a>
                                     </li>
                                     <li></li>
                                     <li></li>
@@ -95,7 +97,7 @@
                                 <figcaption>
                                     <h4>{{ $document->name }}</h4>
                                     <span>{{ $document->author }}</span>
-                                    <p>{{ Str::limit($document->description,200) }}</p>
+                                    {{-- <p>{{ Str::limit($document->description,200) }}</p> --}}
                                 </figcaption>
                         </figure>
                     </li>

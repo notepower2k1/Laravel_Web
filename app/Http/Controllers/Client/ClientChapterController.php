@@ -38,7 +38,9 @@ class ClientChapterController extends Controller
         return view('client.manage.chapter.create')->with('book_id',$id);
 
     }
-
+    public function clean($str){
+        return str_replace([':', '\\', '/', '*','@','#','$','^'],"",$str);
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -69,8 +71,8 @@ class ClientChapterController extends Controller
 
 
         $chapter_id = Chapter::insertGetId([
-            'code' => $request->code,
-            'name' => $name,
+            'code' => $this->clean($request->code),
+            'name' =>  $this->clean($name),
             'content' => $request->content,
             'slug' =>  $slug,
             'book_id' =>  $request->book_id,
@@ -170,8 +172,8 @@ class ClientChapterController extends Controller
 
         $chapter = Chapter::findOrFail($id)
         ->update([
-            'code' => $request->code,
-            'name' => $name,
+            'code' => $this->clean($request->code),
+            'name' =>  $this->clean($name), 
             'content' => $request->content,
             'slug' =>  $slug ,
             'numberOfWords' => $word_count

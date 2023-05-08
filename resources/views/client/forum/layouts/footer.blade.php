@@ -4,8 +4,8 @@
       
   
     <!-- Section: Links  -->
-    <section class="pt-1">
-      <div class="container text-center text-md-start mt-5">
+    <section class="text-white">
+      <div class="p-4 text-center text-md-start">
         <!-- Grid row -->
         <div class="row">
           <!-- Grid column -->
@@ -13,8 +13,8 @@
             <!-- Content -->
             <h6 class="text-uppercase fw-bold mb-4">
               <i class="fas fa-gem me-3"></i> <a href="/" class="logo-link">
-                <img class="logo-light logo-img" src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/forum_logo.png" alt="logo">
-                <img class="logo-dark logo-img" src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/forum_logo.png" alt="logo-dark">
+                <img class="logo-light logo-img" src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/forum_logo_white.png" alt="logo">
+                <img class="logo-dark logo-img" src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/forum_logo_white.png" alt="logo-dark">
             </a>
             </h6>
             <p>

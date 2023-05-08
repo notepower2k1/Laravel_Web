@@ -28,7 +28,7 @@
             </div>
       </div>
       <div class="nk-fmg-quick-list nk-block" style="min-height:100vh">
-        <div class="card card-bordered card-preview">
+        <div class="card card-bordered shadow">
           <div class="card-inner">
               <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false" data-export-title="Export">
                   <thead>

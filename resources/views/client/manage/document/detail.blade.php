@@ -28,7 +28,7 @@
             </div>
         </div>
         <div class="nk-fmg-quick-list nk-block">
-            <div class="card card-bordered card-preview">
+            <div class="card card-bordered shadow">
                 <div class="card-inner">
                     <div class="row">
                         <div class="col-lg-6">

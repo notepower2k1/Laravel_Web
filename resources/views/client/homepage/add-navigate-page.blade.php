@@ -107,7 +107,7 @@
                                                                     </svg>
                                                                 </span>
                                                                 <span class="lead-text mb-1 mt-3">Tài liệu tham khảo trực tuyến</span>
-                                                                <span class="sub-text">Dạng tài liệu được viết và lưu dưới dạng các tệp pdf, docx, ...</span>
+                                                                <span class="sub-text">Dạng tài liệu được viết và lưu dưới dạng các tệp pdf</span>
                                                             </span>
                                                         </label>
                                                     </div>
@@ -186,6 +186,25 @@
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                <div class="col-sm-6" id="file_book_input"> 
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="file_book">File đính kèm</label>
+
+                                                        <input type="file"
+                                                        name="file_book" id="file_book"
+                                                        class="form-control col-6 mb-4 " accept=".pdf">
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label>Tiến độ<sup>*</sup></label>
+                                                        <select required class="form-control mb-4 col-6" name="isCompleted"> 
+                                                        <option value=0>Chưa hoàn thành</option>
+                                                        <option value=1>Đã hoàn thành</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>  
                                      
@@ -202,11 +221,12 @@
                                                 <div>
                                                     <input type="file"  style="display: none" class="form-control" name="previewImages[]" id="previewImageInput" multiple />
 
-                                                    <div id="renderArea" style="display: none">
-                                                </div>
+                                                    <div id="renderArea" style="display: none"></div>
                                                
+                                                </div>
                                             </div>
                                         </div>
+
                                         <div class="nk-stepper-step text-center">
                                             <h5 class="title mb-2">Bạn đã hoàn thành các bước!</h5>
                                             <p class="text-soft">Để kết thúc quá trính hãy nhấn nút thêm!!!</p>
@@ -1067,12 +1087,15 @@
             fileInput.hide();
             documentType.hide();
             bookType.show();
+            $("#file_book_input").show();
             
         }
         else{
             fileInput.show();
             bookType.hide();
             documentType.show();
+            $("#file_book_input").hide();
+
         }
 
     })
@@ -1099,10 +1122,38 @@
         e.preventDefault();    
         var selection = $("input[type=radio][name=type-option]:checked").val();  
         if(selection == 1){ 
+
+            $('#submit-btn').attr("disabled","disabled");
+
+                Swal.fire({
+                title: 'Đang thêm dữ liệu!',
+                text: 'Vui lòng đợi thêm dữ liệu.',
+                imageUrl: 'https://raw.githubusercontent.com/notepower2k1/MyImage/main/gif/codevember-day-6-bookshelf-loader.gif',
+                imageWidth: 400,
+                imageHeight: 200,
+                imageAlt: 'Custom image',
+                showConfirmButton: false
+            });
+
+
+            
             $('#stepper-create').attr('action', "/quan-ly/sach").submit();
           
         }
         else if (selection == 2){
+            
+            $('#submit-btn').attr("disabled","disabled");
+
+                Swal.fire({
+                title: 'Đang thêm dữ liệu!',
+                text: 'Vui lòng đợi thêm dữ liệu.',
+                imageUrl: 'https://raw.githubusercontent.com/notepower2k1/MyImage/main/gif/codevember-day-6-bookshelf-loader.gif',
+                imageWidth: 400,
+                imageHeight: 200,
+                imageAlt: 'Custom image',
+                showConfirmButton: false
+            });
+            
             $('#stepper-create').attr('action', "/quan-ly/tai-lieu").submit();
 
         }
@@ -1125,7 +1176,6 @@
     //
     // Asynchronous download PDF as an ArrayBuffer
     //
-    var pdf = document.getElementById('file_document');
 
     base64ToFile = (url) => {
         let arr = url.split(',');
@@ -1236,31 +1286,62 @@
         
       }
     }
-    pdf.onchange = function (ev) {
-      if (file = document.getElementById('file_document').files[0]) {
-        fileReader = new FileReader();
-        fileReader.onload = function (ev) {
-          // console.log(ev);
 
-          var loadingTask = pdfjsLib.getDocument(fileReader.result);
+    function documentFileHandle(){
+        var pdf = document.getElementById('file_document');
 
-          loadingTask.promise
-            .then(function (pdf) {
-              // console.log('PDF loaded');
-              // Fetch the first page
-              fetch1Page(pdf);
-              fetch5Pages(pdf);
-       
-            }, function (error) {
-              console.log(error);
-            });
-        };
-        fileReader.readAsArrayBuffer(file);
-      }
+        pdf.onchange = function (ev) {
+        if (file = document.getElementById('file_document').files[0]) {
+            fileReader = new FileReader();
+            fileReader.onload = function (ev) {
+            // console.log(ev);
+
+            var loadingTask = pdfjsLib.getDocument(fileReader.result);
+
+            loadingTask.promise
+                .then(function (pdf) {
+                // console.log('PDF loaded');
+                // Fetch the first page
+                fetch1Page(pdf);
+                fetch5Pages(pdf);
+        
+                }, function (error) {
+                console.log(error);
+                });
+            };
+            fileReader.readAsArrayBuffer(file);
+        }
+        }
     }
     
+    function bookFileHandle(){
+        var pdf = document.getElementById('file_book');
 
+        pdf.onchange = function (ev) {
+        if (file = document.getElementById('file_book').files[0]) {
+            fileReader = new FileReader();
+            fileReader.onload = function (ev) {
+            // console.log(ev);
 
+            var loadingTask = pdfjsLib.getDocument(fileReader.result);
+
+            loadingTask.promise
+                .then(function (pdf) {
+                // console.log('PDF loaded');
+                // Fetch the first page
+                fetch1Page(pdf);
+        
+                }, function (error) {
+                console.log(error);
+                });
+            };
+            fileReader.readAsArrayBuffer(file);
+        }
+        }
+    }
+    
+    documentFileHandle();
+    bookFileHandle();
     function uploadPreviewImage() {
 
       var renderArea = document.getElementById('renderArea');

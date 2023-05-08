@@ -75,7 +75,7 @@
                   @switch($comment->type_id)
                     @case(1)
 
-                      <a href="/admin/document/{{ $comment->identifier_id }}">
+                      <a href="/admin/book/detail/{{$comment->identifier_id}}/{{ \Carbon\Carbon::now()->year }}">
                         <span class="badge rounded-pill bg-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $comment->identifier->name }}">
                           {{ $comment->types->name }}
                         </span>
@@ -84,13 +84,13 @@
                       @break
 
                     @case(2)
-                      <a href="/admin/book/{{ $comment->identifier_id }}">
+                      <a href="/admin/document/detail/{{$comment->identifier_id}}/{{ \Carbon\Carbon::now()->year }}">
                       <span class="badge rounded-pill bg-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $comment->identifier->name }}">{{ $comment->types->name }}</span>
                       </a>
                       @break
 
                     @case(3)
-                      <a href="#">
+                      <a href="/admin/forum/post/{{$comment->id}}/detail">
                         <span class="badge rounded-pill bg-outline-success" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $comment->identifier->topic }}">{{  $comment->types->name }}</span>
                         @break
                       </a>
@@ -112,6 +112,7 @@
                                       <li><a href="#" class="delete-button-book" data-id="{{ $comment->id }}">
                                         <em class="icon ni ni-trash"></em><span>Xóa</span>
                                       </a>
+                                      </li>
                                       <li>
                                         <a href="#" class="content-btn" data-id={{ $comment->id }}>
                                           <em class="icon ni ni-notice"></em><span>Nội dung</span>
@@ -126,7 +127,7 @@
                           </div>
                       </li>
                   </ul>
-              </td>
+                </td>
             </tr><!-- .nk-tb-item  -->
           @endforeach
 
@@ -272,7 +273,9 @@
 
     })
 
-    $('#DataTables_Table_0 tbody').on('click','.content-btn',function(){
+    $('#DataTables_Table_0 tbody').on('click','.content-btn',function(e){
+          e.preventDefault();
+
         
           var comment_id = $(this).data('id');
           $('#modalContent').find('.modal-body').empty();

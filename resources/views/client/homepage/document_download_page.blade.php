@@ -49,6 +49,7 @@
                                     <form action="/tai-tai-lieu" method="GET"> 
                                         <input type="hidden" name="id" value="{{ $id }}">
 
+                                        <input type="hidden" name="option" value="{{ $option }}">
 
                                         <div id="captcha-box" style="display: none">
                                             <div class="d-flex justify-content-center" >

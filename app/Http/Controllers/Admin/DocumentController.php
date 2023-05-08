@@ -20,7 +20,11 @@ use Illuminate\Support\Facades\DB;
 class DocumentController extends Controller
 {
 
-  
+    function TimeToText(){
+        $now_date = Carbon::now()->toDateTimeString();
+        $string = str_replace(' ', '-', $now_date);
+        return preg_replace('/[^A-Za-z0-9\-]/', '', $string);  
+    }
     
 
     public function index()
@@ -77,6 +81,7 @@ class DocumentController extends Controller
             'image' => 'image|max:2048|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
             'language' => 'required',
             'author' => 'required',
+            'isCompleted' => 'required',
         ],[
             'name.required' => 'Bạn cần phải nhập tên tài liệu',
             'author.required' => 'Bạn cần phải nhập tên tác giả',
@@ -85,12 +90,13 @@ class DocumentController extends Controller
             'image.max' => 'Dung lượng ảnh quá lớn',
             'image.dimensions' => 'Kích thước ảnh nhỏ nhất là 100x100 và lớn nhất là 2000x2000',
             'file_document.required' => 'Tài liệu phải có file đính kèm',
-            'file_document.mimetypes' => 'Tài liệu đình kèm nên là file .pdf'
+            'file_document.mimetypes' => 'Tài liệu đình kèm nên là file .pdf',
+            'isCompleted.required' => 'Tài liệu phải có tình trạng'
         ]);
 
     
 
-        $slug =  Str::slug($request->name);
+        $slug =  Str::slug($request->name) .'-'. $this->TimeToText();
             
         $previewImagefiles = $request->file('previewImages');
         $image = $request->file('image'); //image file from frontend
@@ -127,7 +133,7 @@ class DocumentController extends Controller
             'file' => $generatedFileName,
             'author' => $request -> author,
             'extension' =>  $request->file_document->extension(),
-            'isCompleted' => 0,
+            'isCompleted' => $request -> isCompleted,
             'totalDownloading'=>0,
             'numberOfPages' => $numberOfPages,
             'status' =>1,
@@ -291,7 +297,7 @@ class DocumentController extends Controller
             'image.dimensions' => 'Kích thước ảnh nhỏ nhất là 100x100 và lớn nhất là 2000x2000',
         ]);
 
-        $slug =  Str::slug($request->name);
+        $slug =  Str::slug($request->name).'-'. $this->TimeToText();
 
         $generatedImageName="";
 

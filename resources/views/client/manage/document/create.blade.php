@@ -30,8 +30,8 @@
         </div>
         <div class="nk-fmg-quick-list nk-block">
 
-            <div class="card card-bordered card-preview">
-                    <div class="card-inner">
+            <div class="card shadow mb-4">
+                <div class="card-body ">
                         @if($errors->any())
                         <div class="alert alert-warning">
                             @foreach ($errors->all() as $error)
@@ -40,22 +40,23 @@
             
                         </div>
                         @endif
-                    <form action="/quan-ly/tai-lieu" method="POST" enctype="multipart/form-data">
-
+                        <form action="{{ route('tai-lieu.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <label>Tiêu đề<sup>*</sup></label>
                         <input type="text" required
                         name="name"
-                        class="form-control mb-4 col-6">
-       
-
+                        class="form-control mb-4 col-6" value="{{ old('name') }}" >
+                       
+            
                         <label>Tác giả<sup>*</sup></label>
                         <input type="text" required
                         name="author"
-                        class="form-control mb-4 col-6"
+                        class="form-control mb-4 col-6" value="{{ old('author') }}"
                         data-bs-toggle="tooltip" data-bs-placement="top" title="Nếu nhiều tác giả, mỗi tác giả cách nhau một dấu phẩy (,)">
-
-
+            
+                     
+            
+            
                         <label>Thể loại<sup>*</sup></label>
                         <select required class="form-control mb-4 col-6" name="document_type_id" id="document_type_id">
                             @foreach ($types as $type)
@@ -63,7 +64,7 @@
                             @endforeach
                         </select>	 	
                     
-                    
+                      
                         <label class="mt-4">File đính kèm<sup>*</sup></label>
                         <input type="file" required
                         name="file_document" id="pdf"
@@ -78,27 +79,41 @@
             
                         <input type="file"
                         name="image" id="imageFileInput" required
-                        class="form-control mb-4 col-6" accept="image/*">
+                        class="form-control mb-4 col-6" accept="image/*" data-bs-toggle="tooltip" data-bs-placement="top" title="Nếu bạn để trống hệ thống sẽ sử dụng ảnh mặc định!!!">
+            
             
                         <input type="file"  style="display: none" class="form-control" name="previewImages[]" id="previewImageInput" multiple />
-
+            
                         <div id="renderArea" style="display: none">
-                  
-
+            
+                        </div>
                         <label>Ngôn ngữ<sup>*</sup></label>
                         <select required class="form-control mb-4 col-6" name="language">                           
                             <option value="1" >Tiếng việt</option>
                             <option value="0" >Tiếng anh</option>
                         </select>     
-
+            
                         <label>Mô tả</label>
                         <textarea     
                         name="description"
                         class="form-control mb-4"
                         ></textarea>
-
-              
-                        <button type="submit" class="btn btn-info">Thêm tài liệu</button>
+            
+                    
+            {{-- 
+                        <label>File đính kèm<sup>*</sup></label>
+                        <input type="file" required
+                        name="file_document" id="pdf"
+                        class="form-control mb-4 col-6" accept=".pdf"> --}}
+            
+            
+                        <label>Tiến độ<sup>*</sup></label>
+                        <select required class="form-control mb-4 col-6" name="isCompleted"> 
+                        <option value=0>Chưa hoàn thành</option>
+                        <option value=1>Đã hoàn thành</option>
+                        </select>
+                      
+                      <button type="submit" class="btn btn-info">Thêm tài liệu</button>
                     </form>
                 </div>
             </div>
@@ -121,7 +136,23 @@
 
 <script>
  
+ $("button[type=submit]").click(function() {
 
+$(this).attr("disabled","disabled");
+
+    Swal.fire({
+    title: 'Đang thêm dữ liệu!',
+    text: 'Vui lòng đợi thêm dữ liệu.',
+    imageUrl: 'https://raw.githubusercontent.com/notepower2k1/MyImage/main/gif/codevember-day-6-bookshelf-loader.gif',
+    imageWidth: 400,
+    imageHeight: 200,
+    imageAlt: 'Custom image',
+    showConfirmButton: false
+});
+
+
+$(this).parent().submit();
+});
    
     $('#document_type_id').select2({
     });

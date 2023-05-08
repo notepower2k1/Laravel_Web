@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\CommentController;
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\NoteController;
 use App\Http\Controllers\Client\ProfileController;
 use App\Http\Controllers\Client\PagesController;
 use App\Http\Controllers\Client\ClientUserController;
@@ -120,12 +121,16 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
     Route::get('/dashboard',[DashboardController::class,'index']);
     Route::get('/dashboard/get/LoginHistory',[DashboardController::class,'getLoginHistory']);
 
+    Route::get('/calendar',[NoteController::class,'calendar_page']);
+    Route::get('/getObject',[NoteController::class,'getObject']);
+    Route::post('/create-note',[NoteController::class,'create']);
+
 
    
 
     //All the routes that belongs to the group goes here
     Route::resource("/book",BookController::class,['except' => ['destroy','show']]);
-    Route::get("/book/{id}/{year?}",[BookController::class,'show']);
+    Route::get("/book/detail/{id}/{year?}",[BookController::class,'show']);
 
     Route::get("/statistics/book/{year?}",[BookController::class,'statistics_book_page']);
     Route::get("/deleted/book",[BookController::class,'deletedItem']);
@@ -158,7 +163,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
     
 
     Route::resource("/document",DocumentController::class,['except' => ['destroy','show']]);
-    Route::get("/document/{id}/{year?}",[DocumentController::class,'show']);
+    Route::get("/document/detail/{id}/{year?}",[DocumentController::class,'show']);
 
     Route::get("/deleted/document",[DocumentController::class,'deletedItem']);
     Route::get("/deleted/document/filter/{fromDate}/{toDate}",[DocumentController::class,'getFilterValueDeleted']);
@@ -201,6 +206,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
     Route::get("/report/filter/{fromDate}/{toDate}",[ReportController::class,'getFilterValue']);
 
     Route::get("/user",[UserController::class,'index']);
+    Route::get("/user/{user_id}",[UserController::class,'detail']);
     Route::get("/statistics/user/{year?}",[UserController::class,'statistics_user_page']);
     Route::get("/statistics/user/get/LoginHistoryPerMonth",[UserController::class,'getLoginHistoryPerMonth']);
 
@@ -282,7 +288,7 @@ Route::group(['middleware'=>['auth']],function(){
     Route::delete("/sach-theo-doi/{book_mark_id}",[ClientFollowController::class,'stopFollowing']);
 
     Route::post("/sach-danh-gia",[ClientBookController::class,'ratingBook']);
-
+    Route::delete("/xoa-danh-gia",[ClientBookController::class,'deleteRatingBook']);
     
     Route::resource('/bai-viet', ClientForumPostController::class,['except' => ['create', 'edit','delete']]);
 
@@ -294,7 +300,10 @@ Route::group(['middleware'=>['auth']],function(){
     Route::post("/thich-binh-luan",[LikeController::class,'like_comment']);
     Route::post("/thich-phan-hoi",[LikeController::class,'like_reply']);
 
-});
+
+    Route::get('/trang-chatGPT',[PagesController::class,'chat_gpt_page']);
+    Route::get('/chat_gpt',[PagesController::class,'chat_gpt']);
+}); 
 });
 
 

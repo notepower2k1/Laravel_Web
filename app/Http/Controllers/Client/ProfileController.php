@@ -108,8 +108,8 @@ class ProfileController extends Controller
     public function user_info($user_id){
 
         $user = User::where('deleted_at','=',null)->findOrFail($user_id);
-        $books = Book::where('userCreatedID','=',$user->id)->where('deleted_at','=',null)->where('isPublic','=',1)->paginate(3,'*', 'books');
-        $documents = Document::where('userCreatedID','=',$user->id)->where('deleted_at','=',null)->where('isPublic','=',1)->paginate(3,'*', 'documents');
+        $books = Book::where('userCreatedID','=',$user->id)->where('deleted_at','=',null)->where('isPublic','=',1)->get();
+        $documents = Document::where('userCreatedID','=',$user->id)->where('deleted_at','=',null)->where('isPublic','=',1)->get();
         $posts = ForumPosts::where('userCreatedID','=',$user->id)->where('deleted_at','=',null)->get();
 
         return view('client.homepage.user_info')

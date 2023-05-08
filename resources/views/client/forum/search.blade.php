@@ -90,12 +90,12 @@
                     <ul class="nk-activity">
                         @foreach ($lastPosts as $lastPost)
                         <li class="nk-activity-item">
-                            <div class="nk-activity-media user-avatar bg-success">
-                                <a href="/thanh-vien/{{ $lastPost->users->id }}"><img src={{ $lastPost->users->profile->url }} alt="image" /></a>
+                            <div class="nk-tnx-type-icon bg-info-dim text-info">                                      
+                                <em class="icon ni ni-chat-fill"></em>                                    
                             </div>
                             <div class="nk-activity-data">
                                 <div class="label">
-                                    <a href="/dien-dan/{{ $lastPost->forums->slug }}/{{ $lastPost->slug }}/{{ $lastPost->id }}">{{ $lastPost->topic }}</a>
+                                    <a class="title text-dark fw-bold" href="/dien-dan/{{ $lastPost->forums->slug }}/{{ $lastPost->slug }}/{{ $lastPost->id }}">{{ $lastPost->topic }}</a>
                                 </div>
                                 <span class="time">{{ $lastPost->time }}</span>
                             </div>

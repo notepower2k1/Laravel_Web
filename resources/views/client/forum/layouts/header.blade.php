@@ -82,7 +82,12 @@
                                         <li>
                                             <a href="/"><em class="icon ni ni-book-read"></em>
                                                 <span >Đọc sách</span>
-                                            </a>                                         
+                                            </a>                                   
+                                        </li>
+                                        <li>
+                                            <a href="/trang-chatGPT"><em class="icon ni ni-coffee-fill"></em>
+                                                <span >Chat GPT (demo)</span>
+                                            </a>                                   
                                         </li>
                                     </ul>
                                 </div>

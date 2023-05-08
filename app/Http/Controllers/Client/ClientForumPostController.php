@@ -13,7 +13,11 @@ use Illuminate\Support\Facades\Auth;
 class ClientForumPostController extends Controller
 {
 
-    
+    function TimeToText(){
+        $now_date = Carbon::now()->toDateTimeString();
+        $string = str_replace(' ', '-', $now_date);
+        return preg_replace('/[^A-Za-z0-9\-]/', '', $string);  
+    }
     
     public function index()
     {
@@ -45,7 +49,7 @@ class ClientForumPostController extends Controller
     public function store(Request $request)
     {
 
-        $slug =  Str::slug($request->topic);
+        $slug =  Str::slug($request->topic).'-'. $this->TimeToText();
 
         $request->validate([
             'topic' => 'required|min:10|max:255',
@@ -101,7 +105,7 @@ class ClientForumPostController extends Controller
     {
         $forum_post = ForumPosts::findOrFail($forum_post_id);
 
-        return view('client.forum_posts.edit')
+        return view('client.forum.forum_posts.edit')
         ->with('forum_slug',$forum_slug)
         ->with('forum_post',$forum_post);
     }
@@ -125,7 +129,7 @@ class ClientForumPostController extends Controller
             'content.required' => 'Bài viết phải có nội dung'
         ]);
 
-        $slug =  Str::slug($request->topic);
+        $slug =  Str::slug($request->topic).'-'. $this->TimeToText();
 
 
         

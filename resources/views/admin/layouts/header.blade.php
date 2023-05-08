@@ -5,18 +5,20 @@
               <a href="#" class="nk-nav-toggle nk-quick-nav-icon" data-target="sidebarMenu"><em class="icon ni ni-menu"></em></a>
           </div>
           <div class="nk-header-news d-none d-xl-block">
-              <div class="nk-news-list">
-                  <a class="nk-news-item" href="/">
-                      <div class="nk-news-icon">
-                          <em class="icon ni ni-home"></em>
-                      </div>
-                     
-                  </a>
-              </div>
+                <div class="nk-news-list">
+                    <a class="nk-news-item" href="#"  data-bs-toggle="modal" data-bs-target="#modalNote">
+                        <div class="nk-news-icon">
+                            <em class="icon ni ni-note-add"></em>
+                        </div>
+                        
+                    </a>
+                              
+                </div>
+            
+            
           </div><!-- .nk-header-news -->
           <div class="nk-header-tools">
-              <ul class="nk-quick-nav">
-              
+              <ul class="nk-quick-nav">             
                   <li class="dropdown user-dropdown">
                       <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
                           <div class="user-toggle">
@@ -49,8 +51,6 @@
                           </div>
                           <div class="dropdown-inner">
                               <ul class="link-list">
-
-
                                   <li>
                                     <a href="{{ route('logout') }}"
                                        onclick="event.preventDefault();

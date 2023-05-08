@@ -38,6 +38,11 @@
     var editEventPopup = $('#editEventPopup');
     var previewEventPopup = $('#previewEventPopup');
     var deleteEventBtn = $('#deleteEvent');
+    var localStorageData = window.localStorage.getItem('calendar');
+   
+    if(localStorageData){
+      localStorageData = JSON.parse(localStorageData);
+    }
     var mobileView = NioApp.Win.width < NioApp.Break.md ? true : false;
     var calendar = new FullCalendar.Calendar(calendarEl, {
       timeZone: 'UTC',
@@ -60,7 +65,7 @@
       },
       direction: NioApp.State.isRTL ? "rtl" : "ltr",
       nowIndicator: true,
-      now: TODAY + 'T09:25:00',
+      now: TODAY + getTime(),
       eventMouseEnter: function eventMouseEnter(info) {
         var elm = info.el,
           title = info.event._def.title,
@@ -125,90 +130,9 @@
         });
         previewEventPopup.modal('show');
       },
-      events: [{
-        id: 'default-event-id-' + Math.floor(Math.random() * 9999999),
-        title: 'Reader will be distracted',
-        start: YM + '-03T13:30:00',
-        className: "fc-event-danger",
-        description: "Use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden."
-      }, {
-        id: 'default-event-id-' + Math.floor(Math.random() * 9999999),
-        title: 'Rabfov va hezow.',
-        start: YM + '-14T13:30:00',
-        end: YM + '-14',
-        className: "fc-event-success",
-        description: "Use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden."
-      }, {
-        id: 'default-event-id-' + Math.floor(Math.random() * 9999999),
-        title: 'The leap into electronic',
-        start: YM + '-05',
-        end: YM + '-06',
-        className: "fc-event-primary",
-        description: "Use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden."
-      }, {
-        id: 'default-event-id-' + Math.floor(Math.random() * 9999999),
-        title: 'Lorem Ipsum passage - Product Release',
-        start: YM + '-02',
-        end: YM + '-04',
-        className: "fc-event-primary",
-        description: "Use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden."
-      }, {
-        title: 'Gibmuza viib hepobe.',
-        start: YM + '-12',
-        end: YM + '-10',
-        className: "fc-event-pink-dim",
-        description: "Use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden."
-      }, {
-        id: 'default-event-id-' + Math.floor(Math.random() * 9999999),
-        title: 'Jidehse gegoj fupelone.',
-        start: YM + '-07T16:00:00',
-        className: "fc-event-danger-dim",
-        description: "Use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden."
-      }, {
-        id: 'default-event-id-' + Math.floor(Math.random() * 9999999),
-        title: 'Ke uzipiz zip.',
-        start: YM + '-16T16:00:00',
-        end: YM + '-14',
-        className: "fc-event-info-dim",
-        description: "Use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden."
-      }, {
-        id: 'default-event-id-' + Math.floor(Math.random() * 9999999),
-        title: 'Piece of classical Latin literature',
-        start: TODAY,
-        end: TODAY + '-01',
-        className: "fc-event-primary",
-        description: "Use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden."
-      }, {
-        id: 'default-event-id-' + Math.floor(Math.random() * 9999999),
-        title: 'Nogok kewwib ezidbi.',
-        start: TODAY + 'T10:00:00',
-        className: "fc-event-info",
-        description: "Use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden."
-      }, {
-        id: 'default-event-id-' + Math.floor(Math.random() * 9999999),
-        title: 'Mifebi ik cumean.',
-        start: TODAY + 'T14:30:00',
-        className: "fc-event-warning-dim",
-        description: "Use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden."
-      }, {
-        id: 'default-event-id-' + Math.floor(Math.random() * 9999999),
-        title: 'Play Time',
-        start: TODAY + 'T17:30:00',
-        className: "fc-event-info",
-        description: "Use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden."
-      }, {
-        id: 'default-event-id-' + Math.floor(Math.random() * 9999999),
-        title: 'Rujfogve kabwih haznojuf.',
-        start: YESTERDAY + 'T05:00:00',
-        className: "fc-event-danger",
-        description: "Use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden."
-      }, {
-        id: 'default-event-id-' + Math.floor(Math.random() * 9999999),
-        title: 'simply dummy text of the printing',
-        start: YESTERDAY + 'T07:00:00',
-        className: "fc-event-primary-dim",
-        description: "Use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden."
-      }]
+
+      //get Data From Local And Show   
+      events: localStorageData?localStorageData:[]
     });
     calendar.render();
 
@@ -225,14 +149,26 @@
       var eventTheme = $('#event-theme').val();
       var eventStartTimeCheck = eventStartTime ? 'T' + eventStartTime + 'Z' : '';
       var eventEndTimeCheck = eventEndTime ? 'T' + eventEndTime + 'Z' : '';
+      var id = MyLib.generateUid().toString();
       calendar.addEvent({
-        id: 'added-event-id-' + Math.floor(Math.random() * 9999999),
+        id: id,
         title: eventTitle,
         start: eventStartDate + eventStartTimeCheck,
         end: eventEndDate + eventEndTimeCheck,
         className: "fc-" + eventTheme,
         description: eventDescription
       });
+
+      const obj = {
+        'id': id,
+        'title': eventTitle,
+        'start': eventStartDate + eventStartTimeCheck,
+        'end': eventEndDate + eventEndTimeCheck,
+        'className': "fc-" + eventTheme,
+        'description': eventDescription
+      }
+      saveInLocalStorage(obj);
+
       addEventPopup.modal('hide');
     });
     updateEventBtn.on("click", function (e) {
@@ -248,21 +184,106 @@
       var eventEndTimeCheck = eventEndTime ? 'T' + eventEndTime + 'Z' : '';
       var selectEvent = calendar.getEventById(editEventForm[0].dataset.id);
       selectEvent.remove();
+      deleteFromLocalStorage(selectEvent)
+
+      var id = editEventForm[0].dataset.id;
       calendar.addEvent({
-        id: editEventForm[0].dataset.id,
+        id: id,
         title: eventTitle,
         start: eventStartDate + eventStartTimeCheck,
         end: eventEndDate + eventEndTimeCheck,
         className: "fc-" + eventTheme,
         description: eventDescription
       });
+
+      const obj = {
+        'id': id,
+        'title': eventTitle,
+        'start': eventStartDate + eventStartTimeCheck,
+        'end': eventEndDate + eventEndTimeCheck,
+        'className': "fc-" + eventTheme,
+        'description': eventDescription
+      }
+      saveInLocalStorage(obj);
       editEventPopup.modal('hide');
     });
+
     deleteEventBtn.on("click", function (e) {
       e.preventDefault();
       var selectEvent = calendar.getEventById(editEventForm[0].dataset.id);
       selectEvent.remove();
+      deleteFromLocalStorage(selectEvent)
     });
+    
+    //suport event
+
+    function saveInLocalStorage(obj){
+      const dataExist = window.localStorage.getItem('calendar');
+      if(dataExist){
+        var parseJson = JSON.parse(dataExist);
+        parseJson.push(obj)
+        window.localStorage.setItem('calendar',JSON.stringify(parseJson));
+      }
+      else{
+        var arrayObject = [];
+        arrayObject.push(obj)
+
+        window.localStorage.setItem('calendar',JSON.stringify(arrayObject));
+      }
+    }
+
+    function deleteFromLocalStorage(selectEvent){
+
+      let event_id = selectEvent._def.publicId;
+
+
+      let dataExist = window.localStorage.getItem('calendar');
+      if(dataExist){
+
+        let parseJson = JSON.parse(dataExist);
+
+        //find index
+        let filtered  = parseJson.filter(item => item.id != `${event_id}`);
+
+
+        window.localStorage.setItem('calendar',JSON.stringify(filtered));
+      }
+    }
+
+    function getTime() {
+      var now     = new Date(); 
+      var hour    = now.getHours();
+      var minute  = now.getMinutes();
+      var second  = now.getSeconds(); 
+      if(hour.toString().length == 1) {
+           hour = '0'+hour;
+      }
+      if(minute.toString().length == 1) {
+           minute = '0'+minute;
+      }
+      if(second.toString().length == 1) {
+           second = '0'+second;
+      }   
+      var dateTime =  'T'+hour+':'+minute+':'+second;   
+      return dateTime;
+    }
+
+    var MyLib = {
+      //Max id guaranted to be unique will be 999 999 999. 
+      //Add more zeros to increase the value.
+      lastUid : 100000000, 
+  
+      generateUid : function(){
+          this.lastUid++;
+  
+          //Way to get a random int value betwen min and max: 
+          //Math.floor(Math.random() * (max - min) ) + min;
+          var randValue = Math.floor(Math.random() * (99999 - 10000)) + 10000;
+  
+          return Number(this.lastUid.toString() + randValue);
+      }
+  };
+    //idk :(
     function removePopover() {
       var fcPopover = document.querySelectorAll('.event-popover');
       fcPopover.forEach(function (elm) {

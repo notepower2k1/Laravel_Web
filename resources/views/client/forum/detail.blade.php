@@ -42,14 +42,18 @@
                                     </div>
                                 </li>
                                 @if (Auth::check())
+                                    @if($forum->status == 0)
 
-                                <li class="nk-block-tools-opt d-none d-sm-block">
-                                    <a href="#" data-bs-toggle="modal" data-bs-target="#modalForm" class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Thêm bài viết</span></a>
-                                </li>
-                                
-                                <li class="nk-block-tools-opt d-block d-sm-none">
-                                    <a href="#" class="btn btn-icon btn-primary"><em class="icon ni ni-plus"></em></a>
-                                </li>
+                                    @else
+                                    <li class="nk-block-tools-opt d-none d-sm-block">
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#modalForm" class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Thêm bài viết</span></a>
+                                    </li>
+                                    
+                                    <li class="nk-block-tools-opt d-block d-sm-none">
+                                        <a href="#" class="btn btn-icon btn-primary"><em class="icon ni ni-plus"></em></a>
+                                    </li>
+                                    @endif
+                             
                                 @endif
                             </ul>
                         </div>
@@ -66,11 +70,11 @@
     <div class="nk-block nk-block-lg">
      
         <div class="row">        
-            <div class="col-lg-8">
+            <div class="col-lg-8 mb-2">
                 <div class="row g-gs">
                     @foreach ( $forums_posts as $post )
                     <div class="col-lg-12" id="post-{{ $post->id }}">
-                        <div class="card card-bordered text-soft">
+                        <div class="card card-bordered text-soft shadow">
                            <div class="p-2">
                                 <div class="d-flex">
                                     <div class="">
@@ -107,13 +111,12 @@
                            
                         </div>
                     </div><!-- .col -->
-                    @endforeach
-                
-                 
+                    @endforeach  
                 </div><!-- .row -->
             </div>  
+            
             <div class="col-lg-4">
-                <div class="card card-bordered card-full">
+                <div class="card card-bordered card-full shadow">
                     <div class="card-inner border-bottom">
                         <div class="card-title-group">
                             <div class="card-title">
@@ -130,7 +133,7 @@
                             </div>
                             <div class="nk-activity-data">
                                 <div class="label">
-                                    <a href="/dien-dan/{{ $lastPost->forums->slug }}/{{ $lastPost->slug }}/{{ $lastPost->id }}">{{ $lastPost->topic }}</a>
+                                    <a class="title text-dark fw-bold" href="/dien-dan/{{ $lastPost->forums->slug }}/{{ $lastPost->slug }}/{{ $lastPost->id }}">{{ $lastPost->topic }}</a>
                                 </div>
                                 <span class="time">{{ $lastPost->time }}</span>
                             </div>
@@ -141,6 +144,11 @@
                     </ul>
                 </div><!-- .card -->
             </div>
+            <div class="col-lg-8 d-flex justify-content-end">                          
+
+                {{ $forums_posts->links('vendor.pagination.custom',['elements' => $forums_posts]) }}
+            </div>
+            
         </div>
     </div>    
 </div>

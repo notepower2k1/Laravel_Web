@@ -126,7 +126,7 @@ a{
 	 font-family: "Dancing Script";
 	 text-transform: lowercase;
 	 font-size: 25px;
-	 content: "this page can't be found";
+	 content: "Trang này không tồn tại";
 	 transform: rotate(90deg) translate(6rem, -1rem);
 	 opacity: 0.3;
 }

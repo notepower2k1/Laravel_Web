@@ -71,7 +71,7 @@ class ReportController extends Controller
                         '</div>'.
                     '</div>';     
                 $title = 'Báo cáo về sách' .'('.$report->created_at.')';
-                $itemUrl = '/sach'.'/'.$item->id.'/'.$item->slug;
+                $itemUrl = '/admin/book/detail'.'/'.$item->id.'/'.Carbon::now()->year;
                 break;
             case 2:
                 $item = Chapter::findOrFail($report->identifier_id);
@@ -134,7 +134,7 @@ class ReportController extends Controller
                     '</div>'.
                 '</div>';     
                 $title = 'Báo cáo về tài liệu' .'('.$report->created_at.')';
-                $itemUrl = '/tai-lieu'.'/'.$item->id.'/'.$item->slug;
+                $itemUrl = '/admin/document/detail'.'/'.$item->id.'/'.$item->slug;
 
                 break;
             case 4:
@@ -161,7 +161,7 @@ class ReportController extends Controller
                     '<li><strong>Lần cập nhật cuối</strong>: '. $updateTime . '</li>'.
                 '</ul>';
                 $title = 'Báo cáo về bài viết' .'('.$report->created_at.')';
-                $itemUrl = '/dien-dan'.'/'.$item->forums->name.'/'.$item->slug.'/'.$item->id;
+                $itemUrl = '/admin/forum/post'.'/'.$item->id.'/detail';
 
                 break;
             case 5:

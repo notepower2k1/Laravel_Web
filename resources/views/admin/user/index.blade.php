@@ -120,16 +120,15 @@
                                                           <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
                                                           <div class="dropdown-menu dropdown-menu-end">
                                                               <ul class="link-list-opt no-bdr">
-                                                                  {{-- <li><a href="#" class="delete-button" data-id={{ $user->id }}>
+                                                                  <li><a href="#" class="delete-button" data-id={{ $user->id }}>
                                                                     <em class="icon ni ni-trash"></em><span>Xóa người dùng</span>
-                                                                  </a> --}}
+                                                                  </a>
 
                                                                   </li>
-                                                                  <li><a href="#"  data-id={{ $user->id }} class="recovery-password-a-tag"><em class="icon ni ni-edit"></em><span>Đổi mật khẩu</span></a>
-                                                                
-                                                                  <li class="divider"></li>
-                                                                  <li><a href="/thanh-vien/{{ $user->id }}"><em class="icon ni ni-eye"></em><span>Xem thông tin</span></a></li>
+                                                                <li><a href="#" data-id={{ $user->id }} class="recovery-password-a-tag"><em class="icon ni ni-edit"></em><span>Đổi mật khẩu</span></a>
+                                                                <li><a href="/admin/user/{{ $user->id }}"><em class="icon ni ni-eye"></em><span>Chi tiết</span></a>
 
+                                                            
                                                               </ul>
                                                           </div>
                                                       </div>
@@ -178,6 +177,21 @@
         </div>
     </div>
 </div>
+<div class="modal fade" tabindex="-1" id="modalContent">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nội dung</h5>
+                <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <em class="icon ni ni-cross"></em>
+                </a>
+            </div>
+            <div class="modal-body">
+                
+            </div>
+        </div>
+    </div>
+  </div>
 @endsection
 @section('additional-scripts')
 <script src="{{ asset('assets/js/libs/datatable-btns.js?ver=3.1.2') }}"></script>
@@ -256,8 +270,8 @@
     $('#DataTables_Table_0_filter').addClass('mt-2');
 
 
-    $('#DataTables_Table_0 tbody').on('click','.btn-suspend',function(){
-        
+    $('#DataTables_Table_0 tbody').on('click','.btn-suspend',function(e){
+        e.preventDefault();
         var user_id = $(this).data('id');
         var status = $(this).data('value');
 
@@ -316,7 +330,9 @@
    
     });
 
-    $('#DataTables_Table_0 tbody').on('click','.recovery-password-a-tag',function(){
+    $('#DataTables_Table_0 tbody').on('click','.recovery-password-a-tag',function(e){
+        e.preventDefault();
+
         var user_id = $(this).data('id');
         
         $('#passwordForm').attr('action', `/admin/user/${user_id}`);
@@ -335,7 +351,9 @@
         });
     })
 
-    $('#DataTables_Table_0 tbody').on('click','.delete-button',function(){
+    $('#DataTables_Table_0 tbody').on('click','.delete-button',function(e){
+        e.preventDefault();
+
         var user_id = $(this).data('id');
 
         Swal.fire({
@@ -375,7 +393,9 @@
         })
     });
 
-    $('#DataTables_Table_0 tbody').on('click','.btn-email',function(){
+    $('#DataTables_Table_0 tbody').on('click','.btn-email',function(e){
+        e.preventDefault();
+
         var email = $(this).data('email');
         var subject = 'Đây là email gửi từ quản trị viên!!!';
         var emailBody = 'Xin chào ' + $(this).data('name');

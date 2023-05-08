@@ -96,7 +96,7 @@
                                     </td>
                                     <td class="nk-tb-col tb-col-lg status">
                                         @if ($book->status == 0)
-                                        <span class="text-success">Đang duyệt</span>
+                                        <span class="text-primary">Đang duyệt</span>
                                         @endif 
 
                                         @if ($book->status == -1)
@@ -162,7 +162,7 @@
                                     </td>
                                     <td class="nk-tb-col tb-col-lg status">
                                     @if ($document->status == 0)
-                                    <span class="text-success">Đang duyệt</span>
+                                    <span class="text-primary">Đang duyệt</span>
                                     @endif 
                                     @if ($document->status == -1)
                                     <span class="text-danger">Từ chối</span>

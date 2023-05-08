@@ -2,6 +2,7 @@
 @section('pageTitle', `${{$document->name}}`)
 @section('additional-style')
 <link rel="stylesheet" href="{{ asset('assets/css/book3d.css') }}">
+<link href="{{ asset('js/pagination/pagination.css') }}" rel="stylesheet" type="text/css">
 
 <style>
     .open-relies-btn:hover{
@@ -241,7 +242,21 @@
                                             <div class="row g-gs flex-lg-row-reverse">                      
                                                 <div class="col-lg-12">
                                                     <div class="product-details entry me-xxl-3">
-                                                        <h5><span class="total-comment-span">{{ $document->totalComments }} </span>bình luận</h5>
+                                                        <div class="d-flex justify-content-between">
+                                                            <h5><span class="total-comment-span">{{ $document->totalComments }} </span>bình luận</h5>
+                                                            <div class="dropdown">
+                                                                <a class="btn btn-icon btn-outline-secondary dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                                                    <em class="icon ni ni-sort-line"></em>    
+                                                                </a>
+                                                                <div class="dropdown-menu">
+                                                                <ul class="link-list-opt">
+                                                                    <li><a href="#" id="sort-comment-new"><span>Mới nhất</span></a></li>
+                                                                    <li><a href="#" id="sort-comment-old"><span>Cũ nhất</span></a></li>
+                                                            
+                                                                </ul>
+                                                                </div>
+                                                            </div>                                                      
+                                                        </div>
                                                         <div class="list-group mt-3">
                                                             @if(Auth::check())
                                                             <div class="d-flex">                                                     
@@ -263,10 +278,11 @@
                                                           
                                                             <hr>
                                                             @endif
-                                                            @if ($comments)
+                                                            @if ($comments->count() > 0)
                                                             <div id="comment-box">
-                    
-                                                                @foreach ($comments as $comment)
+                                                                
+                                                                <div id="comment-render-div">
+                                                                    @foreach ($comments as $comment)
                                                                     <div id="comment-{{ $comment->id }}">
                                                                             <div class="d-flex flex-column comment-section">
                                                                                 <div class="bg-white p-2">
@@ -279,33 +295,35 @@
                                                                                                     <span class="text-muted">{{ $comment->time }}</span>
                                                                                                 </div>
                                                                                             </div>
-                                                                                          
-    
-                                                                                            <div class="dropdown">
-                                                                                                <a class="dropdown-toggle" href="#" type="button" data-bs-toggle="dropdown">
-                                                                                                    <em class="icon ni ni-more-v"></em>
-                                                                                                </a>
-                                                                                                <div class="dropdown-menu">
-                                                                                                  <ul class="link-list-opt">
-                                                                                                    <li>
-                                                                                                        <a class="delete-comment-btn" data-id={{ $comment->id }}>
-                                                                                                            <em class="icon ni ni-trash"></em>
-                                                                                                            <span>Xóa bình luận</span>
+                                                                                        
+                                                                                            @if(Auth::check())
+                                                                                                @if(Auth::user()->id == $comment->users->id || Auth::user()->role == 1)
+                                                                                                    <div class="dropdown">
+                                                                                                        <a class="dropdown-toggle text-dark" href="#" type="button" data-bs-toggle="dropdown">
+                                                                                                            <em class="icon ni ni-more-v"></em>
                                                                                                         </a>
-                                                                                                      
-                                                                                                    </li>
-                                                                                                    <li> 
-                                                                                                        <a class="edit-comment-btn" data-id="{{ $comment->id }}" data-option="1">
-                                                                                                            <em class="icon ni ni-edit fs-16px"></em>
-                                                                                                            <span>Chỉnh sửa bình luận</span>
-                                                                                                        </a>
-    
-                                                                                                       
-                                                                                                    </li>
-                                                                                                  </ul>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            
+                                                                                                        <div class="dropdown-menu">
+                                                                                                        <ul class="link-list-opt">
+                                                                                                            <li>
+                                                                                                                <a class="delete-comment-btn" data-id={{ $comment->id }}>
+                                                                                                                    <em class="icon ni ni-trash"></em>
+                                                                                                                    <span>Xóa bình luận</span>
+                                                                                                                </a>
+                                                                                                            
+                                                                                                            </li>
+                                                                                                            <li> 
+                                                                                                                <a class="edit-comment-btn" data-id="{{ $comment->id }}" data-option="1">
+                                                                                                                    <em class="icon ni ni-edit fs-16px"></em>
+                                                                                                                    <span>Chỉnh sửa bình luận</span>
+                                                                                                                </a>
+            
+                                                                                                            
+                                                                                                            </li>
+                                                                                                        </ul>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                @endif
+                                                                                            @endif
                                                                                         </div>
                                                                                         
                                                                                     
@@ -348,13 +366,13 @@
                                                                                                             <em class="icon ni ni-thumbs-up fs-16px">{{ $comment->totalLikes }}</em>
                                                                                                         </span>
                                                                                                     @endif
-                                                                                             
+                                                                                            
                                                                                                 @else
                                                                                                     <span class="like-comment-btn me-2" data-id={{ $comment->id }}>
                                                                                                         <em class="icon ni ni-thumbs-up fs-16px">{{ $comment->totalLikes }}</em>
                                                                                                     </span>
                                                                                                 @endif
-                                                                                               
+                                                                                            
                                                                                                 @if(Auth::check())
                                                                                                     <span class="create-reply-btn me-2" data-id={{ $comment->id }}>
                                                                                                         <em class="icon ni ni-reply fs-16px "></em>
@@ -371,7 +389,7 @@
                                                                                                 @endif
                                                                                             </div>
                                                                                             
-                                                                                          
+                                                                                        
                                                                                         </div>
                                                                                         
                                                                                                 
@@ -394,33 +412,35 @@
                                                                                                     <span class="text-muted">{{ $reply->time }}</span>
                                                                                                 </div>
                                                                                             </div>
-                                                                                          
-    
-                                                                                            <div class="dropdown">
-                                                                                                <a class="dropdown-toggle" href="#" type="button" data-bs-toggle="dropdown">
-                                                                                                    <em class="icon ni ni-more-v"></em>
-                                                                                                </a>
-                                                                                                <div class="dropdown-menu">
-                                                                                                  <ul class="link-list-opt">
-                                                                                                    <li>
-                                                                                                        <a class="delete-reply-btn" data-id={{ $reply->id }}>
-                                                                                                            <em class="icon ni ni-trash"></em>
-                                                                                                            <span>Xóa phản hồi</span>
+                                                                                        
+                                                                                            @if(Auth::check())
+                                                                                                @if(Auth::user()->id == $reply->users->id || Auth::user()->role == 1)
+                                                                                                    <div class="dropdown">
+                                                                                                        <a class="dropdown-toggle text-dark" href="#" type="button" data-bs-toggle="dropdown">
+                                                                                                            <em class="icon ni ni-more-v"></em>
                                                                                                         </a>
-                                                                                                      
-                                                                                                    </li>
-                                                                                                    <li> 
-                                                                                                        <a class="edit-comment-btn" data-id="{{ $reply->id }}" data-option="2">
-                                                                                                            <em class="icon ni ni-edit fs-16px"></em>
-                                                                                                            <span>Chỉnh sửa phản hồi</span>
-                                                                                                        </a>
-    
-                                                                                                       
-                                                                                                    </li>
-                                                                                                  </ul>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            
+                                                                                                        <div class="dropdown-menu">
+                                                                                                        <ul class="link-list-opt">
+                                                                                                            <li>
+                                                                                                                <a class="delete-reply-btn" data-id={{ $reply->id }}>
+                                                                                                                    <em class="icon ni ni-trash"></em>
+                                                                                                                    <span>Xóa phản hồi</span>
+                                                                                                                </a>
+                                                                                                            
+                                                                                                            </li>
+                                                                                                            <li> 
+                                                                                                                <a class="edit-comment-btn" data-id="{{ $reply->id }}" data-option="2">
+                                                                                                                    <em class="icon ni ni-edit fs-16px"></em>
+                                                                                                                    <span>Chỉnh sửa phản hồi</span>
+                                                                                                                </a>
+            
+                                                                                                            
+                                                                                                            </li>
+                                                                                                        </ul>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                @endif
+                                                                                            @endif
                                                                                         </div>
                                                                                         <div class="mt-2" id ="reply-content-{{ $reply->id }}">
                                                                                             <p>
@@ -476,7 +496,7 @@
                                                                                             @endif
                                                                                         </div>
                                                                                     </div>
-                                                                                   
+                                                                                
                                                                                 </div> 
                                                                                 <hr>
                                                                             </div>
@@ -486,8 +506,14 @@
         
                                                                         @endforeach
                                                                     </div>
-                                                                
-                                                                @endforeach
+                                                                    
+                                                                    @endforeach
+                                                                </div>
+                                                              
+                                                                <div class="data-container"></div>
+                                                                <div class="col-md-12 d-flex justify-content-end mt-4">                          
+                                                                    <div id="pagination"></div>
+                                                                </div>
                                                             </div>
                                                             @endif
                                                             
@@ -699,6 +725,7 @@
 @endsection
 @section('additional-scripts')
 <script src="{{ asset('assets/js/emojionearea.min.js') }}" aria-hidden="true"></script>
+<script src="{{ asset('js/pagination/pagination.min.js') }}" ></script>
 
 <script>
     
@@ -709,6 +736,9 @@
     });
     
     $(function () {
+
+        commentRender();
+
         $('#comment_area').emojioneArea({
             pickerPosition: "bottom",
             filtersPosition: "bottom",
@@ -727,7 +757,79 @@
 
     
 
+     function commentRender(){
+        const container = $('#tabItem7').find('#pagination');
 
+
+        if (!container.length) return;
+            var sources = function () {
+            var result = [];
+
+            $('#comment-render-div').children().each(function(item){
+
+
+                result.push($(this).get(0).outerHTML);
+
+            })
+        return result;
+        }();
+
+        var options = {
+            dataSource: sources,
+            callback: function (response, pagination) {
+                var dataHtml = '<div id ="comment_list" >';
+
+                $.each(response, function (index, item) {
+                    dataHtml += item;
+                });
+
+                dataHtml += '</div>';
+
+                container.parent().prev().html(dataHtml);
+                $('#comment-render-div').remove();
+            }
+        };
+
+
+  
+        container.pagination(options);
+    }
+
+    $(document).on('click','#sort-comment-new',function(e){
+
+        e.preventDefault();
+        $('#comment_list').children().sort(function(a,b){
+
+            
+            
+            return parseInt(b.id.split('-')[1]) - parseInt(a.id.split('-')[1]);
+
+            }).each(function() {
+            var elem = $(this);
+
+            elem.remove();
+
+            $(elem).appendTo("#comment_list")
+         })
+        
+    })
+
+    $(document).on('click','#sort-comment-old',function(e){
+
+        e.preventDefault();
+        $('#comment_list').children().sort(function(a,b){
+
+            return parseInt(a.id.split('-')[1]) - parseInt(b.id.split('-')[1]);
+
+            }).each(function() {
+            var elem = $(this);
+
+            elem.remove();
+
+            $(elem).appendTo("#comment_list")
+        })
+
+    })
     $("#download-btn").click(function(e){  
 
         const id = {!! $document->id !!};
@@ -737,6 +839,7 @@
             type:"GET",
             data:{
                 'id':id,
+                'option':2
             }
             })
             .done(function(res) {
@@ -801,7 +904,7 @@
 
                             
                             setTimeout(()=>{
-                                $('#close-btn').click();
+                                form.modal('hide');
                             }, 2500);
                         })
 
@@ -884,7 +987,7 @@
 
                             
                             setTimeout(()=>{
-                                form.find('#close-btn').click();
+                                form.modal('hide');
                             }, 2500);
                         })
 

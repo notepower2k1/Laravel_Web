@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Book;
 use App\Models\BookComment;
 use App\Models\BookCommentReply;
+use App\Models\Comment;
 use App\Models\DocumentComment;
 use App\Models\DocumentCommentReply;
 use App\Models\Document;
@@ -39,90 +40,46 @@ class UserController extends Controller
                 $message = 'Thành viên đã được mở khóa tài khoản';
 
                 Book::where('userCreatedID','=',$user->id)->update([
-                    'deleted_at' => Carbon::now()
+                    'deleted_at' => null
                 ]);
 
                 Document::where('userCreatedID','=',$user->id)->update([
-                    'deleted_at' => Carbon::now()
+                    'deleted_at' => null
                 ]);
 
                 ForumPosts::where('userCreatedID','=',$user->id)->update([
-                    'deleted_at' => Carbon::now()
+                    'deleted_at' => null
                 ]);
 
                 
-                BookComment::where('userID','=',$user->id)->update([
-                    'deleted_at' => Carbon::now()
+                Comment::where('userID','=',$user->id)->update([
+                    'deleted_at' => null
                 ]);
 
-                
-                BookCommentReply::where('userID','=',$user->id)->update([
-                    'deleted_at' => Carbon::now()
-                ]);
-
-                
-                DocumentComment::where('userID','=',$user->id)->update([
-                    'deleted_at' => Carbon::now()
-                ]);
-
-                
-                DocumentCommentReply::where('userID','=',$user->id)->update([
-                    'deleted_at' => Carbon::now()
-                ]);
-
-                PostComment::where('userID','=',$user->id)->update([
-                    'deleted_at' => Carbon::now()
-                ]);
-
-                
-                PostCommentReply::where('userID','=',$user->id)->update([
-                    'deleted_at' => Carbon::now()
-                ]);
 
                 break;
             case 1:
                 $user->status = 0;
                 $message = 'Khóa tài khoản thành viên thành công';
-                Book::where('userCreatedID','=',$user->id)->update([
-                    'deleted_at' => null
-                ]);
 
+                Book::where('userCreatedID','=',$user->id)->update([
+                    'deleted_at' => Carbon::now()
+                ]);
+                
                 Document::where('userCreatedID','=',$user->id)->update([
-                    'deleted_at' => null
+                    'deleted_at' => Carbon::now()
                 ]);
 
                 ForumPosts::where('userCreatedID','=',$user->id)->update([
-                    'deleted_at' => null
-                ]);
-
-                
-                BookComment::where('userID','=',$user->id)->update([
-                    'deleted_at' => null
-                ]);
-
-                
-                BookCommentReply::where('userID','=',$user->id)->update([
-                    'deleted_at' => null
-                ]);
-
-                
-                DocumentComment::where('userID','=',$user->id)->update([
-                    'deleted_at' => null
-                ]);
-
-                
-                DocumentCommentReply::where('userID','=',$user->id)->update([
-                    'deleted_at' => null
-                ]);
-
-                PostComment::where('userID','=',$user->id)->update([
-                    'deleted_at' => null
-                ]);
-
-                
-                PostCommentReply::where('userID','=',$user->id)->update([
                     'deleted_at' => Carbon::now()
                 ]);
+
+                
+                Comment::where('userID','=',$user->id)->update([
+                    'deleted_at' => Carbon::now()
+                ]);
+    
+              
                 break;
             default:
                 $message = 'Xảy ra lỗi';
@@ -135,7 +92,21 @@ class UserController extends Controller
         ]);
     }
 
+    public function detail($id) {
+        $user = User::findOrFail($id);
+        $books = Book::where('userCreatedID','=',$id)->get();
+        $documents = Document::where('userCreatedID','=',$id)->get();
+        $posts = ForumPosts::where('userCreatedID','=',$id)->get();
+        $comments = Comment::where('userID','=',$id)->get();
 
+        return view('admin.user.detail')
+        ->with('books',$books)
+        ->with('documents',$documents)
+        ->with('posts',$posts)
+        ->with('comments',$comments)
+        ->with('user', $user);
+
+    }
     
     public function update(Request $request, $id)
     {
@@ -163,6 +134,23 @@ class UserController extends Controller
         $user->deleted_at = Carbon::now()->toDateTimeString();
         $user->save();
 
+        Book::where('userCreatedID','=',$user->id)->update([
+            'deleted_at' => null
+        ]);
+
+        Document::where('userCreatedID','=',$user->id)->update([
+            'deleted_at' => null
+        ]);
+
+        ForumPosts::where('userCreatedID','=',$user->id)->update([
+            'deleted_at' => null
+        ]);
+
+        
+        Comment::where('userID','=',$user->id)->update([
+            'deleted_at' => null
+        ]);
+        
         return response()->json([
             'message' => 'Xóa thành viên thành công'
         ]); 

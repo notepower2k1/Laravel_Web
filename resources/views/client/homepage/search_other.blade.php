@@ -1,11 +1,10 @@
 @extends('client/homepage.layouts.app')
 @section('additional-style')
-<style>
-    .item-search:hover{
-        background-color:#062788;
-    }
- 
-    </style>
+@if($option_id == 1)
+<link rel="stylesheet" href="{{ asset('assets/css/animatedbook.css') }}">
+@else
+<link rel="stylesheet" href="{{ asset('assets/css/animateddocument.css') }}">
+@endif
 @endsection
 @section('content')
 <div class="container">
@@ -22,65 +21,106 @@
             @if(isset($items))
             @if($items)
                 <div class="content">
-                    @if($option_id == 0)
-                        <div class="row">
-                            @foreach ($items as $item)
-                                <div class="col-lg-4 col-md-6 mt-4">
-                                    <div class="card card-bordered product-card shadow">
-                                        <div class="product-thumb">                             
-                                                <img class="card-img-top" src="{{ $item->url }}" alt="">    
-                                                                        
-                                                <div class="product-actions book_sameType w-100 h-100">
-                                                    <div class="pricing-body w-100 h-100 text-center">      
-                                                        <div class="h-100 d-flex flex-column justify-content-center">
-                                                            <div class="pricing-amount">
-                                                                <h6 class="bill text-white">{{ $item->name }}</h6>
-                                                                <p class="text-white">Tác giả: {{ $item->author }}</p>
-                                                                <p class="text-white">Số chương: {{ $item->numberOfChapter }}</p>
-                                                                <p class="text-white">Lượt đọc: {{ $item->totalReading }}</p>
-                                                            </div>
-                                                            <div class="pricing-action">
-                                                                <a href="/sach/{{$item->id}}/{{$item->slug}}" class="btn btn-outline-light">Chi tiết</a>
-                                                            </div>
-                                                        </div>                                      
-                                                        
-                                                    </div>
-                                                </div>
-                                        </div>
-                                    
-                                    </div>
-                                </div>                         
-                            @endforeach
-                        </div>
+                    @if($option_id == 1)
+                    <ul class="align">
+                        @foreach ($items as $book)
+                
+                        <li>
+                            <figure class='book'>
+            
+                                <!-- Front -->
+                        
+                                    <ul class='paperback_front'>
+                                        
+                                        <li>
+                                            @if(\Carbon\Carbon::parse($book->created_at)->isToday())
+                                            <span class="ribbon">Mới</span>
+                                            @endif
+            
+                                            <img src="{{ $book->url }}" alt="" width="100%" height="100%">
+                                        </li>
+                                        <li></li>
+                                    </ul>
+                        
+                                <!-- Pages -->
+                        
+                                    <ul class='ruled_paper'>
+                                        <li></li>
+                                        <li class="">
+                                            <a class="atag_btn"
+                                            href="/sach/{{$book->id}}/{{$book->slug}}">{{ Str::limit($book->description,150) }}</a>
+                                        </li>
+                                        <li></li>
+                                        <li></li>
+                                        <li></li>
+                                    </ul>
+                        
+                                <!-- Back -->
+                        
+                                    <ul class='paperback_back'>
+                                        <li></li>
+                                        <li></li>
+                                    </ul>
+                                    <figcaption>
+                                        <h4>{{ $book->name }}</h4>
+                                        <span>{{ $book->author }}</span>
+                                        {{-- <p>{{ Str::limit($book->description,200) }}</p> --}}
+                                    </figcaption>
+                                </figure>
+                        </li>
+                        @endforeach   
+                
+                    </ul>
                     @else
-                        <div class="row">
-                            @foreach ($items as $item)
-                                <div class="col-lg-4 col-md-6 mt-4">
-                                    <div class="card card-bordered product-card shadow">
-                                        <div class="product-thumb">                             
-                                                <img class="card-img-top" src="{{ $item->url }}" alt="">                                                                                    
-                                                <div class="product-actions book_sameType  w-100 h-100">
-                                                    <div class="pricing-body w-100 h-100 text-center">      
-                                                        <div class="h-100 d-flex flex-column justify-content-center">
-                                                            <div class="pricing-amount">
-                                                                <h6 class="bill text-white">{{ $item->name }}</h6>
-                                                                <p class="text-white">Tác giả: {{ $item->author }}</p>
-                                                                <p class="text-white">Số trang: {{ $item->numberOfPages }}</p>
-                                                                <p class="text-white">Lượt tải: {{ $item->totalDownloading }}</p>
-                                                            </div>
-                                                            <div class="pricing-action">
-                                                                <a href="/tai-lieu/{{$item->id}}/{{$item->slug}}" class="btn btn-outline-light">Chi tiết</a>
-                                                            </div>
-                                                        </div>                                      
-                                                        
-                                                    </div>
-                                                </div>
-                                        </div>
-                                    
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
+                    <ul class="align">
+                        @foreach ($items as $document)
+                        <li>
+                            <figure class='book'>
+            
+                                <!-- Front -->
+                
+                                    <ul class='hardcover_front'>
+                                        <li>
+                                            @if(\Carbon\Carbon::parse($document->created_at)->isToday())
+                                            <span class="ribbon">Mới</span>
+                                            @endif
+                                            <img src="{{ $document->url }}" alt="" width="100%" height="100%">
+                                        </li>
+                                        <li></li>
+                                    </ul>
+                
+                                <!-- Pages -->
+                
+                                    <ul class='page'>
+                                        <li></li>
+                                        <li class="d-flex align-items-start justify-content-center">
+                                            <a class="atag_btn"
+                                            href="/tai-lieu/{{$document->id}}/{{$document->slug}}">{{ Str::limit($document->description,150) }}</a>
+                                        </li>
+                                        <li></li>
+                                        <li></li>
+                                        <li></li>
+                                    </ul>
+                
+                                <!-- Back -->
+                
+                                    <ul class='hardcover_back'>
+                                        <li></li>
+                                        <li></li>
+                                    </ul>
+                                    <ul class='book_spine'>
+                                        <li></li>
+                                        <li></li>
+                                    </ul>
+                                    <figcaption>
+                                        <h4>{{ $document->name }}</h4>
+                                        <span>{{ $document->author }}</span>
+                                        {{-- <p>{{ Str::limit($document->description,200) }}</p> --}}
+                                    </figcaption>
+                            </figure>
+                        </li>
+                        @endforeach   
+                    </ul>
                     @endif
 
                     <div class="col-md-12 d-flex justify-content-end mt-4">                          

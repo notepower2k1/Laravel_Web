@@ -85,7 +85,23 @@
 @section('additional-scripts')
 <script>
    
+   $("button[type=submit]").click(function() {
 
+$(this).attr("disabled","disabled");
+
+    Swal.fire({
+    title: 'Đang thêm dữ liệu!',
+    text: 'Vui lòng đợi thêm dữ liệu.',
+    imageUrl: 'https://raw.githubusercontent.com/notepower2k1/MyImage/main/gif/codevember-day-6-bookshelf-loader.gif',
+    imageWidth: 400,
+    imageHeight: 200,
+    imageAlt: 'Custom image',
+    showConfirmButton: false
+});
+
+
+$(this).parent().submit();
+});
 
     $(() => {
       

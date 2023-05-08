@@ -151,7 +151,7 @@
                                                                     <em class="icon ni ni-trash"></em><span>Xóa</span>
                                                                   </a>
                                                                   </li>
-                                                                  <li><a href="/admin/document/{{$document->id}}/{{ \Carbon\Carbon::now()->year }}"><em class="icon ni ni-eye"></em><span>Chi tiết</span></a></li>                                                            
+                                                                  <li><a href="/admin/document/detail/{{$document->id}}/{{ \Carbon\Carbon::now()->year }}"><em class="icon ni ni-eye"></em><span>Chi tiết</span></a></li>                                                            
                                                                   <li><a href="/admin/document/{{$document->id}}/edit"><em class="icon ni ni-edit"></em><span>Cập nhật</span></a></li>
                                                               
                                                               </ul>
@@ -264,11 +264,11 @@
         .done(function() {
         // If successful
             Swal.fire({
-                          icon: 'success',
-                          title: `Đổi trạng thái thành công`,
-                          showConfirmButton: false,
-                          timer: 2500
-                      });
+                icon: 'success',
+                title: `Đổi trạng thái thành công`,
+                showConfirmButton: false,
+                timer: 2500
+            });
 
         })
         .fail(function(jqXHR, textStatus, errorThrown) {

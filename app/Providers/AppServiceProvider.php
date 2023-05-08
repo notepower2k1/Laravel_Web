@@ -10,6 +10,7 @@ use App\Models\bookMark;
 use App\Models\Book;
 use App\Models\Document;
 use App\Models\Follow;
+use App\Models\NoteType;
 use App\Models\readingHistory;
 use App\Models\ratingBook;
 use App\Models\report;
@@ -236,6 +237,18 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
             
+            view()->composer('admin.layouts.app',function($view){
+                $note_types = NoteType::all();
+                $books = Book::all();
+                $documents = Document::all();
+                $users = User::all();
+
+                $view
+                ->with('books',$books)
+                ->with('documents',$documents)
+                ->with('users',$users)
+                ->with('note_types',$note_types);  
+            });
             view()->composer('admin.layouts.header', function ($view) {
                 $report_notifications = report::where('status','=',1)->get();
                 $view

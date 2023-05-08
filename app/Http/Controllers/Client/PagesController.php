@@ -26,12 +26,11 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use PhpScience\TextRank\TextRankFacade;
-
+use OpenAI\Laravel\Facades\OpenAI;
 class PagesController extends Controller
 {
-
     
-    
+ 
     public function home_page(){
             
         $books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get();
@@ -42,7 +41,7 @@ class PagesController extends Controller
 
         $new_books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('updated_at')->take(8);
 
-        $documents = Document::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('created_at')->take(4);
+        $documents = Document::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('numberOfPages')->take(4);
 
         $high_downloading_documents = Document::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('totalDownloading')->take(8);
 
@@ -63,21 +62,21 @@ class PagesController extends Controller
 
         switch ($option) {
             case 'sach-hay-nen-doc':
-                $books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('ratingScore', 'desc')->paginate(12);
+                $books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('ratingScore', 'desc')->paginate(10);
                 $title = 'Sách hay nên đọc';
                 break;
             case 'sach-hay-xem-nhieu':
-                $books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('totalReading', 'desc')->paginate(12);
+                $books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('totalReading', 'desc')->paginate(10);
                 $title = 'Sách hay xem nhiều';
 
                 break;
             case 'sach-moi-cap-nhat':
-                $books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('updated_at', 'desc')->paginate(12);
+                $books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('updated_at', 'desc')->paginate(10);
                 $title = 'Sách mới cập nhật';
 
                 break;  
             default:
-                $books = Book::where('deleted_at','=',null)->where('status','=',1)->where('isPublic','=',1)->paginate(12);
+                $books = Book::where('deleted_at','=',null)->where('status','=',1)->where('isPublic','=',1)->paginate(10);
                 $title = 'Tất cả sách';
 
         }
@@ -97,11 +96,11 @@ class PagesController extends Controller
 
         switch ($option) {
             case 'tai-lieu-hay-nhat':
-                $documents = Document::where('deleted_at','=',null)->where('status','=',1)->where('isPublic','=',1)->orderBy('totalDownloading', 'desc')->paginate(18);
+                $documents = Document::where('deleted_at','=',null)->where('status','=',1)->where('isPublic','=',1)->orderBy('totalDownloading', 'desc')->paginate(10);
                 $title = 'Tài liệu hay nhất';
                 break;
             default:
-                $documents = Document::where('deleted_at','=',null)->where('status','=',1)->where('isPublic','=',1)->paginate(18);
+                $documents = Document::where('deleted_at','=',null)->where('status','=',1)->where('isPublic','=',1)->paginate(10);
                 $title = 'Tất cả tài liệu';
 
         }
@@ -119,8 +118,8 @@ class PagesController extends Controller
     public function book_detail($book_id,$book_slug){
             
         $book = Book::findOrFail($book_id);
-        $chapters = Chapter::where('book_id','=',$book_id)->where('deleted_at','=',null)->paginate(10);
-        $comments = Comment::where('type_id','=',2)->where('identifier_id','=',$book_id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(10);
+        $chapters = Chapter::where('book_id','=',$book_id)->where('deleted_at','=',null)->get();
+        $comments = Comment::where('type_id','=',2)->where('identifier_id','=',$book_id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
 
         $booksWithSameType = Book::where('type_id','=',$book->type_id)->where('id','!=',$book->id)->get();
         $isMark = false;
@@ -431,19 +430,19 @@ class PagesController extends Controller
        
         switch ($option) {
             case 'the-loai-sach':
-                $option_id = 0;
+                $option_id = 1;
                 $type_id = BookType::where('slug','=',$type_slug)->pluck('id')->firstOrFail();
                 $items = Book::where('type_id','=',$type_id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1);    
                 $total = $items->get()->count();      
                 break;
             case 'the-loai-tai-lieu':
-                $option_id = 1;
+                $option_id = 2;
                 $type_id = DocumentType::where('slug','=',$type_slug)->pluck('id')->firstOrFail();
                 $items = Document::where('type_id','=',$type_id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1);
                 $total = $items->get()->count();      
                 break;
             case null:
-                $option_id = 0;
+                $option_id = 1;
                 $type_id = -1;
                 $items = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1);    
                 $total = $items->get()->count();    
@@ -458,7 +457,7 @@ class PagesController extends Controller
       
 
         return view('client.homepage.search_type_page')
-        ->with('items',$items->paginate(18))
+        ->with('items',$items->paginate(12))
         ->with('document_types',$document_types)
         ->with('book_types',$book_types)
         ->with('option_id',$option_id)
@@ -475,26 +474,25 @@ class PagesController extends Controller
 
         switch ($option) {
             case 'tac-gia-sach':
-                $option_id = 0;
+                $option_id = 1;
 
                 $items = Book::where('author','like',"%{$author}%")->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1);    
                 $total = $items->get()->count();      
                 break;
             case 'tac-gia-tai-lieu':
-                $option_id = 1;
+                $option_id = 2;
 
                 $items = Document::where('author','like',"%{$author}%")->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1);
                 $total = $items->get()->count();      
                 break;
             default:
                 $option_id = -1;
-
                 $items = null;    
                 $total = 0;      
         }
         
         if($items){
-            $items = $items->paginate(18);
+            $items = $items->paginate(10);
         }
 
         return view('client.homepage.search_other')
@@ -521,13 +519,13 @@ class PagesController extends Controller
 
         switch ($option) {
             case 'ngon-ngu-sach':
-                $option_id = 0;
+                $option_id = 1;
 
                 $items = Book::where('language','=',$language_id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1);    
                 $total = $items->get()->count();      
                 break;
             case 'ngon-ngu-tai-lieu':
-                $option_id = 1;
+                $option_id = 2;
 
                 $items = Document::where('language','=',$language_id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1);
                 $total = $items->get()->count();      
@@ -540,7 +538,7 @@ class PagesController extends Controller
         }
         
         if($items){
-            $items = $items->paginate(18);
+            $items = $items->paginate(10);
         }
 
         return view('client.homepage.search_other')
@@ -566,13 +564,13 @@ class PagesController extends Controller
 
         switch ($option) {
             case 'tinh-trang-sach':
-                $option_id = 0;
+                $option_id = 1;
 
                 $items = Book::where('isCompleted','=',$status)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1);    
                 $total = $items->get()->count();      
                 break;
             case 'tinh-trang-tai-lieu':
-                $option_id = 1;
+                $option_id = 2;
 
                 $items = Document::where('isCompleted','=',$status)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1);
                 $total = $items->get()->count();      
@@ -585,7 +583,7 @@ class PagesController extends Controller
         }
         
         if($items){
-            $items = $items->paginate(18);
+            $items = $items->paginate(10);
         }
 
         return view('client.homepage.search_other')
@@ -595,7 +593,7 @@ class PagesController extends Controller
     }
 
     public function forum_home_page(){
-        $forums= Forum::where('status','=',1)->where('deleted_at','=',null)->get();
+        $forums= Forum::where('deleted_at','=',null)->orderBy('status', 'asc')->get();
         $lastPosts = ForumPosts::where('deleted_at','=',null)->orderBy('created_at', 'desc')->take(10)->get();
         return view('client.forum.index')
         ->with('lastPosts', $lastPosts)
@@ -607,7 +605,7 @@ class PagesController extends Controller
 
         $forum = Forum::where('slug','=',$forum_slug)->firstOrFail();
 
-        $forums_posts = ForumPosts::where('forumID','=',$forum->id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(9);
+        $forums_posts = ForumPosts::where('forumID','=',$forum->id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(8);
 
         $lastPosts = ForumPosts::where('deleted_at','=',null)->orderBy('created_at', 'desc')->take(10)->get();
 
@@ -622,24 +620,24 @@ class PagesController extends Controller
 
         $forum = Forum::where('slug','=',$forum_slug)->firstOrFail();
 
-        $forums_posts = ForumPosts::where('forumID','=',$forum->id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(9);
+        $forums_posts = ForumPosts::where('forumID','=',$forum->id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(10);
 
         $lastPosts = ForumPosts::where('deleted_at','=',null)->orderBy('created_at', 'desc')->take(10)->get();
 
         switch ($type_slug) {
             case 'luot-binh-luan-nhieu-nhat':
-                $forums_posts = ForumPosts::where('forumID','=',$forum->id)->where('deleted_at','=',null)->orderBy('totalComments', 'desc')->paginate(9);
+                $forums_posts = ForumPosts::where('forumID','=',$forum->id)->where('deleted_at','=',null)->orderBy('totalComments', 'desc')->paginate(10);
     
                 break;
             case 'bai-dang-cu-nhat':
-                $forums_posts = ForumPosts::where('forumID','=',$forum->id)->where('deleted_at','=',null)->orderBy('created_at', 'asc')->paginate(9);
+                $forums_posts = ForumPosts::where('forumID','=',$forum->id)->where('deleted_at','=',null)->orderBy('created_at', 'asc')->paginate(10);
 
                 break;
             case 'bai-dang-cua-ban':
                 $forums_posts = ForumPosts::where('forumID','=',$forum->id)->where('userCreatedID','=',Auth::user()->id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(9);
                 break;
             default:
-                $forums_posts = ForumPosts::where('forumID','=',$forum->id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(9);
+                $forums_posts = ForumPosts::where('forumID','=',$forum->id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(10);
 
         }
             return view('client.forum.detail')
@@ -649,9 +647,10 @@ class PagesController extends Controller
     }
 
     public function forum_search_page($topic){
-        $forums_posts = ForumPosts::where('topic','like','%'.$topic.'%')->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(9);
+        $forums_posts = ForumPosts::where('topic','like','%'.$topic.'%')->where('deleted_at','=',null)->orderBy('created_at', 'desc')->paginate(10);
         $lastPosts = ForumPosts::where('deleted_at','=',null)->orderBy('created_at', 'desc')->take(10)->get();
         $total = $forums_posts->count();
+        
         return view('client.forum.search')
         ->with('total',$total)
         ->with('topic',$topic)
@@ -681,9 +680,20 @@ class PagesController extends Controller
             'g-recaptcha-response.required' => 'Bạn cần xác thực captcha',
         ]);
 
+        $option = $request->option;
+
+        if($option == 1){
+            $book = Book::findOrFail($request->id);
+            $url = $book-> bookUrl;
+            $name = $book->slug;
+    
+            $extension = 'pdf';
+        }
+        else{
+
         $document = Document::findOrFail($request->id);
 
-        
+
         $document->totalDownloading = $document->totalDownloading + 1;
         $document->save();
 
@@ -691,41 +701,39 @@ class PagesController extends Controller
         $name = $document->slug;
 
         $extension = $document->extension;
-        
-        if(Auth::check()){
 
-            $existHistory = downloadingHistory::where('userID','=',Auth::user()->id)->where('documentID','=',$document->id)->orderBy('id','desc')->first();
+        if(Auth::check()) {
 
-            if($existHistory){     
+                $existHistory = downloadingHistory::where('userID', '=', Auth::user()->id)->where('documentID', '=', $document->id)->orderBy('id', 'desc')->first();
 
-                $existHistoryDate = new Carbon($existHistory->created_at);
+                if($existHistory) {
 
-                if($existHistoryDate->isToday()){     
+                    $existHistoryDate = new Carbon($existHistory->created_at);
 
-                    $existHistory->update([
-                        'total' => $existHistory->total + 1
-                    ]);
-                    
-                }
-                
-                else{
+                    if($existHistoryDate->isToday()) {
+
+                        $existHistory->update([
+                            'total' => $existHistory->total + 1
+                        ]);
+
+                    } else {
+                        downloadingHistory::create([
+                            'documentID'=>$document->id,
+                            'userID'=>Auth::user()->id,
+                            'total'=>1
+                        ]);
+                    }
+
+
+                } else {
                     downloadingHistory::create([
                         'documentID'=>$document->id,
                         'userID'=>Auth::user()->id,
                         'total'=>1
                     ]);
                 }
-               
 
             }
-            else{
-                downloadingHistory::create([
-                    'documentID'=>$document->id,
-                    'userID'=>Auth::user()->id,
-                    'total'=>1
-                ]);
-            }
-
         }
 
         $filename = $name.'.'.$extension;
@@ -742,9 +750,10 @@ class PagesController extends Controller
 
     public function generate_link_download(Request $request){
 
-        $document_id = $request->id;
+        $item_id = $request->id;
+        $option = $request->option;
 
-        $url = URL::temporarySignedRoute('tai-lieu.download', now()->addMinutes(30), ['documentID' => $document_id]);
+        $url = URL::temporarySignedRoute('tai-lieu.download', now()->addMinutes(30), ['item_id' => $item_id,'option'=>$option]);
 
         return response()->json([
              'url' => $url,
@@ -753,8 +762,12 @@ class PagesController extends Controller
     }
     public function download_document_page(Request $request){
 
-        $id = $request->get('documentID');
-        return view('client.homepage.document_download_page')->with('id',$id);
+        $id = $request->get('item_id');
+        $option = $request->option;
+
+        return view('client.homepage.document_download_page')
+        ->with('option',$option)
+        ->with('id',$id);
     }
 
 
@@ -800,5 +813,84 @@ class PagesController extends Controller
 
     }
 
+    public function chat_gpt_page(){
+        return view('client.forum.chatGPT.chatgpt');
+    }
 
+    function is_html($string)
+    {
+        return preg_match("/<[^<]+>/",$string,$m) != 0;
+    }
+
+    public function chat_gpt(Request $request){
+        $input = $request->get('content');
+        $chatTime = Carbon::now('Asia/Ho_Chi_Minh')->toDayDateTimeString();
+        
+        $result = OpenAI::completions()->create([
+            'model' => 'text-davinci-003',
+            "temperature" => 0.3,
+            "top_p" => 1,
+            "frequency_penalty" => 0,
+            "presence_penalty" => 0,
+            'max_tokens' => 150,
+            'prompt' => $input,
+        ]);
+
+        $content = trim($result['choices'][0]['text']);
+
+
+        if($this->is_html($content)){
+            $code ='<pre>'.
+            '<code>'.htmlentities($content).'</code>'.
+            '</pre>';
+
+            $botChat =  '<div class="chat is-you">'.
+            '<div class="chat-avatar">'.
+                '<div class="user-avatar bg-purple">'.
+                '<img src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/chatGPT-bot.png" alt="">'.
+                '</div>'.
+            '</div>'.
+            '<div class="chat-content">'.
+                '<div class="chat-bubbles">'.
+                   ' <div class="chat-bubble">'.
+                      '  <div class="chat-msg">'.$code.'</div>'.     
+                        '<ul class="chat-msg-more">'.
+                            '<li class="d-none d-sm-block"><a href="#" class="btn btn-icon btn-sm btn-trigger"><em class="icon ni ni-reply-fill"></em></a></li>'.                    
+                       ' </ul>  '.   
+                  '  </div>'.
+                '</div>'.
+             '<ul class="chat-meta">'.
+             '<li>BOT</li>'.
+             '</ul>'.
+            '   </div>'.
+            ' </div>';
+        }
+        else{
+            $botChat =  '<div class="chat is-you">'.
+            '<div class="chat-avatar">'.
+                '<div class="user-avatar bg-purple">'.
+                '<img src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/chatGPT-bot.png" alt="">'.
+                '</div>'.
+            '</div>'.
+            '<div class="chat-content">'.
+                '<div class="chat-bubbles">'.
+                   ' <div class="chat-bubble">'.
+                      '  <div class="chat-msg">'.$content.'</div>'.     
+                        '<ul class="chat-msg-more">'.
+                            '<li class="d-none d-sm-block"><a href="#" class="btn btn-icon btn-sm btn-trigger"><em class="icon ni ni-reply-fill"></em></a></li>'.                    
+                       ' </ul>  '.   
+                  '  </div>'.
+             '   </div>'.
+                '<ul class="chat-meta">'.
+                '<li>BOT</li>'.
+                '</ul>'.
+            '   </div>'.
+            ' </div>';
+        }
+
+        return response()->json(
+            ['botChat'=>$botChat,
+            'content'=>$content]
+        );
+    }
 }

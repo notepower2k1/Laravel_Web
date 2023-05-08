@@ -19,7 +19,11 @@ use Illuminate\Support\Facades\DB;
 class BookController extends Controller
 {
     
-
+    function TimeToText(){
+        $now_date = Carbon::now()->toDateTimeString();
+        $string = str_replace(' ', '-', $now_date);
+        return preg_replace('/[^A-Za-z0-9\-]/', '', $string);  
+    }
   
 
 
@@ -74,7 +78,9 @@ class BookController extends Controller
             'author' => 'required',
             'description' => 'required',
             'image' => 'required|image|max:2048|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
-            'language' => 'required'
+            'language' => 'required',
+            'isCompleted' => 'required',
+            'file_book' => 'mimetypes:application/pdf',
         ],
         [
             'name.required' => 'Bạn cần phải nhập tên sách',
@@ -84,17 +90,25 @@ class BookController extends Controller
             'image.required' => 'Sách cần có ảnh bìa',
             'image.image' => 'Bạn nên đưa đúng định dạng ảnh bìa',
             'image.max' => 'Dung lượng ảnh quá lớn',
-            'image.dimensions' => 'Kích thước ảnh nhỏ nhất là 100x100 và lớn nhất là 2000x2000'
+            'image.dimensions' => 'Kích thước ảnh nhỏ nhất là 100x100 và lớn nhất là 2000x2000',
+            'file_book.mimetypes' => 'Tài liệu đình kèm nên là file .pdf',
+            'isCompleted.required' => 'Sách phải có tình trạng'
         ]);
 
 
-        $slug =  Str::slug($request->name);
+        $slug =  Str::slug($request->name).'-'. $this->TimeToText();
     
         $image = $request->file('image'); //image file from frontend
 
         $generatedImageName = $slug.$image->hashName();
 
+        $generatedFileName = null;
+        $file_book = $request->file('file_book'); 
 
+        if($file_book){
+            $generatedFileName = $slug.$file_book->hashName();
+
+        }
    
         $book = Book::create([
             'name' => $request->name,
@@ -105,23 +119,32 @@ class BookController extends Controller
             'type_id' => intval($request->book_type_id),
             'image' => $generatedImageName,
             'userCreatedID' => Auth::user()->id,
-            'isCompleted' => 0,
+            'isCompleted' => $request -> isCompleted,
             'language' => $request -> language,
             'numberOfChapter' => 0,
             'ratingScore'=> 0,
             'totalReading'=>0,
             'totalBookMarking'=>0,
             'totalComments' => 0,
-            'status' =>1
+            'status' =>1,
+            'file' => $generatedFileName
         ]);
 
-        $firebase_storage_path = 'bookImage/';
         $localfolder = public_path('firebase-temp-uploads') .'/';
+
+        $firebase_storage_path = 'bookImage/';
         if ($image->move($localfolder, $generatedImageName)) {
         $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
 
         app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
         unlink($localfolder . $generatedImageName);
+        }
+
+        $firebase_storage_path_2 = 'bookFile/';
+        if ($file_book->move($localfolder, $generatedFileName)) {
+        $uploadedfile = fopen($localfolder.$generatedFileName, 'r');
+        app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path_2 . $generatedFileName]);
+        unlink($localfolder . $generatedFileName);
         }
 
 
@@ -246,7 +269,7 @@ class BookController extends Controller
             'image.dimensions' => 'Kích thước ảnh nhỏ nhất là 100x100 và lớn nhất là 2000x2000'
         ]);
 
-        $slug =  Str::slug($request->name);
+        $slug =  Str::slug($request->name).'-'. $this->TimeToText();
 
         $generatedImageName="";
 

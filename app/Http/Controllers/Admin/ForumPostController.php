@@ -14,11 +14,12 @@ use Illuminate\Support\Facades\DB;
 class ForumPostController extends Controller
 {
 
-    function setNameForImage(){
+    function TimeToText(){
         $now_date = Carbon::now()->toDateTimeString();
         $string = str_replace(' ', '-', $now_date);
         return preg_replace('/[^A-Za-z0-9\-]/', '', $string);  
     }
+    
     public function index()
     {
         $forum_posts = ForumPosts::where('deleted_at','=',null)->get();
@@ -77,7 +78,7 @@ class ForumPostController extends Controller
     public function store(Request $request)
     {
 
-        $slug =  Str::slug($request->topic);
+        $slug =  Str::slug($request->topic).'-'. $this->TimeToText();
 
         $request->validate([
             'topic' => 'required|min:10|max:255',

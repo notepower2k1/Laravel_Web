@@ -467,7 +467,7 @@
                                                             </div><!-- .product-meta -->   
                                                             <div class="product-meta">
                                                                 <h6 class="title">File đỉnh kèm</h6>
-                                                                <a href="#" id="download-btn">
+                                                                <a href="{{ $high_downloading_document->documentUrl }}" >
                                                                     file.{{ $high_downloading_document->extension }}
                                                                 </a>
                                                             </div><!-- .product-meta -->   
@@ -503,7 +503,7 @@
                         </div>
                     </div>
                     <div class="p-2">
-                        <table class="datatable-init nowrap nk-tb-list nk-tb-ulist">
+                        <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false">
                             <thead>
                                 <tr class="nk-tb-item nk-tb-head">      
                                     <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ảnh bìa</span></th>                        
@@ -532,7 +532,7 @@
                                         </div>
                                     </td>
                                     <td class="nk-tb-col tb-col-lg">
-                                      <span>{{  $book->author }}</span>
+                                      <span>{{ Str::limit($book->author,30) }}</span>
                                     </td>
                                     <td class="nk-tb-col tb-col-lg">
                                       <span>{{ $book->types->name }}</span>
@@ -579,7 +579,7 @@
                                       </div>
                                   </td>
                                   <td class="nk-tb-col tb-col-lg">
-                                    <span>{{  $document->author }}</span>
+                                    <span>{{ Str::limit($document->author,30) }}</span>
                                   </td>
                                   <td class="nk-tb-col tb-col-lg">
                                     <span>{{ $document->types->name }}</span>

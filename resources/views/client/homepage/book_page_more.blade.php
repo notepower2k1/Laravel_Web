@@ -99,7 +99,9 @@
                         <ul class='paperback_front'>
                             
                             <li>
-                                <span class="ribbon">{{ $book->ratingScore }}/5</span>
+                                @if(\Carbon\Carbon::parse($book->created_at)->isToday())
+                                <span class="ribbon">Mới</span>
+                                @endif
 
                                 <img src="{{ $book->url }}" alt="" width="100%" height="100%">
                             </li>
@@ -110,9 +112,9 @@
             
                         <ul class='ruled_paper'>
                             <li></li>
-                            <li class="d-flex align-items-start  justify-content-center">
+                            <li class="">
                                 <a class="atag_btn"
-                                href="/sach/{{$book->id}}/{{$book->slug}}">Chi tiết</a>
+                                href="/sach/{{$book->id}}/{{$book->slug}}">{{ Str::limit($book->description,150) }}</a>
                             </li>
                             <li></li>
                             <li></li>
@@ -128,7 +130,7 @@
                         <figcaption>
                             <h4>{{ $book->name }}</h4>
                             <span>{{ $book->author }}</span>
-                            <p>{{ Str::limit($book->description,200) }}</p>
+                            {{-- <p>{{ Str::limit($book->description,200) }}</p> --}}
                         </figcaption>
                     </figure>
             </li>

@@ -67,6 +67,10 @@ class ChapterController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
+     public function clean($str){
+        return str_replace([':', '\\', '/', '*','@','#','$','^'],"",$str);
+    }
     public function store(Request $request)
     {
 
@@ -91,8 +95,8 @@ class ChapterController extends Controller
 
 
         $chapter_id = Chapter::insertGetId([
-            'code' => $request->code,
-            'name' => $name,
+            'code' => $this->clean($request->code),
+            'name' =>  $this->clean($name),
             'content' => $request->content,
             'slug' =>  $slug,
             'book_id' =>  $request->book_id,
@@ -186,8 +190,8 @@ class ChapterController extends Controller
 
         $chapter = Chapter::findOrFail($id)
         ->update([
-            'code' => $request->code,
-            'name' => $name,
+            'code' =>  $this->clean($request->code),
+            'name' =>  $this->clean($name),
             'content' => $request->content,
             'slug' =>  $slug ,
             'numberOfWords' => $word_count

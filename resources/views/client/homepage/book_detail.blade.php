@@ -2,6 +2,7 @@
 @section('pageTitle', `${{$book->name}}`)
 @section('additional-style')
 <link rel="stylesheet" href="{{ asset('assets/css/book3d.css') }}">
+<link href="{{ asset('js/pagination/pagination.css') }}" rel="stylesheet" type="text/css">
 
 <style>
     .chapter-items{
@@ -24,6 +25,7 @@
         border:none !important;
 
     }
+
 </style>
 
 @endsection
@@ -115,7 +117,7 @@
                                                     @endif --}}
                                                     <div id="rateYo" data-rateyo-read-only="true"></div>
 
-                                                    <p style="font-size: 18px"><span id="score">{{$book->ratingScore}}</span>/5 
+                                                    <p style="font-size: 18px"><span class="score">{{$book->ratingScore}}</span>/5 
                                                         (<span class="ratingPersonCount">{{ $ratingPersons->count() }}</span> đánh giá)</p>
                                                 </div><!-- .product-rating -->          
                                             </div>
@@ -123,15 +125,16 @@
                                             
                                             <div class="product-meta">
                                                 <ul class="d-flex flex-wrap ailgn-center g-2 pt-1">
+                                                    @if($book->numberOfChapter)
                                                     <li class="ms-n1">
-                                                        @if($book->numberOfChapter === 0)
-                                                            <a class="btn btn-lg btn-primary disabled"><em class="icon ni ni-arrow-right-circle"></em><span>Đọc ngay</span></a>
-                                                        @else
-                                                            <a href="/doc-sach/{{$book->slug}}/{{ $chapters->first()->slug }}" class="btn btn-lg btn-primary">
-                                                                <em class="icon ni ni-arrow-right-circle"></em><span>Đọc ngay</span>
-                                                            </a>
-                                                        @endif
+                                                       
+                                                      
+                                                        <a href="/doc-sach/{{$book->slug}}/{{ $chapters->first()->slug }}" class="btn btn-lg btn-primary">
+                                                            <em class="icon ni ni-arrow-right-circle"></em><span>Đọc ngay</span>
+                                                        </a>
+                                                      
                                                     </li>
+                                                    @endif
                                                     <li class="ms-n1">
                                                         @if(Auth::check())
                                                             @if(!$isMark)
@@ -143,7 +146,19 @@
                                                         <a href="/login" class="btn btn-lg btn-primary"><em class="icon ni ni-bookmark"></em><span id="span-text">Đánh dấu</span></a>
                                                         @endif
                                                     </li>
-                                                    
+                                                    @if($book->file)
+                                                    <li class="ms-n1">
+                                                        @if(Auth::check())
+
+                                                        <a href="#" id="download-btn" class="btn btn-lg btn-primary">
+                                                            <em class="icon ni ni-download"></em><span>PDF</span>
+                                                        </a>
+                                                        @else
+                                                        <a href="/login" class="btn btn-lg btn-primary"><em class="icon ni ni-download"></em><span id="span-text">PDF</span></a>
+
+                                                        @endif
+                                                    </li>
+                                                    @endif
                                                 </ul>
                                             </div><!-- .product-meta -->
                                         </div><!-- .product-info -->
@@ -158,19 +173,25 @@
                                     <li class="nav-item">
                                         <a class="nav-link active" data-bs-toggle="tab" href="#tabItem5"><span>Giới thiệu</span></a>
                                     </li>
+                                    @if($chapters->count() > 0)
+
                                     <li class="nav-item">
                                         <a class="nav-link" data-bs-toggle="tab" href="#tabItem6"><span>Danh sách chương <span class="badge badge-dim bg-primary">{{ $book->numberOfChapter }}</span>
                                         </span></a>
                                     </li>
+                                    @endif
                                     <li class="nav-item">
                                         <a class="nav-link" data-bs-toggle="tab" href="#tabItem7"><span>Bình luận
                                             <span class="badge badge-dim bg-primary total-comment-span">{{ $book->totalComments }}</span> </span></a>
 
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" data-bs-toggle="tab" href="#tabItem8"><span>Đánh giá</span></a>
+                                        <a class="nav-link" data-bs-toggle="tab" href="#tabItem8"><span>Đánh giá
+                                            <span class="badge badge-dim bg-primary ratingPersonCount">{{ $ratingPersons->count() }}</span> </span></a>
+                                        </span></a>
                                     </li>
                                 </ul>
+                           
                                 <div class="tab-content">
                                     <div class="tab-pane active" id="tabItem5">
                                         <div class="row">                      
@@ -250,39 +271,67 @@
                                             </div>
                                         </div><!-- .row -->
                                     </div>
+                                    @if($chapters->count() > 0)
                                     <div class="tab-pane" id="tabItem6">                                  
-                                        <div class="d-flex" id="chapter_list">
-                                            <div class="row">
+                                        <div>
+                                            <div class="d-flex justify-content-between">
                                                 <h5 class="mb-4">Danh sách chương</h5>
+
+                                                <a href="#" class="btn btn-icon btn-outline-secondary" id="sortbtn" data-order = "asc" >
+                                                    <em class="icon ni ni-sort-up-fill"></em>
+                                                </a>
+
+                                            </div>
+                                            <div class="row" id ="chapter-render-div">
+                                               
                                                 @foreach ($chapters as $chapter)          
-                                                <div class="col-6">
+                                                <div class="col-6" id={{ $loop->iteration }}>
                                                     <a href="/doc-sach/{{ $chapter->books->slug }}/{{ $chapter->slug }}" class="chapter-items" data-id="{{ $chapter->id }}">                                           
                                                         
-                                                        <span>{{$chapter->code}}</span>        
                                                         @if($chapter->name)
-                                                        <span>:{{ Str::limit($chapter->name, 40) }}</span>
-                                                        @else                                                     
+                                                        <span>{{$chapter->code}}: {{ Str::limit($chapter->name, 40) }}</span>
+                                                        @else    
+                                                        <span>{{$chapter->code}}</span>                                                 
                                                         @endif                                              
                                                     </a>
                                                     <span class="text-muted fs-12px">({{ $chapter->time }})</span>
+
+                                                   
+                                                    <div class="w-100">
+                                                        <hr class="hr">
+                                                    </div>
+                                                    
                                                 </div>
-                                                @if($loop->iteration % 2 == 0)
-                                                <div class="w-100">
-                                                    <hr class="hr">
-                                                </div>
-                                                @endif
+                                               
                                                 @endforeach
                                             </div>
                                             
-                                            
-                                        </div>
-                                        {{ $chapters->links('vendor.pagination.custom',['elements' => $chapters]) }}
+                                            <div class="data-container"></div>
+                                            <div class="col-md-12 d-flex justify-content-end mt-4">                          
+                                                <div id="pagination"></div>
+                                            </div>
+                                        </div>                                        
                                     </div>
+                                    @endif
                                     <div class="tab-pane" id="tabItem7">
                                         <div class="row g-gs flex-lg-row-reverse">                      
                                             <div class="col-lg-12">
                                                 <div class="product-details entry me-xxl-3">
-                                                    <h5><span class="total-comment-span">{{ $book->totalComments }} </span>bình luận</h5>
+                                                    <div class="d-flex justify-content-between">
+                                                        <h5><span class="total-comment-span">{{ $book->totalComments }} </span>bình luận</h5>
+                                                        <div class="dropdown">
+                                                            <a class="btn btn-icon btn-outline-secondary dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                                                <em class="icon ni ni-sort-line"></em>    
+                                                            </a>
+                                                            <div class="dropdown-menu">
+                                                              <ul class="link-list-opt">
+                                                                <li><a href="#" id="sort-comment-new"><span>Mới nhất</span></a></li>
+                                                                <li><a href="#" id="sort-comment-old"><span>Cũ nhất</span></a></li>
+                                                        
+                                                              </ul>
+                                                            </div>
+                                                          </div>                                                      
+                                                    </div>
                                                     <div class="list-group mt-3">
                                                         @if(Auth::check())
                                                         <div class="d-flex">                                                     
@@ -304,10 +353,11 @@
                                                       
                                                         <hr>
                                                         @endif
-                                                        @if ($comments)
+                                                        @if ($comments->count() > 0)
                                                         <div id="comment-box">
-                
-                                                            @foreach ($comments as $comment)
+                                                            
+                                                            <div id ="comment-render-div">
+                                                                @foreach ($comments as $comment)
                                                                 <div id="comment-{{ $comment->id }}">
                                                                         <div class="d-flex flex-column comment-section">
                                                                             <div class="bg-white p-2">
@@ -321,32 +371,34 @@
                                                                                             </div>
                                                                                         </div>
                                                                                       
+                                                                                        @if(Auth::check())
+                                                                                            @if(Auth::user()->id == $comment->users->id || Auth::user()->role == 1)
+                                                                                            <div class="dropdown">
+                                                                                                <a class="dropdown-toggle text-dark" href="#" type="button" data-bs-toggle="dropdown">
+                                                                                                    <em class="icon ni ni-more-v"></em>
+                                                                                                </a>
+                                                                                                <div class="dropdown-menu">
+                                                                                                <ul class="link-list-opt">
+                                                                                                    <li>
+                                                                                                        <a class="delete-comment-btn" data-id={{ $comment->id }}>
+                                                                                                            <em class="icon ni ni-trash"></em>
+                                                                                                            <span>Xóa bình luận</span>
+                                                                                                        </a>
+                                                                                                    
+                                                                                                    </li>
+                                                                                                    <li> 
+                                                                                                        <a class="edit-comment-btn" data-id="{{ $comment->id }}" data-option="1">
+                                                                                                            <em class="icon ni ni-edit fs-16px"></em>
+                                                                                                            <span>Chỉnh sửa bình luận</span>
+                                                                                                        </a>
 
-                                                                                        <div class="dropdown">
-                                                                                            <a class="dropdown-toggle" href="#" type="button" data-bs-toggle="dropdown">
-                                                                                                <em class="icon ni ni-more-v"></em>
-                                                                                            </a>
-                                                                                            <div class="dropdown-menu">
-                                                                                              <ul class="link-list-opt">
-                                                                                                <li>
-                                                                                                    <a class="delete-comment-btn" data-id={{ $comment->id }}>
-                                                                                                        <em class="icon ni ni-trash"></em>
-                                                                                                        <span>Xóa bình luận</span>
-                                                                                                    </a>
-                                                                                                  
-                                                                                                </li>
-                                                                                                <li> 
-                                                                                                    <a class="edit-comment-btn" data-id="{{ $comment->id }}" data-option="1">
-                                                                                                        <em class="icon ni ni-edit fs-16px"></em>
-                                                                                                        <span>Chỉnh sửa bình luận</span>
-                                                                                                    </a>
-
-                                                                                                   
-                                                                                                </li>
-                                                                                              </ul>
+                                                                                                    
+                                                                                                    </li>
+                                                                                                </ul>
+                                                                                                </div>
                                                                                             </div>
-                                                                                        </div>
-                                                                                        
+                                                                                            @endif
+                                                                                        @endif
                                                                                     </div>
                                                                                     
                                                                                 
@@ -439,32 +491,34 @@
                                                                                             </div>
                                                                                         </div>
                                                                                       
+                                                                                        @if(Auth::check())
+                                                                                            @if(Auth::user()->id == $reply->users->id || Auth::user()->role == 1)
+                                                                                            <div class="dropdown">
+                                                                                                <a class="dropdown-toggle text-dark" href="#" type="button" data-bs-toggle="dropdown">
+                                                                                                    <em class="icon ni ni-more-v"></em>
+                                                                                                </a>
+                                                                                                <div class="dropdown-menu">
+                                                                                                    <ul class="link-list-opt">
+                                                                                                    <li>
+                                                                                                        <a class="delete-reply-btn" data-id={{ $reply->id }}>
+                                                                                                            <em class="icon ni ni-trash"></em>
+                                                                                                            <span>Xóa phản hồi</span>
+                                                                                                        </a>
+                                                                                                        
+                                                                                                    </li>
+                                                                                                    <li> 
+                                                                                                        <a class="edit-comment-btn" data-id="{{ $reply->id }}" data-option="2">
+                                                                                                            <em class="icon ni ni-edit fs-16px"></em>
+                                                                                                            <span>Chỉnh sửa phản hồi</span>
+                                                                                                        </a>
 
-                                                                                        <div class="dropdown">
-                                                                                            <a class="dropdown-toggle" href="#" type="button" data-bs-toggle="dropdown">
-                                                                                                <em class="icon ni ni-more-v"></em>
-                                                                                            </a>
-                                                                                            <div class="dropdown-menu">
-                                                                                              <ul class="link-list-opt">
-                                                                                                <li>
-                                                                                                    <a class="delete-reply-btn" data-id={{ $reply->id }}>
-                                                                                                        <em class="icon ni ni-trash"></em>
-                                                                                                        <span>Xóa phản hồi</span>
-                                                                                                    </a>
-                                                                                                  
-                                                                                                </li>
-                                                                                                <li> 
-                                                                                                    <a class="edit-comment-btn" data-id="{{ $reply->id }}" data-option="2">
-                                                                                                        <em class="icon ni ni-edit fs-16px"></em>
-                                                                                                        <span>Chỉnh sửa phản hồi</span>
-                                                                                                    </a>
-
-                                                                                                   
-                                                                                                </li>
-                                                                                              </ul>
+                                                                                                        
+                                                                                                    </li>
+                                                                                                    </ul>
+                                                                                                </div>
                                                                                             </div>
-                                                                                        </div>
-                                                                                        
+                                                                                            @endif
+                                                                                        @endif
                                                                                     </div>
                                                                                     <div class="mt-2" id ="reply-content-{{ $reply->id }}">
                                                                                         <p>
@@ -527,6 +581,17 @@
                                                                 </div>
                                                             
                                                             @endforeach
+                                                            </div>
+                                                       
+
+
+                                                            {{-- <div class="col-md-12 d-flex justify-content-end mt-4">                          
+                                                                {{ $comments->links('vendor.pagination.custom',['elements' => $comments]) }}
+                                                            </div> --}}
+                                                            <div class="data-container"></div>
+                                                            <div class="col-md-12 d-flex justify-content-end mt-4">                          
+                                                                <div id="pagination"></div>
+                                                            </div>
                                                         </div>
                                                         @endif
                                                         
@@ -540,8 +605,8 @@
 
                                     </div>
                                     <div class="tab-pane" id="tabItem8">
-                                        <div id ="rating-box">                         
-                                            <div class="row">                                                  
+                                                           
+                                            <div id="rating-box" class="row">                                                  
                                                     
                                                 <div class="col-8">
 
@@ -571,39 +636,67 @@
                                                         </div>
                                                         <hr>
                                                         @endif
-                                                        <div class="row">                                           
+                                                        <div class="d-flex justify-content-between">
+                                                            <h5><span class="total-comment-span">{{ $ratingPersons->count() }} </span>đánh giá</h5>
+                                                            <div class="dropdown">
+                                                                <a class="btn btn-icon btn-outline-secondary dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                                                    <em class="icon ni ni-sort-line"></em>    
+                                                                </a>
+                                                                <div class="dropdown-menu">
+                                                                  <ul class="link-list-opt">
+                                                                    <li><a href="#" id="sort-rating-new"><span>Mới nhất</span></a></li>
+                                                                    <li><a href="#" id="sort-rating-old"><span>Cũ nhất</span></a></li>
+                                                            
+                                                                  </ul>
+                                                                </div>
+                                                              </div>                                                      
+                                                        </div>
+                                                        <div class="row" id ="rating-list-content">                                           
                                                             @foreach ( $ratingPersons as $person )
-                                                                <div class="d-flex justify-content-center">
-                                                                    <img class="rounded-circle" src="{{ $person->users->profile->url }}" style="width:60px">
-                                                                    <div class="w-100">
-                                                                        <span class="d-block font-weight-bold name">{{ $person->users->profile->displayName }}</span>
-                                                                        <div class="d-flex justify-content-between">
-                                                                            <div>
-                                                                                <div class="me-6 d-flex align-items-center">
-                                                                                    <div id="rateYo-{{ $loop->index }}" data-rateyo-read-only="true" data-person-rating-score={{ $person->score }}></div>                                                
-                                                                                    <span style="font-size:20px"> {{ $person->score }}</span>                                                                            
+                                                                <div id ="rating-{{ $person->id }}">
+                                                                    <div class="d-flex justify-content-center">
+                                                                        <img class="rounded-circle" src="{{ $person->users->profile->url }}" style="width:60px">
+                                                                        <div class="w-100">
+                                                                            <div class="d-flex justify-content-between">
+                                                                                <span class="d-block font-weight-bold name">{{ $person->users->profile->displayName }}</span>
+    
+                                                                                @if(Auth::check())
+                                                                                    @if(Auth::user()->id == $person->users->id || Auth::user()->role == 1)
+                                                                                        <a href="#" class="delete-rating-btn" data-id={{ $person->id }} >
+                                                                                            <em class="icon ni ni-cross"></em>      
+                                                                                        </a>
+                                                                                    @endif
+                                                                                @endif
+                                                                            </div>
+                                                                            <div class="d-flex justify-content-between">
+                                                                                <div>
+                                                                                    <div class="me-6 d-flex align-items-center">
+                                                                                        <div id="rateYo-{{ $loop->index }}" data-rateyo-read-only="true" data-person-rating-score={{ $person->score }}></div>                                                
+                                                                                        <span style="font-size:20px"> {{ $person->score }}</span>                                                                            
+                                                                                    </div>
+                                                                                   
                                                                                 </div>
-                                                                               
+                                                                                
+                    
+                                                                                <div class="date text-mute">
+                                                                                    <em class="icon ni ni-clock text-mute"></em>
+                                                                                    <span class="text-mute">{{ $person->time }}</span>
+                                                                                </div>
+                                                                              
                                                                             </div>
                                                                             
-                
-                                                                            <div class="date text-mute">
-                                                                                <em class="icon ni ni-clock text-mute"></em>
-                                                                                <span class="text-mute">{{ $person->time }}</span>
-                                                                            </div>
-                                                                          
                                                                         </div>
-                                                                        
-                                                                    </div>
-                                                               
-                                                                </div>    
-                                                                <div class="rating-content mt-2">
-                                                                    <p class="text-muted">{{ $person->content }}</p>     
-                                                                </div>  
-                                                                <hr>
+                                                                   
+                                                                    </div>    
+                                                                    <div class="rating-content mt-2">
+                                                                        <p class="text-muted">{{ $person->content }}</p>     
+                                                                    </div>  
+                                                                    <hr>
+                                                                </div>
+                                                              
                                                                          
                                                             @endforeach
-                                                    </div>
+                                                        </div>
                                                 </div>
                                                
                                                 <div class="col-4">
@@ -653,10 +746,11 @@
                                                     
                                             </div>
                                           
-                                        </div>                        
+                                                             
                                        
                                     </div>
                                 </div>
+                               
                             </div>                        
                         </div>
                     </div>
@@ -727,7 +821,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Báo cáo sách</h5>
-                <button id="close-btn" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <button class="close" data-bs-dismiss="modal" aria-label="Close">
                     <em class="icon ni ni-cross"></em>
                 </button>
             </div>
@@ -768,7 +862,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Báo cáo bình luận</h5>
-                <button id="close-btn" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <button class="close" data-bs-dismiss="modal" aria-label="Close">
                     <em class="icon ni ni-cross"></em>
                 </button>
             </div>
@@ -841,7 +935,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
 <script src="{{ asset('assets/js/example-sweetalert.js?ver=3.1.2') }}" aria-hidden="true"></script>
 <script src="{{ asset('assets/js/emojionearea.min.js') }}" aria-hidden="true"></script>
-
+<script src="{{ asset('js/pagination/pagination.min.js') }}" ></script>
 
 <script>
    
@@ -852,83 +946,167 @@
     }
     });
 
+
     $(function () {
-        $('#comment_area').emojioneArea({
-            pickerPosition: "bottom",
-            filtersPosition: "bottom",
-            tones: false,
-            events: {
-                keyup: function (editor, event) {
-                    $('#comment_area').val(this.getText());
-                }
-            }
-	    });
-        
 
-        $('.replies-item').css('display', 'none');
+  
 
-        var chapter = {!! $book->numberOfChapter  !!}
-
-        if(chapter > 0){
-
-            const readingLog = window.localStorage.getItem('readingLog');
-
-            if(readingLog){
-
-            const log = JSON.parse(readingLog);
-            const current_book_id = {!! $book->id !!}
-            objIndex = log.findIndex((obj => obj.book_id == current_book_id));
-
-            if(objIndex >= 0){
-                log[objIndex].chapter_id.forEach(element => {
-                var buttonChapters = $('#chapter_list').find(`a[data-id='${element}']`);
-                
-                buttonChapters.each(function (i,item) {
-                    $(item).parent().css("background-color", "#dbd7d3");
-                })
-
-
-                });
-            }
-          
+    chapterRender();
+    commentRender();
+    $('#comment_area').emojioneArea({
+        pickerPosition: "bottom",
+        filtersPosition: "bottom",
+        tones: false,
+        events: {
+            keyup: function (editor, event) {
+                $('#comment_area').val(this.getText());
             }
         }
-       
+    });
+        
+
+    $('.replies-item').css('display', 'none');
+
+    var chapter = {!! $book->numberOfChapter  !!}
+
+    if(chapter > 0){
+
+        const readingLog = window.localStorage.getItem('readingLog');
+
+        if(readingLog){
+
+        const log = JSON.parse(readingLog);
+        const current_book_id = {!! $book->id !!}
+        objIndex = log.findIndex((obj => obj.book_id == current_book_id));
+
+        if(objIndex >= 0){
+            log[objIndex].chapter_id.forEach(element => {
+            var buttonChapters = $('#tabItem6').find('#chapter_list').find(`a[data-id='${element}']`);
+            
+            buttonChapters.each(function (i,item) {
+                $(item).css("color", "#dbd7d3");
+            })
+
+
+            });
+        }
+        
+        }
+    }
+    
         $('#comment-btn').attr('disabled', true);
     
        
 
-        $("#rateYo3").rateYo({
-            maxValue: 5,
-            numStars: 5,
-            halfStar: true,
-            starWidth: "30px",
-            spacing: "10px",
+    $("#rateYo3").rateYo({
+        maxValue: 5,
+        numStars: 5,
+        halfStar: true,
+        starWidth: "30px",
+        spacing: "10px",
 
-            multiColor: {
- 
-            "startColor": "#FF0000", //RED
-            "endColor"  : "#00FF00"  //GREEN
-            },
-        });
+        multiColor: {
+
+        "startColor": "#FF0000", //RED
+        "endColor"  : "#00FF00"  //GREEN
+        },
+    });
 
 
-        $("#rateYo2").rateYo({
-            rating: {!! $ratingScore !!},
-            starWidth: "18px",  
+    $("#rateYo2").rateYo({
+        rating: {!! $ratingScore !!},
+        starWidth: "18px",  
 
-          
-        });
-
-        $("#rateYo").rateYo({
-            rating: {!! $ratingScore !!},
-            starWidth: "20px",    
-        });
         
-        defaultRatingSet();
+    });
+
+    $("#rateYo").rateYo({
+        rating: {!! $ratingScore !!},
+        starWidth: "20px",    
+    });
+    
+    defaultRatingSet();
       
        
     });
+
+    function chapterRender(){
+        const container = $('#tabItem6').find('#pagination');
+        const book_slug = @json($book->slug);
+
+  
+
+        if (!container.length) return;
+            var sources = function () {
+            var result = [];
+
+            $('#chapter-render-div').children().each(function(item){
+
+                result.push($(this).get(0).outerHTML);
+
+            })
+        return result;
+        }();
+
+        var options = {
+            dataSource: sources,
+            callback: function (response, pagination) {
+                var dataHtml = '<div class="row" id="chapter_list">';
+
+                $.each(response, function (index, item) {
+                    dataHtml += item;
+                });
+
+                dataHtml += '</div>';
+
+                container.parent().prev().html(dataHtml);
+                $('#chapter-render-div').remove();
+            }
+        };
+
+
+  
+        container.pagination(options);
+    }
+
+
+    function commentRender(){
+        const container = $('#tabItem7').find('#pagination');
+
+
+        if (!container.length) return;
+            var sources = function () {
+            var result = [];
+
+            $('#comment-render-div').children().each(function(item){
+
+
+                result.push($(this).get(0).outerHTML);
+
+            })
+        return result;
+        }();
+
+        var options = {
+            dataSource: sources,
+            callback: function (response, pagination) {
+                var dataHtml = '<div id ="comment_list" >';
+
+                $.each(response, function (index, item) {
+                    dataHtml += item;
+                });
+
+                dataHtml += '</div>';
+
+                container.parent().prev().html(dataHtml);
+                $('#comment-render-div').remove();
+            }
+        };
+
+
+  
+        container.pagination(options);
+    }
 
     function defaultRatingSet(){
         const totalOfRating = @json($ratingPersons->count());
@@ -1000,7 +1178,7 @@
                 
                 var currentScore = res.currentScore;
 
-                $('#score').text(`${currentScore}`);  
+                $('span.score').text(`${currentScore}`);  
                 
                 $("#rateYo").rateYo("rating", `${currentScore}`);
                 
@@ -1195,7 +1373,7 @@
 
                             
                             setTimeout(()=>{
-                                form.find('#close-btn').click();
+                                form.modal('hide');
                             }, 2500);
                         })
 
@@ -1233,7 +1411,6 @@
         form.find('input[name="identifier_id"]').val(identifier_id);
        
 
-        console.log(identifier_id,type_id,userName);
     })
 
     $('#submitReportFormComment').click(function (e) {
@@ -1280,7 +1457,7 @@
 
                             
                             setTimeout(()=>{
-                                form.find('#close-btn').click();
+                                form.modal('hide');
                             }, 2500);
                         })
 
@@ -1305,7 +1482,9 @@
     });
 
 
-    $(document).on('click','.delete-comment-btn',function(){
+    $(document).on('click','.delete-comment-btn',function(e){
+        e.preventDefault();
+
         var comment_id = $(this).data('id');
 
             Swal.fire({
@@ -1349,7 +1528,9 @@
 
     })
 
-    $(document).on('click','.delete-reply-btn',function(){
+    $(document).on('click','.delete-reply-btn',function(e){
+        e.preventDefault();
+
         var reply_id = $(this).data('id');
 
             Swal.fire({
@@ -1393,7 +1574,9 @@
 
     })
 
-    $(document).on('click','.create-reply-btn',function(){
+    $(document).on('click','.create-reply-btn',function(e){
+        e.preventDefault();
+
 
         var comment_id = $(this).data('id');
 
@@ -1436,7 +1619,9 @@
         
     })
 
-    $(document).on('click','#reply-btn',function(){
+    $(document).on('click','#reply-btn',function(e){
+        e.preventDefault();
+
         var content = $("#reply_area").val();
         
         var comment_id = $(this).data('id');
@@ -1472,7 +1657,8 @@
     })
     
 
-    $(document).on('click','.like-comment-btn',function(){
+    $(document).on('click','.like-comment-btn',function(e){
+        e.preventDefault();
 
         const commentID = $(this).data('id');
 
@@ -1509,7 +1695,8 @@
     })
 
 
-    $(document).on('click','.like-reply-btn',function(){
+    $(document).on('click','.like-reply-btn',function(e){
+        e.preventDefault();
 
         const replyID = $(this).data('id');
 
@@ -1547,6 +1734,7 @@
         
 
     $(document).on('click','.edit-comment-btn',function(e) {
+        e.preventDefault();
 
         const item_id = $(this).data('id');
         const option = $(this).data('option');
@@ -1585,8 +1773,8 @@
         },500);
     })
 
-    $(document).on('click','#submitEditCommentForm',function(){
-  
+    $(document).on('click','#submitEditCommentForm',function(e){
+        e.preventDefault();
         const item_id = $(this).data('id');
         const option = $(this).data('option');
 
@@ -1675,6 +1863,236 @@
     });
 
 
+    $(document).on('click','.delete-rating-btn',function(e){
+        e.preventDefault();
+        const rating_id = $(this).data('id');
+        const book_id = {!! $book->id !!};
+
+        Swal.fire({
+                title: "Bạn muốn xóa đánh giá này này?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Xóa',
+                cancelButtonText: 'Không'
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                    type:"DELETE",
+                    url:'/xoa-danh-gia',
+                    data : {
+                        'rating_id': rating_id,
+                        'book_id' : book_id
+                    },
+                    })
+                    .done(function(res) {
+                    // If successful
+                    Swal.fire({
+                            icon: 'success',
+                            title: `${res.success}`,
+                            showConfirmButton: false,
+                            timer: 2500
+                    });
+                
+                    var currentScore = res.currentScore;
+
+                    $('span.score').text(`${currentScore}`);  
+                    
+                    $("#rateYo").rateYo("rating", `${currentScore}`);
+                    
+                    $("#rating-box").load(" #rating-box > *",function() {
+                        const totalOfRating = res.totalOfRating;
+                        
+                        $("#rateYo2").rateYo({
+                            rating: currentScore,
+                            starWidth: "17px",   
+                        });
+
+                    for(i=0;i<totalOfRating;i++){
+
+                        const score = $(`#rateYo-${i}`).data('person-rating-score');
+
+                        if(score == 5){
+                            color = '#20c997';
+                        }
+                        if(score >=4 && score <5){
+                            color = '#1ee0ac';
+                        }
+                        if(score >=3 && score <4){
+                            color = '#09c2de';
+                        }
+                        if(score >=2 && score <3){
+                            color = '#f4bd0e';
+                        }
+                        if (score >=1 && score <2){
+                            color = '#e85347';
+                        }
+
+                        $(`#rateYo-${i}`).rateYo({
+                            rating: score,
+                            starWidth: "20px",   
+                            ratedFill: color,           
+                        });
+
+                        const temp =  $('#rating-box').find('.ratingPersonCount').text();
+                        
+                        $('.ratingPersonCount').text(temp);
+
+                    }
+
+                   
+                    })
+                })
+                    .fail(function(jqXHR, textStatus, errorThrown) {
+                    // If fail
+                    console.log(textStatus + ': ' + errorThrown);
+                    });
+                
+                }
+            })
+
+
+    })
+
+
+    $(document).on('click', '#sortbtn',function(e){
+        e.preventDefault();
+
+        const order = $(this).data('order');
+
+        if(order == 'asc'){
+            $("#chapter_list").children().sort(function(a, b) {
+                return parseInt(b.id) - parseInt(a.id);
+
+                }).each(function() {
+                var elem = $(this);
+
+                elem.remove();
+
+                $(elem).appendTo("#chapter_list");
+            });
+
+            $('#sortbtn').data('order','desc');
+
+            $('#sortbtn').empty();
+            $('#sortbtn').append('<em class="icon ni ni-sort-down-fill"></em>')
+        }
+        else{
+            $("#chapter_list").children().sort(function(a, b) {
+                return parseInt(a.id) - parseInt(b.id);
+
+                }).each(function() {
+                var elem = $(this);
+                
+                elem.remove();
+
+                $(elem).appendTo("#chapter_list");
+            });
+
+            $('#sortbtn').data('order','asc')
+            $('#sortbtn').empty();
+            $('#sortbtn').append('<em class="icon ni ni-sort-up-fill"></em>')
+        }
+
+     
+    })
     
+    $(document).on('click','#sort-comment-new',function(e){
+
+        e.preventDefault();
+        $('#comment_list').children().sort(function(a,b){
+
+            
+            
+            return parseInt(b.id.split('-')[1]) - parseInt(a.id.split('-')[1]);
+
+            }).each(function() {
+            var elem = $(this);
+
+            elem.remove();
+
+            $(elem).appendTo("#comment_list")
+         })
+        
+    })
+
+    $(document).on('click','#sort-comment-old',function(e){
+
+        e.preventDefault();
+        $('#comment_list').children().sort(function(a,b){
+
+            return parseInt(a.id.split('-')[1]) - parseInt(b.id.split('-')[1]);
+
+            }).each(function() {
+            var elem = $(this);
+
+            elem.remove();
+
+            $(elem).appendTo("#comment_list")
+        })
+
+    })
+
+    $(document).on('click','#sort-rating-new',function(e){
+
+        e.preventDefault();
+        $('#rating-list-content').children().sort(function(a,b){
+
+            
+            
+            return parseInt(b.id.split('-')[1]) - parseInt(a.id.split('-')[1]);
+
+            }).each(function() {
+            var elem = $(this);
+
+            elem.remove();
+
+            $(elem).appendTo("#rating-list-content")
+        })
+
+    })
+
+    $(document).on('click','#sort-rating-old',function(e){
+
+        e.preventDefault();
+        $('#rating-list-content').children().sort(function(a,b){
+
+            return parseInt(a.id.split('-')[1]) - parseInt(b.id.split('-')[1]);
+
+            }).each(function() {
+            var elem = $(this);
+
+            elem.remove();
+
+            $(elem).appendTo("#rating-list-content")
+        })
+
+    })
+
+    $("#download-btn").click(function(e){  
+        e.preventDefault();
+        const id = {!! $book->id !!};
+
+        $.ajax({
+            url:'/generation-link',
+            type:"GET",
+            data:{
+                'id':id,
+                'option':1
+            }
+            })
+            .done(function(res) {
+                
+                window.location.href = res.url;
+            })
+
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            console.log(textStatus + ': ' + errorThrown);
+            })
+
+        })
+
 </script>
 @endsection

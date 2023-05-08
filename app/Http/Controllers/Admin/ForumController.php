@@ -11,6 +11,12 @@ use Carbon\Carbon;
 
 class ForumController extends Controller
 {
+    function TimeToText(){
+        $now_date = Carbon::now()->toDateTimeString();
+        $string = str_replace(' ', '-', $now_date);
+        return preg_replace('/[^A-Za-z0-9\-]/', '', $string);  
+    }
+    
     public function index(){
             
         $forums = Forum::where('deleted_at','=',null)->get();
@@ -47,7 +53,7 @@ class ForumController extends Controller
         ]);
 
 
-        $slug =  Str::slug($request->name);
+        $slug =  Str::slug($request->name).'-'. $this->TimeToText();
 
    
 

@@ -24,20 +24,54 @@
     @yield('additional-style')
 
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
         textarea {
             resize: none;
         }
-        #navbar-background{
+        #navbar-background {
             background-image: url('https://raw.githubusercontent.com/notepower2k1/MyImage/main/banner/forum_banner_1.png');
             background-position: center center;
             background-repeat: no-repeat;
             background-size: cover;
             min-height: 250px;
         }
-        #navbar-content{
+
+        footer{
+            background-image: url('https://raw.githubusercontent.com/notepower2k1/MyImage/main/banner/forum_banner_1.png');
+            background-position: bottom center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        #navbar-content , footer > section > div{
             background-color:rgba(25,45,64,0.3);
           
         }
+        .nk-content{
+            background: hsla(27, 85%, 81%, 1);
+
+            background: linear-gradient(0deg, hsla(27, 85%, 81%, 1) 0%, hsla(199, 100%, 96%, 1) 100%);
+
+            background: -moz-linear-gradient(0deg, hsla(27, 85%, 81%, 1) 0%, hsla(199, 100%, 96%, 1) 100%);
+
+            background: -webkit-linear-gradient(0deg, hsla(27, 85%, 81%, 1) 0%, hsla(199, 100%, 96%, 1) 100%);
+
+            filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#F8CBA6", endColorstr="#ECF9FF", GradientType=1 );
+        }
+
+        .card , .drodown > div , .pagination{
+            background: hsla(48, 100%, 96%, 1);
+
+            background: linear-gradient(0deg, hsla(48, 100%, 96%, 1) 0%, hsla(199, 100%, 96%, 1) 100%);
+
+            background: -moz-linear-gradient(0deg, hsla(48, 100%, 96%, 1) 0%, hsla(199, 100%, 96%, 1) 100%);
+
+            background: -webkit-linear-gradient(0deg, hsla(48, 100%, 96%, 1) 0%, hsla(199, 100%, 96%, 1) 100%);
+
+            filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#FFFBEB", endColorstr="#ECF9FF", GradientType=1 );
+        }
+
     </style>
 </head>
 <body class="nk-body bg-lighter preload">
@@ -58,7 +92,7 @@
                         
                         <div class="nk-content-body">      
 
-                            <div class="container">
+                            <div class="p-3">
                                 @yield('content')
 
                             </div>

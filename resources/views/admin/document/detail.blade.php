@@ -171,7 +171,7 @@
                                                     </div>
                                                     <div class="nk-sale-data-group align-center justify-between gy-3 gx-5">
                                                         <div class="nk-sale-data">
-                                                            <span class="amount">Tổng lượt đọc: {{ $totalDownloadingInYear }}</span>
+                                                            <span class="amount">Tổng lượt tải: {{ $totalDownloadingInYear }}</span>
                                                         </div>
                                                         <div class="nk-sale-data">
                                                             <span class="amount sm">Năm: {{ $statisticsYear }}</span>

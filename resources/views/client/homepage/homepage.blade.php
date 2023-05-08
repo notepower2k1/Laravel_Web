@@ -99,8 +99,8 @@
                                 <div class="toggle-expand-content" data-content="pageMenu">
                                     <ul class="nk-block-tools g-3">
                                         <li class="nk-block-tools-opt">
-                                            <a href="/sach/all/sach-hay-nen-doc" class="d-md-none">Xem thêm</a>
-                                            <a href="/sach/all/sach-hay-nen-doc" class="d-none d-md-inline-flex"><span>Xem thêm</span></a>
+                                            <a href="/sach/all/sach-hay-nen-doc" class="d-md-none text-dark">Xem thêm</a>
+                                            <a href="/sach/all/sach-hay-nen-doc" class="d-none d-md-inline-flex text-dark"><span>Xem thêm</span></a>
                                         </li>
                                     </ul>
                                 </div>
@@ -136,7 +136,7 @@
                                             <li><a href="#">{{ $book->author }}</a></li>
                                         </ul>
                                         <h3 class="product-title fs-13px" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $book->name }}"><a href="/sach/{{$book->id}}/{{$book->slug}}"> {{ Str::limit($book->name,25) }}</a></h3>
-                                        <small class="text-muted fs-13px"><em class="icon ni ni-book-read"></em> {{ $book->numberOfChapter }} Chương</small>
+                                        <small class="text-muted fs-13px"><em class="icon ni ni-book-read"></em> {{ $book->isCompleted == 1 ? "Đã hoàn thành" : "Chưa hoàn thành" }}</small>
                                     </div>
                                 </div>
                             </div>
@@ -165,8 +165,8 @@
                             <div class="toggle-expand-content" data-content="pageMenu1">
                                 <ul class="nk-block-tools g-3">
                                     <li class="nk-block-tools-opt">
-                                        <a href="/sach/all/sach-moi-cap-nhat" class="d-md-none">Xem thêm</a>
-                                        <a href="/sach/all/sach-moi-cap-nhat" class="d-none d-md-inline-flex"><span>Xem thêm</span></a>
+                                        <a href="/sach/all/sach-moi-cap-nhat" class="d-md-none text-dark">Xem thêm</a>
+                                        <a href="/sach/all/sach-moi-cap-nhat" class="d-none d-md-inline-flex text-dark"><span>Xem thêm</span></a>
                                     </li>
                                 </ul>
                             </div>
@@ -226,8 +226,8 @@
                             <div class="toggle-expand-content" data-content="pageMenu2">
                                 <ul class="nk-block-tools g-3">
                                     <li class="nk-block-tools-opt">
-                                        <a href="/sach/all/sach-hay-xem-nhieu" class="d-md-none">Xem thêm</a>
-                                        <a href="/sach/all/sach-hay-xem-nhieu" class="d-none d-md-inline-flex"><span>Xem thêm</span></a>
+                                        <a href="/sach/all/sach-hay-xem-nhieu" class="d-md-none text-dark">Xem thêm</a>
+                                        <a href="/sach/all/sach-hay-xem-nhieu" class="d-none d-md-inline-flex text-dark"><span>Xem thêm</span></a>
                                     </li>
                                 </ul>
                             </div>
@@ -272,7 +272,7 @@
             <div class="nk-block-head nk-block-head-sm mb-5">
                 <div class="nk-block-between">
                     <div class="nk-block-head-content border border-dark p-4">
-                        <a href="/tai-lieu/all" class="nk-block-title text-white ff-mono fw-bold">Tài liệu tham khảo</a>
+                        <a href="/tai-lieu/all" class="nk-block-title text-white ff-mono fw-bold">Tài liệu điện tử</a>
                     </div><!-- .nk-block-head-content -->
                 </div><!-- .nk-block-between -->
             </div><!-- .nk-block-head -->
@@ -308,8 +308,8 @@
                                         <div class="toggle-expand-content" data-content="pageMenu3">
                                             <ul class="nk-block-tools g-3">
                                                 <li class="nk-block-tools-opt">
-                                                    <a href="/tai-lieu/all/tai-lieu-hay-nhat" class="d-md-none">Xem thêm</a>
-                                                    <a href="/tai-lieu/all/tai-lieu-hay-nhat" class="d-none d-md-inline-flex"><span>Xem thêm</span></a>
+                                                    <a href="/tai-lieu/all/tai-lieu-hay-nhat" class="d-md-none text-dark">Xem thêm</a>
+                                                    <a href="/tai-lieu/all/tai-lieu-hay-nhat" class="d-none d-md-inline-flex text-dark"><span>Xem thêm</span></a>
                                                 </li>
                                             </ul>
                                         </div>

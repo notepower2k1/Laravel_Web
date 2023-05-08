@@ -17,7 +17,11 @@ use Illuminate\Support\Str;
 class ClientBookController extends Controller
 {
 
- 
+    function TimeToText(){
+        $now_date = Carbon::now()->toDateTimeString();
+        $string = str_replace(' ', '-', $now_date);
+        return preg_replace('/[^A-Za-z0-9\-]/', '', $string);  
+    }
     
   
     
@@ -58,7 +62,10 @@ class ClientBookController extends Controller
             'author' => 'required',
             'description' => 'required',
             'image' => 'required|image|max:2048|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
-            'language' => 'required'
+            'language' => 'required',
+            'isCompleted' => 'required',
+            'file_book' => 'mimetypes:application/pdf',
+
         ],
         [
             'name.required' => 'Bạn cần phải nhập tên sách',
@@ -68,17 +75,26 @@ class ClientBookController extends Controller
             'image.required' => 'Sách cần có ảnh bìa',
             'image.image' => 'Bạn nên đưa đúng định dạng ảnh bìa',
             'image.max' => 'Dung lượng ảnh quá lớn',
-            'image.dimensions' => 'Kích thước ảnh nhỏ nhất là 100x100 và lớn nhất là 2000x2000'
+            'image.dimensions' => 'Kích thước ảnh nhỏ nhất là 100x100 và lớn nhất là 2000x2000',
+            'file_book.mimetypes' => 'Tài liệu đình kèm nên là file .pdf',
+            'isCompleted.required' => 'Sách phải có tình trạng'
         ]);
 
 
-        $slug =  Str::slug($request->name);
+        $slug =  Str::slug($request->name).'-'. $this->TimeToText();
     
         $image = $request->file('image'); //image file from frontend
 
         $generatedImageName = $slug.$image->hashName();
 
-      
+        $generatedFileName = null;
+        $file_book = $request->file('file_book'); 
+
+        if($file_book){
+            $generatedFileName = $slug.$file_book->hashName();
+
+        }
+   
 
         $book = Book::create([
             'name' => $request->name,
@@ -96,7 +112,9 @@ class ClientBookController extends Controller
             'totalReading'=>0,
             'totalBookMarking'=>0,
             'totalComments' => 0,
-            'status' =>0
+            'status' =>0,
+            'file' => $generatedFileName
+
         ]);
         
         $firebase_storage_path = 'bookImage/';
@@ -108,6 +126,16 @@ class ClientBookController extends Controller
         app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
         unlink($localfolder . $generatedImageName);
         }
+
+        $firebase_storage_path_2 = 'bookFile/';
+        if ($file_book->move($localfolder, $generatedFileName)) {
+        $uploadedfile = fopen($localfolder.$generatedFileName, 'r');
+        
+        app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path_2 . $generatedFileName]);
+        unlink($localfolder . $generatedFileName);
+        }
+
+
 
         return redirect('/quan-ly');
 
@@ -170,7 +198,7 @@ class ClientBookController extends Controller
             'image.dimensions' => 'Kích thước ảnh nhỏ nhất là 100x100 và lớn nhất là 2000x2000'
         ]);
 
-        $slug =  Str::slug($request->name);
+        $slug =  Str::slug($request->name).'-'. $this->TimeToText();
 
         $generatedImageName="";
 
@@ -274,6 +302,33 @@ class ClientBookController extends Controller
         ]);
         
        
+    }
+
+    public function deleteRatingBook(Request $request){
+
+        $rating = ratingBook::findOrFail($request->rating_id);
+        $rating->delete();
+
+        //update new score
+        $rating_book_score = ratingBook::where('bookID','=',$request->book_id)->pluck('score')->toArray();
+
+        $rating_book_score = array_filter($rating_book_score, fn($x)=>$x !== '');
+        $average = array_sum($rating_book_score)/count($rating_book_score);
+
+        $book = Book::findOrFail($request->book_id);
+        $book->ratingScore = round($average, 2);
+
+        $ratingPersons = ratingBook::where('bookID','=',$request->book_id)->get();
+
+        $book->save();
+       
+
+
+        return response()->json([
+            'success' => 'Xóa đánh giá thành công!!!',
+            'currentScore' => $book->ratingScore,
+            'totalOfRating' =>$ratingPersons->count()
+        ]);
     }
 
     public function changeFollowStatus(Request $request){

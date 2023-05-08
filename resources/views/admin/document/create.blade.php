@@ -81,6 +81,11 @@
             class="form-control mb-4 col-6" accept=".pdf"> --}}
 
 
+            <label>Tiến độ<sup>*</sup></label>
+            <select required class="form-control mb-4 col-6" name="isCompleted"> 
+            <option value=0>Chưa hoàn thành</option>
+            <option value=1>Đã hoàn thành</option>
+            </select>
           
           <button type="submit" class="btn btn-info">Thêm tài liệu</button>
         </form>
@@ -97,10 +102,30 @@
     
 @section('additional-scripts')
 <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+<script src="{{ asset('assets/js/example-sweetalert.js?ver=3.1.2') }}" aria-hidden="true"></script>
 
 <script>
 
-  
+  var pdfjsLib = window['pdfjs-dist/build/pdf'];
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.worker.js';
+
+    $("button[type=submit]").click(function() {
+
+        $(this).attr("disabled","disabled");
+
+        Swal.fire({
+          title: 'Đang thêm dữ liệu!',
+          text: 'Vui lòng đợi thêm dữ liệu.',
+          imageUrl: 'https://raw.githubusercontent.com/notepower2k1/MyImage/main/gif/codevember-day-6-bookshelf-loader.gif',
+          imageWidth: 400,
+          imageHeight: 200,
+          imageAlt: 'Custom image',
+          showConfirmButton: false
+        });
+
+
+        $(this).parent().submit();
+    })
     
     $('#document_type_id').select2({
     });
@@ -124,13 +149,36 @@
         }
     })
 
-    var pdfjsLib = window['pdfjs-dist/build/pdf'];
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.worker.js';
-
     //
     // Asynchronous download PDF as an ArrayBuffer
     //
-    var pdf = document.getElementById('pdf');
+
+    function documentFileHandler(){
+      var pdf = document.getElementById('pdf');
+      pdf.onchange = function (ev) {
+      if (file = document.getElementById('pdf').files[0]) {
+        fileReader = new FileReader();
+        fileReader.onload = function (ev) {
+          // console.log(ev);
+
+          var loadingTask = pdfjsLib.getDocument(fileReader.result);
+
+          loadingTask.promise
+            .then(function (pdf) {
+              // console.log('PDF loaded');
+              // Fetch the first page
+              fetch1Page(pdf);
+              fetch5Pages(pdf);
+       
+            }, function (error) {
+              console.log(error);
+            });
+        };
+        fileReader.readAsArrayBuffer(file);
+      }
+    }
+    }
+   
 
     base64ToFile = (url) => {
         let arr = url.split(',');
@@ -241,28 +289,7 @@
         
       }
     }
-    pdf.onchange = function (ev) {
-      if (file = document.getElementById('pdf').files[0]) {
-        fileReader = new FileReader();
-        fileReader.onload = function (ev) {
-          // console.log(ev);
-
-          var loadingTask = pdfjsLib.getDocument(fileReader.result);
-
-          loadingTask.promise
-            .then(function (pdf) {
-              // console.log('PDF loaded');
-              // Fetch the first page
-              fetch1Page(pdf);
-              fetch5Pages(pdf);
-       
-            }, function (error) {
-              console.log(error);
-            });
-        };
-        fileReader.readAsArrayBuffer(file);
-      }
-    }
+  
     
 
 
@@ -292,6 +319,7 @@
       
     };
   
+    documentFileHandler();
 </script>
 
 @endsection

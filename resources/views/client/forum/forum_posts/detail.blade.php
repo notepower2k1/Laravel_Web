@@ -11,15 +11,15 @@
 @endsection
 @section('content')
 <div class="nk-block">
-  <nav>
-      <ul class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/dien-dan">Diễn đàn</a></li>
-          <li class="breadcrumb-item"><a href="/dien-dan/{{ $post->forums->slug }}">{{ $post->forums->name }}</a></li>
-          <li class="breadcrumb-item active">{{ $post->topic }}</li>
-      </ul>
-  </nav>
     <div class="card card-bordered">
         <div class="card-inner">
+            <nav>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/dien-dan">Diễn đàn</a></li>
+                    <li class="breadcrumb-item"><a href="/dien-dan/{{ $post->forums->slug }}">{{ $post->forums->name }}</a></li>
+                    <li class="breadcrumb-item active">{{ $post->topic }}</li>
+                </ul>
+            </nav>
             <div class="row g-gs flex-lg-row-reverse">
                 
                 <div class="col-lg-12">
@@ -60,20 +60,35 @@
 
     <div class="card card-bordered">
         <div class="card-inner">        
-            <div class=" mb-5 bg-white rounded" id="comment-box" style="overflow-y:scroll; overflow-x:hidden; max-height:1000px;">
+            <div class="d-flex justify-content-between">
+                <h5><span class="total-comment-span">{{ $post->totalComments }} </span>bình luận</h5>
+                <div class="dropdown">
+                    <a class="btn btn-icon btn-outline-secondary dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                        <em class="icon ni ni-sort-line"></em>    
+                    </a>
+                    <div class="dropdown-menu">
+                      <ul class="link-list-opt">
+                        <li><a href="#" id="sort-comment-new"><span>Mới nhất</span></a></li>
+                        <li><a href="#" id="sort-comment-old"><span>Cũ nhất</span></a></li>
+                
+                      </ul>
+                    </div>
+                  </div>                                                      
+            </div>
+            <div class="mb-5 bg-white rounded" id="comment-box" style="overflow-y:scroll; overflow-x:hidden; max-height:1000px;">
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-12" id="comment_list">
                         @foreach ($comments as $comment)
 
                         <div class="media mt-4" id="comment-{{ $comment->id }}">
-                            <div class="d-flex flex-column me-3 ">
-                                <img class="border border-primary" alt="Bootstrap Media Preview" src="{{ $comment->users->profile->url }}" width="150px" />
+                            <div class="d-flex flex-column me-3">
+                                <img class="border border-secondary" alt="Bootstrap Media Preview" src="{{ $comment->users->profile->url }}" width="80px" />
 
                                 @if(Auth::check())
 
                                 <button class="btn btn-icon btn-lg btn-success create-reply-btn" data-id={{ $comment->id }}>
                                     <em class="icon ni ni-reply m-auto">
-                                        </em>
+                                    </em>
                                 </button>
 
                                 @endif
@@ -85,7 +100,7 @@
 
                                         <div class="row">
                                             <div class="col-8 d-flex flex-column justify-content-start">                                      
-                                                    <a href="/thanh-vien/{{ $comment->users->id }}" class="d-block font-weight-bold name">{{ $comment->users->profile->displayName }}</a>
+                                                    <a href="/thanh-vien/{{ $comment->users->id }}" class="d-block font-weight-bold name text-dark">{{ $comment->users->profile->displayName }}</a>
                                                     <span class="date text-black-50">{{ $comment->created_at }}</span>                                     
                                             </div>    
 
@@ -95,7 +110,7 @@
                                                     <div class="col-4">                                   
                                                         <div class="d-flex flex-row-reverse">                              
                                                             <div class="dropdown">
-                                                                <a class="dropdown-toggle" href="#" type="button" data-bs-toggle="dropdown">
+                                                                <a class="dropdown-toggle text-dark" href="#" type="button" data-bs-toggle="dropdown">
                                                                     <em class="icon ni ni-more-v"></em>
                                                                 </a>
                                                                 <div class="dropdown-menu">
@@ -712,7 +727,7 @@
 
                             
                             setTimeout(()=>{
-                                $('#close-btn').click();
+                                form.modal('hide');
                             }, 2500);
                         })
 
@@ -788,7 +803,7 @@
                                 });     
                             
                             setTimeout(()=>{
-                                form.find('#close-btn').click();
+                                form.modal('hide');
                             }, 2500);
                         })
                         .fail(function(jqXHR, textStatus, errorThrown) {
@@ -805,5 +820,42 @@
             }
         })
     });
+
+
+    $(document).on('click','#sort-comment-new',function(e){
+
+        e.preventDefault();
+    $('#comment_list').children().sort(function(a,b){
+
+        
+        
+        return parseInt(b.id.split('-')[1]) - parseInt(a.id.split('-')[1]);
+
+        }).each(function() {
+        var elem = $(this);
+
+        elem.remove();
+
+        $(elem).appendTo("#comment_list")
+    })
+
+    })
+
+    $(document).on('click','#sort-comment-old',function(e){
+
+        e.preventDefault();
+    $('#comment_list').children().sort(function(a,b){
+
+        return parseInt(a.id.split('-')[1]) - parseInt(b.id.split('-')[1]);
+
+        }).each(function() {
+        var elem = $(this);
+
+        elem.remove();
+
+        $(elem).appendTo("#comment_list")
+    })
+
+    })
 </script>
 @endsection

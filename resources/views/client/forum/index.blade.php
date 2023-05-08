@@ -8,14 +8,19 @@
             <div class="row g-gs">
                 @foreach ( $forums as $forum )
                 <div class="col-lg-12">
-                    <div class="card card-bordered text-soft">
+                    <div class="card card-bordered text-soft shadow">
                         <div class="p-2">
                                 <div class="d-flex">
-                                    <div class="">
-                                        <div class="nk-tnx-type-icon bg-success-dim text-success">                                      
-                                                <em class="icon ni ni-folders-fill"></em>                                    
-                                        </div>
+                                    
+                                    @if($forum->status == 0)
+                                    <div class="nk-tnx-type-icon bg-danger-dim text-danger">                                      
+                                            <em class="icon ni ni-folders-fill"></em>                                    
                                     </div>
+                                    @else
+                                    <div class="nk-tnx-type-icon bg-success-dim text-success">                                      
+                                        <em class="icon ni ni-folders-fill"></em>                                    
+                                    </div>
+                                    @endif
                                     <div class="flex-grow-1 ">
                                         <div class="d-flex flex-column">
                                             <a class="title text-dark fw-bold" href="/dien-dan/{{ $forum->slug }}">
@@ -47,7 +52,7 @@
             </div><!-- .row -->
         </div>  
         <div class="col-lg-4">
-            <div class="card card-bordered card-full">
+            <div class="card card-bordered card-full shadow">
                 <div class="card-inner border-bottom">
                     <div class="card-title-group">
                         <div class="card-title">
@@ -64,7 +69,7 @@
                         </div>
                         <div class="nk-activity-data">
                             <div class="label">
-                                <a href="/dien-dan/{{ $lastPost->forums->slug }}/{{ $lastPost->slug }}/{{ $lastPost->id }}">{{ $lastPost->topic }}</a>
+                                <a class="title text-dark fw-bold" href="/dien-dan/{{ $lastPost->forums->slug }}/{{ $lastPost->slug }}/{{ $lastPost->id }}">{{ $lastPost->topic }}</a>
                             </div>                            
                             <span class="time">{{ $lastPost->time }}</span>
                         </div>

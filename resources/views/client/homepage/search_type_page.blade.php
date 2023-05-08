@@ -29,7 +29,7 @@
                             </div>
                             <ul id="book-type-menu">
                                 @foreach ($book_types as $book_type)
-                                <li class="type-option" data-value={{ $book_type->slug  }} data-option=0 data-id={{ $book_type->id }} >
+                                <li class="type-option" data-value={{ $book_type->slug  }} data-option=1 data-id={{ $book_type->id }} >
                                     <p class="nk-fmg-menu-item">
                                         <span class="nk-fmg-menu-text">{{ $book_type->name }}</span>
                                     </p>
@@ -45,7 +45,7 @@
                             </div>
                             <ul id="document-type-menu">
                                 @foreach ($document_types as $document_type)
-                                <li class="type-option" data-value={{ $document_type->slug  }} data-option=1 data-id={{ $document_type->id }} > 
+                                <li class="type-option" data-value={{ $document_type->slug  }} data-option=2 data-id={{ $document_type->id }} > 
                                     <p class="nk-fmg-menu-item">
                                         <span class="nk-fmg-menu-text">{{ $document_type->name }}</span>
                                     </p>
@@ -77,7 +77,7 @@
                         <div class="nk-files nk-files-view-grid">
                             @if($items)
                             <div class="content">
-                                @if($option_id == 0)
+                                @if($option_id == 1)
                                     <div class="row">
                                         @foreach ($items as $item)
                                             <div class="col-lg-4 col-md-6 mt-4">
@@ -91,7 +91,7 @@
                                                                         <div class="pricing-amount">
                                                                             <h6 class="bill text-white">{{ $item->name }}</h6>
                                                                             <p class="text-white">Tác giả: {{ $item->author }}</p>
-                                                                            <p class="text-white">Số chương: {{ $item->numberOfChapter }}</p>
+                                                                            {{-- <p class="text-white">Số chương: {{ $item->numberOfChapter }}</p> --}}
                                                                             <p class="text-white">Lượt đọc: {{ $item->totalReading }}</p>
                                                                         </div>
                                                                         <div class="pricing-action">
@@ -167,11 +167,11 @@
         $(`*[data-id="${type_id}"][data-option="${option_id}"]`).addClass('active');
 
         
-        if (option_id == 0){
+        if (option_id == 1){
             $('#book-type-menu').show("slow");
             $('#document-type-menu').hide();
         }
-        else if (option_id == 1){             
+        else if (option_id == 2){             
             $('#document-type-menu').show("slow");
             $('#book-type-menu').hide();
         }
@@ -213,7 +213,7 @@ $('.type-option').click(function(){
     const option_id = $(this).attr('data-option');
     
     var option = '';
-    if(option_id == 0){
+    if(option_id == 1){
         option = 'the-loai-sach';
     }
     else{
