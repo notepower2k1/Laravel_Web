@@ -3,7 +3,7 @@
 
 @section('content')
 <div class="nk-block nk-block-lg">
-    <div class="row">
+    <div class="row g-gs">
         <div class="col-lg-8">
             <div class="row g-gs">
                 @foreach ( $forums as $forum )
@@ -86,6 +86,7 @@
 @section('additional-scripts')
 
 <script>
+
 
 </script>
 

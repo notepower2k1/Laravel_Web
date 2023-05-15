@@ -63,4 +63,33 @@ class NoteController extends Controller
         return response()->json(['success'=>'Ghi chú thành công']);
 
     }
+
+
+    public function delete($id){
+        $note = Note::findOrFail($id);
+        $note->delete();
+        return response()->json([
+            'success' => 'Xóa ghi chú thành công!'
+        ]);
+    }
+
+
+    public function client_getRejectReason(Request $request) {
+
+        $type_id = $request->type_id;
+        $identifier_id = $request->identifier_id;
+
+        $noteList = Note::where('type_id',$type_id)->where('identifier_id',$identifier_id)->get();
+
+
+        $itemList = array();
+        foreach ($noteList as $note){
+            $item = '<li>'.$note->content.'</li>';
+
+            array_push($itemList,$item);
+        }
+
+
+        return response()->json(['res'=>$itemList]);
+    }
 }

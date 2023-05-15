@@ -1,99 +1,114 @@
 @extends('client/homepage.layouts.app')
+@section('additional-style')
+<style>
+    .nk-content{
+        background-image:url('https://raw.githubusercontent.com/notepower2k1/MyImage/main/banner/main-banner-1.png') !important;
+        background-repeat: no-repeat;
+        background-position: left top;
+
+    }
+    .container{
+        margin-top:250px  !important;
+    }
+</style>
+@endsection
 @section('content')
-<div class="nk-block nk-block-lg">
-    <div class="nk-block-head">
-      
-    </div>
-    <div class="card card-bordered card-preview" id="mark-book-box">
-        <table class="table table-ulogs">
-            <thead class="table-light">
-                <tr>
-                    <th class="nk-tb-col"><span class="overline-title">Sách/Tài liệu</span></th>
-                    <th class="nk-tb-col tb-col-mb"><span class="overline-title">Số trang/chương</span></th>
-                    <th class="nk-tb-col tb-col-mb"><span class="overline-title">Lần cập nhật cuối</span></th>
-                    <th class="nk-tb-col nk-tb-col-tools text-end"><span class="overline-title">#</span></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($follows as $follow)
-                <tr id ="row-{{ $follow->id }}" class=" {{ $follow->status==1?"bg-primary-dim":"" }}">
-                    <td class="nk-tb-col">
-
-                        <div class="user-card">
-                            <div class="avatar bg-primary">
-
-                                @if($follow->type_id ==1)
-                                <a href="/tai-lieu/{{$follow->identifier->id}}/{{$follow->identifier->slug}}">
-                                    <img class="image-fluid" src={{ $follow->identifier->url }} alt="..." style="width:100px" />
-                                </a>
-                                @endif
-                                @if($follow->type_id ==2)
-                                <a href="/sach/{{$follow->identifier->id}}/{{$follow->identifier->slug}}">
-                                    <img class="image-fluid" src={{ $follow->identifier->url }} alt="..." style="width:100px" />
-                                </a>
-                                @endif
+<div class="container">
+    <div class="nk-block nk-block-lg">
+        <div class="nk-block-head">
+          
+        </div>
+        <div class="card card-bordered card-preview" id="mark-book-box">
+            <table class="table table-ulogs">
+                <thead class="table-light">
+                    <tr>
+                        <th class="nk-tb-col"><span class="overline-title">Sách/Tài liệu</span></th>
+                        <th class="nk-tb-col tb-col-mb"><span class="overline-title">Số trang/chương</span></th>
+                        <th class="nk-tb-col tb-col-mb"><span class="overline-title">Lần cập nhật cuối</span></th>
+                        <th class="nk-tb-col nk-tb-col-tools text-end"><span class="overline-title">#</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($follows as $follow)
+                    <tr id ="row-{{ $follow->id }}" class=" {{ $follow->status==1?"bg-primary-dim":"" }}">
+                        <td class="nk-tb-col">
+    
+                            <div class="user-card">
+                                <div class="avatar bg-primary">
+    
+                                    @if($follow->type_id ==1)
+                                    <a href="/tai-lieu/{{$follow->identifier->id}}/{{$follow->identifier->slug}}">
+                                        <img class="image-fluid" src={{ $follow->identifier->url }} alt="..." style="width:100px" />
+                                    </a>
+                                    @endif
+                                    @if($follow->type_id ==2)
+                                    <a href="/sach/{{$follow->identifier->id}}/{{$follow->identifier->slug}}">
+                                        <img class="image-fluid" src={{ $follow->identifier->url }} alt="..." style="width:100px" />
+                                    </a>
+                                    @endif
+                                </div>
+                                <div class="ms-2">
+                                    <span class="tb-lead text-">{{ $follow->identifier->name }}<span class="dot dot-success d-md-none ms-1"></span></span>
+                                </div>
                             </div>
-                            <div class="ms-2">
-                                <span class="tb-lead text-">{{ $follow->identifier->name }}<span class="dot dot-success d-md-none ms-1"></span></span>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="nk-tb-col tb-col-mb">
-                        @if($follow->type_id == 1)
-                        <span>{{ $follow->identifier->numberOfPages }} trang</span>
-                        @endif
-
-                        @if($follow->type_id == 2)
-                        <span>{{ $follow->identifier->numberOfChapter }} chương</span>
-                        @endif
-                    </td>
-                    <td class="nk-tb-col tb-col-mb">
-
-                        @if($follow->type_id == 1)
-                        <span class="badge badge-dot bg-primary">{{ $follow->time }}</span>
-                        @endif
-
-                        @if($follow->type_id == 2)
-                        <span class="badge badge-dot bg-success">{{ $follow->time }}</span>
-                        @endif
-
-                   
-                    </td>
-                    
-                    <td class="nk-tb-col nk-tb-col-tools text-end">
-                        <ul class="nk-tb-actions gx-1">                             
-                          
-                            <li class="me-2">
-
-                                @if($follow->status==1)
-                                <button class="btn btn-info me-sm-n1 check-book-mark" data-id="{{ $follow->id }}" data-name="{{ $follow->identifier->name }}">
-                                    <em class="icon ni ni-check-thick"></em></button>
-                                @else
-                                <button class="btn btn-info me-sm-n1 check-book-mark" disabled>
-                                    <em class="icon ni ni-check-thick"></em></button>
-                                @endif
-                            </li>
-                            <li>
-                                <button class="btn btn-danger me-sm-n1 remove-book-mark" data-id="{{ $follow->id }}" data-name="{{ $follow->identifier->name }}">
-                                    <em class="icon ni ni-cross"></em></button>
-                            </li>
-                                      
-                                    
-                            
-                        </ul>
+                        </td>
+                        <td class="nk-tb-col tb-col-mb">
+                            @if($follow->type_id == 1)
+                            <span>{{ $follow->identifier->numberOfPages }} trang</span>
+                            @endif
+    
+                            @if($follow->type_id == 2)
+                            <span>{{ $follow->identifier->numberOfChapter }} chương</span>
+                            @endif
+                        </td>
+                        <td class="nk-tb-col tb-col-mb">
+    
+                            @if($follow->type_id == 1)
+                            <span class="badge badge-dot bg-primary">{{ $follow->time }}</span>
+                            @endif
+    
+                            @if($follow->type_id == 2)
+                            <span class="badge badge-dot bg-success">{{ $follow->time }}</span>
+                            @endif
+    
+                       
+                        </td>
                         
-                    </td>
-                </tr>
-                @endforeach
-                {{ $follows->links('vendor.pagination.custom',['elements' => $follows]) }}
-
-
-            </tbody>
-        </table>
-
-        
+                        <td class="nk-tb-col nk-tb-col-tools text-end">
+                            <ul class="nk-tb-actions gx-1">                             
+                              
+                                <li class="me-2">
+    
+                                    @if($follow->status==1)
+                                    <button class="btn btn-info me-sm-n1 check-book-mark" data-id="{{ $follow->id }}" data-name="{{ $follow->identifier->name }}">
+                                        <em class="icon ni ni-check-thick"></em></button>
+                                    @else
+                                    <button class="btn btn-info me-sm-n1 check-book-mark" disabled>
+                                        <em class="icon ni ni-check-thick"></em></button>
+                                    @endif
+                                </li>
+                                <li>
+                                    <button class="btn btn-danger me-sm-n1 remove-book-mark" data-id="{{ $follow->id }}" data-name="{{ $follow->identifier->name }}">
+                                        <em class="icon ni ni-cross"></em></button>
+                                </li>
+                                          
+                                        
+                                
+                            </ul>
+                            
+                        </td>
+                    </tr>
+                    @endforeach
+    
+    
+                </tbody>
+            </table>
+    
+            
+        </div>
     </div>
 </div>
+
 
 @endsection
 @section('additional-scripts')
@@ -113,7 +128,7 @@ $('.remove-book-mark').click(function(){
 
     Swal.fire({
         title: "Bạn muốn bỏ theo dõi "+ name,
-        text: "Bạn sẽ không còn được nhận thông báo khi có chương mới!",
+        text: "Bạn sẽ không còn được nhận thông báo khi có cập nhật mới!",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',

@@ -1,0 +1,127 @@
+dfn {
+    /* background: rgba(0,0,0,0.2); */
+    /* border-bottom: dashed 1px rgba(0,0,0,0.8); */
+    padding: 0 0.4em;
+    cursor: help;
+    font-style: normal;
+    position: relative;
+    
+  }
+  dfn::after {
+    content: attr(data-info);
+    display: inline;
+    position: absolute;
+    top: 22px; left: 0;
+    opacity: 0;
+    width: 230px;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.5em;
+    padding: 0.5em 0.8em;
+    background: rgba(0,0,0,0.8);
+    color: #fff;
+    pointer-events: none; /* This prevents the box from apearing when hovered. */
+    transition: opacity 250ms, top 250ms;
+  }
+  dfn::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 12px; left: 20px;
+    opacity: 0;
+    width: 0; height: 0;
+    border: solid transparent 5px;
+    border-bottom-color: rgba(0,0,0,0.8);
+    transition: opacity 250ms, top 250ms;
+  }
+  dfn:hover {z-index: 2;} /* Keeps the info boxes on top of other elements */
+  dfn:hover::after,
+  dfn:hover::before {opacity: 1;}
+  dfn:hover::after {top: 30px;}
+  dfn:hover::before {top: 20px;}
+
+
+
+  .shelf {
+    display: block;
+    position: relative;
+    height: 20px;
+    margin-top: -60px;
+    margin-left:-60px;
+    margin-bottom:20px;
+    background-image: -moz-linear-gradient(90deg,#d1d8de 0%,#eff1f3 100%);
+    background-image: -webkit-gradient(90deg,left top,right bottom,color-stop(0%,#d1d8de),color-stop(100%,#eff1f3));
+    background-image: -webkit-linear-gradient(90deg,#d1d8de 0%,#eff1f3 100%);
+    background-image: -o-linear-gradient(90deg,#d1d8de 0%,#eff1f3 100%);
+    background-image: -ms-linear-gradient(90deg,#d1d8de 0%,#eff1f3 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eff1f3', endColorstr='#d1d8de', GradientType='0' );
+    -webkit-box-shadow: 0 2px 2px #708698, 0 4px 0 #abb8c3, 0 20px 30px -8px #000000, transparent 0 0 0, transparent 0 0 0, transparent 0 0 0;
+    -moz-box-shadow: 0 2px 2px #708698, 0 4px 0 #abb8c3, 0 20px 30px -8px #000000, transparent 0 0 0, transparent 0 0 0, transparent 0 0 0;
+    box-shadow: 0 2px 2px #708698, 0 4px 0 #abb8c3, 0 20px 30px -8px #000000, transparent 0 0 0, transparent 0 0 0, transparent 0 0 0;
+ }
+  .bookend_left {
+    display: block;
+    position: absolute;
+    left: -25px;
+    top: -18px;
+    width: 36px;
+    height: 36px;
+    background-color: #ffffff;
+    -webkit-transform: rotate(35deg);
+    -moz-transform: rotate(35deg);
+    -ms-transform: rotate(35deg);
+    -o-transform: rotate(35deg);
+ }
+  .bookend_left:before {
+    position: absolute;
+    top: 31px;
+    left: 17px;
+    width: 20px;
+    height: 10px;
+    background-color: #ffffff;
+    content: "";
+    -webkit-transform: rotate(-35deg);
+    -moz-transform: rotate(-35deg);
+    -ms-transform: rotate(-35deg);
+    -o-transform: rotate(-35deg);
+ }
+  .bookend_right {
+    display: block;
+    position: absolute;
+    right: -25px;
+    top: -18px;
+    width: 36px;
+    height: 36px;
+    background-color: #ffffff;
+    -webkit-transform: rotate(-35deg);
+    -moz-transform: rotate(-35deg);
+    -ms-transform: rotate(-35deg);
+    -o-transform: rotate(-35deg);
+ }
+  .bookend_right:before {
+    position: absolute;
+    top: 31px;
+    right: 17px;
+    width: 20px;
+    height: 10px;
+    background-color: #ffffff;
+    content: "";
+    -webkit-transform: rotate(35deg);
+    -moz-transform: rotate(35deg);
+    -ms-transform: rotate(35deg);
+    -o-transform: rotate(35deg);
+ }
+  .shelf .reflection {
+    display: block;
+    position: absolute;
+    top: 20px;
+    left: 1px;
+    width: 99.8%;
+    height: 1px;
+    background-image: -moz-linear-gradient(0deg,#ffffff 0%,rgba(255,255,255,0.5) 35%,#ffffff 65%,rgba(255,255,255,0.7) 100%);
+    background-image: -webkit-gradient(linear,left top,right top,color-stop(0%,#ffffff),color-stop(35%,rgba(255,255,255,0.5)),color-stop(65%,#ffffff),color-stop(100%,rgba(255,255,255,0.7)));
+    background-image: -webkit-linear-gradient(0deg,#ffffff 0%,rgba(255,255,255,0.5) 35%,#ffffff 65%,rgba(255,255,255,0.7) 100%);
+    background-image: -o-linear-gradient(0deg,#ffffff 0%,rgba(255,255,255,0.5) 35%,#ffffff 65%,rgba(255,255,255,0.7) 100%);
+    background-image: -ms-linear-gradient(0deg,#ffffff 0%,rgba(255,255,255,0.5) 35%,#ffffff 65%,rgba(255,255,255,0.7) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='rgba(255,255,255,0.7)', endColorstr='#ffffff', GradientType='0' );
+ }

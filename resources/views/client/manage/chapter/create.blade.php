@@ -110,6 +110,13 @@ $(this).parent().submit();
         tinymce.init({
         entity_encoding : "raw",
         selector: '#mytextarea',
+        setup: function (editor) {
+            editor.on('init', function (e) {
+                var theEditor = tinymce.activeEditor;
+                var wordCount = theEditor.plugins.wordcount.getCount();
+                $('#wordCount').val(wordCount);
+            });
+        },
         branding: false,
         statusbar: false,
         height: 1000,

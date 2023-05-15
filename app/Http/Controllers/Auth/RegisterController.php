@@ -94,7 +94,7 @@ class RegisterController extends Controller
 
         $profile = Profile::create([
             'displayName' => $user->name,
-            'avatar'=>'default-image.jpg',
+            'avatar'=>'default-image.png',
             'gender'=>2,
             'userID'=>$user->id        
         ]);

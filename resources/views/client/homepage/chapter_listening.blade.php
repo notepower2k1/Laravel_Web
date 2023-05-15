@@ -350,7 +350,7 @@
           window.scrollTo({top: 0})
           });
 
-          var scroll_offset = 120;
+          var scroll_offset = 50;
             $(window).scroll(function(){
               var $this = $(window);
 

@@ -82,7 +82,8 @@ class ClientBookController extends Controller
 
 
         $slug =  Str::slug($request->name).'-'. $this->TimeToText();
-    
+        $localfolder = public_path('firebase-temp-uploads') .'/';
+
         $image = $request->file('image'); //image file from frontend
 
         $generatedImageName = $slug.$image->hashName();
@@ -92,7 +93,13 @@ class ClientBookController extends Controller
 
         if($file_book){
             $generatedFileName = $slug.$file_book->hashName();
-
+    
+            $firebase_storage_path_2 = 'bookFile/';
+            if ($file_book->move($localfolder, $generatedFileName)) {
+            $uploadedfile = fopen($localfolder.$generatedFileName, 'r');
+            app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path_2 . $generatedFileName]);
+            unlink($localfolder . $generatedFileName);
+            }
         }
    
 
@@ -118,7 +125,6 @@ class ClientBookController extends Controller
         ]);
         
         $firebase_storage_path = 'bookImage/';
-        $localfolder = public_path('firebase-temp-uploads') .'/';
 
         if ($image->move($localfolder, $generatedImageName)) {
         $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
@@ -127,13 +133,7 @@ class ClientBookController extends Controller
         unlink($localfolder . $generatedImageName);
         }
 
-        $firebase_storage_path_2 = 'bookFile/';
-        if ($file_book->move($localfolder, $generatedFileName)) {
-        $uploadedfile = fopen($localfolder.$generatedFileName, 'r');
-        
-        app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path_2 . $generatedFileName]);
-        unlink($localfolder . $generatedFileName);
-        }
+    
 
 
 
@@ -290,7 +290,7 @@ class ClientBookController extends Controller
         $average = array_sum($rating_book_score)/count($rating_book_score);
 
         $book = Book::findOrFail($request->id);
-        $book->ratingScore = round($average, 2);
+        $book->ratingScore = round($average, 1);
 
         $ratingPersons = ratingBook::where('bookID','=',$request->id)->get();
 
@@ -316,7 +316,7 @@ class ClientBookController extends Controller
         $average = array_sum($rating_book_score)/count($rating_book_score);
 
         $book = Book::findOrFail($request->book_id);
-        $book->ratingScore = round($average, 2);
+        $book->ratingScore = round($average, 1);
 
         $ratingPersons = ratingBook::where('bookID','=',$request->book_id)->get();
 

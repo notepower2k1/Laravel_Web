@@ -49,8 +49,13 @@ Route::group(['middleware' => ['isVerified']],function(){
 
 // Route::get("/tom-tat-tai-lieu",[PagesController::class,'summarizePage']);
 
-
+Route::get('/test',[PagesController::class,'test']);
 Route::get('/',[PagesController::class,'home_page']);
+
+
+Route::get('/thong-tin/lien-he',[PagesController::class,'contact_page']);
+Route::get('/thong-tin/quy-dinh',[PagesController::class,'policy_page']);
+Route::get('/thong-tin/huong-dan',[PagesController::class,'guide_page']);
 
 Route::get('/sach/all/{option?}',[PagesController::class,'book_page_more']);
 Route::get('/tai-lieu/all/{option?}',[PagesController::class,'document_page_more']);
@@ -86,11 +91,12 @@ Route::get("/dien-dan/bai-viet/{topic}",[PagesController::class,'forum_search_pa
 Route::get("/dien-dan/{forum_slug}/",[PagesController::class,'forum_detail']);
 Route::get("/dien-dan/{forum_slug}/all/{type_slug?}",[PagesController::class,'forum_detail_filter']);
 
+Route::get("/dien-dan/{forum_slug}/all/{fromDate}/{toDate}",[PagesController::class,'forum_detail_filter_time']);
+
 Route::get("/dien-dan/{forum_slug}/{post_slug}/{post_id}",[PagesController::class,'post_detail']);
 
 Route::get("/thanh-vien/{user_id}",[ProfileController::class,'user_info']);
 
-Route::get('/preview-document', [PagesController::class, 'preview_document']);
 
 Route::post("/binh-luan",[ClientCommentController::class,'user_comment']);
 Route::post("/phan-hoi",[ClientCommentController::class,'user_reply']);
@@ -124,6 +130,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
     Route::get('/calendar',[NoteController::class,'calendar_page']);
     Route::get('/getObject',[NoteController::class,'getObject']);
     Route::post('/create-note',[NoteController::class,'create']);
+    Route::delete('/delete-note/{note_id}',[NoteController::class,'delete']);
 
 
    
@@ -233,6 +240,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
 
 Route::group(['prefix' => 'quan-ly',  'middleware' => ['auth']], function()
 {
+    Route::get('/get-reject-reason',[NoteController::class,'client_getRejectReason']);
 
     Route::get("/",[ClientDashboard::class,'index']);
     Route::put("/xet-duyet-lai",[ClientDashboard::class,'re_verified']);

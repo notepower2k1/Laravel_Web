@@ -9,6 +9,7 @@ use App\Models\Document;
 use App\Models\DocumentType;
 use App\Models\downloadingHistory;
 use App\Models\Follow;
+use App\Models\Note;
 use App\Models\previewDocumentImages;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -202,6 +203,7 @@ class DocumentController extends Controller
     public function show($id,$year=null) //like "show details"
     {   
         DB::statement("SET SQL_MODE=''");
+        $notes = Note::where('type_id','=',2)->where('identifier_id','=',$id)->get();
 
         $allYears = DB::select("SELECT distinct year(documents.created_at) as 'year'
         from documents");
@@ -242,6 +244,7 @@ class DocumentController extends Controller
         $previewImages = previewDocumentImages::where('documentID','=',$id)->get();
 
         return view('admin.document.detail')
+        ->with('notes',$notes)
         ->with('totalDownloadingInYear',$totalDownloadingInYear)
         ->with('totalDownloadingPerDate',$totalDownloadingPerDate)
         ->with('totalDownloadingPerMonth',$totalDownloadingPerMonth)

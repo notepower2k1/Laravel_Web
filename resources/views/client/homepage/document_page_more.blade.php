@@ -1,116 +1,172 @@
 @extends('client/homepage.layouts.app')
 @section('additional-style')
 <link rel="stylesheet" href="{{ asset('assets/css/animateddocument.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/infohelper.css') }}">
+<link href="{{ asset('js/pagination/pagination.css') }}" rel="stylesheet" type="text/css">
 
-<style>
- 
-    
-</style>
 @endsection
 @section('content')
-
-{{--       
-    <div class="container">
-        <div class="nk-block">
-            <div class="row">
-                @foreach ($documents as $document)
-                <div class="col-lg-3 col-md-6 mt-3">
-                    <div class="card card-bordered product-card shadow">
-                        <div class="product-thumb">                             
-                                <img class="card-img-top" src="{{ $document->url }}" alt="" width="300px" height="400px">    
-                                                         
-                                <div class="product-actions high_downloading_documents w-100 h-100">
-                                    <div class="pricing-body w-100 h-100  d-flex text-center align-items-center">      
-                                        <div class="row">
-                                            <div class="pricing-amount">
-                                                <h6 class="bill text-white">{{ $document->name }}</h6>
-                                                <p class="text-white">Số trang: {{ $document->numberOfPages }}</p>
-                                                <p class="text-white">Lượt tải: {{ $document->totalDownloading }}</p>
-                                            </div>
-                                            <div class="pricing-action">
-                                                <a href="/tai-lieu/{{$document->id}}/{{$document->slug}}" class="btn btn-outline-light">Chi tiết</a>
-                                            </div>
-                                        </div>                                      
-                                        
-                                    </div>
-                                </div>
-                        </div>
-                     
-                    </div>
-                </div>
-            @endforeach   
-            </div>      
-        </div>
-
-    <div class="col-md-12 d-flex justify-content-end">                          
-
-        {{ $documents->links('vendor.pagination.custom',['elements' => $documents]) }}
-    </div>
-    </div> --}}
       
     <div class="container">
 
-        <h2>{{ $title }}</h2>
+        <div class="d-flex">
+            <h3 class="align-end">{{ $title }}</h3>
+            <div class="border border-dark p-4 ms-auto">
+                <p class="nk-block-title ff-mono fw-bold">
+    
+                    @switch($option)
+                        @case('luot-tai-cao')                     
+                            Danh sách các tài liệu có tổng lượt tải cao
+                            @break
+                        @case('moi-dang')
+                            Danh sách các tài liệu vừa được đăng gần đây
+                            @break
+                        @default    
+                            Danh sách toàn bộ các tài liệu đang có
+                        
+                    @endswitch
+                </p>
+            </div>
+        </div>
+        <hr>
         <div class="nk-block">
            
 
-				<ul class="align">
-                    @foreach ($documents as $document)
-                    <li>
-                        <figure class='book'>
+            <ul class="align" id="render-div">
+                @foreach ($documents as $document)
+                <li class="item-book">
+                    <div class="d-sm-none d-md-block">
+                        <div class="info mb-2 d-flex justify-content-start">
+                            <dfn data-info="{{ $document->name }}"><em class="icon ni ni-file text-success"></em></dfn>
+            
+                            <dfn data-info="{{ $document->author }}"><em class="icon ni ni-user text-info"></em></dfn>
+                        </div>
+                    </div>
+                   
+                    <figure class='book'>
+    
+                        <!-- Front -->
         
-                            <!-- Front -->
-            
-                                <ul class='hardcover_front'>
-                                    <li>
-                                        @if(\Carbon\Carbon::parse($document->created_at)->isToday())
-                                        <span class="ribbon">Mới</span>
-                                        @endif
-                                        <img src="{{ $document->url }}" alt="" width="100%" height="100%">
-                                    </li>
-                                    <li></li>
-                                </ul>
-            
-                            <!-- Pages -->
-            
-                                <ul class='page'>
-                                    <li></li>
-                                    <li class="d-flex align-items-start justify-content-center">
-                                        <a class="atag_btn"
-                                        href="/tai-lieu/{{$document->id}}/{{$document->slug}}">{{ Str::limit($document->description,150) }}</a>
-                                    </li>
-                                    <li></li>
-                                    <li></li>
-                                    <li></li>
-                                </ul>
-            
-                            <!-- Back -->
-            
-                                <ul class='hardcover_back'>
-                                    <li></li>
-                                    <li></li>
-                                </ul>
-                                <ul class='book_spine'>
-                                    <li></li>
-                                    <li></li>
-                                </ul>
-                                <figcaption>
-                                    <h4>{{ $document->name }}</h4>
-                                    <span>{{ $document->author }}</span>
-                                    {{-- <p>{{ Str::limit($document->description,200) }}</p> --}}
-                                </figcaption>
-                        </figure>
-                    </li>
-                    @endforeach   
-                </ul>
-               
-        
-            
-            <div class="col-md-12 d-flex justify-content-end">                          
+                            <ul class='hardcover_front'>
+                                <li>
+                                    @switch($option)
+                                        @case('luot-tai-cao')
+                                            <span class="ribbon">
+                                                <span class="fs-9px">
+                                                    {{ $document->totalDownloading }}
+                                                    <em class="icon ni ni-download"></em>
+                                                </span>
+                                            </span>
 
-                {{ $documents->links('vendor.pagination.custom',['elements' => $documents]) }}
+                                            @break                  
+                                        @case('moi-dang')
+                                            <span class="ribbon">{{ $document->time }}</span>
+
+                                            @break
+
+                                        @default
+                                        
+                                        @if(\Carbon\Carbon::parse($document->created_at)->isToday())
+                                            <span class="ribbon">Mới</span>
+                                        @endif
+                                    @endswitch
+                                <img src="{{ $document->url }}" alt="" width="100%" height="100%">
+
+                                </li>
+                              
+                                <li></li>
+                            </ul>
+        
+                        <!-- Pages -->
+        
+                            <ul class='page'>
+                                <li></li>
+                                <li class="d-flex align-items-start justify-content-center">
+                                    <a class="atag_btn"
+                                    href="/tai-lieu/{{$document->id}}/{{$document->slug}}">{{ Str::limit($document->description,250) }}</a>
+                                </li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                            </ul>
+        
+                        <!-- Back -->
+        
+                            <ul class='hardcover_back'>
+                                <li></li>
+                                <li></li>
+                            </ul>
+                            <ul class='book_spine'>
+                                <li></li>
+                                <li></li>
+                            </ul>                          
+                    </figure>
+                </li>
+
+                @if($loop->iteration % 3 == 0 || $loop->iteration == $documents->count()  )
+                <div class="shelf d-none d-xl-block">
+    
+                    <div class="bookend_left"></div>
+                      <div class="bookend_right"></div>
+                      <div class="reflection"></div>
+                  
+                </div>
+                @endif
+                @endforeach   
+            </ul>
+            
+            <div class="data-container"></div>
+            <div class="col-md-12 d-flex justify-content-end mt-4">                          
+                <div id="pagination"></div>
             </div>
         </div>
     </div>
    
+@endsection
+@section('additional-scripts')
+<script src="{{ asset('js/pagination/pagination.min.js') }}" ></script>
+
+<script>
+    $(function(){
+        bookRender();
+    });
+    
+    function bookRender(){
+        const container = $('#pagination');
+
+
+        if (!container.length) return;
+            var sources = function () {
+            var result = [];
+
+            $('#render-div').children().each(function(item){
+
+                result.push($(this).get(0).outerHTML);
+
+            })
+        return result;
+        }();
+
+        var options = {
+            dataSource: sources,
+            pageSize: 12,
+            callback: function (response, pagination) {
+                var dataHtml = '<ul class="align">';
+
+                $.each(response, function (index, item) {
+                    dataHtml += item;
+                });
+
+                dataHtml += '</ul>';
+
+                container.parent().prev().html(dataHtml);
+                $('#render-div').remove();
+            }
+        };
+
+
+  
+        container.pagination(options);
+    }
+</script>
 @endsection

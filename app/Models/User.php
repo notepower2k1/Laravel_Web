@@ -56,6 +56,7 @@ class User extends Authenticatable
         return $dt->diffForHumans($now);
 
     }
+
     public function profile() {
         return $this->hasOne(Profile::class,'userID');
     }

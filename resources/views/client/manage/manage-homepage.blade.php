@@ -94,15 +94,26 @@
                                         <span>{{ $book->types->name }}</span>
 
                                     </td>
-                                    <td class="nk-tb-col tb-col-lg status">
+                                    
+                                    <td class="nk-tb-col tb-col-lg status" >                                    
                                         @if ($book->status == 0)
                                         <span class="text-primary">Đang duyệt</span>
                                         @endif 
 
                                         @if ($book->status == -1)
-                                        <span class="text-danger">Từ chối</span>
+                                            @if($notes->where('identifier_id','=',$book->id)->where('type_id','=',1)->count()>0)           
+                                                <a href="#" class="getReasonbtn" data-type = "1" data-identifier = {{ $book->id }}>
+                                                    <span class="badge badge-dim rounded-pill bg-outline-danger">Từ chối</span>
+                                                </a>                           
+                                            @else
+                                                <span class="badge badge-dim rounded-pill bg-outline-danger">Từ chối</span>
+                                            @endif
+
                                         @endif 
                                     </td>
+                                      
+                                          
+                                        
                                     <td class="nk-tb-col tb-col-lg">
                                     <span>{{ $book->created_at }}</span>
                                     </td>
@@ -160,14 +171,23 @@
                                     <span>{{ $document->types->name }}</span>
 
                                     </td>
-                                    <td class="nk-tb-col tb-col-lg status">
-                                    @if ($document->status == 0)
-                                    <span class="text-primary">Đang duyệt</span>
-                                    @endif 
-                                    @if ($document->status == -1)
-                                    <span class="text-danger">Từ chối</span>
-                                    @endif 
+                                    <td class="nk-tb-col tb-col-lg status" >                                    
+                                        @if ($document->status == 0)
+                                        <span class="text-primary">Đang duyệt</span>
+                                        @endif 
+
+                                        @if ($document->status == -1)
+                                            @if($notes->where('identifier_id','=',$document->id)->where('type_id','=',2)->count()>0)           
+                                                <a href="#" class="getReasonbtn" data-type = "2" data-identifier = {{ $document->id }}>
+                                                    <span class="badge badge-dim rounded-pill bg-outline-danger">Từ chối</span>
+                                                </a>                           
+                                            @else
+                                                <span class="badge badge-dim rounded-pill bg-outline-danger">Từ chối</span>
+                                            @endif
+
+                                        @endif 
                                     </td>
+                                      
                                 <td class="nk-tb-col tb-col-lg">
                                     <span>{{ $document->created_at }}</span>
                                 </td>
@@ -463,6 +483,24 @@
 
 @endsection
 
+@section('modal')
+<div class="modal fade" id="reasonModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Lý do từ chối</h5>
+                <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <em class="icon ni ni-cross"></em>
+                </a>
+            </div>
+            <div class="modal-body">
+                <ul class="list list-checked">
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
 @section('additional-scripts')
 <script>
       $.ajaxSetup({
@@ -665,5 +703,34 @@
             console.log(textStatus + ': ' + errorThrown);
         });
     });
+
+    $('.getReasonbtn').on('click', function(e) {
+        e.preventDefault();
+
+        const type_id = $(this).data('type');
+        const identifier_id = $(this).data('identifier');
+        $.ajax({
+            type:"GET",
+            url:'/quan-ly/get-reject-reason',
+            data : {
+                "type_id": type_id,
+                'identifier_id': identifier_id,
+            },
+            })
+            .done(function(res) {
+            // If successful     
+
+                const listItem = res.res;
+            
+                $('#reasonModal').find('ul').empty().append(listItem);
+
+                $('#reasonModal').modal('show');
+                
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            console.log(textStatus + ': ' + errorThrown);
+        });
+    })
 </script>
 @endsection

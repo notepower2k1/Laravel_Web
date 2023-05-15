@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -33,7 +34,7 @@ class Book extends Model
         return $this->hasMany(Chapter::class,'book_id','id');
     }
 
-    protected $appends = ['url','bookUrl'];
+    protected $appends = ['url','bookUrl','time'];
 
     public function getUrlAttribute()
     {
@@ -67,5 +68,14 @@ class Book extends Model
 
     }
   
+    public function getTimeAttribute()
+    {
+        Carbon::setLocale('vi'); 
+
+        $dt = new Carbon($this->created_at);
+        $now = Carbon::now();
+
+        return $dt->diffForHumans($now);
+    }
 
 }

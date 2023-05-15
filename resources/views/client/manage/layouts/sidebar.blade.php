@@ -36,7 +36,7 @@
                 </ul>
             </div>
             <div class="nk-fmg-aside-bottom">
-                <div class="nk-fmg-status">
+                {{-- <div class="nk-fmg-status">
                     <h6 class="nk-fmg-status-title"><em class="icon ni ni-hard-drive"></em><span>Storage</span></h6>
                     <div class="progress progress-md bg-light">
                         <div class="progress-bar" data-progress="5" style="width: 5%;"></div>
@@ -45,7 +45,7 @@
                     <div class="nk-fmg-status-action">
                         <a href="#" class="link link-primary link-sm">Upgrade Storage</a>
                     </div>
-                </div>
+                </div> --}}
                 <div class="nk-fmg-switch">
                     {{-- <div class="dropup">
                         <a href="#" data-bs-toggle="dropdown" data-offset="-10, 12" class="dropdown-toggle dropdown-indicator-unfold">

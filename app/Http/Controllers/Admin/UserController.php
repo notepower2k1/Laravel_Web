@@ -16,6 +16,7 @@ use App\Models\DocumentComment;
 use App\Models\DocumentCommentReply;
 use App\Models\Document;
 use App\Models\ForumPosts;
+use App\Models\Note;
 use App\Models\PostComment;
 use App\Models\PostCommentReply;
 use Illuminate\Support\Facades\Auth;
@@ -98,8 +99,10 @@ class UserController extends Controller
         $documents = Document::where('userCreatedID','=',$id)->get();
         $posts = ForumPosts::where('userCreatedID','=',$id)->get();
         $comments = Comment::where('userID','=',$id)->get();
+        $notes = Note::where('type_id','=',3)->where('identifier_id','=',$id)->get();
 
         return view('admin.user.detail')
+        ->with('notes',$notes)
         ->with('books',$books)
         ->with('documents',$documents)
         ->with('posts',$posts)

@@ -30,6 +30,7 @@ class ProfileController extends Controller
         $updatedDate = new Carbon($user->updated_at);
 
         $updateFlag = true;
+
         if($updatedDate->isToday()){
 
             $updateFlag = false;
@@ -60,13 +61,22 @@ class ProfileController extends Controller
             'gender.required' => 'Nên chọn giới tính'
         ]);
 
-        $profile = Profile::findOrFail($id)
-                ->update([
-                    'displayName' => $request->displayName,
-                    'gender' =>  $request->gender
-                    
-                ]);
+        Profile::findOrFail($id)
+        ->update([
+            'displayName' => $request->displayName,
+            'gender' =>  $request->gender
+            
+        ]);
+
+        $profile = Profile::findOrFail($id);
+
+        $user = User::findOrFail($profile->userID);
+
+        $user->updated_at = Carbon::now();
+
+        $user->save();
         return redirect('/trang-ca-nhan');
+
     }
 
 
@@ -94,12 +104,26 @@ class ProfileController extends Controller
 
         app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
         unlink($localfolder . $generatedImageName);
+
+        if($request->oldImage != 'default-image.png'){
+            $imageDeleted = app('firebase.storage')->getBucket()->object($firebase_storage_path.$request->oldImage)->delete();
         }
 
-        $profile = Profile::findOrFail($id)
+        }
+
+
+        Profile::findOrFail($id)
                 ->update([
                     'avatar' => $generatedImageName                
                 ]);
+
+        $profile = Profile::findOrFail($id);
+
+        $user = User::findOrFail($profile->userID);
+
+        $user->updated_at = Carbon::now();
+
+        $user->save();
 
         return redirect('/trang-ca-nhan');
        

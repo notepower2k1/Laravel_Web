@@ -22,32 +22,111 @@
                 </div>
             </div>            
             <ul class="nk-menu nk-menu-main">             
-                {{-- <li class="nk-menu-item has-sub">
+                <li class="nk-menu-item has-sub">
                     <a href="#" class="nk-menu-link nk-menu-toggle">
-                        <span class="nk-menu-text">Apps</span>
+                        <em class="icon ni ni-menu-circled"></em>
+                        <span class="nk-menu-text">Danh sách</span>
                     </a>
-                    <ul class="nk-menu-sub">
-                        <li class="nk-menu-item">
-                            <a href="html/apps-messages.html" class="nk-menu-link"><span class="nk-menu-text">Messages</span></a>
-                        </li>
-                        <li class="nk-menu-item">
-                            <a href="html/apps-inbox.html" class="nk-menu-link"><span class="nk-menu-text">Inbox / Mail</span></a>
-                        </li>
-                        <li class="nk-menu-item">
-                            <a href="html/apps-file-manager.html" class="nk-menu-link"><span class="nk-menu-text">File Manager</span></a>
-                        </li>
-                        <li class="nk-menu-item">
-                            <a href="html/apps-chats.html" class="nk-menu-link"><span class="nk-menu-text">Chats / Messenger</span></a>
-                        </li>
-                        <li class="nk-menu-item">
-                            <a href="html/apps-calendar.html" class="nk-menu-link"><span class="nk-menu-text">Calendar</span></a>
-                        </li>
-                        <li class="nk-menu-item">
-                            <a href="html/apps-kanban.html" class="nk-menu-link"><span class="nk-menu-text">Kanban Board</span></a>
-                        </li>
+                    <ul class="nk-menu-sub">                     
+                        <li class="nk-menu-item has-sub">
+                            <a href="#" class="nk-menu-link nk-menu-toggle">
+                                <span class="nk-menu-text">Sách điện tử</span>
+                            </a>
+                            <ul class="nk-menu-sub">
+                                <li class="nk-menu-item">
+                                    <a href="/sach/all/moi-dang" class="nk-menu-link"><span class="nk-menu-text">Mới cập nhật</span></a>
+                                </li>
+                                <li class="nk-menu-item">
+                                    <a href="/sach/all/doc-nhieu" class="nk-menu-link"><span class="nk-menu-text">Đọc nhiều</span></a>
+                                </li>
+                                <li class="nk-menu-item">
+                                    <a href="/sach/all/danh-gia-cao" class="nk-menu-link"><span class="nk-menu-text">Đánh giá cao</span></a>
+                                </li>
+                            </ul><!-- .nk-menu-sub -->
+                        </li><!-- .nk-menu-item -->
+                        <li class="nk-menu-item has-sub">
+                            <a href="#" class="nk-menu-link nk-menu-toggle">
+                                <span class="nk-menu-text">Tài liệu tham khảo</span>
+                            </a>
+                            <ul class="nk-menu-sub">
+                                <li class="nk-menu-item">
+                                    <a href="/tai-lieu/all/moi-dang" class="nk-menu-link"><span class="nk-menu-text">Mới cập nhật</span></a>
+                                </li>                  
+                                <li class="nk-menu-item">
+                                    <a href="/tai-lieu/all/luot-tai-cao" class="nk-menu-link"><span class="nk-menu-text">Lượt tải cao</span></a>
+                                </li>
+                            </ul><!-- .nk-menu-sub -->
+                        </li><!-- .nk-menu-item -->
+                        <li class="nk-menu-item has-sub">
+                            <a href="#" class="nk-menu-link nk-menu-toggle">
+                                <span class="nk-menu-text">Tình trạng</span>
+                            </a>
+                            <ul class="nk-menu-sub">
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-text">Sách điện tử</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        <li class="nk-menu-item">
+                                            <a href="/tinh-trang/tinh-trang-sach/da-hoan-thanh" class="nk-menu-link"><span class="nk-menu-text">Đã hoàn thành</span></a>
+                                        </li>                  
+                                        <li class="nk-menu-item">
+                                            <a href="/tinh-trang/tinh-trang-sach/chua-hoan-thanh" class="nk-menu-link"><span class="nk-menu-text">Chưa hoàn thành</span></a>
+                                        </li>
+                                    </ul><!-- .nk-menu-sub -->
+                                </li><!-- .nk-menu-item -->
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-text">Tài liệu tham khảo</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        <li class="nk-menu-item">
+                                            <a href="/tinh-trang/tinh-trang-tai-lieu/da-hoan-thanh" class="nk-menu-link"><span class="nk-menu-text">Đã hoàn thành</span></a>
+                                        </li>                  
+                                        <li class="nk-menu-item">
+                                            <a href="/tinh-trang/tinh-trang-tai-lieu/chua-hoan-thanh" class="nk-menu-link"><span class="nk-menu-text">Chưa hoàn thành</span></a>
+                                        </li>
+                                    </ul><!-- .nk-menu-sub -->
+                                </li><!-- .nk-menu-item -->
+                            </ul><!-- .nk-menu-sub -->
+                        </li><!-- .nk-menu-item -->
+                        <li class="nk-menu-item has-sub">
+                            <a href="#" class="nk-menu-link nk-menu-toggle">
+                                <span class="nk-menu-text">Ngôn ngữ</span>
+                            </a>
+                            <ul class="nk-menu-sub">
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-text">Sách điện tử</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        <li class="nk-menu-item">
+                                            <a href="/ngon-ngu/ngon-ngu-sach/tieng-viet" class="nk-menu-link"><span class="nk-menu-text">Tiếng Việt</span></a>
+                                        </li>                  
+                                        <li class="nk-menu-item">
+                                            <a href="/ngon-ngu/ngon-ngu-sach/tieng-anh" class="nk-menu-link"><span class="nk-menu-text">Tiếng Anh</span></a>
+                                        </li>
+                                    </ul><!-- .nk-menu-sub -->
+                                </li><!-- .nk-menu-item -->
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-text">Tài liệu tham khảo</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        <li class="nk-menu-item">
+                                            <a href="/ngon-ngu/ngon-ngu-tai-lieu/tieng-viet" class="nk-menu-link"><span class="nk-menu-text">Tiếng Việt</span></a>
+                                        </li>                  
+                                        <li class="nk-menu-item">
+                                            <a href="/ngon-ngu/ngon-ngu-tai-lieu/tieng-anh" class="nk-menu-link"><span class="nk-menu-text">Tiếng Anh</span></a>
+                                        </li>
+                                    </ul><!-- .nk-menu-sub -->
+                                </li><!-- .nk-menu-item -->
+                            </ul><!-- .nk-menu-sub -->
+                        </li><!-- .nk-menu-item -->
+                      
                     </ul><!-- .nk-menu-sub -->
-                </li> --}}    
-                
+                </li>
+
                 @if(!Request::is('tim-kiem'))
                     <li class="nk-menu-item">
                         {{-- <a href="/tim-kiem" class="nk-menu-link">
@@ -58,8 +137,8 @@
                         
                         </a> --}}
                         <a href="#" class="nk-menu-link" data-bs-toggle="modal" data-bs-target="#modalSearchHomePage">
+                            <em class="icon ni ni-search"></em>
                             <span class="nk-menu-text">
-                                <em class="icon ni ni-search"></em>
                                 Tìm kiếm               
                             </span>
                         </a>
@@ -68,29 +147,14 @@
                 @endif
                 <li class="nk-menu-item {{ Request::is('the-loai') ? 'active' : '' }}">
                     <a href="/the-loai" class="nk-menu-link">
-                        
+                        <em class="icon ni ni-menu-circled"></em>
+
                         <span class="nk-menu-text">
-                            <em class="icon ni ni-menu-circled"></em>
                             Thể loại
                         </span>
                     </a>
                 </li><!-- .nk-menu-item -->           
-                <li class="nk-menu-item {{ Request::is('sach/all/sach-hay-nen-doc') ? 'active' : '' }}">
-                    <a href="/sach/all/sach-hay-nen-doc" class="nk-menu-link">
-                        
-                        <span class="nk-menu-text">
-                            <em class="icon ni ni-star-fill"></em>
-                            Khuyên đọc</span>
-                    </a>
-                </li><!-- .nk-menu-item -->             
-                <li class="nk-menu-item {{ Request::is('tai-lieu/all/tai-lieu-hay-nhat') ? 'active' : '' }}">
-                    <a href="/tai-lieu/all/tai-lieu-hay-nhat" class="nk-menu-link">
-                        
-                        <span class="nk-menu-text">
-                            <em class="icon ni ni-download"></em>
-                            Nên tải</span>
-                    </a>
-                </li><!-- .nk-menu-item -->     
+              <!-- .nk-menu-item -->             
                 {{-- <li class="nk-menu-item {{ Request::is('/tom-tat-tai-lieu/*') ? 'active' : '' }}">
                     <a href="/tom-tat-tai-lieu" class="nk-menu-link">
                         
@@ -101,8 +165,9 @@
                 </li>--}}
                 <li class="nk-menu-item {{ Request::is('/dien-dan') ? 'active' : '' }}">
                     <a href="/dien-dan" class="nk-menu-link">
+                        <em class="icon ni ni-question"></em>
+
                         <span class="nk-menu-text">
-                            <em class="icon ni ni-question"></em>
                             Diễn đàn</span>
                     </a>
                 </li><!-- .nk-menu-item -->
@@ -112,7 +177,7 @@
             <ul class="nk-quick-nav">              
                 @if(Auth::check())
                     
-                <li class="dropdown notification-dropdown {{ Request::is('sach-theo-doi') ? 'd-none':'' }}" id="bookMark_notifications_box">
+                <li class="dropdown notification-dropdown {{ Request::is('trang-theo-doi') ? 'd-none':'' }}" id="bookMark_notifications_box">
                     <a href="#" class="dropdown-toggle nk-quick-nav-icon" data-bs-toggle="dropdown">
                         @if($follow_notifications->isEmpty())
                         <em class="icon ni ni-bookmark"></em>
@@ -160,7 +225,7 @@
                             </div><!-- .nk-notification -->
                         </div><!-- .nk-dropdown-body -->
                         <div class="dropdown-foot center">
-                            <a href="/sach-theo-doi">Xem tất cả</a>
+                            <a href="/trang-theo-doi">Xem tất cả</a>
                         </div>
                     </div>
                 </li><!-- .dropdown -->
@@ -313,7 +378,7 @@
                                     @endif
                                 </li>
                                 <li><a href="/them-tai-lieu"><em class="icon ni ni-plus"></em><span>Đăng tài liệu</span></a></li>
-                                <li><a href="/sach-theo-doi"><em class="icon ni ni-bookmark"></em><span>Sách theo dõi</span></a></li>
+                                <li><a href="/trang-theo-doi"><em class="icon ni ni-bookmark"></em><span>Sách theo dõi</span></a></li>
                                 {{-- <li><a class="dark-switch" href="#"><em class="icon ni ni-moon"></em><span>Chế độ ban đêm</span></a></li> --}}
                             </ul>
                         </div>

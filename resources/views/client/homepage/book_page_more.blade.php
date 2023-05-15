@@ -2,145 +2,188 @@
 @section('pageTitle', `${{$title}}`)
 @section('additional-style')
 <link rel="stylesheet" href="{{ asset('assets/css/animatedbook.css') }}">
-
-{{-- <style>
- 
-    .high_reading_books{
-        margin-top: 80px;
-    }
-    
-    .high-reading-book-images{
-        max-width: none !important;
-        position: absolute;
-        top: -50px;
-        left:20px;
-        width:120px;
-        height:176px;
-        box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
-                }
-    .high-reading-book-images:hover{
-        animation: taadaa 2s;
-
-    }
-    @keyframes taadaa { 
-        0% {
-            opacity: 0.6;
-        }
-
-        100% {
-            opacity: 1;
-        }
-    }
-   
-</style> --}}
-
+<link rel="stylesheet" href="{{ asset('assets/css/infohelper.css') }}">
+<link href="{{ asset('js/pagination/pagination.css') }}" rel="stylesheet" type="text/css">
 @endsection
 
 @section('content')
-
-{{-- <div class="container">
-    <div class="nk-block">
-        <div class="nk-block-head nk-block-head-sm">
-            <div class="nk-block-between">
-                <div class="nk-block-head-content">
-                    <h5 class="nk-block-title">{{ $title }}</h5>
-                </div><!-- .nk-block-head-content -->
-               
-            </div><!-- .nk-block-between -->
-        </div><!-- .nk-block-head -->
-        <div class="row g-gs">
-            @foreach ($books as $book)
-                <div class="col-xxl-3 col-lg-4 col-sm-6 high_reading_books">
-                    <div class="card card-bordered shadow">
-                        <div class="d-flex">
-                            <div class="flex-fill" style="position: relative; width:140px">    
-                                <a href="/sach/{{$book->id}}/{{$book->slug}}">
-                                    <img class="high-reading-book-images" src="{{ $book->url }}" alt="">                            
-                                </a>                                                     
-                            </div>
-                            <div class="flex-fill">
-                                <div class="p-2 text-center">
-                                    <ul class="product-tags">
-                                        <li><a href="#">{{ $book->author }}</a></li>
-                                    </ul>
-                                    <h3 class="product-title fs-13px" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $book->name }}"><a href="/sach/{{$book->id}}/{{$book->slug}}"> {{ Str::limit($book->name,20) }}</a></h3>
-                                    <small class="text-muted fs-13px"><em class="icon ni ni-book-read"></em> {{ $book->numberOfChapter }} Chương</small>
-                                </div>
-                            </div>          
-                        </div>
-                        <hr>
-                        <p class="text-muted ms-2">{{ $book->totalReading }} Lượt xem</p>
-                    </div>
-                </div>
-            @endforeach
-        </div>   
-    </div>
-       
-      
-      
-    <div class="col-md-12 mt-4 d-flex justify-content-end">                          
-    
-        {{ $books->links('vendor.pagination.custom',['elements' => $books]) }}
-    </div>
-</div> --}}
-
 <div class="container">
+    <div class="d-flex">
+        <h3 class="align-end">{{ $title }}</h3>
+        <div class="border border-dark p-4 ms-auto">
+            <p class="nk-block-title ff-mono fw-bold">
 
-    <h2>{{ $title }}</h2>
+                @switch($option)
+                    @case('danh-gia-cao')                     
+                        Danh sách các sách có điểm đánh giá cao
+                        @break
+                
+                    @case('doc-nhieu')
+                        Danh sách các sách có tổng lượt đọc cao
+
+                        @break
+
+                    @case('moi-dang')
+                        Danh sách các sách vừa được đăng gần đây
+                        @break
+
+                    @default    
+                        Danh sách toàn bộ các sách đang có
+                    
+                @endswitch
+            </p>
+        </div>
+    </div>
+    <hr>
     <div class="nk-block">
-        <ul class="align">
+        <ul class="align" id="render-div">
             @foreach ($books as $book)
-    
-            <li>
-                <figure class='book'>
 
-                    <!-- Front -->
-            
+          
+            <li class="item-book">
+                <div class="info mb-2 d-sm-none d-md-block">
+                    <dfn data-info="{{ $book->name }}"><em class="icon ni ni-book text-success"></em></dfn>
+
+                    <dfn data-info="{{ $book->author }}"><em class="icon ni ni-user text-info"></em></dfn>
+                </div>
+             
+                <figure class='book'>    
                         <ul class='paperback_front'>
                             
                             <li>
-                                @if(\Carbon\Carbon::parse($book->created_at)->isToday())
-                                <span class="ribbon">Mới</span>
-                                @endif
+
+                                @switch($option)
+                                    @case('danh-gia-cao')
+                                        <span class="ribbon">
+                                            <span class="fs-9px">
+                                                {{ $book->ratingScore }}
+                                                <em class="icon ni ni-star-fill"></em>
+                                            </span>
+                                        </span>
+
+                                        @break
+                                
+                                    @case('doc-nhieu')
+                                        <span class="ribbon">
+                                            <span class="fs-9px">
+                                                {{ $book->totalReading }}
+                                                <em class="icon ni ni-eye-fill"></em>
+                                            </span>
+                                  
+
+                                        </span>
+
+                                        @break
+
+                                    @case('moi-dang')
+                                        <span class="ribbon">{{ $book->time }}</span>
+
+                                        @break
+
+                                    @default
+                                    
+                                    @if(\Carbon\Carbon::parse($book->created_at)->isToday())
+                                        <span class="ribbon">Mới</span>
+                                    @endif
+                                @endswitch
 
                                 <img src="{{ $book->url }}" alt="" width="100%" height="100%">
                             </li>
                             <li></li>
                         </ul>
             
-                    <!-- Pages -->
             
                         <ul class='ruled_paper'>
                             <li></li>
                             <li class="">
                                 <a class="atag_btn"
-                                href="/sach/{{$book->id}}/{{$book->slug}}">{{ Str::limit($book->description,150) }}</a>
+                                href="/sach/{{$book->id}}/{{$book->slug}}">{{ Str::limit($book->description,250) }}</a>
                             </li>
                             <li></li>
                             <li></li>
                             <li></li>
                         </ul>
             
-                    <!-- Back -->
             
                         <ul class='paperback_back'>
                             <li></li>
                             <li></li>
                         </ul>
-                        <figcaption>
+                        {{-- <figcaption>
                             <h4>{{ $book->name }}</h4>
                             <span>{{ $book->author }}</span>
-                            {{-- <p>{{ Str::limit($book->description,200) }}</p> --}}
-                        </figcaption>
-                    </figure>
-            </li>
-            @endforeach   
-    
-        </ul>
-        <div class="col-md-12 d-flex justify-content-end">                          
+                        </figcaption> --}}
+                </figure>
 
-            {{ $books->links('vendor.pagination.custom',['elements' => $books]) }}
+           
+
+            </li>
+            
+            @if($loop->iteration % 3 == 0 || $loop->iteration == $books->count()  )
+            <div class="shelf d-none d-xl-block">
+
+                <div class="bookend_left"></div>
+                  <div class="bookend_right"></div>
+                  <div class="reflection"></div>
+              
+            </div>
+            @endif
+            @endforeach   
+
+        </ul>
+        
+
+        <div class="data-container" style=""></div>
+        <div class="col-md-12 d-flex justify-content-end mt-4">                          
+            <div id="pagination"></div>
         </div>
     </div>
 </div>
+@endsection
+@section('additional-scripts')
+<script src="{{ asset('js/pagination/pagination.min.js') }}" ></script>
+
+<script>
+    $(function(){
+        bookRender();
+    });
+    
+    function bookRender(){
+        const container = $('#pagination');
+
+
+        if (!container.length) return;
+            var sources = function () {
+            var result = [];
+
+            $('#render-div').children().each(function(item){
+
+                result.push($(this).get(0).outerHTML);
+
+            })
+        return result;
+        }();
+
+        var options = {
+            dataSource: sources,
+            pageSize: 12,
+            callback: function (response, pagination) {
+                var dataHtml = '<ul class="align">';
+
+                $.each(response, function (index, item) {
+                    dataHtml += item;
+                });
+
+                dataHtml += '</ul>';
+
+                container.parent().prev().html(dataHtml);
+                $('#render-div').remove();
+            }
+        };
+
+
+  
+        container.pagination(options);
+    }
+</script>
 @endsection

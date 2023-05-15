@@ -1,7 +1,7 @@
 @extends('admin/layouts.app')
 @section('content')
 
-<div class="nk-content-body">
+<div class="p-2">
     <div class="nk-block-head nk-block-head-sm">
         <div class="nk-block-between">
             <div class="nk-block-head-content">
@@ -10,42 +10,44 @@
                     <p id="moment-today-span"></p>
                 </div>
             </div><!-- .nk-block-head-content -->
-            {{-- <div class="nk-block-head-content">
+            <div class="nk-block-head-content">
                 <div class="toggle-wrap nk-block-tools-toggle">
                     <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1" data-target="pageMenu"><em class="icon ni ni-more-v"></em></a>
                     <div class="toggle-expand-content" data-content="pageMenu">
                         <ul class="nk-block-tools g-3">
                             <li>
                                 <div class="drodown">
-                                    <a href="#" class="dropdown-toggle btn btn-white btn-dim btn-outline-light" data-bs-toggle="dropdown"><em class="d-none d-sm-inline icon ni ni-calender-date"></em><span><span class="d-none d-md-inline">Last</span> 30 Days</span><em class="dd-indc icon ni ni-chevron-right"></em></a>
+                                    <a href="#" class="dropdown-toggle btn btn-white btn-dim btn-outline-primary" data-bs-toggle="dropdown"><em class="icon ni ni-reports"></em><span>Xuất báo cáo</span></a>
                                     <div class="dropdown-menu dropdown-menu-end">
                                         <ul class="link-list-opt no-bdr">
-                                            <li><a href="#"><span>Last 30 Days</span></a></li>
-                                            <li><a href="#"><span>Last 6 Months</span></a></li>
-                                            <li><a href="#"><span>Last 1 Years</span></a></li>
+                                            <li><a class="export-csv-btn" data-option=1 href="#"><span>Thống kê sách được thêm trong tuần</span></a></li>
+                                            <li><a class="export-csv-btn" data-option=2 href="#"><span>Thống kê tài liệu được thêm trong tuần</span></a></li>
+                                            <li><a class="export-csv-btn" data-option=3 href="#"><span>Thống kê thành viên tham gia trong tuần</span></a></li>
+                                            <li><a class="export-csv-btn" data-option=4 href="#"><span>Thống kê bài viết được đăng trong tuần</span></a></li>
+                                            <li><a class="export-csv-btn" data-option=5 href="#"><span>Khung giờ đăng nhập</span></a></li>
                                         </ul>
                                     </div>
                                 </div>
                             </li>
-                            <li class="nk-block-tools-opt"><a href="#" class="btn btn-primary"><em class="icon ni ni-reports"></em><span>Reports</span></a></li>
+
                         </ul>
                     </div>
                 </div>
-            </div><!-- .nk-block-head-content --> --}}
+            </div><!-- .nk-block-head-content -->
         </div><!-- .nk-block-between -->
     </div><!-- .nk-block-head -->
-    <div class="nk-block">
+    <div class="nk-block nk-block-lg">
         <div class="row g-gs">  
             <div class="col-xxl-3 col-sm-3">
                 <div class="card card-full overflow-hidden">
                     <div class="nk-ecwg nk-ecwg7 h-100">
                         <div class="card-inner flex-grow-1">
                             <h6 class="title">Sách mới trong ngày</h6>
-
+    
                             <div class="">
                                 <em class="icon icon-circle bg-success-dim ni ni-book-fill"></em>
                                 <span>{{ $book_today_info['todayValue'] }}</span>
-
+    
                             </div>
                             <div class="balance mt-2">
                                 <div class="info">    
@@ -64,7 +66,7 @@
                                             <em class="icon ni equal"></em><span class="text-info">Không đổi</span><span> so với hôm qua</span>
                                         @endif
                                     @endif
-
+    
                                     @if ($book_today_info['todayValue'] > 0 Xor $book_today_info['yestedayValue'] > 0)
                                         @if ($book_today_info['todayValue'] > 0 && $book_today_info['yestedayValue'] == 0)
                                             <em class="icon ni ni-arrow-long-up"></em><span class="change up text-success">{{ $book_today_info['todayValue'] }}</span><span> so với hôm qua</span>
@@ -73,9 +75,9 @@
                                             <em class="icon ni ni-arrow-long-down"></em><span class="change down text-success">{{ $book_today_info['yestedayValue'] }}</span><span> so với hôm qua</span>
                                         @endif
                                     @endif
-
-                                 
-                                   
+    
+                                    
+                                    
                                 </div>
                             </div>
                             
@@ -88,11 +90,11 @@
                     <div class="nk-ecwg nk-ecwg7 h-100">
                         <div class="card-inner flex-grow-1">
                             <h6 class="title">Tài liệu mới trong ngày</h6>
-
+    
                             <div class="">
                                 <em class="icon icon-circle bg-secondary-dim ni ni-file-text"></em>
                                 <span>{{ $document_today_info['todayValue'] }}</span>
-
+    
                             </div>
                             <div class="balance mt-2">
                                 <div class="info">
@@ -111,7 +113,7 @@
                                         <em class="icon ni equal"></em><span class="text-info">Không đổi</span><span> so với hôm qua</span>
                                     @endif
                                 @endif
-
+    
                                 @if ($document_today_info['todayValue'] > 0 Xor $document_today_info['yestedayValue'] > 0)
                                     @if ($document_today_info['todayValue'] > 0 && $document_today_info['yestedayValue'] == 0)
                                         <em class="icon ni ni-arrow-long-up"></em><span class="change up text-success">{{ $document_today_info['todayValue'] }}</span><span> so với hôm qua</span>
@@ -132,11 +134,11 @@
                     <div class="nk-ecwg nk-ecwg7 h-100">
                         <div class="card-inner flex-grow-1">
                             <h6 class="title">Bài viết mới trong ngày </h6>
-
+    
                             <div class="">
                                 <em class="icon icon-circle bg-info-dim ni ni-list-fill"></em>
                                 <span>{{ $post_today_info['todayValue'] }}</span>
-
+    
                             </div>
                             <div class="balance mt-2">
                                 <div class="info">
@@ -155,7 +157,7 @@
                                         <em class="icon ni equal"></em><span class="text-info">Không đổi</span><span> so với hôm qua</span>
                                     @endif
                                 @endif
-
+    
                                 @if ($post_today_info['todayValue'] > 0 Xor $post_today_info['yestedayValue'] > 0)
                                     @if ($post_today_info['todayValue'] > 0 && $post_today_info['yestedayValue'] == 0)
                                         <em class="icon ni ni-arrow-long-up"></em><span class="change up text-success">{{ $post_today_info['todayValue'] }}</span><span> so với hôm qua</span>
@@ -176,11 +178,11 @@
                     <div class="nk-ecwg nk-ecwg7 h-100">
                         <div class="card-inner flex-grow-1">
                             <h6 class="title">Thành viên mới trong ngày</h6>
-
+    
                             <div class="">
                                 <em class="icon icon-circle bg-warning-dim ni ni-users"></em>
                                 <span>{{ $user_today_info['todayValue'] }}</span>
-
+    
                             </div>
                             <div class="balance mt-2">
                                 <div class="info">
@@ -199,7 +201,7 @@
                                         <em class="icon ni equal"></em><span class="text-info">Không đổi</span><span> so với hôm qua</span>
                                     @endif
                                 @endif
-
+    
                                 @if ($user_today_info['todayValue'] > 0 Xor $user_today_info['yestedayValue'] > 0)
                                     @if ($user_today_info['todayValue'] > 0 && $user_today_info['yestedayValue'] == 0)
                                         <em class="icon ni ni-arrow-long-up"></em><span class="change up text-success">{{ $user_today_info['todayValue'] }}</span><span> so với hôm qua</span>
@@ -305,12 +307,12 @@
                                 </div>
                                 <div class="card-tools">
                                     <div class="dropdown">
-                                        <a href="#" class="dropdown-toggle link link-light link-sm dropdown-indicator" data-bs-toggle="dropdown">Option</a>
+                                        <a href="#" class="dropdown-toggle link link-light link-sm dropdown-indicator" data-bs-toggle="dropdown">Lựa chọn</a>
                                         <div class="dropdown-menu dropdown-menu-sm dropdown-menu-end">
                                             <ul class="link-list-opt no-bdr">
-                                                <li><a href="" class="active loginChartChange" data-option="0"><span>Today</span></a></li>
-                                                <li><a href="" class="loginChartChange" data-option="1"><span>Yesterday</span></a></li>
-                                                <li><a href="" class="loginChartChange" data-option="2"><span>Current week</span></a></li>
+                                                <li><a href="" class="active loginChartChange" data-option="0"><span>Hôm nay</span></a></li>
+                                                <li><a href="" class="loginChartChange" data-option="1"><span>Hôm qua</span></a></li>
+                                                <li><a href="" class="loginChartChange" data-option="2"><span>Tuần này</span></a></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -318,7 +320,7 @@
                             </div>
                             <div style=" height: 400px;">
                                 <canvas id="loginBar"></canvas>
-
+    
                             </div>
                         </div><!-- .card-inner -->
                     </div>
@@ -327,7 +329,7 @@
             <div class="col-xxl-3 col-md-12 col-lg-5">
                 <div class="card card-full overflow-hidden">
                     <div class="nk-ecwg nk-ecwg7 h-100">
-                         
+                            
                         <div class="d-flex flex-column justify-content-center align-items-center h-100">
                             <div class="card-title-group mb-4">
                                 <div class="card-title">
@@ -372,7 +374,7 @@
                                                     <div class="col-lg-6">
                                                         <div class="product-gallery" >    
                                                             <img src="{{ $high_reading_book->url }}" class="w-100" alt="">                                     
-                                                       </div>
+                                                        </div>
                                                     </div><!-- .col -->
                                                     <div class="col-lg-6 d-flex align-items-end">
                                                         <div class="product-info mb-5 me-xxl-5">
@@ -388,7 +390,7 @@
                         
                                                                     @endif 
                                                                 </h6>
-                                                              
+                                                                
                                                             </div><!-- .product-meta -->                            
                                                             <div class="product-meta">
                                                                 <h6 class="title">Thể loại</h6>                                     
@@ -411,8 +413,8 @@
                                                                 <span class="text-success">{{ $high_reading_book->totalBookMarking }}</span>
                                                             </div><!-- .product-meta -->   
                                                         </div><!-- .product-info -->
-                                                       
-                                                      
+                                                        
+                                                        
                                                     </div><!-- .col -->
                                                 </div><!-- .row -->                                            
                                             </div>
@@ -423,7 +425,7 @@
                                     @endif
                 
                                 </div><!-- .tab-pane -->
-                              
+                                
                 
                                 <div class="tab-pane" id="file-group-view">
                                     @if($high_downloading_document)
@@ -435,7 +437,7 @@
                                                     <div class="col-lg-6">
                                                         <div class="product-gallery" >    
                                                             <img src="{{ $high_downloading_document->url }}" class="w-100" alt="">                                     
-                                                       </div>
+                                                        </div>
                                                     </div><!-- .col -->
                                                     <div class="col-lg-6 d-flex align-items-end">
                                                         <div class="product-info mb-5 me-xxl-5">
@@ -451,7 +453,7 @@
                         
                                                                     @endif 
                                                                 </h6>
-                                                              
+                                                                
                                                             </div><!-- .product-meta -->                            
                                                             <div class="product-meta">
                                                                 <h6 class="title">Thể loại</h6>                                     
@@ -472,13 +474,13 @@
                                                                 </a>
                                                             </div><!-- .product-meta -->   
                                                         </div><!-- .product-info -->
-                                                       
-                                                      
+                                                        
+                                                        
                                                     </div><!-- .col -->
                                                 </div><!-- .row -->                                            
                                             </div>
                                         </div>
-                                      
+                                        
                                     </div><!-- .nk-files -->
                                     @else
                                     <p>Bạn chưa đăng tài liệu nào</p>
@@ -513,17 +515,17 @@
                                     <th class="nk-tb-col tb-col-mb"><span class="sub-text">Người thêm</span></th>
                                     <th class="nk-tb-col tb-col-md"><span class="sub-text">Ngày thêm</span></th>
                                     <th class="nk-tb-col tb-col-md"><span class="sub-text">Tình trạng</span></th>
-
+    
                                 </tr>
                             </thead>
                             <tbody>
-                              @foreach ($today_book as $book)
+                                @foreach ($today_book as $book)
                                 <tr class="nk-tb-item" id ="row-book-{{ $book->id }}">                                                                  
-                                   
+                                    
                                     <td class="nk-tb-col tb-col-lg">
                                         <img class="image-fluid" src={{$book->url}} alt="..." style="width:100px" />
                                     </td>
-
+    
                                     <td class="nk-tb-col">
                                         <div class="user-card">                                           
                                             <div class="user-info">
@@ -532,20 +534,20 @@
                                         </div>
                                     </td>
                                     <td class="nk-tb-col tb-col-lg">
-                                      <span>{{ Str::limit($book->author,30) }}</span>
+                                        <span>{{ Str::limit($book->author,30) }}</span>
                                     </td>
                                     <td class="nk-tb-col tb-col-lg">
-                                      <span>{{ $book->types->name }}</span>
+                                        <span>{{ $book->types->name }}</span>
     
                                     </td>
                                     <td class="nk-tb-col tb-col-mb">
                                         <span>{{ $book->users->name }}</span>
                                     </td>
-
+    
                                     <td class="nk-tb-col tb-col-md">
                                         <span>{{ $book->created_at }}</span>
                                     </td>
-
+    
                                     <td class="nk-tb-col tb-col-md">
                                         @if($book->status == 1)
                                         <span class="badge badge-dot badge-dot-xs bg-success">
@@ -564,32 +566,32 @@
                                         @endif
                                     </td>
                                 </tr><!-- .nk-tb-item  -->
-                              @endforeach
-                              @foreach ($today_document as $document)
-                              <tr class="nk-tb-item" id ="row-document-{{ $document->id }}">             
-                                                           
-                                  <td class="nk-tb-col tb-col-lg">
+                                @endforeach
+                                @foreach ($today_document as $document)
+                                <tr class="nk-tb-item" id ="row-document-{{ $document->id }}">             
+                                                            
+                                    <td class="nk-tb-col tb-col-lg">
                                     <img class="image-fluid" src={{$document->url}} alt="..." style="width:100px" />
-                                  </td>
-                                  <td class="nk-tb-col">
-                                      <div class="user-card">                                           
-                                          <div class="user-info">
-                                              <span class="tb-lead">{{ Str::limit($document->name,30) }}<span class="dot dot-success d-md-none ms-1"></span></span>
-                                          </div>
-                                      </div>
-                                  </td>
-                                  <td class="nk-tb-col tb-col-lg">
+                                    </td>
+                                    <td class="nk-tb-col">
+                                        <div class="user-card">                                           
+                                            <div class="user-info">
+                                                <span class="tb-lead">{{ Str::limit($document->name,30) }}<span class="dot dot-success d-md-none ms-1"></span></span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="nk-tb-col tb-col-lg">
                                     <span>{{ Str::limit($document->author,30) }}</span>
-                                  </td>
-                                  <td class="nk-tb-col tb-col-lg">
+                                    </td>
+                                    <td class="nk-tb-col tb-col-lg">
                                     <span>{{ $document->types->name }}</span>
     
-                                  </td>
-                                  <td class="nk-tb-col tb-col-mb">
-                                      <span>{{ $document->users->name }}</span>
+                                    </td>
+                                    <td class="nk-tb-col tb-col-mb">
+                                        <span>{{ $document->users->name }}</span>
                                     </td>
                                     <td class="nk-tb-col tb-col-md">
-                                      <span>{{ $document->created_at }}</span>
+                                        <span>{{ $document->created_at }}</span>
                                     </td>
                                     <td class="nk-tb-col tb-col-md">
                                         @if($document->status == 1)
@@ -608,19 +610,21 @@
                                         </span>
                                         @endif
                                     </td>
-                              </tr><!-- .nk-tb-item  -->
+                                </tr><!-- .nk-tb-item  -->
                             @endforeach
-                          
+                            
                             
                             </tbody>
                         </table>
                     </div>
-                  
+                    
                 </div><!-- .card -->
             </div>
         </div><!-- .row -->
     </div><!-- .nk-block -->
 </div>
+
+
 @endsection
 @section('additional-scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -629,6 +633,8 @@
 
 
 <script>
+    var loginBarDataset = [];
+    var loginBarLabels = [];
 
     $(function() {
 
@@ -761,6 +767,10 @@
                 
         });
 
+        loginBarDataset = loginBar.data.datasets[0].data;
+        loginBarLabels = loginBar.data.labels;
+
+        
         $('.loginChartChange').click(function(e) {
             e.preventDefault();
             
@@ -819,7 +829,10 @@
 
                     loginBar.data.datasets[0].data = newArray.map(object =>object.total);
 
-                    
+                    loginBarDataset = loginBar.data.datasets[0].data;
+                    loginBarLabels = loginBar.data.labels
+
+          
 
                     loginBar.update();                 
 
@@ -1048,44 +1061,44 @@
 
     function createDonutChart() {
 
-    const ctx = document.getElementById('doughnutChart');
+        const ctx = document.getElementById('doughnutChart');
 
 
-    var books = {!! count($total_books) !!};
-    var documents = {!! count($total_documents) !!};
+        var books = {!! count($total_books) !!};
+        var documents = {!! count($total_documents) !!};
 
-    const data = {
+        const data = {
 
-        labels:['Sách','Tài liệu'],
-        datasets: [{
-            label: 'Số lượng',
-            data: [books,documents],
-            hoverOffset: 4,
-      
+            labels:['Sách','Tài liệu'],
+            datasets: [{
+                label: 'Số lượng',
+                data: [books,documents],
+                hoverOffset: 4,
+        
 
-        }]
-    };
+            }]
+        };
 
-    new Chart(ctx, {
-        type: 'doughnut',
-        data: data,
-        options: {  
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: 70,
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: data,
+            options: {  
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: 70,
 
-            plugins: {
-            
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        textAlign: 'left',
+                plugins: {
+                
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            textAlign: 'left',
+                        }
                     }
-                }
+                },
             },
-        },
 
-    });
+        });
 
     }
     createDonutChart();
@@ -1116,6 +1129,139 @@
         
     })
 
+
+    function arrayToCsv(data){
+        return data.map(row =>
+            row
+            .map(String)  // convert every value to String
+            .map(v => v.replaceAll('"', '""'))  // escape double colons
+            .map(v => `"${v}"`)  // quote it
+            .join(',')  // comma-separated
+        ).join('\r\n');  // rows starting on new lines
+    }
+
+    function downloadBlob(content, filename, contentType) {
+    // Create a blob
+        var blob = new Blob(["\ufeff",content], { type: 'text/csv;charset=utf-8;' });
+        var url = URL.createObjectURL(blob);
+
+        // Create a link to download it
+        var pom = document.createElement('a');
+        pom.href = url;
+        pom.setAttribute('download', filename);
+        pom.click();
+    }
+
+    $('.export-csv-btn').on('click', function(){
+        var currentDate = moment();
+        var weekStart = currentDate.clone().startOf('week');
+        var weekEnd = currentDate.clone().endOf('week');
+
+        var days = [];
+        for (let i = 1; i <= 7; i++) {
+
+            days.push(moment(weekStart).add(i, 'days').locale('vi').format("L"));
+
+        };
+
+        const option = $(this).data('option');
+
+        let title = '';
+        let result = null;
+
+        
+        if(option === 5){
+            title = ['Khung giờ đăng nhập'];
+            header = ['Khung giờ','Số lượng']    
+
+            timeArea = loginBarLabels.map(function(i,index){
+                if (index == 23) {
+                    const temp = new Date(i)
+
+                    var hour1 = moment(temp).locale('en').format('LT');
+
+                    return "Sau " + hour1;
+                    
+                    } else {
+
+                    const temp = new Date(i)
+                    const temp2 = new Date(loginBarLabels[index + 1])
+
+                    var hour1 = moment(temp).locale('en').format('LT');
+                    var hour2 = moment(temp2).locale('en').format('LT');
+
+                    return hour1 + " - " + hour2;
+                }
+            });
+
+            total = loginBarDataset;
+
+            const obj = {};
+
+            timeArea.forEach((element, index) => {
+                obj[element] = total[index];
+            });
+            
+            let entries = Object.entries(obj);
+            
+            let temp = [];
+            temp.push(title)
+            temp.push(header);
+            entries.forEach(i => temp.push(i));
+
+            let csv = arrayToCsv(temp);
+            downloadBlob(csv, `bao-cao-${option}.csv`);
+        }
+
+        else{
+
+            if (option === 1){
+                result = {!! json_encode($week_books) !!};
+                title = ['Số lượng sách'];
+
+            }
+            if(option === 2){
+                result = {!! json_encode($week_documents) !!};
+                title = ['Số lượng tài liệu'];
+
+            }     
+            if (option === 3){
+                result = {!! json_encode($week_members) !!};
+                title = ['Số lượng thành viên'];
+            }
+            if(option === 4){
+                result = {!! json_encode($week_posts) !!};
+                title = ['Số lượng bài viết'];
+            }
+
+        
+
+
+            let header = ['Thứ','Ngày','Số lượng']    
+
+            let entries = Object.entries(result[0]);
+
+            entries.forEach(function (item,index) {
+                item.unshift(days[index]);
+            })
+        
+            let temp = [];
+            temp.push(title)
+            temp.push(header);
+         
+            entries.forEach(i => temp.push(i));
+
+            let csv = arrayToCsv(temp);
+            downloadBlob(csv, `bao-cao-${option}.csv`);
+        }
+       
+
+
+
+        // const csvData = json2csv.parse(result);
+
+      
+    })
    
 </script>
 @endsection

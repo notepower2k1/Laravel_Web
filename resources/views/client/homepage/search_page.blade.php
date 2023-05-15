@@ -1,11 +1,20 @@
 @extends('client/homepage.layouts.app')
 @section('additional-style')
+<link href="{{ asset('js/pagination/pagination.css') }}" rel="stylesheet" type="text/css">
+
 <style>
-    .item-search:hover{
-        background-color:#062788;
+
+    .nk-content{
+        background-image:url('https://raw.githubusercontent.com/notepower2k1/MyImage/main/banner/main-banner-1.png') !important;
+        background-repeat: no-repeat;
+        background-position: left top;
+
     }
- 
-    </style>
+    .container{
+        margin-top:250px  !important;
+    }
+
+</style>
 @endsection
 @section('content')
 <div class="container">
@@ -42,13 +51,58 @@
             <div class="nk-block-between position-relative">
                 <div class="nk-block-head-content">
     
-                    <h3 class="nk-block-title page-title">Tìm kiếm: <span id="total-search">0</span> kết quả</h3>    
+                    <h3 class="nk-block-title page-title"><span id="total-search"></span></h3>    
                 </div>              
             </div>
         </div>
-        <div class="nk-content">
-            <div class="row g-gs" id="result-box">
+        <div class="card card-bordered shadow">
+            <div class="card-inner">
+                <div class="row g-gs" id="result-box">
+                    @foreach ($default_books as $book)
+                    <div class="col-lg-6 col-md-6">
+                        <div class="card">
+                            <div class="d-flex">  
+                                <div class="me-2 shine">
+                                    <img class="card-img-top" src="{{ $book->url }}" alt="" style="width:200px;height:150px">    
+                                </div>
+                                <div class="d-flex flex-column">                                 
+                                    <a class="title-book" href="/sach/{{$book->id}}/{{$book->slug}}">{{ Str::limit($book->name,40) }}</a>
+                                    <span class="text-muted fs-13px ">{{ Str::limit($book->description,100) }}</span>
+                                    <div class="d-flex justify-content-between mt-1">
+                                        <span class="text-muted fs-13px"><em class="icon ni ni-user-list"></em><span>{{ Str::limit($book->author,30) }}</span></span>
+                               
+                                        <span class="fs-13px">
+                                            <span class="badge badge-dim bg-outline-danger">{{$book->types->name }}</span>      
+                                        </span>
+                                    </div> 
+                                    <span class="text-muted fs-13px ">
+
+                                        @if($book->file == null)
+                                        <em class="icon ni ni-view-row-wd"></em><span>{{ $book->numberOfChapter }}</span>
+                                        @else
+                                        <em class="icon ni ni-file-pdf"></em><span>PDF</span>
+
+                                        @endif
+                                    </span>
+                                </div>                    
+                                  
+                            </div>
+                        
+                        </div> 
+                        <hr>                                                  
+                    </div>  
+
+                    @endforeach
+
+                </div>
+
+
+                <div class="data-container mt-3"></div>
+                <div class="col-md-12 d-flex justify-content-end mt-4 align-items-end h-100">                          
+                    <div id="pagination"></div>
+                </div>
             </div>
+           
         </div>
     </div> 
       
@@ -65,8 +119,8 @@
 
 @section('additional-scripts')
 <script src="{{ asset('assets/js/example-sweetalert.js?ver=3.1.2') }}" aria-hidden="true"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.1/bootstrap3-typeahead.min.js">
-</script>
+<script src="{{ asset('js/pagination/pagination.min.js') }}" ></script>
+
 <script>
 const bookNames = @json($books);
 const documentNames = @json($documents);
@@ -75,6 +129,9 @@ var typingTimer;                //timer identifier
 var doneTypingInterval = 1000;  //time in ms, 5 seconds for example
 
 
+$(function() {
+    bookRender();
+})
 //on keyup, start the countdown
 $('#search').on('keyup', function () {
   clearTimeout(typingTimer);
@@ -120,14 +177,17 @@ function doneTyping () {
 
 
 
-$(document).on('click','.search-items',function(){
+$(document).on('click','.search-items',function(e){
 
+    e.preventDefault();
     const text = $(this).find('span').text();
     $('#search').val(text);
 
 })
 
-$(".search-option").click(function(){
+$(".search-option").click(function(e){
+    e.preventDefault();
+
     $(".search-option").parent().removeClass("active");
     var option_text = $(this).text();
     var option_value = $(this).attr('data-value');
@@ -139,7 +199,8 @@ $(".search-option").click(function(){
     $('#search').val("");
 });
 
-$("#search-btn").click(function(){
+$("#search-btn").click(function(e){
+    e.preventDefault();
 
     var option_value = $(this).attr('data-value');
     var input_value = $("input[type=text]").val();
@@ -172,13 +233,15 @@ $("#search-btn").click(function(){
 
                     $('#total-search').text(res.total);
                     if(res.total > 0 ){
-                        renderArea.empty();                
-                        for(item of res.res){
+                        renderArea.empty();    
+                        const item = res.res;        
                     
                         
-                        renderArea.append(item).hide().show('slow');
-                    
-                        }
+                        renderArea.append(item).hide().show();
+                            
+
+                        bookRender();
+                        
 
                     }
                     else{
@@ -209,5 +272,45 @@ $("#search-btn").click(function(){
    
   
 })
+
+    function bookRender(){
+        const container = $('#pagination');
+
+
+        if (!container.length) return;
+            var sources = function () {
+            var result = [];
+
+            $('#result-box').children().each(function(item){
+
+                result.push($(this).get(0).outerHTML);
+
+            })
+        return result;
+        }();
+
+        var options = {
+            dataSource: sources,
+            pageSize: 20,
+            callback: function (response, pagination) {
+                var dataHtml = '<div class="row g-gs">';
+
+                $.each(response, function (index, item) {
+                    dataHtml += item;
+                });
+
+                dataHtml += '</div>';
+
+                container.parent().prev().html(dataHtml);
+                $('#result-box').empty();
+            }
+        };
+
+
+        const total = sources.length;
+        $('#total-search').text(`Tìm kiếm: ${total} kết quả`)
+
+        container.pagination(options);
+    }
 </script>
 @endsection

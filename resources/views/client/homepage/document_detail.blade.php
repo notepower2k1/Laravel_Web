@@ -19,6 +19,29 @@
         border:none !important;
 
     }
+    
+    .nk-content{
+        background-image:url('https://raw.githubusercontent.com/notepower2k1/MyImage/main/banner/main-banner-1.png') !important;
+        background-repeat: no-repeat;
+        background-position: left top;
+
+    }
+    .container{
+        margin-top:250px  !important;
+    }
+
+    .nav-tabs .nav-link.active{
+        color:#b78a28 !important;
+    }
+    .nav-tabs .nav-link:after{
+        color:#b78a28 !important;
+        background:#b78a28 !important;
+    }
+
+    .nav-tabs .nav-link:focus{
+        color:#b78a28 !important;
+
+    }
 </style>  
 @endsection
 @section('content')
@@ -28,8 +51,8 @@
         <div class="nk-content-body">
             <div class="nk-block">
                 <div class="row">
-                    <div class="card card-bordered">
-                        <div class="card-inner">
+                    <div class="card">
+                        <div class="">
                         
                                 <div class="col-12">
                                     <div class="row">
@@ -50,7 +73,7 @@
                                                 </a>
                                             </div>
                                         </div><!-- .col -->
-                                        <div class="col-lg-6 d-flex align-items-end mt-4">
+                                        <div class="col-lg-6 mt-4">
                                             <div class="product-info mb-5 me-xxl-5">
                                                     <h3 class="product-title">{{ $document->name }}
                                                     
@@ -72,9 +95,9 @@
                                                     </span> 
 
                                                     @if ($document->language === 1)
-                                                    <span class="badge badge-md rounded-pill bg-outline-secondary me-1 mt-1"><a class="text-secondary" href="/ngon-ngu/ngon-ngu-tai-lieu/tieng-viet">Tiếng việt</a></span>
+                                                    <span class="badge badge-md rounded-pill bg-outline-secondary me-1 mt-1"><a class="text-secondary" href="/ngon-ngu/ngon-ngu-tai-lieu/tieng-viet">Tiếng Việt</a></span>
                                                     @else
-                                                    <span class="badge badge-md rounded-pill bg-outline-secondary me-1 mt-1"><a class="text-secondary" href="/ngon-ngu/ngon-ngu-tai-lieu/tieng-anh">Tiếng anh</a></span>
+                                                    <span class="badge badge-md rounded-pill bg-outline-secondary me-1 mt-1"><a class="text-secondary" href="/ngon-ngu/ngon-ngu-tai-lieu/tieng-anh">Tiếng Anh</a></span>
                                                     @endif 
         
                                                     @if ($document->isCompleted === 1)
@@ -114,9 +137,9 @@
                                                         
                                                         <li class="ms-n1">
                                                             @if(Auth::check())
-                                                            <button class="btn btn-xl btn-primary" id="download-btn"><em class="icon ni ni-download"></em><span>Tải xuống</span></button>
+                                                            <button class="btn btn-xl btn-warning" id="download-btn"><em class="icon ni ni-download"></em><span>Tải xuống</span></button>
                                                             @else
-                                                            <a href="/login" class="btn btn-xl btn-primary"><em class="icon ni ni-download"></em><span>Tải xuống</span></a>
+                                                            <a href="/login" class="btn btn-xl btn-warning"><em class="icon ni ni-download"></em><span>Tải xuống</span></a>
             
                                                             @endif
                                                         </li>
@@ -124,12 +147,12 @@
                                                         <li class="ms-n1">
                                                             @if(Auth::check())
                                                                 @if(!$isMark)
-                                                                <button class="btn btn-xl btn-primary" id="document-mark-btn"><em class="icon ni ni-bookmark"></em><span id="span-text">Đánh dấu</span></button>
+                                                                <button class="btn btn-xl btn-outline-secondary" id="document-mark-btn"><em class="icon ni ni-bookmark"></em><span id="span-text">Đánh dấu</span></button>
                                                                 @else
-                                                                <button class="btn btn-xl btn-primary" id="document-mark-btn" disabled><em class="icon ni ni-bookmark"></em><span id="span-text">Đã đánh dấu</span></button>
+                                                                <button class="btn btn-xl btn-outline-secondary" id="document-mark-btn" disabled><em class="icon ni ni-bookmark"></em><span id="span-text">Đã đánh dấu</span></button>
                                                                 @endif
                                                             @else
-                                                            <a href="/login" class="btn btn-xl btn-primary"><em class="icon ni ni-bookmark"></em><span id="span-text">Đánh dấu</span></a>
+                                                            <a href="/login" class="btn btn-xl btn-warning"><em class="icon ni ni-bookmark"></em><span id="span-text">Đánh dấu</span></a>
                                                             @endif
                                                         </li>
                                                       
@@ -149,12 +172,12 @@
                                         </li>                            
                                         <li class="nav-item">
                                             <a class="nav-link" data-bs-toggle="tab" href="#tabItem7"><span>Bình luận
-                                                <span class="badge badge-dim bg-primary total-comment-span">{{ $document->totalComments }}</span> </span>
+                                                <span class="badge badge-dim bg-orange total-comment-span">{{ $document->totalComments }}</span> </span>
                                             </a>
                                         </li>   
                                         <li class="nav-item">
                                             <a class="nav-link" data-bs-toggle="tab" href="#tabItem8"><span>Xem trước</span>
-                                                <span class="badge badge-dim bg-primary">{{ $previewImages->count() }}</span> </span>
+                                                <span class="badge badge-dim bg-orange">{{ $previewImages->count() }}</span> </span>
                                             </a>
                                         </li>                             
                                     </ul>
@@ -167,7 +190,7 @@
                                                     </div>
                                                 </div><!-- .col -->
                                                 <div class="col-lg-4 col-xl-4 col-xxl-3">
-                                                    <div class="card card-bordered">
+                                                    <div class="card card-bordered" style="background-color:#f5f4f2;">
                                                         <div class="card-inner-group">
                                                             <div class="card-inner">
                                                                 <div class="user-card user-card-s2">
@@ -176,7 +199,9 @@
                                                                     </div>
                                                                     <div class="user-info">
                                                                         {{-- <div class="badge bg-light rounded-pill ucap">Platinam</div> --}}
-                                                                        <h5>{{ $document->users->profile->displayName }}</h5>
+                                                                        <h5>
+                                                                            <a class="text-dark" href="/thanh-vien/{{ $document->users->id }}"> {{ $document->users->profile->displayName }}</a>
+                                                                        </h5>
                                                                         {{-- <span class="sub-text">info@softnio.com</span> --}}
                                                                     </div>
                                                                 </div>
@@ -186,48 +211,57 @@
                                                                     <div class="col-6">
                                                                         <div class="profile-stats">
                                                                             <span class="amount">{{ $user_books->count() }}</span>
-                                                                            <span class="sub-text">Số sách</span>
+                                                                            <span class="sub-text text-warning" style="font-size:20px"><em class="icon ni ni-book-read"></em></span>
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-6">
                                                                         <div class="profile-stats">
                                                                             <span class="amount">{{ $user_documents->count() }}</span>
-                                                                            <span class="sub-text">Số tài liệu</span>
+                                                                            <span class="sub-text text-warning " style="font-size:20px"><em class="icon ni ni-file-docs"></em></span>
                                                                         </div>
                                                                     </div>                                                        
                                                                 </div>
                                                             </div><!-- .card-inner -->
-                                                            <div class="card-inner">
-                                                                <div class="slider-init" data-slick='{"arrows": true, "dots": false, "slidesToShow": 1, "slidesToScroll": 1, "infinite":false, "responsive":[ {"breakpoint": 992,"settings":{"slidesToShow": 2}}, {"breakpoint": 768,"settings":{"slidesToShow": 1}} ]}'>                                                               
+                                                            <div class="card-inner text-center">
+                                                                <div class="slider-init" data-slick='{"arrows": false, "dots": false, "slidesToShow": 1, "slidesToScroll": 1, "infinite":false, "responsive":[ {"breakpoint": 992,"settings":{"slidesToShow": 2}}, {"breakpoint": 768,"settings":{"slidesToShow": 1}} ]}'>                                                               
                                                                     @foreach ( $user_books as $user_book)
                                                                         @if($loop->index <3)
-                                                                            <div class="col">
-                                                                                <div class="card card-bordered">
-                                                                                    <img src="{{ $user_book->url }}" class="card-img-top" style="width:360px;height:300px">
-                                                                                    <div class="card-inner">
-                                                                                        <a href="/sach/{{ $user_book->id }}/{{ $user_book->slug }}" class="card-title text-dark fw-bold">{{ $user_book->name }}</a>
-                                                                                        <p class="card-text">
-                                                                                            <span class="badge bg-outline-primary">{{ $user_book->types->name }}</span>
-        
-                                                                                        </p>
-                                                                                    </div>
+                                                                        <div class="col">                                    
+                                                                            <div class="shine">
+                                                                                <img src="{{ $user_book->url }}" class="card-img-top m-auto" alt="" style="width:150px;height:200px">
+                                
+                                                                            </div>
+                                                                            <div class="info mt-2">
+                                                                                <h5 class="card-title">{{ $user_book->name }}</h5>
+                                                                                <p class="card-text">{{ Str::limit($user_book->description,100) }}</p>
+                                                                                <div class="d-flex justify-content-center">
+                                                                                    
+                                                                                    <a href="the-loai/the-loai-sach/{{$user_book->types->slug}}" class="fs-13px"><span class="badge badge-dim bg-outline-danger">{{$user_book->types->name }}</span></a>
+                                
+                                
                                                                                 </div>
-                                                                            </div>     
+                                                                            </div>         
+                                                                        </div>
                                                                         @endif 
                                                                     @endforeach
                                                                     @foreach ( $user_documents as $user_document)
                                                                         @if($loop->index <3)
-                                                                            <div class="col">
-                                                                                <div class="card card-bordered">
-                                                                                    <img src="{{ $user_document->url }}" class="card-img-top" style="width:360px;height:300px">
-                                                                                    <div class="card-inner">
-                                                                                        <a href="/tai-lieu/{{ $user_document->id }}/{{ $user_document->slug }}" class="card-title text-dark fw-bold" >{{ $user_document->name }}</a>
-                                                                                        <p class="card-text">
-                                                                                            <span class="badge bg-outline-primary">{{ $user_document->types->name }}</span>
-                                                                                        </p>
-                                                                                    </div>
+                                                                            <div class="col">                                    
+                                                                                <div class="shine">
+                                                                                    <img src="{{ $user_document->url }}" class="card-img-top m-auto" alt="" style="width:150px;height:200px">
+                                    
                                                                                 </div>
-                                                                            </div>     
+                                                                                <div class="info mt-2">
+                                                                                    <h5 class="card-title">{{ $user_document->name }}</h5>
+                                                                                    <p class="card-text">{{ Str::limit($user_document->description,100) }}</p>
+                                                                                    <div class="d-flex justify-content-center">
+                                                                                        
+                                                                                        <a href="the-loai/the-loai-tai-lieu/{{$user_document->types->slug}}" class="fs-13px"><span class="badge badge-dim bg-outline-danger">{{$user_document->types->name }}</span></a>
+                                    
+                                    
+                                                                                    </div>
+                                                                                </div>         
+                                                                            </div>    
                                                                         @endif 
                                                                     @endforeach                                         
                                                                 </div>
@@ -260,7 +294,7 @@
                                                         <div class="list-group mt-3">
                                                             @if(Auth::check())
                                                             <div class="d-flex">                                                     
-                                                                <img class="rounded-circle shadow me-2 flex-grow-2" src="{{ Auth::user()->profile->url }}" id="comment_avatar">
+                                                                <img class="rounded border shadow me-2 flex-grow-2" src="{{ Auth::user()->profile->url }}" id="comment_avatar" style="width:128px;height:128px">
     
                                                                 <div class="nk-chat-editor border flex-grow-1 bg-light" id="main-comment-box">
                                                                     <div class="nk-chat-editor-form">
@@ -270,7 +304,7 @@
                                                                     </div>
                                                                     <ul class="nk-chat-editor-tools g-2">                                                                                                                                                                                    
                                                                         <li>                                                           
-                                                                            <button class="btn btn-round btn-primary btn-icon" id="comment-btn"><em class="icon ni ni-send-alt"></em></button>
+                                                                            <button class="btn btn-round btn-warning btn-icon" id="comment-btn"><em class="icon ni ni-send-alt"></em></button>
                                                                         </li>
                                                                     </ul>
                                                                 </div>
@@ -278,7 +312,6 @@
                                                           
                                                             <hr>
                                                             @endif
-                                                            @if ($comments->count() > 0)
                                                             <div id="comment-box">
                                                                 
                                                                 <div id="comment-render-div">
@@ -288,7 +321,7 @@
                                                                                 <div class="bg-white p-2">
                                                                                         <div class="d-flex justify-content-between">
                                                                                             <div class="d-flex user-info">
-                                                                                                <img class="rounded-circle" src="{{ $comment->users->profile->url }}" width="60px">
+                                                                                                <img class="rounded border shadow me-2" src="{{ $comment->users->profile->url }}" width="60px">
                                                                                                 <div class="flex-grow-1">
                                                                                                     <span class="d-block font-weight-bold name">{{ $comment->users->profile->displayName }}</span>
                                                                                                     <em class="icon ni ni-clock"></em>
@@ -405,7 +438,7 @@
                                                                                     <div class="bg-white p-2">
                                                                                         <div class="d-flex justify-content-between">
                                                                                             <div class="d-flex user-info">
-                                                                                                <img class="rounded-circle" src="{{ $reply->users->profile->url }}" width="60px">
+                                                                                                <img class="rounded border shadow me-2" src="{{ $reply->users->profile->url }}" width="60px">
                                                                                                 <div class="flex-grow-1">
                                                                                                     <span class="d-block font-weight-bold name">{{ $reply->users->profile->displayName }}</span>
                                                                                                     <em class="icon ni ni-clock"></em>
@@ -510,12 +543,14 @@
                                                                     @endforeach
                                                                 </div>
                                                               
+                                                                @if ($comments->count() > 0)
+
                                                                 <div class="data-container"></div>
                                                                 <div class="col-md-12 d-flex justify-content-end mt-4">                          
                                                                     <div id="pagination"></div>
                                                                 </div>
+                                                                @endif
                                                             </div>
-                                                            @endif
                                                             
                                                         
                                                                 
@@ -523,7 +558,6 @@
                                                     </div>
                                                 </div><!-- .col -->
                                             </div><!-- .row -->
-                                            <button class="d-none" data-bs-toggle="modal" data-bs-target="#editCommentForm" id="openEditComment"></button>
     
                                         </div>
                                         <div class="tab-pane" id="tabItem8">
@@ -708,7 +742,7 @@
                     </div>
                     <ul class="nk-chat-editor-tools g-2">                   
                         <li>
-                            <button class="btn btn-round btn-primary btn-icon" id="submitEditCommentForm"><em class="icon ni ni-send-alt"></em></button>
+                            <button class="btn btn-round btn-warning btn-icon" id="submitEditCommentForm"><em class="icon ni ni-send-alt"></em></button>
                         </li>
                     </ul>
                 </div>
@@ -1183,7 +1217,7 @@
                         </div>
                         <ul class="nk-chat-editor-tools g-2">              
                             <li>
-                                <button class="btn btn-round btn-primary btn-icon" id="reply-btn" data-id=${comment_id}><em class="icon ni ni-send-alt"></em></button>
+                                <button class="btn btn-round btn-warning btn-icon" id="reply-btn" data-id=${comment_id}><em class="icon ni ni-send-alt"></em></button>
                             </li>
                         </ul>
                 </div>`;
@@ -1355,7 +1389,7 @@
 
 
     setTimeout(function() {
-        $('#openEditComment').click();
+        $('#editCommentForm').modal('show');
     },500);
     })
 
@@ -1393,7 +1427,7 @@
                 $('#comment-content-' + item_id).find('p').text(content);
 
                 setTimeout(function() {
-                    $('#openEditComment').click();
+                    $('#editCommentForm').modal('hide');
                 },2500);
             
 
@@ -1423,7 +1457,7 @@
                 $('#reply-content-' + item_id).find('p').text(content);
 
                 setTimeout(function() {
-                    $('#openEditComment').click();
+                    $('#editCommentForm').modal('hide');
                 },2500);
 
             })

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Searchable\Searchable;
@@ -28,7 +29,7 @@ class Document extends Model
     }
 
 
-    protected $appends = ['url','documentUrl'];
+    protected $appends = ['url','documentUrl','time'];
 
     public function getUrlAttribute()
     {
@@ -64,6 +65,15 @@ class Document extends Model
 
     }
 
-   
+    public function getTimeAttribute()
+    {
+        Carbon::setLocale('vi'); 
+
+        $dt = new Carbon($this->created_at);
+        $now = Carbon::now();
+
+        return $dt->diffForHumans($now);
+    }
+
 
 }

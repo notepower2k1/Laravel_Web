@@ -134,37 +134,32 @@
                                                
                                             </div><!-- .profile-ud-list -->
                                         </div><!-- .nk-block -->
+
+                                        @if($notes->count() > 0)
                                         <div class="nk-divider divider md"></div>
                                         <div class="nk-block">
                                             <div class="nk-block-head nk-block-head-sm nk-block-between">
-                                                <h5 class="title">Admin Note</h5>
-                                                <a href="#" class="link link-sm">+ Add Note</a>
+                                                <h5 class="title">Ghi chú của quản trị viên</h5>
                                             </div><!-- .nk-block-head -->
                                             <div class="bq-note">
-                                                <div class="bq-note-item">
-                                                    <div class="bq-note-text">
-                                                        <p>Aproin at metus et dolor tincidunt feugiat eu id quam. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean sollicitudin non nunc vel pharetra. </p>
-                                                    </div>
-                                                    <div class="bq-note-meta">
-                                                        <span class="bq-note-added">Added on <span class="date">November 18, 2019</span> at <span class="time">5:34 PM</span></span>
-                                                        <span class="bq-note-sep sep">|</span>
-                                                        <span class="bq-note-by">By <span>Softnio</span></span>
-                                                        <a href="#" class="link link-sm link-danger">Delete Note</a>
-                                                    </div>
-                                                </div><!-- .bq-note-item -->
-                                                <div class="bq-note-item">
-                                                    <div class="bq-note-text">
-                                                        <p>Aproin at metus et dolor tincidunt feugiat eu id quam. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean sollicitudin non nunc vel pharetra. </p>
-                                                    </div>
-                                                    <div class="bq-note-meta">
-                                                        <span class="bq-note-added">Added on <span class="date">November 18, 2019</span> at <span class="time">5:34 PM</span></span>
-                                                        <span class="bq-note-sep sep">|</span>
-                                                        <span class="bq-note-by">By <span>Softnio</span></span>
-                                                        <a href="#" class="link link-sm link-danger">Delete Note</a>
-                                                    </div>
-                                                </div><!-- .bq-note-item -->
+
+                                                @foreach ($notes as $note)
+                                                    <div class="bq-note-item" id="note-{{ $note->id }}">
+                                                        <div class="bq-note-text">
+                                                            <p>{{ $note->content }}</p>
+                                                        </div>
+                                                        <div class="bq-note-meta">
+                                                            <span class="bq-note-added">Thêm vào lúc <span class="date">{{ Carbon\Carbon::parse($note->created_at) }}</span></span>
+                                                            <span class="bq-note-sep sep">|</span>
+                                                            <a href="#" class="link link-sm link-danger" id="deleteUserNote" data-id="{{$note->id}}">Xóa ghi chú</a>
+                                                        </div>
+                                                    </div><!-- .bq-note-item -->
+                                                @endforeach
+                                             
+                                            
                                             </div><!-- .bq-note -->
                                         </div><!-- .nk-block -->
+                                        @endif
                                     </div><!-- .card-inner -->
                                 </div>
                                 <div class="tab-pane" id="tabItem2">
@@ -606,13 +601,13 @@
         var message = (status == 0) ? 'Bạn có chắc muốn mở khóa tài khoản của người dùng này?' : 'Bạn có chắc muốn khóa tài khoản của người dùng này?'
         
         Swal.fire({
-        title: `${message}`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Muốn',
-        cancelButtonText: 'Không'
+            title: `${message}`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Muốn',
+            cancelButtonText: 'Không'
         }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
@@ -689,5 +684,46 @@
         window.location = "mailto:"+email+"?subject="+subject+"&body="+emailBody;
         // window.location =  `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${emailBody}`;
     });
+
+    $('#deleteUserNote').on('click', function(e){
+        e.preventDefault();
+        const note_id = $(this).data('id');
+        Swal.fire({
+            title: `Bạn muốn xóa ghi chú này?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Muốn',
+            cancelButtonText: 'Không'
+        }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+            type:"DELETE",
+            url:'/admin/delete-note/' +note_id,
+            data : {     
+            },
+            })
+            .done(function(res) {
+            // If successful
+              Swal.fire({
+                    icon: 'success',
+                    title: `${res.success}`,
+                    showConfirmButton: false,
+                    timer: 2500
+                });
+
+                $(`#note-${note_id}`).fadeOut();
+                
+
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            console.log(textStatus + ': ' + errorThrown);
+            })
+         
+        }
+      })
+    })
 </script>
 @endsection

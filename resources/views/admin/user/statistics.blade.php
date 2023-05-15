@@ -12,264 +12,288 @@
 @section('content')
 
 <div class="nk-block">
-    <div class="row g-gs">
-        <div class="col-12">
-            <div class="card card-bordered h-100">
-                <div class="card-inner">
-                    <div class="card-title-group">
-                        <div class="card-title card-title-sm">
-                        <h6 class="title">Thống kê số lượng theo tình trạng</h6>
+    <div class="container">
+        <div class="row g-gs">
+            <div class="col-12">
+                <div class="card card-bordered h-100">
+                    <div class="card-inner">
+                        <div class="card-title-group">
+                            <div class="card-title card-title-sm">
+                            <h6 class="title">Thống kê số lượng theo tình trạng</h6>
+                            </div>
+                        </div>
+                        <div class="mt-5 d-flex">
+                            <canvas id="doughnutChart"></canvas>    
                         </div>
                     </div>
-                    <div class="mt-5 d-flex">
-                        <canvas id="doughnutChart"></canvas>    
+                </div>
+            </div>
+            
+            <ul class="nav nav-tabs nav-tabs-s2">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#tabItem9">Thống kê khung giờ đăng nhập
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#tabItem10">Thống kê người dùng
+                    </a>
+                </li>
+              
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="tabItem9">
+                    <div class="col-12">
+                        <div class="col-12">
+                            <div class="card card-bordered h-100">
+                                <div class="card-inner">
+                                    <div class="card-title-group align-start gx-3 mb-3">
+                                        <div class="card-title">
+                                            <h6 class="title">Thống kê khung giờ đăng nhập</h6>
+                                            <p>Thống kê khung giờ đăng nhập của người trong vòng 12 tháng </p>
+                                        </div>
+                                        <div class="card-tools">
+                                            <div class="dropdown">
+                                                <div class="me-2"  data-bs-toggle="dropdown">
+                                                    <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex"><em class="icon ni ni-calendar"></em><span>Chọn năm</span></a>
+                                                    <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none"><em class="icon ni ni-calendar"></em></a>
+                                                </div>
+                                           
+                                                <div id="report-time-btn">
+                                                    <a href="#" class="btn btn-danger btn-dim d-none d-sm-inline-flex"><em class="icon ni ni-reports"></em><span>Xuất báo cáo</span></a>
+                                                    <a href="#" class="btn btn-icon btn-danger btn-dim d-sm-none"><em class="icon ni ni-reports"></em></a>
+                                                </div>
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <ul class="link-list-opt no-bdr">
+                                                        @foreach ($allYears as $year)
+                                                            <li><a href="/admin/statistics/user/{{ $year->year }}"><em class="icon ni ni-calendar"></em><span>Năm {{ $year->year }} </span></a></li>
+                                                        @endforeach
+                                                      
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="nk-sale-data-group align-center justify-between gy-3 gx-5">
+                                        <div class="nk-sale-data">
+                                            <span class="amount">Tổng người dùng: {{ $totalUsersInYear }}</span>
+                                        </div>
+                                        <div class="nk-sale-data">
+                                            <span class="amount sm">Năm: {{ $statisticsYear }}</span>
+                                        </div>
+                                    </div>
+                                    {{-- <div class="analytic-ov"> --}}
+                                       
+                                        <div class="analytic-ov-ck" style=" height: 400px;">
+                                            <canvas id="LoginLineChartYear"></canvas>
+                                        </div>
+                                    {{-- </div> --}}
+                              
+                                </div>
+                            </div><!-- .card -->
+                        </div><!-- .col -->
+                
+                        <div class="col-12">
+                            <div class="card card-bordered h-100">
+                                <div class="card-inner">
+                                    <div class="card-title-group align-start gx-3 mb-3">
+                                        <div class="card-title">
+                                            <h6 class="title">Thống kê khung giờ đăng nhập</h6>
+                                            <p>Thống kê khung giờ đăng nhập của người trong vòng 1 tháng </p>
+                                        </div>
+                                        <div class="card-tools">
+                                            <div class="dropdown">
+                                                <div class="me-2"  data-bs-toggle="dropdown">
+                                                    <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex"><em class="icon ni ni-calendar"></em><span>Chọn tháng</span></a>
+                                                    <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none"><em class="icon ni ni-calendar"></em></a>
+                                                </div>
+                                           
+                                                <div id="report-time-month-btn">
+                                                    <a href="#" class="btn btn-danger btn-dim d-none d-sm-inline-flex"><em class="icon ni ni-reports"></em><span>Xuất báo cáo</span></a>
+                                                    <a href="#" class="btn btn-icon btn-danger btn-dim d-sm-none"><em class="icon ni ni-reports"></em></a>
+                                                </div>
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <ul class="link-list-opt no-bdr">
+                                                        @for ($i = 1 ; $i < 13 ; $i++)
+                                                            <li class="month-selection-login-li" data-value="{{ $i }}"><a style="cursor: pointer;"><span>Tháng {{ $i }}</span></a></li>
+                                                        @endfor
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                  
+                                    <div class="analytic-ov">
+                                        <div class="analytic-data-group analytic-ov-group g-3">
+                                            <div class="analytic-data analytic-ov-data d-flex flex-column  align-items-center">
+                                                <div class="title">Tổng</div>
+                                                <div class="amount">
+                                                    <span id="total-logins-span"></span>
+                                                </div>
+                                                {{-- <div class="change up"><em class="icon ni ni-arrow-long-up"></em>12.37%</div> --}}
+                                            </div>
+                                            <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
+                                                <div class="title">Min</div>
+                                                <div class="amount">                               
+                                                    <span id="min-logins-span"></span>
+                
+                                                </div>
+                                                {{-- <div class="change up"><em class="icon ni ni-arrow-long-up"></em>47.74%</div> --}}
+                                            </div>
+                                            <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
+                                                <div class="title">Max</div>
+                                                <div class="amount">
+                                                    <span id="max-logins-span"></span>
+                
+                                                </div>
+                                                {{-- <div class="change down"><em class="icon ni ni-arrow-long-down"></em>12.37%</div> --}}
+                                            </div>
+                                            <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
+                                                <div class="title">Tháng</div>
+                                                <div class="amount">
+                                                    <span id="month-selection-login-span"></span>
+                                                </div>
+                                                {{-- <div class="change down"><em class="icon ni ni-arrow-long-down"></em>0.35%</div> --}}
+                                            </div>
+                                        </div>
+                                        <div class="analytic-ov-ck" style=" height: 300px;">
+                                            <canvas id="LoginLineChartMonth"></canvas>
+                                            {{-- <input type="month" onchange="filterChart(this)"/> --}}                    
+                                        </div>
+                                    </div>
+                
+                                   
+                                </div>
+                            </div><!-- .card -->
+                        </div><!-- .col -->
                     </div>
                 </div>
+                <div class="tab-pane" id="tabItem10">
+                    <div class="col-12">
+                        <div class="col-12">
+                            <div class="card card-bordered h-100">
+                                <div class="card-inner">
+                                    <div class="card-title-group align-start gx-3 mb-3">
+                                        <div class="card-title">
+                                            <h6 class="title">Thống kê người dùng</h6>
+                                            <p>Thống kê tổng số người dùng đã tham gia trong vòng 12 tháng </p>
+                                        </div>
+                                        <div class="card-tools">
+                                            <div class="dropdown">
+                                                <div class="me-2"  data-bs-toggle="dropdown">
+                                                    <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex"><em class="icon ni ni-calendar"></em><span>Chọn năm</span></a>
+                                                    <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none"><em class="icon ni ni-calendar"></em></a>
+                                                </div>
+                                           
+                                                <div id="report-total-user-btn">
+                                                    <a href="#" class="btn btn-danger btn-dim d-none d-sm-inline-flex"><em class="icon ni ni-reports"></em><span>Xuất báo cáo</span></a>
+                                                    <a href="#" class="btn btn-icon btn-danger btn-dim d-sm-none"><em class="icon ni ni-reports"></em></a>
+                                                </div>
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <ul class="link-list-opt no-bdr">
+                                                        @foreach ($allYears as $year)
+                                                            <li><a href="/admin/statistics/user/{{ $year->year }}"><em class="icon ni ni-calendar"></em><span>Năm {{ $year->year }} </span></a></li>
+                                                        @endforeach
+                                                      
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="nk-sale-data-group align-center justify-between gy-3 gx-5">
+                                        <div class="nk-sale-data">
+                                            <span class="amount">Tổng người dùng: {{ $totalUsersInYear }}</span>
+                                        </div>
+                                        <div class="nk-sale-data">
+                                            <span class="amount sm">Năm: {{ $statisticsYear }}</span>
+                                        </div>
+                                    </div>
+                                    {{-- <div class="analytic-ov"> --}}
+                                       
+                                        <div class="analytic-ov-ck" style=" height: 400px;">
+                                            <canvas id="userLineChartYear"></canvas>
+                                        </div>
+                                    {{-- </div> --}}
+                              
+                                </div>
+                            </div><!-- .card -->
+                        </div><!-- .col -->
+                
+                        <div class="col-12">
+                            <div class="card card-bordered h-100">
+                                <div class="card-inner">
+                                    <div class="card-title-group align-start gx-3 mb-3">
+                                        <div class="card-title">
+                                            <h6 class="title">Thống kê người dùng</h6>
+                                            <p>Thống kê tổng số người dùng đã tham gia theo ngày trong tháng</p>
+                                        </div>
+                                        <div class="card-tools">
+                                            <div class="dropdown">
+                                                <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em><span>Chọn tháng</span></a>
+                                                <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em></a>
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <ul class="link-list-opt no-bdr">
+                                                        @for ($i = 1 ; $i < 13 ; $i++)
+                                                            <li class="month-selection-user-li" data-value="{{ $i }}"><a style="cursor: pointer;"><span>Tháng {{ $i }}</span></a></li>
+                                                        @endfor
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                  
+                                    <div class="analytic-ov">
+                                        <div class="analytic-data-group analytic-ov-group g-3">
+                                            <div class="analytic-data analytic-ov-data d-flex flex-column  align-items-center">
+                                                <div class="title">Tổng</div>
+                                                <div class="amount">
+                                                    <span id="total-users-span"></span>
+                                                </div>
+                                                {{-- <div class="change up"><em class="icon ni ni-arrow-long-up"></em>12.37%</div> --}}
+                                            </div>
+                                            <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
+                                                <div class="title">Min</div>
+                                                <div class="amount">                               
+                                                    <span id="min-users-span"></span>
+                
+                                                </div>
+                                                {{-- <div class="change up"><em class="icon ni ni-arrow-long-up"></em>47.74%</div> --}}
+                                            </div>
+                                            <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
+                                                <div class="title">Max</div>
+                                                <div class="amount">
+                                                    <span id="max-users-span"></span>
+                
+                                                </div>
+                                                {{-- <div class="change down"><em class="icon ni ni-arrow-long-down"></em>12.37%</div> --}}
+                                            </div>
+                                            <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
+                                                <div class="title">Tháng</div>
+                                                <div class="amount">
+                                                    <span id="month-selection-user-span"></span>
+                                                </div>
+                                                {{-- <div class="change down"><em class="icon ni ni-arrow-long-down"></em>0.35%</div> --}}
+                                            </div>
+                                        </div>
+                                        <div class="analytic-ov-ck" style=" height: 300px;">
+                                            <canvas id="userLineChartMonth"></canvas>
+                                            {{-- <input type="month" onchange="filterChart(this)"/> --}}                    
+                                        </div>
+                                    </div>
+                
+                                   
+                                </div>
+                            </div><!-- .card -->
+                        </div><!-- .col -->
+                    </div>
+                </div>
+               
             </div>
-        </div>
-        
-        <ul class="nav nav-tabs nav-tabs-s2">
-            <li class="nav-item">
-                <a class="nav-link active" data-bs-toggle="tab" href="#tabItem9">Thống kê khung giờ đăng nhập
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#tabItem10">Thống kê người dùng
-                </a>
-            </li>
+    
           
-        </ul>
-        <div class="tab-content">
-            <div class="tab-pane active" id="tabItem9">
-                <div class="col-12">
-                    <div class="col-12">
-                        <div class="card card-bordered h-100">
-                            <div class="card-inner">
-                                <div class="card-title-group align-start gx-3 mb-3">
-                                    <div class="card-title">
-                                        <h6 class="title">Thống kê khung giờ đăng nhập</h6>
-                                        <p>Thống kê khung giờ đăng nhập của người trong vòng 12 tháng </p>
-                                    </div>
-                                    <div class="card-tools">
-                                        <div class="dropdown">
-                                            <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em><span>Chọn năm</span></a>
-                                            <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <ul class="link-list-opt no-bdr">
-                                                    @foreach ($allYears as $year)
-                                                        <li><a href="/admin/statistics/user/{{ $year->year }}"><em class="icon ni ni-calendar"></em><span>Năm {{ $year->year }} </span></a></li>
-                                                    @endforeach
-                                                  
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="nk-sale-data-group align-center justify-between gy-3 gx-5">
-                                    <div class="nk-sale-data">
-                                        <span class="amount">Tổng người dùng: {{ $totalUsersInYear }}</span>
-                                    </div>
-                                    <div class="nk-sale-data">
-                                        <span class="amount sm">Năm: {{ $statisticsYear }}</span>
-                                    </div>
-                                </div>
-                                {{-- <div class="analytic-ov"> --}}
-                                   
-                                    <div class="analytic-ov-ck">
-                                        <canvas id="LoginLineChartYear"></canvas>
-                                    </div>
-                                {{-- </div> --}}
-                          
-                            </div>
-                        </div><!-- .card -->
-                    </div><!-- .col -->
-            
-                    <div class="col-12">
-                        <div class="card card-bordered h-100">
-                            <div class="card-inner">
-                                <div class="card-title-group align-start gx-3 mb-3">
-                                    <div class="card-title">
-                                        <h6 class="title">Thống kê khung giờ đăng nhập</h6>
-                                        <p>Thống kê khung giờ đăng nhập của người trong vòng 1 tháng </p>
-                                    </div>
-                                    <div class="card-tools">
-                                        <div class="dropdown">
-                                            <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em><span>Chọn tháng</span></a>
-                                            <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <ul class="link-list-opt no-bdr">
-                                                    @for ($i = 1 ; $i < 13 ; $i++)
-                                                        <li class="month-selection-login-li" data-value="{{ $i }}"><a style="cursor: pointer;"><span>Tháng {{ $i }}</span></a></li>
-                                                    @endfor
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                              
-                                <div class="analytic-ov">
-                                    <div class="analytic-data-group analytic-ov-group g-3">
-                                        <div class="analytic-data analytic-ov-data d-flex flex-column  align-items-center">
-                                            <div class="title">Tổng</div>
-                                            <div class="amount">
-                                                <span id="total-logins-span"></span>
-                                            </div>
-                                            {{-- <div class="change up"><em class="icon ni ni-arrow-long-up"></em>12.37%</div> --}}
-                                        </div>
-                                        <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
-                                            <div class="title">Min</div>
-                                            <div class="amount">                               
-                                                <span id="min-logins-span"></span>
-            
-                                            </div>
-                                            {{-- <div class="change up"><em class="icon ni ni-arrow-long-up"></em>47.74%</div> --}}
-                                        </div>
-                                        <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
-                                            <div class="title">Max</div>
-                                            <div class="amount">
-                                                <span id="max-logins-span"></span>
-            
-                                            </div>
-                                            {{-- <div class="change down"><em class="icon ni ni-arrow-long-down"></em>12.37%</div> --}}
-                                        </div>
-                                        <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
-                                            <div class="title">Tháng</div>
-                                            <div class="amount">
-                                                <span id="month-selection-login-span"></span>
-                                            </div>
-                                            {{-- <div class="change down"><em class="icon ni ni-arrow-long-down"></em>0.35%</div> --}}
-                                        </div>
-                                    </div>
-                                    <div class="analytic-ov-ck" style=" height: 300px;">
-                                        <canvas id="LoginLineChartMonth"></canvas>
-                                        {{-- <input type="month" onchange="filterChart(this)"/> --}}                    
-                                    </div>
-                                </div>
-            
-                               
-                            </div>
-                        </div><!-- .card -->
-                    </div><!-- .col -->
-                </div>
-            </div>
-            <div class="tab-pane" id="tabItem10">
-                <div class="col-12">
-                    <div class="col-12">
-                        <div class="card card-bordered h-100">
-                            <div class="card-inner">
-                                <div class="card-title-group align-start gx-3 mb-3">
-                                    <div class="card-title">
-                                        <h6 class="title">Thống kê người dùng</h6>
-                                        <p>Thống kê tổng số người dùng đã tham gia trong vòng 12 tháng </p>
-                                    </div>
-                                    <div class="card-tools">
-                                        <div class="dropdown">
-                                            <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em><span>Chọn năm</span></a>
-                                            <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <ul class="link-list-opt no-bdr">
-                                                    @foreach ($allYears as $year)
-                                                        <li><a href="/admin/statistics/user/{{ $year->year }}"><em class="icon ni ni-calendar"></em><span>Năm {{ $year->year }} </span></a></li>
-                                                    @endforeach
-                                                  
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="nk-sale-data-group align-center justify-between gy-3 gx-5">
-                                    <div class="nk-sale-data">
-                                        <span class="amount">Tổng người dùng: {{ $totalUsersInYear }}</span>
-                                    </div>
-                                    <div class="nk-sale-data">
-                                        <span class="amount sm">Năm: {{ $statisticsYear }}</span>
-                                    </div>
-                                </div>
-                                {{-- <div class="analytic-ov"> --}}
-                                   
-                                    <div class="analytic-ov-ck">
-                                        <canvas id="userLineChartYear"></canvas>
-                                    </div>
-                                {{-- </div> --}}
-                          
-                            </div>
-                        </div><!-- .card -->
-                    </div><!-- .col -->
-            
-                    <div class="col-12">
-                        <div class="card card-bordered h-100">
-                            <div class="card-inner">
-                                <div class="card-title-group align-start gx-3 mb-3">
-                                    <div class="card-title">
-                                        <h6 class="title">Thống kê người dùng</h6>
-                                        <p>Thống kê tổng số người dùng đã tham gia theo ngày trong tháng</p>
-                                    </div>
-                                    <div class="card-tools">
-                                        <div class="dropdown">
-                                            <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em><span>Chọn tháng</span></a>
-                                            <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <ul class="link-list-opt no-bdr">
-                                                    @for ($i = 1 ; $i < 13 ; $i++)
-                                                        <li class="month-selection-user-li" data-value="{{ $i }}"><a style="cursor: pointer;"><span>Tháng {{ $i }}</span></a></li>
-                                                    @endfor
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                              
-                                <div class="analytic-ov">
-                                    <div class="analytic-data-group analytic-ov-group g-3">
-                                        <div class="analytic-data analytic-ov-data d-flex flex-column  align-items-center">
-                                            <div class="title">Tổng</div>
-                                            <div class="amount">
-                                                <span id="total-users-span"></span>
-                                            </div>
-                                            {{-- <div class="change up"><em class="icon ni ni-arrow-long-up"></em>12.37%</div> --}}
-                                        </div>
-                                        <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
-                                            <div class="title">Min</div>
-                                            <div class="amount">                               
-                                                <span id="min-users-span"></span>
-            
-                                            </div>
-                                            {{-- <div class="change up"><em class="icon ni ni-arrow-long-up"></em>47.74%</div> --}}
-                                        </div>
-                                        <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
-                                            <div class="title">Max</div>
-                                            <div class="amount">
-                                                <span id="max-users-span"></span>
-            
-                                            </div>
-                                            {{-- <div class="change down"><em class="icon ni ni-arrow-long-down"></em>12.37%</div> --}}
-                                        </div>
-                                        <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
-                                            <div class="title">Tháng</div>
-                                            <div class="amount">
-                                                <span id="month-selection-user-span"></span>
-                                            </div>
-                                            {{-- <div class="change down"><em class="icon ni ni-arrow-long-down"></em>0.35%</div> --}}
-                                        </div>
-                                    </div>
-                                    <div class="analytic-ov-ck" style=" height: 300px;">
-                                        <canvas id="userLineChartMonth"></canvas>
-                                        {{-- <input type="month" onchange="filterChart(this)"/> --}}                    
-                                    </div>
-                                </div>
-            
-                               
-                            </div>
-                        </div><!-- .card -->
-                    </div><!-- .col -->
-                </div>
-            </div>
            
         </div>
-
-      
-       
     </div>
+   
 </div>
 
 @endsection
@@ -280,6 +304,13 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.4/moment-with-locales.js"></script>
 <script>
+
+    var loginBarDataset = [];
+    var loginBarLabels = [];
+    var monthSelect = '';
+
+    var loginBarDatasetMonth = [];
+    var loginBarLabelsMonth = [];
     $(document).ready(function () {
 
         renderUserLineChartMonth();
@@ -329,6 +360,8 @@
         var currentMonth = temp.toString().substring(4,6);
 
         $('#month-selection-login-span').text(currentMonth);
+        monthSelect = currentMonth;
+
         const totalLoginsPerMonth = {!! json_encode($totalLoginsPerMonth) !!};
 
         var min = 0;
@@ -568,6 +601,9 @@
 
                 $('#month-selection-user-span').text(month);
 
+
+
+                
                 const result = {!! json_encode($totalUsersPerDate) !!};
 
                 const filterByMonth = result.map((obj)=>{
@@ -713,6 +749,9 @@
                 },  
                 
         });
+
+        loginBarDataset = loginBar.data.datasets[0].data;
+        loginBarLabels = loginBar.data.labels;
     }
 
     createLoginChartYear();
@@ -834,7 +873,9 @@
             },  
             
     });
-    console.log(loginBar.data.datasets[0]);
+
+    loginBarDatasetMonth = loginBar.data.datasets[0].data;
+    loginBarLabelsMonth = loginBar.data.labels;
 
     $('.month-selection-login-li').click(function () {
 
@@ -900,10 +941,15 @@
 
                     loginBar.data.datasets[0].data = newArray.map(object =>object.total);
 
-                
+                    
+             
 
                     loginBar.update();
 
+
+                    loginBarDatasetMonth = loginBar.data.datasets[0].data;
+                    loginBarLabelsMonth = loginBar.data.labels;
+                    monthSelect = month;
 
 
 
@@ -940,5 +986,225 @@
     }
 
     createLoginChartMonth();
+
+    function arrayToCsv(data){
+        return data.map(row =>
+            row
+            .map(String)  // convert every value to String
+            .map(v => v.replaceAll('"', '""'))  // escape double colons
+            .map(v => `"${v}"`)  // quote it
+            .join(',')  // comma-separated
+        ).join('\r\n');  // rows starting on new lines
+    }
+
+    function downloadBlob(content, filename, contentType) {
+    // Create a blob
+        var blob = new Blob(["\ufeff",content], { type: 'text/csv;charset=utf-8;' });
+        var url = URL.createObjectURL(blob);
+
+        // Create a link to download it
+        var pom = document.createElement('a');
+        pom.href = url;
+        pom.setAttribute('download', filename);
+        pom.click();
+    }
+
+   
+
+    $('#report-time-btn').on('click', function (e) {
+        e.preventDefault();
+        var yearSelected = {!! $statisticsYear !!};
+
+        let title = [`Khung giờ đăng nhập trong năm ${yearSelected}`];
+
+        let header = ['Khung giờ','Số lượng']
+
+        timeArea = loginBarLabels.map(function(i,index){
+                if (index == 23) {
+                    const temp = new Date(i)
+
+                    var hour1 = moment(temp).locale('en').format('LT');
+
+                    return "Sau " + hour1;
+                    
+                    } else {
+
+                    const temp = new Date(i)
+                    const temp2 = new Date(loginBarLabels[index + 1])
+
+                    var hour1 = moment(temp).locale('en').format('LT');
+                    var hour2 = moment(temp2).locale('en').format('LT');
+
+                    return hour1 + " - " + hour2;
+                }
+            });
+
+            total = loginBarDataset;
+
+        const obj = {};
+
+        timeArea.forEach((element, index) => {
+            obj[element] = total[index];
+        });
+        
+        let entries = Object.entries(obj);
+        
+        let temp = [];
+        temp.push(title)
+        temp.push(header);
+        entries.forEach(i => temp.push(i));
+
+        let csv = arrayToCsv(temp);
+        downloadBlob(csv, `bao-cao-khung-gio-dang-nhap-nam-${yearSelected}.csv`);
+
+    })
+
+
+    $('#report-time-month-btn').on('click', function (e) {
+        e.preventDefault();
+        let title = [`Khung giờ đăng nhập trong tháng ${monthSelect}`];
+
+        let header = ['Khung giờ','Số lượng']
+
+        let timeArea = loginBarLabelsMonth.map(function(i,index){
+                if (index == 23) {
+                    const temp = new Date(i)
+
+                    var hour1 = moment(temp).locale('en').format('LT');
+
+                    return "Sau " + hour1;
+                    
+                    } else {
+
+                    const temp = new Date(i)
+                    const temp2 = new Date(loginBarLabels[index + 1])
+
+                    var hour1 = moment(temp).locale('en').format('LT');
+                    var hour2 = moment(temp2).locale('en').format('LT');
+
+                    return hour1 + " - " + hour2;
+                }
+            });
+
+        let total = loginBarDatasetMonth;
+
+        const obj = {};
+
+        timeArea.forEach((element, index) => {
+            obj[element] = total[index];
+        });
+        
+        let entries = Object.entries(obj);
+        
+        let temp = [];
+        temp.push(title)
+        temp.push(header);
+        entries.forEach(i => temp.push(i));
+
+        let csv = arrayToCsv(temp);
+        downloadBlob(csv, `bao-cao-khung-gio-dang-nhap-thang-${monthSelect}.csv`);
+
+    })
+
+
+    $('#report-time-btn').on('click', function (e) {
+        e.preventDefault();
+        var yearSelected = {!! $statisticsYear !!};
+
+        var result = {!! json_encode($totalLoginsPerMonth) !!};
+        let title = [`Khung giờ đăng nhập trong tháng ${yearSelected}`];
+
+        let header = ['Khung giờ','Số lượng']
+
+        timeArea = loginBarLabels.map(function(i,index){
+                if (index == 23) {
+                    const temp = new Date(i)
+
+                    var hour1 = moment(temp).locale('en').format('LT');
+
+                    return "Sau " + hour1;
+                    
+                    } else {
+
+                    const temp = new Date(i)
+                    const temp2 = new Date(loginBarLabels[index + 1])
+
+                    var hour1 = moment(temp).locale('en').format('LT');
+                    var hour2 = moment(temp2).locale('en').format('LT');
+
+                    return hour1 + " - " + hour2;
+                }
+            });
+
+            total = loginBarDataset;
+
+        const obj = {};
+
+        timeArea.forEach((element, index) => {
+            obj[element] = total[index];
+        });
+        
+        let entries = Object.entries(obj);
+        
+        let temp = [];
+        temp.push(title)
+        temp.push(header);
+        entries.forEach(i => temp.push(i));
+
+        let csv = arrayToCsv(temp);
+        downloadBlob(csv, `bao-cao-khung-gio-dang-nhap-nam-${yearSelected}.csv`);
+
+    })
+
+
+    $('#report-total-user-btn').on('click', function (e) {
+        e.preventDefault();
+        var yearSelected = {!! $statisticsYear !!};
+
+        var result = {!! json_encode($totalUsersPerMonth) !!};
+        let title = [`Tổng số lượt đăng ký theo từng tháng trong năm ${yearSelected}`];
+
+        let header = ['Tháng','Số lượng']    
+
+        let entries = Object.entries(result[0]);
+
+
+        let temp = [];
+        temp.push(title)
+        temp.push(header);
+ 
+        entries.forEach(i => temp.push(i));
+
+        let csv = arrayToCsv(temp);
+
+        downloadBlob(csv, `tong-so-luot-dang-ky-theo-thang-nam-${yearSelected}.csv`);
+
+        var result2 = {!! json_encode($totalUsersPerDate) !!};
+        let title2 = [`Tổng số lượt đăng ký theo ngày trong năm ${yearSelected}`];
+
+        let header2 = ['Ngày','Số lượng']    
+
+        const obj = {};
+        result2.forEach(function(item) {
+           
+            obj[item.date] = item.total;
+        })
+
+       
+ 
+        let entries2 = Object.entries(obj);
+      
+        let temp2 = [];
+        temp2.push(title2)
+        temp2.push(header2);
+
+        entries2.forEach(i => temp2.push(i));
+
+        let csv2 = arrayToCsv(temp2);
+
+        downloadBlob(csv2, `tong-so-luot-dang-ky-theo-ngay-nam-${yearSelected}.csv`);
+
+
+    })
 </script>
 @endsection

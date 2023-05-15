@@ -32,7 +32,7 @@
                 </div>
             </div>
         </div>
-        <ul class="nav nav-tabs">
+        <ul class="nav nav-tabs nav-tabs-s2">
             <li class="nav-item">
                 <a class="nav-link active" data-bs-toggle="tab" href="#tabItem1">Thống kê số lượt đăng sách</a>
             </li>
@@ -53,17 +53,27 @@
                                     </div>
                                     <div class="card-tools">
                                         <div class="dropdown">
-                                            <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em><span>Chọn năm</span></a>
-                                            <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em></a>
+                                            <div class="me-2"  data-bs-toggle="dropdown">
+                                                <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex"><em class="icon ni ni-calendar"></em><span>Chọn năm</span></a>
+                                                <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none"><em class="icon ni ni-calendar"></em></a>
+                                            </div>
+                                       
+                                            <div id="report-total-book-btn">
+                                                <a href="#" class="btn btn-danger btn-dim d-none d-sm-inline-flex"><em class="icon ni ni-reports"></em><span>Xuất báo cáo</span></a>
+                                                <a href="#" class="btn btn-icon btn-danger btn-dim d-sm-none"><em class="icon ni ni-reports"></em></a>
+                                            </div>
+                                         
+
                                             <div class="dropdown-menu dropdown-menu-end">
                                                 <ul class="link-list-opt no-bdr">
                                                     @foreach ($allYears as $year)
                                                         <li><a href="/admin/statistics/book/{{ $year->year }}"><em class="icon ni ni-calendar"></em><span>Năm {{ $year->year }} </span></a></li>
                                                     @endforeach
-                                                  
+                                                        
                                                 </ul>
                                             </div>
                                         </div>
+                                       
                                     </div>
                                 </div>
                                 <div class="nk-sale-data-group align-center justify-between gy-3 gx-5">
@@ -161,8 +171,17 @@
                                     </div>
                                     <div class="card-tools">
                                         <div class="dropdown">
-                                            <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em><span>Chọn năm</span></a>
-                                            <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em></a>
+ 
+                                            <div class="me-2" data-bs-toggle="dropdown">
+                                                <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex"><em class="icon ni ni-calendar"></em><span>Chọn năm</span></a>
+                                                <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none"><em class="icon ni ni-calendar"></em></a>
+                                            </div>
+                                       
+                                            <div id="report-total-reading-btn">
+                                                <a href="#" class="btn btn-danger btn-dim d-none d-sm-inline-flex"><em class="icon ni ni-reports"></em><span>Xuất báo cáo</span></a>
+                                                <a href="#" class="btn btn-icon btn-danger btn-dim d-sm-none"><em class="icon ni ni-reports"></em></a>
+                                            </div>
+                                            
                                             <div class="dropdown-menu dropdown-menu-end">
                                                 <ul class="link-list-opt no-bdr">
                                                     @foreach ($allYears as $year)
@@ -264,6 +283,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.4/moment-with-locales.js"></script>
+
 <script>
     $(document).ready(function () {
 
@@ -652,7 +672,7 @@
         const data = {
             labels: result.map(object => object.date),
             datasets: [{
-                label: 'Số lượng lượt đọc sách',
+                label: 'Số lượt đọc sách',
                 data: result.map(object => object.total),         
                 borderWidth: 1
             }]
@@ -726,7 +746,7 @@
                 month = '0' + month;
             }
             const lastDay = (y,m)=>{
-            return new Date(y,m,0).getDate();
+                return new Date(y,m,0).getDate();
             }
 
 
@@ -778,5 +798,130 @@
     createChart3();
     createChart4();
     createChart5();
+
+
+    function arrayToCsv(data){
+        return data.map(row =>
+            row
+            .map(String)  // convert every value to String
+            .map(v => v.replaceAll('"', '""'))  // escape double colons
+            .map(v => `"${v}"`)  // quote it
+            .join(',')  // comma-separated
+        ).join('\r\n');  // rows starting on new lines
+    }
+
+    function downloadBlob(content, filename, contentType) {
+    // Create a blob
+        var blob = new Blob(["\ufeff",content], { type: 'text/csv;charset=utf-8;' });
+        var url = URL.createObjectURL(blob);
+
+        // Create a link to download it
+        var pom = document.createElement('a');
+        pom.href = url;
+        pom.setAttribute('download', filename);
+        pom.click();
+    }
+
+   
+
+    $('#report-total-book-btn').on('click', function (e) {
+        e.preventDefault();
+        var yearSelected = {!! $statisticsYear !!};
+
+        var result = {!! json_encode($totalBooksPerMonth) !!};
+        let title = [`Tổng số sách từng tháng trong năm ${yearSelected}`];
+
+        let header = ['Tháng','Số lượng']    
+
+        let entries = Object.entries(result[0]);
+
+
+        let temp = [];
+        temp.push(title)
+        temp.push(header);
+ 
+        entries.forEach(i => temp.push(i));
+
+        let csv = arrayToCsv(temp);
+
+        downloadBlob(csv, `tong-so-sach-theo-thang-nam-${yearSelected}.csv`);
+
+        var result2 = {!! json_encode($totalBooksPerDate) !!};
+        let title2 = [`Tổng số sách theo ngày trong năm ${yearSelected}`];
+
+        let header2 = ['Ngày','Số lượng']    
+
+        const obj = {};
+        result2.forEach(function(item) {
+           
+            obj[item.date] = item.total;
+        })
+
+       
+ 
+        let entries2 = Object.entries(obj);
+      
+        let temp2 = [];
+        temp2.push(title2)
+        temp2.push(header2);
+
+        entries2.forEach(i => temp2.push(i));
+
+        let csv2 = arrayToCsv(temp2);
+
+        downloadBlob(csv2, `tong-so-sach-theo-ngay-nam-${yearSelected}.csv`);
+
+
+    })
+
+    $('#report-total-reading-btn').on('click', function (e) {
+        e.preventDefault();
+        var yearSelected = {!! $statisticsYear !!};
+
+        var result = {!! json_encode($totalReadingPerMonth) !!};
+        let title = [`Tổng số lượt đọc từng tháng trong năm ${yearSelected}`];
+
+        let header = ['Tháng','Số lượng']    
+
+        let entries = Object.entries(result[0]);
+
+
+        let temp = [];
+        temp.push(title)
+        temp.push(header);
+ 
+        entries.forEach(i => temp.push(i));
+
+        let csv = arrayToCsv(temp);
+
+        downloadBlob(csv, `tong-so-luot-doc-theo-thang-nam-${yearSelected}.csv`);
+
+        var result2 = {!! json_encode($totalReadingPerDate) !!};
+        let title2 = [`Tổng số sách theo ngày trong năm ${yearSelected}`];
+
+        let header2 = ['Ngày','Số lượng']    
+
+        const obj = {};
+        result2.forEach(function(item) {
+           
+            obj[item.date] = item.total;
+        })
+
+       
+ 
+        let entries2 = Object.entries(obj);
+      
+        let temp2 = [];
+        temp2.push(title2)
+        temp2.push(header2);
+
+        entries2.forEach(i => temp2.push(i));
+
+        let csv2 = arrayToCsv(temp2);
+
+        downloadBlob(csv2, `tong-so-luot-doc-theo-ngay-nam-${yearSelected}.csv`);
+
+
+    })
 </script>
 @endsection

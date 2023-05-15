@@ -1,6 +1,8 @@
 @extends('client/forum.layouts.app')
 @section('pageTitle', `Tìm kiếm`)
-
+@section('additional-style')
+<link href="{{ asset('js/pagination/pagination.css') }}" rel="stylesheet" type="text/css">
+@endsection
 @section('navbar-Footer')
 <div class="card card-bordered shadow">
     <nav class="ms-4">
@@ -32,7 +34,12 @@
      
         <div class="row">        
             <div class="col-lg-8">
-                <div class="row g-gs">
+                <div class="col-md-12 d-flex justify-content-end mb-4">                          
+                    <div id="pagination"></div>
+                </div>
+                <div class="data-container"></div>
+
+                <div class="row g-gs" id="render-div">
                     @foreach ( $forums_posts as $post )
                     <div class="col-lg-12" id="post-{{ $post->id }}">
                         <div class="card card-bordered text-soft">
@@ -115,7 +122,13 @@
 
 
 @section('additional-scripts')
+<script src="{{ asset('js/pagination/pagination.min.js') }}" ></script>
+
 <script>
+    
+    $(function(){
+        postRender();
+    })
     
     $('.delete-btn').click(function(){
         var forum_post_id = $(this).attr('data-id');
@@ -166,6 +179,42 @@
        
     })
     
+    function postRender(){
+        const container = $('#pagination');
+
+
+        if (!container.length) return;
+            var sources = function () {
+            var result = [];
+
+            $('#render-div').children().each(function(item){
+
+                result.push($(this).get(0).outerHTML);
+
+            })
+        return result;
+        }();
+
+        var options = {
+            dataSource: sources,
+            callback: function (response, pagination) {
+                var dataHtml = '<div class="row g-gs">';
+
+                $.each(response, function (index, item) {
+                    dataHtml += item;
+                });
+
+                dataHtml += '</div>';
+
+                container.parent().next().html(dataHtml);
+                $('#render-div').remove();
+            }
+        };
+
+
+  
+        container.pagination(options);
+    }
 </script>
 
 @endsection

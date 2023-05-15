@@ -325,6 +325,7 @@
 <script src="{{ asset('assets/js/libs/fullcalendar.js?ver=3.1.2') }}"></script>
 <script src="{{ asset('assets/js/apps/calendar.js?ver=3.1.2') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.4/moment-with-locales.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/json2csv"></script>
 
 <script>
      $(function() {
@@ -356,7 +357,7 @@
     $('#exportcsvbtn').click(function(e) {
 
         let type = {
-           "fc-event-primary":"Công ty",
+            "fc-event-primary":"Công ty",
             "fc-event-success":"Hội thảo",
             "fc-event-info":"Hội nghị",
             "fc-event-warning":"Meeting",

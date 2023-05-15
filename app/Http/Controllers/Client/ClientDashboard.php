@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Book;
 use App\Models\Document;
+use App\Models\Note;
 use Illuminate\Support\Facades\Auth;
 
 class ClientDashboard extends Controller
 {
     public function index(){
+        $notes = Note::where('type_id','!=',3);
         $waiting_books = Book::where('userCreatedID','=',Auth::user()->id)->where('deleted_at','=',null)->where('status','!=',1)->get();
         $waiting_documents = Document::where('userCreatedID','=',Auth::user()->id)->where('deleted_at','=',null)->where('status','!=',1)->get();
         
@@ -21,6 +23,7 @@ class ClientDashboard extends Controller
         $document_search = Document::where('userCreatedID','=',Auth::user()->id)->where('deleted_at','=',null)->where('status','=',1)->get(['name','id']);
 
         return view('client.manage.manage-homepage')
+        ->with('notes',$notes)
         ->with('high_reading_book',$high_reading_book)
         ->with('high_downloading_document',$high_downloading_document)
         ->with('name_search',$name_search)

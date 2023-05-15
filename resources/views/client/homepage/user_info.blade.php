@@ -153,7 +153,7 @@
                                         <span class="sub-text">Tình trạng</span>
                                     </div>
                                     <div class="nk-tb-col">
-                                        <span class="sub-text">Tải xuống</span>
+                                        <span class="sub-text">Số trang</span>
                                     </div>
                                  
                                 </div>
@@ -171,8 +171,7 @@
                                             @endif 
                                         </div>                   
                                         <div class="nk-tb-col">
-                                            <button class="btn btn-icon btn-lg btn-primary download-btn" data-id={{ $document->id }}><em class="icon ni ni-download"></em>
-                                            </button>                                
+                                            <span class="sub-text">{{ $document->numberOfPages }}</span>
                                         </div>
                                     </div>
                                 @endforeach

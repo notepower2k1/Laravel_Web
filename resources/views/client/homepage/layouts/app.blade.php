@@ -35,7 +35,18 @@
             resize: none;
         }
 
+        .nk-content{
+            background-color:#ffffff;
+        }
+
+        .nk-header,.accordion-item{
+            background-color:#f5f4f2;
+        }
         
+        .a-more-button{
+            text-decoration: none;
+            color:#b78a28;
+        }
     </style>
 </head>
 <body class="nk-body bg-lighter preload">
@@ -43,27 +54,22 @@
         <div class="loader-wrapper">
             <span class="loader"><span class="loader-inner"></span></span>
         </div>  
-        <div class="nk-main ">      
-            <div class="nk-wrap">         
-                <div class="nk-header nk-header-fixed is-light shadow-sm">
+        <div class="nk-main">      
+            <div class="">         
+                <div class="nk-header nk-header-fixed shadow-sm">
                     @include('client/homepage.layouts.header')
                 </div>
 
                 <div class="nk-content">
                     <div class="nk-content-inner">                    
                         <div class="nk-content-body">                   
-                            @yield('content')
-
-                           
+                            @yield('content')                
                         </div>
                     </div>
                 </div>
             </div>
-            {{-- @if(Request::is('/','dien-dan/*','tim-kiem','the-loai','the-loai/*','sach/*','tai-lieu/*','sach-theo-doi','trang-ca-nhan','them-tai-lieu','thanh-vien/*'))
+         
 
-                            @else
-                            @include('client/homepage.layouts.contentFooter')
-                            @endif --}}
             @include('client/homepage.layouts.footer')
         </div>
   

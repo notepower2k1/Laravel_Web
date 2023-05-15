@@ -9,6 +9,7 @@ use App\Models\Book;
 use App\Models\BookType;
 use App\Models\Chapter;
 use App\Models\Follow;
+use App\Models\Note;
 use App\Models\ratingBook;
 use App\Models\readingHistory;
 use Illuminate\Support\Facades\Auth;
@@ -95,6 +96,7 @@ class BookController extends Controller
             'isCompleted.required' => 'Sách phải có tình trạng'
         ]);
 
+        $localfolder = public_path('firebase-temp-uploads') .'/';
 
         $slug =  Str::slug($request->name).'-'. $this->TimeToText();
     
@@ -107,7 +109,13 @@ class BookController extends Controller
 
         if($file_book){
             $generatedFileName = $slug.$file_book->hashName();
-
+            
+            $firebase_storage_path_2 = 'bookFile/';
+            if ($file_book->move($localfolder, $generatedFileName)) {
+            $uploadedfile = fopen($localfolder.$generatedFileName, 'r');
+            app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path_2 . $generatedFileName]);
+            unlink($localfolder . $generatedFileName);
+            }
         }
    
         $book = Book::create([
@@ -130,7 +138,6 @@ class BookController extends Controller
             'file' => $generatedFileName
         ]);
 
-        $localfolder = public_path('firebase-temp-uploads') .'/';
 
         $firebase_storage_path = 'bookImage/';
         if ($image->move($localfolder, $generatedImageName)) {
@@ -140,12 +147,7 @@ class BookController extends Controller
         unlink($localfolder . $generatedImageName);
         }
 
-        $firebase_storage_path_2 = 'bookFile/';
-        if ($file_book->move($localfolder, $generatedFileName)) {
-        $uploadedfile = fopen($localfolder.$generatedFileName, 'r');
-        app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path_2 . $generatedFileName]);
-        unlink($localfolder . $generatedFileName);
-        }
+     
 
 
         return redirect('/admin/book');
@@ -161,6 +163,7 @@ class BookController extends Controller
     public function show($id,$year = null) //like "show details"
     {
         DB::statement("SET SQL_MODE=''");
+        $notes = Note::where('type_id','=',1)->where('identifier_id','=',$id)->get();
 
         $allYears = DB::select("SELECT distinct year(books.created_at) as 'year'
         from books");
@@ -214,6 +217,7 @@ class BookController extends Controller
         ORDER BY `base`) as sub");
 
         return view('admin.book.detail')
+        ->with('notes',$notes)
         ->with('ratingScoreBase',$ratingScoreBase)
         ->with('statisticsYear',$year)
         ->with('allYears',$allYears)

@@ -1,7 +1,9 @@
 <!-- Footer -->
 
+@if(Request::is('doc-sach/*'))
 
-<section class="mt-4 ps-4 pe-4 pt-4" style="background-color:#062788">
+@else
+<section class="mt-4 p-4" style="background-color:#062788">
   <div class="slider-init" data-slick='{"arrows": true, "dots": false, "slidesToShow": 1, "slidesToScroll": 1, "infinite":false, "responsive":[ {"breakpoint": 992,"settings":{"slidesToShow": 2}}, {"breakpoint": 768,"settings":{"slidesToShow": 1}} ]}'>
       <div class="col">
           <div class="ps-4 pe-4">
@@ -30,7 +32,8 @@
                     </figure>
               </div>
           </div>
-      </div> <div class="col">
+      </div> 
+      <div class="col">
           <div class="ps-4 pe-4">
               <div class="card-inner">
                   <figure class="text-center">
@@ -43,7 +46,8 @@
                     </figure>
               </div>
           </div>
-      </div> <div class="col">
+      </div> 
+      <div class="col">
           <div class="ps-4 pe-4">
               <div class="card-inner">
                   <figure class="text-center">
@@ -56,7 +60,8 @@
                     </figure>
               </div>
           </div>
-      </div> <div class="col">
+      </div> 
+      <div class="col">
           <div class="ps-4 pe-4">
               <div class="card-inner">
                   <figure class="text-center">
@@ -69,7 +74,8 @@
                     </figure>
               </div>
           </div>
-      </div> <div class="col">
+      </div> 
+      <div class="col">
           <div class="ps-4 pe-4">
               <div class="card-inner">
                   <figure class="text-center">
@@ -85,17 +91,13 @@
       </div>
   </div>
 </section>
+@endif
+<footer class="text-center text-lg-start shadow text-dark" style="background-color:#fffff">
 
-<footer class="text-center text-lg-start shadow text-dark" style="background-color: #ffffff "> 
 
-      
-  
-    <!-- Section: Links  -->
     <section class="pt-1">
       <div class="container text-center text-md-start mt-5">
-        <!-- Grid row -->
         <div class="row">
-          <!-- Grid column -->
           <div class="col-md-6 col-lg-6 col-xl-3 mx-auto mb-4">
             <!-- Content -->
             <h6 class="text-uppercase fw-bold mb-4">
@@ -108,9 +110,7 @@
               Kho tàng tài liệu điện tử miễn phí cho người dùng. Đăng ký làm thành viên và tham gia ngay với chúng tôi.
             </p>
           </div>
-          <!-- Grid column -->
-  
-          <!-- Grid column -->
+         
           <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mb-4">
             <!-- Links -->
             <h6 class="text-uppercase fw-bold mb-4">
@@ -133,13 +133,7 @@
               <span>contact@example.com</span> 
             </p>
           </div>
-          <!-- Grid column -->
-  
-          <!-- Grid column -->
-        
-          <!-- Grid column -->
-  
-          <!-- Grid column -->
+     
           <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
             <!-- Links -->
             <h6 class="text-uppercase fw-bold mb-4">Theo dõi chúng tôi</h6>
@@ -159,15 +153,19 @@
                 <em class="icon ni ni-instagram text-pink"></em>
               </a>
           </div>
-          <!-- Grid column -->
-        </div>
-        <!-- Grid row -->
-      </div>
-    </section>
-    <!-- Section: Links  -->
-  
-    <!-- Copyright -->
 
-    <!-- Copyright -->
-  </footer>
-  <!-- Footer -->
+
+          <div class="mb-2 d-flex justify-content-between">
+            <a class="a-more-button" href="/thong-tin/quy-dinh">Điều khoản dịch vụ</a>
+            <a class="a-more-button" href="/thong-tin/huong-dan">Hướng dẫn sử dụng</a>
+            <a class="a-more-button" href="/thong-tin/lien-he">Thông tin liên hệ</a>
+          </div>
+        </div>
+
+    
+      </div>
+
+     
+    </section>
+  
+</footer>

@@ -1,5 +1,8 @@
 @extends('client/forum.layouts.app')
 @section('pageTitle', `{{$forum->name}}`)
+@section('additional-style')
+<link href="{{ asset('js/pagination/pagination.css') }}" rel="stylesheet" type="text/css">
+@endsection
 
 @section('navbar-Footer')
 <div class="card card-bordered shadow">
@@ -24,6 +27,23 @@
                         <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1" data-target="pageMenu"><em class="icon ni ni-menu-alt-r"></em></a>
                         <div class="toggle-expand-content" data-content="pageMenu">
                             <ul class="nk-block-tools g-3">
+                                {{-- <li>
+                                    <div class="drodown">
+                                        <a href="#" class="dropdown-toggle btn btn-white btn-dim btn-outline-light" data-bs-toggle="dropdown"><em class="d-none d-sm-inline icon ni ni-filter-alt"></em><span>Lọc bài viết</span><em class="dd-indc icon ni ni-chevron-right"></em></a>
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <ul class="link-list-opt no-bdr">
+                                                <li><a href="/dien-dan/{{ $forum->slug }}"><span>Mặc định</span></a></li>
+                                                <li><a href="/dien-dan/{{ $forum->slug }}/all/luot-binh-luan-nhieu-nhat"><span>Lượt bình luận nhiều nhất</span></a></li>
+                                                <li><a href="/dien-dan/{{ $forum->slug }}/all/bai-dang-cu-nhat"><span>Bài đăng cũ nhất</span></a></li>
+
+                                                @if (Auth::check())
+                                                <li><a href="/dien-dan/{{ $forum->slug }}/all/bai-dang-cua-ban"><span>Bài đăng của bạn</span></a></li>
+
+                                                @endif
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li> --}}
                                 <li>
                                     <div class="drodown">
                                         <a href="#" class="dropdown-toggle btn btn-white btn-dim btn-outline-light" data-bs-toggle="dropdown"><em class="d-none d-sm-inline icon ni ni-filter-alt"></em><span>Lọc bài viết</span><em class="dd-indc icon ni ni-chevron-right"></em></a>
@@ -37,6 +57,40 @@
                                                 <li><a href="/dien-dan/{{ $forum->slug }}/all/bai-dang-cua-ban"><span>Bài đăng của bạn</span></a></li>
 
                                                 @endif
+                                                
+                                                <li class="divider"></li>
+
+                                                <li>
+                                                    <div class="filter-box p-2">
+                                                        <div class="form-group">
+                                                            <span>Lọc theo ngày thêm</span>
+                                                            <div class="form-control-wrap">
+                                                                <div class="input-daterange date-picker-range input-group">  
+                                                                    @if(isset($fromDate))                                                                  
+                                                                    <input type="text" class="form-control" name="from-date" value="{{ $fromDate }}"/>
+                                                                    @else
+                                                                    <input type="text" class="form-control" name="from-date"/>
+                                                                    @endif
+                                                                    <div class="input-group-addon">
+                                                                      <em class="icon ni ni-arrow-long-right"></em>
+                                                                    </div>       
+                                                                    @if(isset($toDate))             
+                                                                    <input type="text" class="form-control" name="to-date" value="{{ $toDate }}"/>
+                                                                    @else
+                                                                    <input type="text" class="form-control" name="to-date"/>
+                                                                    @endif
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="button-box d-flex flex-row-reverse">
+                                                            <button class="btn btn-warning" id="filter-btn">
+                                                              <em class="icon ni ni-filter"></em>
+                                                            </button>                                                                              
+                                                        </div>
+                                                      </div>
+
+                                                </li>
+                                                <li class="divider"></li>                                              
                                             </ul>
                                         </div>
                                     </div>
@@ -69,9 +123,15 @@
 <div class="nk-content-wrap">
     <div class="nk-block nk-block-lg">
      
-        <div class="row">        
+        <div class="row g-gs">        
             <div class="col-lg-8 mb-2">
-                <div class="row g-gs">
+                
+                <div class="col-md-12 d-flex justify-content-end mb-4">                          
+                    <div id="pagination"></div>
+                </div>
+                <div class="data-container"></div>
+                <div class="row g-gs" id="render-div">
+
                     @foreach ( $forums_posts as $post )
                     <div class="col-lg-12" id="post-{{ $post->id }}">
                         <div class="card card-bordered text-soft shadow">
@@ -113,7 +173,12 @@
                     </div><!-- .col -->
                     @endforeach  
                 </div><!-- .row -->
+
+
+
+               
             </div>  
+            
             
             <div class="col-lg-4">
                 <div class="card card-bordered card-full shadow">
@@ -144,10 +209,10 @@
                     </ul>
                 </div><!-- .card -->
             </div>
-            <div class="col-lg-8 d-flex justify-content-end">                          
+            {{-- <div class="col-lg-8 d-flex justify-content-end">                          
 
                 {{ $forums_posts->links('vendor.pagination.custom',['elements' => $forums_posts]) }}
-            </div>
+            </div> --}}
             
         </div>
     </div>    
@@ -208,11 +273,18 @@
 @endsection
 
 @section('additional-scripts')
+<script src="{{ asset('js/pagination/pagination.min.js') }}" ></script>
+
 <script>
+
     
 
     
     $(function () {
+
+        postRender();
+
+
         tinymce.init({
         entity_encoding : "raw",
         selector: '#mytextarea',
@@ -332,6 +404,74 @@
 
        
     })
+    
+    function postRender(){
+        const container = $('#pagination');
+
+
+        if (!container.length) return;
+            var sources = function () {
+            var result = [];
+
+            $('#render-div').children().each(function(item){
+
+                result.push($(this).get(0).outerHTML);
+
+            })
+        return result;
+        }();
+
+        var options = {
+            dataSource: sources,
+            callback: function (response, pagination) {
+                var dataHtml = '<div class="row g-gs">';
+
+                $.each(response, function (index, item) {
+                    dataHtml += item;
+                });
+
+                dataHtml += '</div>';
+
+                container.parent().next().html(dataHtml);
+                $('#render-div').remove();
+            }
+        };
+
+
+  
+        container.pagination(options);
+    }
+
+    function customFormatDate(date){
+        const month = date.slice(0,2);
+        const day = date.slice(3,5);
+        const year = date.slice(6,10)
+    
+        return year+month+day;
+    }
+
+    $('#filter-btn').click(function() {
+        
+        const fromDate = $('.filter-box').find('input[type="text"][name="from-date"]').val();
+        const toDate = $('.filter-box').find('input[type="text"][name="to-date"]').val();
+
+        const forum_slug = @json($forum->slug);
+        if(fromDate == '' || toDate == '') {
+        Swal.fire({
+            icon: 'error',
+            title: `Không thể để trống!!!`,
+            showConfirmButton: false,
+            timer: 2500
+        });
+        }
+        if(fromDate && toDate){
+            window.location.href = `/dien-dan/${forum_slug}/all/${customFormatDate(fromDate)}/${customFormatDate(toDate)}`;
+        }
+        
+
+    })
+
+
     
 </script>
 

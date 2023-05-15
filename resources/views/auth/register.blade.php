@@ -3,9 +3,9 @@
 @section('content')
     <div class="nk-block nk-block-middle nk-auth-body wide-xs">
         <div class="brand-logo pb-4 text-center">
-            <a href="html/index.html" class="logo-link">
-                <img class="logo-light logo-img logo-img-lg" src="./images/logo.png" srcset="./images/logo2x.png 2x" alt="logo">
-                <img class="logo-dark logo-img logo-img-lg" src="./images/logo-dark.png" srcset="./images/logo-dark2x.png 2x" alt="logo-dark">
+            <a href="/" class="logo-link">
+                <img class="logo-light logo-img logo-img-lg" src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png" srcset="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png 2x" alt="logo">
+                <img class="logo-dark logo-img logo-img-lg" src=".https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png" srcset="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png 2x" alt="logo-dark">
             </a>
         </div>
         <div class="card card-bordered">
@@ -93,7 +93,7 @@
                     <div class="form-group">
                         <div class="custom-control custom-control-xs custom-checkbox">
                             <input type="checkbox" class="custom-control-input" id="checkbox" required>
-                            <label class="custom-control-label" for="checkbox">Bạn đồng ý với các <a href="#">điều khoản</a> và <a href="#"> chính sách.</a> của website</label>
+                            <label class="custom-control-label" for="checkbox">Bạn đồng ý với các <a href="/thong-tin/quy-dinh">điều khoản</a> và <a href="/thong-tin/quy-dinh"> chính sách.</a> của website</label>
                         </div>
                     </div>
                     <div class="form-group">

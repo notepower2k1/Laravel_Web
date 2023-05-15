@@ -26,7 +26,7 @@
                 </div>
             </div>
         </div>
-        <ul class="nav nav-tabs">
+        <ul class="nav nav-tabs nav-tabs-s2">
             <li class="nav-item">
                 <a class="nav-link active" data-bs-toggle="tab" href="#tabItem1">Thống kê số lượt đăng tài liệu</a>
             </li>
@@ -48,8 +48,15 @@
                                 </div>
                                 <div class="card-tools">
                                     <div class="dropdown">
-                                        <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em><span>Chọn năm</span></a>
-                                        <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em></a>
+                                        <div class="me-2"  data-bs-toggle="dropdown">
+                                            <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex"><em class="icon ni ni-calendar"></em><span>Chọn năm</span></a>
+                                            <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none"><em class="icon ni ni-calendar"></em></a>
+                                        </div>
+                                   
+                                        <div id="report-total-document-btn">
+                                            <a href="#" class="btn btn-danger btn-dim d-none d-sm-inline-flex"><em class="icon ni ni-reports"></em><span>Xuất báo cáo</span></a>
+                                            <a href="#" class="btn btn-icon btn-danger btn-dim d-sm-none"><em class="icon ni ni-reports"></em></a>
+                                        </div>
                                         <div class="dropdown-menu dropdown-menu-end">
                                             <ul class="link-list-opt no-bdr">
                                                 @foreach ($allYears as $year)
@@ -151,8 +158,15 @@
                                 </div>
                                 <div class="card-tools">
                                     <div class="dropdown">
-                                        <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em><span>Chọn năm</span></a>
-                                        <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em></a>
+                                        <div class="me-2"  data-bs-toggle="dropdown">
+                                            <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex"><em class="icon ni ni-calendar"></em><span>Chọn năm</span></a>
+                                            <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none"><em class="icon ni ni-calendar"></em></a>
+                                        </div>
+                                   
+                                        <div id="report-total-reading-btn">
+                                            <a href="#" class="btn btn-danger btn-dim d-none d-sm-inline-flex"><em class="icon ni ni-reports"></em><span>Xuất báo cáo</span></a>
+                                            <a href="#" class="btn btn-icon btn-danger btn-dim d-sm-none"><em class="icon ni ni-reports"></em></a>
+                                        </div>
                                         <div class="dropdown-menu dropdown-menu-end">
                                             <ul class="link-list-opt no-bdr">
                                                 @foreach ($allYears as $year)
@@ -770,5 +784,130 @@
     createChart3();
     createChart4();
     createChart5();
+
+
+    function arrayToCsv(data){
+        return data.map(row =>
+            row
+            .map(String)  // convert every value to String
+            .map(v => v.replaceAll('"', '""'))  // escape double colons
+            .map(v => `"${v}"`)  // quote it
+            .join(',')  // comma-separated
+        ).join('\r\n');  // rows starting on new lines
+    }
+
+    function downloadBlob(content, filename, contentType) {
+    // Create a blob
+        var blob = new Blob(["\ufeff",content], { type: 'text/csv;charset=utf-8;' });
+        var url = URL.createObjectURL(blob);
+
+        // Create a link to download it
+        var pom = document.createElement('a');
+        pom.href = url;
+        pom.setAttribute('download', filename);
+        pom.click();
+    }
+
+   
+
+    $('#report-total-document-btn').on('click', function (e) {
+        e.preventDefault();
+        var yearSelected = {!! $statisticsYear !!};
+
+        var result = {!! json_encode($totalDocumentsPerMonth) !!};
+        let title = [`Tổng số tài liệu từng tháng trong năm ${yearSelected}`];
+
+        let header = ['Tháng','Số lượng']    
+
+        let entries = Object.entries(result[0]);
+
+
+        let temp = [];
+        temp.push(title)
+        temp.push(header);
+ 
+        entries.forEach(i => temp.push(i));
+
+        let csv = arrayToCsv(temp);
+
+        downloadBlob(csv, `tong-so-tai-lieu-theo-thang-nam-${yearSelected}.csv`);
+
+        var result2 = {!! json_encode($totalDocumentsPerDate) !!};
+        let title2 = [`Tổng số tài liệu theo ngày trong năm ${yearSelected}`];
+
+        let header2 = ['Ngày','Số lượng']    
+
+        const obj = {};
+        result2.forEach(function(item) {
+           
+            obj[item.date] = item.total;
+        })
+
+       
+ 
+        let entries2 = Object.entries(obj);
+      
+        let temp2 = [];
+        temp2.push(title2)
+        temp2.push(header2);
+
+        entries2.forEach(i => temp2.push(i));
+
+        let csv2 = arrayToCsv(temp2);
+
+        downloadBlob(csv2, `tong-so-tai-lieu-theo-ngay-nam-${yearSelected}.csv`);
+
+
+    })
+
+    $('#report-total-downloading-btn').on('click', function (e) {
+        e.preventDefault();
+        var yearSelected = {!! $statisticsYear !!};
+
+        var result = {!! json_encode($totalDownloadingPerMonth) !!};
+        let title = [`Tổng số lượt tải từng tháng trong năm ${yearSelected}`];
+
+        let header = ['Tháng','Số lượng']    
+
+        let entries = Object.entries(result[0]);
+
+
+        let temp = [];
+        temp.push(title)
+        temp.push(header);
+ 
+        entries.forEach(i => temp.push(i));
+
+        let csv = arrayToCsv(temp);
+
+        downloadBlob(csv, `tong-so-luot-tai-theo-thang-nam-${yearSelected}.csv`);
+
+        var result2 = {!! json_encode($totalDownloadingPerDate) !!};
+        let title2 = [`Tổng số lượt tải theo ngày trong năm ${yearSelected}`];
+
+        let header2 = ['Ngày','Số lượng']    
+
+        const obj = {};
+        result2.forEach(function(item) {
+           
+            obj[item.date] = item.total;
+        })
+
+       
+ 
+        let entries2 = Object.entries(obj);
+      
+        let temp2 = [];
+        temp2.push(title2)
+        temp2.push(header2);
+
+        entries2.forEach(i => temp2.push(i));
+
+        let csv2 = arrayToCsv(temp2);
+
+        downloadBlob(csv2, `tong-so-luot-tai-theo-ngay-nam-${yearSelected}.csv`);
+
+
+    })
 </script>
 @endsection

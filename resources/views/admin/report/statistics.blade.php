@@ -11,126 +11,136 @@
 @endsection
 @section('content')
 
-<div class="nk-block">
-    <div class="row g-gs">
-        <div class="col-12">
-            <div class="card card-bordered h-100">
-                <div class="card-inner">
-                    <div class="card-title-group">
-                        <div class="card-title card-title-sm">
-                        <h6 class="title">Thống kê số lượng theo loại</h6>
+<div class="container">
+    <div class="nk-block">
+        <div class="row g-gs">
+            <div class="col-12">
+                <div class="card card-bordered h-100">
+                    <div class="card-inner">
+                        <div class="card-title-group">
+                            <div class="card-title card-title-sm">
+                            <h6 class="title">Thống kê số lượng theo loại</h6>
+                            </div>
                         </div>
-                    </div>
-                    <div class="mt-5 d-flex">
-                        <canvas id="doughnutChart"></canvas>    
+                        <div class="mt-5 d-flex">
+                            <canvas id="doughnutChart"></canvas>    
+                        </div>
                     </div>
                 </div>
             </div>
+            
+            <div class="col-12">
+                <div class="card card-bordered h-100">
+                    <div class="card-inner">
+                        <div class="card-title-group align-start gx-3 mb-3">
+                            <div class="card-title">
+                                <h6 class="title">Thống kê báo cáo</h6>
+                                <p>Thống kê tổng số báo cáo trong vòng 12 tháng </p>
+                            </div>
+                            <div class="card-tools">
+                                <div class="dropdown">
+                                    <div class="me-2"  data-bs-toggle="dropdown">
+                                        <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex"><em class="icon ni ni-calendar"></em><span>Chọn năm</span></a>
+                                        <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none"><em class="icon ni ni-calendar"></em></a>
+                                    </div>
+                               
+                                    <div id="report-total-report-btn">
+                                        <a href="#" class="btn btn-danger btn-dim d-none d-sm-inline-flex"><em class="icon ni ni-reports"></em><span>Xuất báo cáo</span></a>
+                                        <a href="#" class="btn btn-icon btn-danger btn-dim d-sm-none"><em class="icon ni ni-reports"></em></a>
+                                    </div>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <ul class="link-list-opt no-bdr">
+                                            @foreach ($allYears as $year)
+                                                <li><a href="/admin/statistics/report/{{ $year->year }}"><em class="icon ni ni-calendar"></em><span>Năm {{ $year->year }} </span></a></li>
+                                            @endforeach
+                                          
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="nk-sale-data-group align-center justify-between gy-3 gx-5">
+                            <div class="nk-sale-data">
+                                <span class="amount">Tổng báo cáo: {{ $totalReportsInYear }}</span>
+                            </div>
+                            <div class="nk-sale-data">
+                                <span class="amount sm">Năm: {{ $statisticsYear }}</span>
+                            </div>
+                        </div>
+                        <div class="">
+                            <canvas id="salesOverview" style="height:300px" ></canvas>
+                        </div>
+                    </div>
+                </div><!-- .card -->
+            </div><!-- .col -->
+    
+            <div class="col-12">
+                <div class="card card-bordered h-100">
+                    <div class="card-inner">
+                        <div class="card-title-group align-start gx-3 mb-3">
+                            <div class="card-title">
+                                <h6 class="title">Thống kê báo cáo</h6>
+                                <p>Thống kê tổng số báo cáo theo ngày trong tháng</p>
+                            </div>
+                            <div class="card-tools">
+                                <div class="dropdown">
+                                    <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em><span>Chọn tháng</span></a>
+                                    <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em></a>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <ul class="link-list-opt no-bdr">
+                                            @for ($i = 1 ; $i < 13 ; $i++)
+                                                <li class="month-selection-li" data-value="{{ $i }}"><a style="cursor: pointer;"><span>Tháng {{ $i }}</span></a></li>
+                                            @endfor
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="analytic-ov">
+                            <div class="analytic-data-group analytic-ov-group g-3">
+                                <div class="analytic-data analytic-ov-data d-flex flex-column  align-items-center">
+                                    <div class="title">Tổng</div>
+                                    <div class="amount">
+                                        <span id="total-users-span"></span>
+                                    </div>
+                                    {{-- <div class="change up"><em class="icon ni ni-arrow-long-up"></em>12.37%</div> --}}
+                                </div>
+                                <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
+                                    <div class="title">Min</div>
+                                    <div class="amount">                               
+                                        <span id="min-users-span"></span>
+    
+                                    </div>
+                                    {{-- <div class="change up"><em class="icon ni ni-arrow-long-up"></em>47.74%</div> --}}
+                                </div>
+                                <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
+                                    <div class="title">Max</div>
+                                    <div class="amount">
+                                        <span id="max-users-span"></span>
+    
+                                    </div>
+                                    {{-- <div class="change down"><em class="icon ni ni-arrow-long-down"></em>12.37%</div> --}}
+                                </div>
+                                <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
+                                    <div class="title">Tháng</div>
+                                    <div class="amount">
+                                        <span id="month-selection-span"></span>
+                                    </div>
+                                    {{-- <div class="change down"><em class="icon ni ni-arrow-long-down"></em>0.35%</div> --}}
+                                </div>
+                            </div>
+                            <div class="analytic-ov-ck" style=" height: 300px;">
+                                <canvas id="myBar"></canvas>
+                                {{-- <input type="month" onchange="filterChart(this)"/> --}}                    
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- .card -->
+            </div><!-- .col -->
         </div>
-        
-        <div class="col-12">
-            <div class="card card-bordered h-100">
-                <div class="card-inner">
-                    <div class="card-title-group align-start gx-3 mb-3">
-                        <div class="card-title">
-                            <h6 class="title">Thống kê báo cáo</h6>
-                            <p>Thống kê tổng số báo cáo trong vòng 12 tháng </p>
-                        </div>
-                        <div class="card-tools">
-                            <div class="dropdown">
-                                <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em><span>Chọn năm</span></a>
-                                <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em></a>
-                                <div class="dropdown-menu dropdown-menu-end">
-                                    <ul class="link-list-opt no-bdr">
-                                        @foreach ($allYears as $year)
-                                            <li><a href="/admin/statistics/report/{{ $year->year }}"><em class="icon ni ni-calendar"></em><span>Năm {{ $year->year }} </span></a></li>
-                                        @endforeach
-                                      
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="nk-sale-data-group align-center justify-between gy-3 gx-5">
-                        <div class="nk-sale-data">
-                            <span class="amount">Tổng báo cáo: {{ $totalReportsInYear }}</span>
-                        </div>
-                        <div class="nk-sale-data">
-                            <span class="amount sm">Năm: {{ $statisticsYear }}</span>
-                        </div>
-                    </div>
-                    <div class="">
-                        <canvas id="salesOverview" style="height:300px" ></canvas>
-                    </div>
-                </div>
-            </div><!-- .card -->
-        </div><!-- .col -->
-
-        <div class="col-12">
-            <div class="card card-bordered h-100">
-                <div class="card-inner">
-                    <div class="card-title-group align-start gx-3 mb-3">
-                        <div class="card-title">
-                            <h6 class="title">Thống kê báo cáo</h6>
-                            <p>Thống kê tổng số báo cáo theo ngày trong tháng</p>
-                        </div>
-                        <div class="card-tools">
-                            <div class="dropdown">
-                                <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em><span>Chọn tháng</span></a>
-                                <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em></a>
-                                <div class="dropdown-menu dropdown-menu-end">
-                                    <ul class="link-list-opt no-bdr">
-                                        @for ($i = 1 ; $i < 13 ; $i++)
-                                            <li class="month-selection-li" data-value="{{ $i }}"><a style="cursor: pointer;"><span>Tháng {{ $i }}</span></a></li>
-                                        @endfor
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="analytic-ov">
-                        <div class="analytic-data-group analytic-ov-group g-3">
-                            <div class="analytic-data analytic-ov-data d-flex flex-column  align-items-center">
-                                <div class="title">Tổng</div>
-                                <div class="amount">
-                                    <span id="total-users-span"></span>
-                                </div>
-                                {{-- <div class="change up"><em class="icon ni ni-arrow-long-up"></em>12.37%</div> --}}
-                            </div>
-                            <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
-                                <div class="title">Min</div>
-                                <div class="amount">                               
-                                    <span id="min-users-span"></span>
-
-                                </div>
-                                {{-- <div class="change up"><em class="icon ni ni-arrow-long-up"></em>47.74%</div> --}}
-                            </div>
-                            <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
-                                <div class="title">Max</div>
-                                <div class="amount">
-                                    <span id="max-users-span"></span>
-
-                                </div>
-                                {{-- <div class="change down"><em class="icon ni ni-arrow-long-down"></em>12.37%</div> --}}
-                            </div>
-                            <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
-                                <div class="title">Tháng</div>
-                                <div class="amount">
-                                    <span id="month-selection-span"></span>
-                                </div>
-                                {{-- <div class="change down"><em class="icon ni ni-arrow-long-down"></em>0.35%</div> --}}
-                            </div>
-                        </div>
-                        <div class="analytic-ov-ck" style=" height: 300px;">
-                            <canvas id="myBar"></canvas>
-                            {{-- <input type="month" onchange="filterChart(this)"/> --}}                    
-                        </div>
-                    </div>
-                </div>
-            </div><!-- .card -->
-        </div><!-- .col -->
     </div>
 </div>
+
 
 @endsection
 
@@ -424,6 +434,80 @@
         $('#total-users-span').text(sum);
         $('#min-users-span').text(min);
         $('#max-users-span').text(max);
+
+    })
+
+    function arrayToCsv(data){
+        return data.map(row =>
+            row
+            .map(String)  // convert every value to String
+            .map(v => v.replaceAll('"', '""'))  // escape double colons
+            .map(v => `"${v}"`)  // quote it
+            .join(',')  // comma-separated
+        ).join('\r\n');  // rows starting on new lines
+    }
+
+    function downloadBlob(content, filename, contentType) {
+    // Create a blob
+        var blob = new Blob(["\ufeff",content], { type: 'text/csv;charset=utf-8;' });
+        var url = URL.createObjectURL(blob);
+
+        // Create a link to download it
+        var pom = document.createElement('a');
+        pom.href = url;
+        pom.setAttribute('download', filename);
+        pom.click();
+    }
+
+   
+
+    $('#report-total-report-btn').on('click', function (e) {
+        e.preventDefault();
+        var yearSelected = {!! $statisticsYear !!};
+
+        var result = {!! json_encode($totalReportsPerMonth) !!};
+        let title = [`Tổng số báo cáo từng tháng trong năm ${yearSelected}`];
+
+        let header = ['Tháng','Số lượng']    
+
+        let entries = Object.entries(result[0]);
+
+
+        let temp = [];
+        temp.push(title)
+        temp.push(header);
+ 
+        entries.forEach(i => temp.push(i));
+
+        let csv = arrayToCsv(temp);
+
+        downloadBlob(csv, `tong-so-bao-cao-theo-thang-nam-${yearSelected}.csv`);
+
+        var result2 = {!! json_encode($totalReportsPerDate) !!};
+        let title2 = [`Tổng số báo cáo theo ngày trong năm ${yearSelected}`];
+
+        let header2 = ['Ngày','Số lượng']    
+
+        const obj = {};
+        result2.forEach(function(item) {
+           
+            obj[item.date] = item.total;
+        })
+
+       
+ 
+        let entries2 = Object.entries(obj);
+      
+        let temp2 = [];
+        temp2.push(title2)
+        temp2.push(header2);
+
+        entries2.forEach(i => temp2.push(i));
+
+        let csv2 = arrayToCsv(temp2);
+
+        downloadBlob(csv2, `tong-so-bao-cao-theo-ngay-nam-${yearSelected}.csv`);
+
 
     })
 </script>

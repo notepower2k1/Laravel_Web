@@ -1,6 +1,47 @@
 @extends('client/homepage.layouts.app')
 @section('pageTitle', 'Thông tin cá nhân')
+@section('additional-style')
+<link href="{{ asset('js/cropper/cropper.min.css') }}" rel="stylesheet" type="text/css">
+<link href="
+https://cdn.jsdelivr.net/npm/jquery-ui-slider@1.12.1/jquery-ui.min.css
+" rel="stylesheet">
+<style>
+   
+#cropModal > img{
+    width:100% !important;
+}
 
+    h1, h2 {
+    font-family: Lato;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .container {
+    max-width: 640px;
+    margin: 20px auto;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  .slider-val-area {
+    width: 50%;
+    padding: 10px 15px 0 10px
+  }
+
+  .slider-val-area #min-zoom-val {
+    float: left;
+  }
+
+  .slider-val-area #max-zoom-val {
+    float: right;
+  }
+</style>
+@endsection
 @section('content')
 
 <div class="nk-block">
@@ -26,7 +67,7 @@
                                         <ul class="link-list-opt no-bdr">
                                             <li>
                                                 @if($updateFlag)
-                                                <a href="#"data-bs-toggle="modal" data-bs-target="#profile-edit"><em class="icon ni ni-camera-fill"></em><span>Thay đổi ảnh</span></a>
+                                                <a href="#" data-bs-toggle="modal" data-bs-target="#profile-edit"><em class="icon ni ni-camera-fill"></em><span>Thay đổi ảnh</span></a>
 
                                                 @else
                                                 <a href="#" class="fail-update-btn" ><em class="icon ni ni-camera-fill"></em><span>Thay đổi ảnh</span></a>
@@ -52,7 +93,7 @@
                     
                     <div class="card-inner p-0">
                         <ul class="link-list-menu">
-                            <li><a href="/trang-ca-nhan"><em class="icon ni ni-user-fill-c"></em><span>Thông tin cá nhân</span></a></li>
+                            <li><a href="#"><em class="icon ni ni-user-fill-c"></em><span>Thông tin cá nhân</span></a></li>
                             <li><a href="/quan-ly/binh-luan"><em class="icon ni ni-activity-round-fill"></em><span>Lịch sử hoạt động</span></a></li>
                             <li>
                                 @if($updateFlag)
@@ -162,10 +203,11 @@
         </div><!-- .card-aside-wrap -->
     </div><!-- .card -->
 </div><!-- .nk-block -->
+
 @endsection 
 
 @section('modal')
- <div class="modal fade" role="dialog" id="profile-edit">
+    <div class="modal fade" role="dialog" id="profile-edit">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <a href="#" class="close" data-bs-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
@@ -248,11 +290,12 @@
                             <form id="form-avatar-edit" method="POST" action="/profile/changeAvatar/{{ Auth::user()->profile->id }}" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
+                                <input name="oldImage" type="hidden" value="{{  Auth::user()->profile->avatar }}">
+
                                 <div class="row gy-4">
                                     <div class="col-md-12">
-                                        <div class="user-avatar sq xl">
-                                            <img src={{ Auth::user()->profile->url }} alt="..."  id="showNewImage"/>
-
+                                        <div class="user-avatar sq xl">       
+                                            <img src={{ Auth::user()->profile->url }} alt="..."  id="showNewImage"/>                                    
                                         </div>
                                     </div>
                                     
@@ -261,8 +304,9 @@
                                             <label class="form-label" for="customFileLabel">Upload ảnh đại diện</label>
                                             <div class="form-control-wrap">
                                                 <div class="form-file">
-                                                    <input type="file" class="form-file-input" id="customFile" name="image" required>
+                                                    <input type="file" class="form-file-input" id="avatarUpload" name="image" required>
                                                     <label class="form-file-label" for="customFile">Chọn ảnh</label>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -319,10 +363,83 @@
             </div><!-- .modal-content -->
         </div><!-- .modal-dialog -->
     </div><!-- .modal -->
+
+    <div class="modal fade modal-fullscreen" role="dialog" id="cropModal"  data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <em class="icon ni ni-cross"></em>
+                </a>
+                <div class="modal-header">
+                    <h5 class="modal-title">Crop avatar 128 x 128</h5>
+                </div>
+                <div class="modal-body modal-body-lg">
+                    <div class="d-flex justify-content-center">
+                        <div class="border">
+                            <img src="" id="cropper-img" />
+                        </div>
+                        {{-- <img class="border" src="" alt="" id="result" style="width:128px;height:128px" > --}}
+                    </div>
+
+                    {{-- <input id="zoom-slider" step=".05" min="0.1" max="5.45" value="1" type="range"> --}}
+                    <div id="zoom-slider" class="mt-2"></div>
+                    {{-- <div class="row">
+                        <div class="slider-val-area">
+                            <span id="min-zoom-val" class="pull-left">0</span>
+                        </div>
+                        <div class="slider-val-area">
+                            <span id="max-zoom-val" class="pull-right">1</span>
+                        </div>
+                    </div> --}}
+                </div>
+                <div class="modal-footer bg-light">
+                    <button class="btn btn-outline-primary" id="cropImageBtn">Bắt đầu crop</button>
+                    <button class="btn btn-outline-warning" id="acceptCropBtn">Xuất ảnh</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection 
 @section('additional-scripts')
+<script src="{{ asset('js/cropper/cropper.min.js') }}" ></script>
+<script src="
+https://cdn.jsdelivr.net/npm/jquery-ui-slider@1.12.1/jquery-ui.min.js
+"></script>
+
 <script>
-    
+    var isInitialized = false;
+    var cropper = '';
+    var updatedImage = '';
+
+    var _URL = window.URL || window.webkitURL;
+    // Initialize Slider
+
+    $(document).ready(function () {
+
+        $("#zoom-slider").slider({
+            orientation: "horizontal",
+            range: "min",
+            max: 1,
+            min: 0,
+            value: 0,
+            step: 0.0001,
+            slide: function () {
+                if (isInitialized == true) {
+                  
+                    var currentValue = $("#zoom-slider").slider("value");
+                    var zoomValue = parseFloat(currentValue);
+                    cropper.zoomTo(zoomValue.toFixed(4));
+                    
+                }
+            }
+        });
+    });
+
+
+       
+
+
     $('.fail-update-btn').click(function(){
         Swal.fire({
                     icon: 'info',
@@ -336,24 +453,133 @@
         e.preventDefault();
 
         Swal.fire({
-                    icon: 'success',
-                    title: `Cập nhật thông tin cá nhân thành công`,
-                    showConfirmButton: false,
-                    timer: 2500
-                });
+            icon: 'success',
+            title: `Cập nhật thông tin cá nhân thành công`,
+            showConfirmButton: false,
+            timer: 2500
+        });
         $('#form-profile-edit').submit();
     })
 
-    $("#customFile").change(function() {
+    $("#avatarUpload").change(function() {
+
         const file = this.files[0]
         if (file) {
             let reader = new FileReader();
             reader.onload = function(event){
-                $('#showNewImage').attr('src', event.target.result);
+
+                var image = new Image();
+
+                //Set the Base64 string return from FileReader as source.
+                image.src = event.target.result;
+
+                image.onload = function () {
+                var height = this.height;
+                var width = this.width;
+
+                if (height > 128 || width > 128) {
+                    $('#cropModal').modal('show');
+                    // $('#firstCropImage').attr('src', event.target.result);
+                    $("#cropImageBtn").removeAttr('disabled');
+                    // $('#result').attr('src', event.target.result);
+                    $("#cropper-img").attr('src',event.target.result);
+                    $('#cropper-img').addClass('ready');
+                    if (isInitialized == true) {
+                        $('#zoom-slider').val(0);
+                        cropper.destroy();
+                    }
+                }
+                else{
+                    $('#showNewImage').attr('src', event.target.result)
+                }
+
+                };
+             
             }
             reader.readAsDataURL(file);
         }
     })
+    
+    function initCropper() {
+        var vEl = document.getElementById('cropper-img');
+        cropper = new Cropper(vEl, {
+            autoCropArea: 1,
+            viewMode: 1,
+            dragMode: 'move',
+            aspectRatio: 128/128,
+            minCropBoxWidth: 128,
+            minCropBoxHeight: 128,
+            checkOrientation: false,
+            cropBoxMovable: false,
+            cropBoxResizable: false,
+            zoomOnTouch: false,
+            zoomOnWheel: false,
+            guides: false,
+            highlight: false,
+            
+            ready: function (e) {
+                var cropper = this.cropper;
+                cropper.zoomTo(0);
+
+                var imageData = cropper.getImageData();
+                console.log("imageData ", imageData);
+                var minSliderZoom = imageData.width / imageData.naturalWidth;
+
+                $('#min-zoom-val').html(minSliderZoom.toFixed(4));
+
+                $(".cr-slider-wrap").show();
+                $("#zoom-slider").slider("option", "max", 1);
+                $("#zoom-slider").slider("option", "min", minSliderZoom);
+                $("#zoom-slider").slider("value", minSliderZoom);
+            },
+            crop: () => {
+                const canvas = cropper.getCroppedCanvas();
+                updatedImage = canvas.toDataURL('image/jpeg');
+            },
+        });
+        isInitialized = true;
+    }
+
+    $('#cropImageBtn').click(function(e){
+        e.preventDefault();
+
+        $(this).attr('disabled','disabled');
+
+        initCropper();
+    })
+
+    $('#acceptCropBtn').click(function(e) {
+            e.preventDefault();
+            $('#showNewImage').attr('src', updatedImage)
+
+            const file = base64ToFile(updatedImage);
+
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+
+            const fileInput = document.getElementById('avatarUpload');
+
+            fileInput.files = dataTransfer.files;
+            $('#cropModal').modal('hide');
+
+            console.log(file);
+    })
+
+    $('#cropModal').on('hidden.bs.modal', function(event) {
+        cropper.destroy();
+       
+    })
+ 
+    $('#zoom-slider').on("input",function(event) {
+
+        if (isInitialized == true) {    
+            var currentValue = $(this).val();
+            var zoomValue = parseFloat(currentValue);
+            cropper.zoomTo(zoomValue.toFixed(4));
+            
+        }
+    })
+
     $('#btn-avatar-edit').click(function(e){
         e.preventDefault();
 
@@ -367,6 +593,27 @@
      
 
     })
+
+    base64ToFile = (url) => {
+        let arr = url.split(',');
+        // console.log(arr)
+        let mime = arr[0].match(/:(.*?);/)[1];
+        let data = arr[1];
+
+        let dataStr = atob(data);
+        let n = dataStr.length;
+        let dataArr = new Uint8Array(n);
+
+        while (n--) {
+        dataArr[n] = dataStr.charCodeAt(n);
+        }
+
+        let file = new File([dataArr], 'image.jpeg', { type: mime });
+
+
+        return file;
+
+    };
 </script>
 
 @endsection
