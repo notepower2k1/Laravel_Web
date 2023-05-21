@@ -484,6 +484,16 @@ pre {
 
 
     })
+
+    $('input').keyup(function(){
+        var input_val = $(this).val();
+        var inputRGEX = /^[a-zA-Z0-9]*$/;
+        var inputResult = inputRGEX.test(input_val);
+          if(!(inputResult))
+          {     
+            this.value = this.value.replace(/[^a-z0-9\s]/gi, '');
+          }
+       });
 </script>
 
 @endsection

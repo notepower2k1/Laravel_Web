@@ -7,7 +7,7 @@
 
 .btn2top .sticky-btn {
   position: fixed;
-  bottom: -96px;
+  bottom: 36px;
   right: 60px;
   background: dodgerblue;
   opacity: .6;
@@ -18,10 +18,7 @@
   width: 36px;
   height: 36px;
 }
-.btn2top .sticky-btn.revealed {
-  bottom: 36px;
-  opacity: 1;
-}
+
 .btn2top a.sticky-btn {
   font-family: sans-serif;
   padding: 9px;
@@ -38,10 +35,10 @@
 @media screen and (max-width: 768px) {
   .btn2top .sticky-btn {
     right: 21px;
-  }  
-  .btn2top .sticky-btn.revealed {
     bottom: 21px;
-  }
+
+  }  
+
 }
 
 
@@ -50,10 +47,12 @@
   position: fixed;
   bottom: -96px;
   left: 33px;
-  background: rgba(255, 255, 255, 0.81);
+  background: #F9FBE7;
   padding: 12px;
   border-radius: 50%;
   transition: all 0.8s ease;
+  bottom: 36px;
+
 }
 .btn2contact .sticky-btn:hover {
   cursor: pointer;
@@ -63,23 +62,20 @@
 }
 .btn2contact .sticky-btn img {
   width: 45px;
+
 }
 
-.btn2contact .sticky-btn.revealed {
-  bottom: 36px;
-  opacity: 1;
-}
 
 @media screen and (max-width: 768px) {
   .btn2contact .sticky-btn {
+    bottom: 21px;
+
     left: 21px;
   } 
   .btn2contact .sticky-btn img {
     width: 36px;
   }
-  .btn2contact .sticky-btn.revealed {
-    bottom: 21px;
-  } 
+  
 }
  
 .nk-content{
@@ -92,89 +88,101 @@
 <div>
   <div class="nk-block" id="content-box-detail">
     <div class="container">
-      <div class="card card-bordered">
-  
-      
-          <div class="card-inner">
-            <div class="d-flex mb-3">
-              <div class="p-2 ">
-                @if($previous)
-                <a href="{{ $previous->slug }}"  class="btn btn-lg btn-outline-secondary">
-                  <em class="icon ni ni-arrow-long-left"></em>
-                  <span>Chương trước</span>
-                  </a>
-                @else
-                <button class="btn btn-lg  btn-outline-secondary" disabled>
-                  <em class="icon ni ni-arrow-long-left"></em>
-                  <span>Chương trước</span>
-
-                </button>
-                @endif
-              </div>
-              <div class="ms-auto p-2">
+    <div class="card card-bordered">
+        
+        <div class="">
+            <div class="d-flex justify-content-between">
+                <div class="p-2 ">
+                    @if($previous)
+                    <a href="{{ $previous->slug }}" class="btn btn-lg btn-outline-secondary">
+                      <em class="icon ni ni-arrow-long-left"></em>
+                      <span>Chương trước</span>
+                      </a>
+                    @else
+                    <button class="btn btn-lg  btn-outline-secondary" disabled>
+                      <em class="icon ni ni-arrow-long-left"></em>
+                      <span>Chương trước</span>
+              
+                    </button>
+                    @endif
+                </div>
+          
+                <div class="p-2">
+                   
+                    <a href="/sach-noi/{{ $chapter->books->slug }}/{{  $chapter->slug }}" class="btn btn-lg btn-outline-secondary" >
+                      <em class="icon ni ni-headphone"></em><span>Sách nói</span>
+                    </a>
+                  
+                </div>
+              <div class="p-2">
               
                 @if($next)
                 <a href="{{ $next->slug }}" class="btn btn-lg btn-outline-secondary">
                   <span>Chương sau</span>
                   <em class="icon ni ni-arrow-long-right"></em>
-
-
+          
+          
                 </a>
                 @else
                 <button class="btn btn-lg  btn-outline-secondary" disabled>
                   <span>Chương sau</span>
                   <em class="icon ni ni-arrow-long-right"></em>
-
+          
                 </button>
                 @endif
               </div>
             </div>
+        </div>
+      
+        <div class="card-inner">
             
-          
+           
+        
+        
             <div class="title mb-2">
-              @if($chapter->name)
-              <h3 class="text-left">       
+                @if($chapter->name)
+                <h3 class="text-left">       
                 {{$chapter->code}}: {{ $chapter->name }}
                 </h3>
                 @else
                 <h3 class="text-left">       
-                  {{$chapter->code}}
+                    {{$chapter->code}}
                 </h3>
                 @endif 
             </div>
-    
+
             <div class="d-flex bg-light">
                 <div class="p-2 flex-fill bg-light">
-                  <em class="icon ni ni-book"></em>
-                  <a class="text-dark" href="/sach/{{$chapter->books->id  }}/{{ $chapter->books->slug  }}">{{ $chapter->books->name }}</a>
+                    <em class="icon ni ni-book"></em>
+                    <a class="text-dark" href="/sach/{{$chapter->books->id  }}/{{ $chapter->books->slug  }}">{{ $chapter->books->name }}</a>
                 </div>
                 <div class="p-2 flex-fill bg-light">
-                  <em class="icon ni ni-edit"></em>          
-                  <a class="text-dark" href="/thanh-vien/{{ $chapter->books->users->id }}">{{ $chapter->books->users->profile->displayName }}</a>
+                    <em class="icon ni ni-edit"></em>          
+                    <a class="text-dark" href="/thanh-vien/{{ $chapter->books->users->id }}">{{ $chapter->books->users->profile->displayName }}</a>
                 </div>
                 <div class="p-2 flex-fill bg-light">
-                  <em class="icon ni ni-text"></em>
-                  <span>{{ $chapter->numberOfWords }} chữ</span>
+                    <em class="icon ni ni-text"></em>
+                    <span>{{ $chapter->numberOfWords }} chữ</span>
                 </div>
                 <div class="p-2 flex-fill bg-light">
-                  <em class="icon ni ni-clock"></em>          
-                  <span>{{ $chapter->updated_at }}</span>
+                    <em class="icon ni ni-clock"></em>          
+                    <span>{{ $chapter->updated_at }}</span>
                 </div>
-    
-              
+
+                
             </div>
             <div class="border px-4 pt-3" id="divhtmlContent" style="font-size: 16px;line-height:30px">
-    
-              {!! clean($chapter->content) !!}
-    
+
+                {!! clean($chapter->content) !!}
+
             </div>  
-    
-          
-          </div>
-        </div>
+
         
-      <div class="card card-bordered rounded">
-        <div class="">
+        </div>
+    </div>
+        
+    <div class="card card-bordered rounded">
+      <div class="">
           <div class="d-flex justify-content-between">
             <div class="p-2 ">
               @if($previous)
@@ -222,7 +230,9 @@
         
       <div class="card card-bordered rounded">
         <div class="p-3">
-          <div class="row g-gs">                      
+          <div class="row g-gs"> 
+            
+            @if(Auth::check())
             <div class="col-lg-8">
                 <div class="product-details entry me-xxl-3">
                     <div class="d-flex justify-content-between">
@@ -547,7 +557,9 @@
                     </div>
                 </div>
             </div><!-- .col -->
-            <div class="col-lg-4 " style="background-color:#f7f5f0">
+
+            
+            <div class="col-lg-4" style="background-color:#f7f5f0">
                 <h5><span class="total-comment-span">Gợi ý cho bạn</h5>
 
                 <div class="text-center">
@@ -570,7 +582,7 @@
     
     
                             </div>
-                            <a href="/sach/{{$book->id}}/{{$book->slug}}" class="btn btn-danger rounded-pill mt-5 px-4 ">Đọc ngay</a>
+                            <a href="/sach/{{$book->id}}/{{$book->slug}}" class="btn btn-danger rounded-pill mt-2 px-4 ">Đọc ngay</a>
                         </div>
                                 
                             
@@ -580,59 +592,349 @@
                 </div>
                
             </div>
+
+            @else
+            <div class="col-lg-12">
+                <div class="product-details entry me-xxl-3">
+                    <div class="d-flex justify-content-between">
+                        <h5><span class="total-comment-span">{{ $chapter->books->totalComments }} </span>bình luận</h5>
+                        <div class="dropdown">
+                            <a class="btn btn-icon btn-outline-secondary dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                <em class="icon ni ni-sort-line"></em>    
+                            </a>
+                            <div class="dropdown-menu">
+                              <ul class="link-list-opt">
+                                <li><a href="#" id="sort-comment-new"><span>Mới nhất</span></a></li>
+                                <li><a href="#" id="sort-comment-old"><span>Cũ nhất</span></a></li>
+                        
+                              </ul>
+                            </div>
+                          </div>                                                      
+                    </div>
+                    <div class="list-group mt-3">
+                        @if(Auth::check())
+                        <div class="d-flex">                                                     
+                            <img class="rounded border shadow me-2 flex-grow-2" src="{{ Auth::user()->profile->url }}" id="comment_avatar" style="width:128px;height:128px">
+  
+                            <div class="nk-chat-editor border flex-grow-1 bg-light" id="main-comment-box">
+                                <div class="nk-chat-editor-form">
+                                    <div class="form-control-wrap">
+                                        <textarea class="form-control form-control-simple no-resize bg-light textarea" id="comment_area" placeholder="Viết bình luận của bạn..."></textarea>
+                                    </div>
+                                </div>
+                                <ul class="nk-chat-editor-tools g-2">                                                                                                                                                                                    
+                                    <li>                                                           
+                                        <button class="btn btn-round btn-warning btn-icon" id="comment-btn"><em class="icon ni ni-send-alt"></em></button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                      
+                        <hr>
+                        @endif
+                        <div id="comment-box">
+                            
+                            <div id ="comment-render-div">
+                                @foreach ($comments as $comment)
+                                <div id="comment-{{ $comment->id }}">
+                                        <div class="d-flex flex-column comment-section">
+                                            <div class="bg-white p-2">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div class="d-flex user-info">
+                                                            <img class="rounded border shadow me-2" src="{{ $comment->users->profile->url }}" width="60px">
+                                                            <div class="flex-grow-1">
+                                                                <span class="d-block font-weight-bold name">{{ $comment->users->profile->displayName }}</span>
+                                                                
+  
+                                                                <div class="d-flex">
+                                                                    @foreach ($userTotalReading as $userTotal )
+  
+                                                                    @if($userTotal->userID == $comment->users->id)
+                                                                        <div class="otherInfo me-5">
+                                                                            <em class="icon ni ni-eye"></em>
+                                                                            <span class="text-muted">Đã đọc: {{ $userTotal->total }} lần</span>
+                                                                        </div>
+                                                                    @endif
+                                                                    @endforeach
+                                                                    <div class="timeComment">
+                                                                        <em class="icon ni ni-clock"></em>
+                                                                        <span class="text-muted">{{ $comment->time }}</span>
+                                                                    </div>
+                                                                  
+                                                                </div>
+                                                               
+                                                            </div>
+  
+                                                          
+                                                            
+                                                        </div>
+                                                      
+                                                        @if(Auth::check())
+                                                            @if(Auth::user()->id == $comment->users->id || Auth::user()->role == 1)
+                                                            <div class="dropdown">
+                                                                <a class="dropdown-toggle text-dark" href="#" type="button" data-bs-toggle="dropdown">
+                                                                    <em class="icon ni ni-more-v"></em>
+                                                                </a>
+                                                                <div class="dropdown-menu">
+                                                                <ul class="link-list-opt">
+                                                                    <li>
+                                                                        <a class="delete-comment-btn" data-id={{ $comment->id }}>
+                                                                            <em class="icon ni ni-trash"></em>
+                                                                            <span>Xóa bình luận</span>
+                                                                        </a>
+                                                                    
+                                                                    </li>
+                                                                    <li> 
+                                                                        <a class="edit-comment-btn" data-id="{{ $comment->id }}" data-option="1">
+                                                                            <em class="icon ni ni-edit fs-16px"></em>
+                                                                            <span>Chỉnh sửa bình luận</span>
+                                                                        </a>
+  
+                                                                    
+                                                                    </li>
+                                                                </ul>
+                                                                </div>
+                                                            </div>
+                                                            @endif
+                                                        @endif
+                                                    </div>
+                                                    
+                                                
+                                                
+                                                <div class="mt-2" id ="comment-content-{{ $comment->id }}">
+                                                    <p>
+                                                        {{ $comment->content }}
+                                                    </p>
+                                                </div>
+                                            </div>
+  
+                                            
+                                                <div class="bg-white">
+                                                    <div class="d-flex align-items-center justify-content-between">
+                                                        @if($comment->totalReplies > 0)
+                                                            <div class="ms-2">
+                                                                <p class="open-relies-btn fw-bold" data-id="{{ $comment->id }}">Xem {{ $comment->totalReplies }} phản hồi</p>
+                                                            </div>
+                                                        @else
+  
+                                                            <div></div>
+                                                        @endif
+                                                        
+                                                        <div class="ms-2">
+  
+                                                            @if($comment->likes->count() > 0)
+                                                                @if(Auth::check()) 
+                                                                    @if($comment->likes->where("userID",'=',Auth::user()->id)->where('isLike','=',1)->count() > 0)   
+                                                                        <span class="like-comment-btn me-2" data-id={{ $comment->id }}>
+                                                                            <em class="icon ni ni-thumbs-up fs-16px text-primary">{{ $comment->totalLikes }}</em>
+                                                                        </span>
+                                                                    @else
+                                                                        <span class="like-comment-btn me-2" data-id={{ $comment->id }}>
+                                                                            <em class="icon ni ni-thumbs-up fs-16px">{{ $comment->totalLikes }}</em>
+                                                                        </span>
+                                                                    @endif
+  
+                                                                @else
+                                                                    <span class="me-2">
+                                                                        <em class="icon ni ni-thumbs-up fs-16px">{{ $comment->totalLikes }}</em>
+                                                                    </span>
+                                                                @endif
+                                                         
+                                                            @else
+                                                                <span class="like-comment-btn me-2" data-id={{ $comment->id }}>
+                                                                    <em class="icon ni ni-thumbs-up fs-16px">{{ $comment->totalLikes }}</em>
+                                                                </span>
+                                                            @endif
+                                                           
+                                                            @if(Auth::check())
+                                                                <span class="create-reply-btn me-2" data-id={{ $comment->id }}>
+                                                                    <em class="icon ni ni-reply fs-16px "></em>
+                                                                </span>
+                                                                
+  
+                                                          
+                                                                @if(Auth::user()->id != $comment->users->id)
+  
+                                                                <span class="report-comment-btn me-2" data-id={{ $comment->id }} data-type=6 data-user="{{ $comment->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                    <em class="icon ni ni-flag fs-16px"></em>
+                                                                </span>
+                                                                @endif
+                                                               
+                                                                
+                                                               
+                                                            @endif
+                                                        </div>
+                                                        
+                                                      
+                                                    </div>
+                                                    
+                                                            
+                                                    
+                                                </div>
+                                            
+                                        </div> 
+                                        <hr>
+                                        @foreach ($comment->replies as $reply)
+                                        @if(is_null($reply->deleted_at))
+                                        <div class="ms-5 replies-item replies-item-{{ $reply->commentID }}" id="reply-{{ $reply->id }}">
+                                            <div class="d-flex flex-column comment-section">
+                                                <div class="bg-white p-2">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div class="d-flex user-info">
+                                                            <img class="rounded border shadow me-2" src="{{ $reply->users->profile->url }}" width="60px">
+                                                            <div class="flex-grow-1">
+                                                                <span class="d-block font-weight-bold name">{{ $reply->users->profile->displayName }}</span>
+                                                                
+                                                                <div class="d-flex">
+                                                                    @foreach ($userTotalReading as $userTotal )
+  
+                                                                    @if($userTotal->userID == $reply->users->id)
+                                                                        <div class="otherInfo me-5">
+                                                                            <em class="icon ni ni-eye"></em>
+                                                                            <span class="text-muted">Đã đọc: {{ $userTotal->total }} lần</span>
+                                                                        </div>
+                                                                    @endif
+                                                                    @endforeach
+                                                                    <div class="timeComment">
+                                                                        <em class="icon ni ni-clock"></em>
+                                                                        <span class="text-muted">{{ $reply->time }}</span>
+                                                                    </div>
+                                                                  
+                                                                </div>
+                                                               
+                                                            </div>
+                                                        </div>
+                                                      
+                                                        @if(Auth::check())
+                                                            @if(Auth::user()->id == $reply->users->id || Auth::user()->role == 1)
+                                                            <div class="dropdown">
+                                                                <a class="dropdown-toggle text-dark" href="#" type="button" data-bs-toggle="dropdown">
+                                                                    <em class="icon ni ni-more-v"></em>
+                                                                </a>
+                                                                <div class="dropdown-menu">
+                                                                    <ul class="link-list-opt">
+                                                                    <li>
+                                                                        <a class="delete-reply-btn" data-id={{ $reply->id }}>
+                                                                            <em class="icon ni ni-trash"></em>
+                                                                            <span>Xóa phản hồi</span>
+                                                                        </a>
+                                                                        
+                                                                    </li>
+                                                                    <li> 
+                                                                        <a class="edit-comment-btn" data-id="{{ $reply->id }}" data-option="2">
+                                                                            <em class="icon ni ni-edit fs-16px"></em>
+                                                                            <span>Chỉnh sửa phản hồi</span>
+                                                                        </a>
+  
+                                                                        
+                                                                    </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                            @endif
+                                                        @endif
+                                                    </div>
+                                                    <div class="mt-2" id ="reply-content-{{ $reply->id }}">
+                                                        <p>
+                                                            {{ $reply->content }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                
+  
+                                                <div class="ms-2">
+                                                    <div class="d-flex align-items-center">
+                                                        @if($reply->likes->count() > 0)
+                                                            @if(Auth::check()) 
+                                                                @if($reply->likes->where("userID",'=',Auth::user()->id)->where('isLike','=',1)->count() > 0)   
+                                                                    <span class="like-reply-btn me-2" data-id={{ $reply->id }}>
+                                                                        <em class="icon ni ni-thumbs-up fs-16px text-primary">{{ $reply->totalLikes }}</em>
+                                                                    </span>
+                                                                @else
+                                                                    <span class="like-reply-btn me-2" data-id={{ $reply->id }}>
+                                                                        <em class="icon ni ni-thumbs-up fs-16px">{{ $reply->totalLikes }}</em>
+                                                                    </span>
+                                                                @endif
+  
+                                                            @else
+                                                                <span class="me-2">
+                                                                    <em class="icon ni ni-thumbs-up fs-16px">{{ $reply->totalLikes }}</em>
+                                                                </span>
+                                                            @endif
+                                                
+                                                        @else
+                                                            <span class="like-reply-btn me-2" data-id={{ $reply->id }}>
+                                                                <em class="icon ni ni-thumbs-up fs-16px">{{ $reply->totalLikes }}</em>
+                                                            </span>                                                                             
+                                                        @endif
+                                                        
+                                                        @if(Auth::check()) 
+                                                            
+  
+                                                                
+                                                                @if(Auth::user()->id != $comment->users->id)
+  
+                                                                <span class="report-comment-btn" data-id={{ $reply->id }} data-type=7 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                    <em class="icon ni ni-flag fs-16px me-2 "></em>
+                                                                </span>
+                                                                @endif
+                                                               
+                                                          
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                               
+                                            </div> 
+                                            <hr>
+                                        </div>
+  
+                                        @endif
+                                        
+  
+                                    @endforeach
+                                </div>
+                            
+                            @endforeach
+                            </div>
+                       
+  
+  
+                            {{-- <div class="col-md-12 d-flex justify-content-end mt-4">                          
+                                {{ $comments->links('vendor.pagination.custom',['elements' => $comments]) }}
+                            </div> --}}
+  
+                            @if ($comments->count() > 0)
+  
+                            <div class="data-container"></div>
+                            <div class="col-md-12 d-flex justify-content-end mt-4">                          
+                                <div id="pagination"></div>
+                            </div>
+                            @endif
+                        </div>
+                       
+                        
+                    
+                            
+                    </div>
+                </div>
+            </div><!-- .col -->
+            @endif
           </div><!-- .row -->
         </div>
        
       </div>
     </div>
   
-  
-  
-  
-  
- 
-
-  {{-- <div class="container text-center">
-      <div class="slider-init" data-slick='{"arrows": false, "dots": true, "slidesToShow": 3, "slidesToScroll": 1, "infinite":false, "responsive":[ {"breakpoint": 992,"settings":{"slidesToShow": 2}}, {"breakpoint": 768,"settings":{"slidesToShow": 2}} ]}'>
-        @foreach ($recommened_books as $book)
-
-        <div class="col">
-            
-                    <div class="shine">
-                        <img src="{{ $book->url }}" class="card-img-top shine" alt="" style="width:500px;height:400px">
-
-                    </div>
-                    <div class="info mt-2">
-                        <h5 class="card-title">{{ $book->name }}</h5>
-                        <p class="card-text">{{ Str::limit($book->description,150) }}</p>
-                        <div class="d-flex justify-content-between">
-                            <span class="text-muted fs-13px"><em class="icon ni ni-user-list"></em><span>{{ $book->author }}</span></span>
-                            
-                            <a href="the-loai/the-loai-sach/{{$book->types->slug}}" class="fs-13px"><span class="badge badge-dim bg-outline-danger">{{$book->types->name }}</span></a>
-
-
-                        </div>
-                        <a href="/sach/{{$book->id}}/{{$book->slug}}" class="btn btn-danger rounded-pill mt-5 px-4 ">Đọc ngay</a>
-                    </div>
-                    
-                
-        </div>
-        @endforeach
+    <div class="btn2top">
+        <a class="sticky-btn">
+        <img src="https://byjaris.com/code/icons/chevron-up.svg">
+        </a>
     </div>
-  </div><!-- .nk-block -->   --}}
-
-
-
-  <div class="btn2top">
-    <a class="sticky-btn">
-      <img src="https://byjaris.com/code/icons/chevron-up.svg">
-    </a>
-  </div>
   
   
     <div class="btn2contact">
       <a target="blank" class="toggle sticky-btn" data-target="addProduct"> 
-        <img src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/svg/configure-svgrepo-com.svg">
+        <img src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/svg/config.png">
       </a>
     </div>
   </div>
@@ -822,11 +1124,7 @@
                               <button class="btn btn-primary" id="save-setting"><em class="icon ni ni-plus"></em><span>Lưu cài đặt</span></button>
                           </div>
   
-                          <div class="col-12">
-                            <a href="/sach-noi/{{ $chapter->books->slug }}/{{  $chapter->slug }}" class="btn btn-primary w-75" >
-                              <em class="icon ni ni-headphone"></em><span>Chuyển sang sách nói</span>
-                            </a>
-                          </div>
+                          
                       </div>
                   </div><!-- .nk-block -->
                 </div>
@@ -864,7 +1162,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Báo cáo tài liệu</h5>
+                <h5 class="modal-title">Báo cáo chương</h5>
                 <button id="close-btn" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <em class="icon ni ni-cross"></em>
                 </button>
@@ -881,8 +1179,20 @@
                             <input type="text" class="form-control" id="chapter-code" required="" value='{{ $chapter->code }}' readonly>
                         </div>
                     </div>
+
                     <div class="form-group">
-                        <label class="form-label" for="description">Lý do</label>
+                        <label class="form-label" for="reason">Lý do</label>
+                        <div class="form-control-wrap">
+                            <select required class="form-control mb-4 col-6" name="reason" id="reason">
+                                @foreach ($reportReasons as $reason)
+                                <option value="{{ $reason->id }}" >{{ $reason->name }}</option>
+                                @endforeach
+                            </select>                        
+                        </div>                     
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="description">Ghi chú</label>
                         <div class="form-control-wrap">
                             <textarea class="form-control form-control-sm" id="description" name="description" placeholder="Lý do của bạn" required></textarea>
                         </div>
@@ -924,8 +1234,20 @@
                           <input type="text" class="form-control" id="user-name" name="user-name" required="" readonly>
                       </div>
                   </div>
+
                   <div class="form-group">
-                      <label class="form-label" for="description">Lý do</label>
+                    <label class="form-label" for="reason">Lý do</label>
+                    <div class="form-control-wrap">
+                        <select required class="form-control mb-4 col-6" name="reason" id="reason">
+                            @foreach ($reportReasons as $reason)
+                            <option value="{{ $reason->id }}" >{{ $reason->name }}</option>
+                            @endforeach
+                        </select>                        
+                    </div>                     
+                </div>
+
+                  <div class="form-group">
+                      <label class="form-label" for="description">Ghi chú</label>
                       <div class="form-control-wrap">
                           <textarea class="form-control form-control-sm" id="description" name="description" placeholder="Lý do của bạn" required></textarea>
                       </div>
@@ -1015,7 +1337,6 @@ $.ajaxSetup({
           window.scrollTo({top: 0})
       });
 
-      var scroll_offset = 50;
         $(window).scroll(function(){
           var $this = $(window);
 
@@ -1030,13 +1351,7 @@ $.ajaxSetup({
 
           }
         
-          if( $('.sticky-btn').length ) {
-            if( $this.scrollTop() > scroll_offset ) { 
-              $('.sticky-btn').addClass('revealed');
-            } else {
-              $('.sticky-btn').removeClass('revealed');
-            }	
-          }
+          
 
         
          
@@ -1262,6 +1577,7 @@ $.ajaxSetup({
                 const type_id = form.find('input[name="type_id"]').val();
                 const identifier_id = form.find('input[name="identifier_id"]').val();
                 const description = form.find('textarea[name="description"]').val();
+                const reason = form.find('select[name="reason"]').val();
 
 
   
@@ -1273,7 +1589,8 @@ $.ajaxSetup({
                         data:{
                             'description': description,
                             'identifier_id':identifier_id,
-                            'type_id':type_id
+                            'type_id':type_id,
+                            'reason':reason
                         }
                         })
                         .done(function(res) {
@@ -1872,7 +2189,8 @@ $.ajaxSetup({
                 var type_id = form.find('input[name="type_id"]').val();
                 var identifier_id = form.find('input[name="identifier_id"]').val();
                 var description = form.find('textarea[name="description"]').val();
-                
+                const reason = form.find('select[name="reason"]').val();
+
                 if(description){
                         $.ajax({
                         url:'/bao-cao',
@@ -1880,7 +2198,8 @@ $.ajaxSetup({
                         data:{
                             'description': description,
                             'identifier_id':identifier_id,
-                            'type_id':type_id
+                            'type_id':type_id,
+                            'reason':reason
                         }
                         })
                         .done(function(res) {

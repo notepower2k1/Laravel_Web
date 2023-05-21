@@ -63,22 +63,43 @@
                     
                   
 
-                        <label>File đính kèm</label>
-                        <input type="file"
-                        name="file_book" id="file_book"
-                        class="form-control col-6 " accept=".pdf">
+                        <div id="accordion-2" class="accordion">
+                            <div class="accordion-item">
+                                <a href="#" class="accordion-head" data-bs-toggle="collapse" data-bs-target="#accordion-item-2-1">
+                                    <h6 class="title">Sách dạng file .pdf</h6>
+                                    <span class="accordion-icon"></span>
+                                </a>
+                                <div class="accordion-body collapse" id="accordion-item-2-1" data-bs-parent="#accordion-2">
+                                    <div class="accordion-inner">
+                                      <label>File đính kèm</label>
+                                      <input type="file"
+                                      name="file_book" id="file_book"
+                                      class="form-control col-6 " accept=".pdf">
+                                    </div>
+                                </div>
+                            </div>    
+                          </div>
             
-                        <label class="mt-4">Ảnh bìa<sup>*</sup></label>
-                        <div>
-                            <canvas id="the-canvas" style="border:1px solid black;width:200px;height:300px" ></canvas>
-            
+                          <label class="mt-4">Ảnh bìa<sup>*</sup></label>
+                          <div class="d-flex">
+                            
+                            <div class="me-2">
+                              <canvas id="the-canvas" style="border:1px solid black;width:200px;height:300px" ></canvas>
+              
+                            </div>
+              
+                            <div class="flex-grow-1 align-self-end">
+                              <input type="file"
+                              name="image" id="imageFileInput" required
+                              class="form-control mb-4 col-6" accept="image/*" data-bs-toggle="tooltip" data-bs-placement="top" title="Nếu bạn để trống hệ thống sẽ sử dụng ảnh mặc định!!!">
+                            </div>
+                            
+                         
                         </div>
+                   
             
             
-                        <input type="file"
-                        name="image" id="imageFileInput" required
-                        class="form-control mb-4 col-6" accept="image/*" data-bs-toggle="tooltip" data-bs-placement="top" title="Nếu bạn để trống hệ thống sẽ sử dụng ảnh mặc định!!!">
-                        
+                 
                         <label>Ngôn ngữ<sup>*</sup></label>
                         <select required class="form-control mb-4 col-6" name="language">                           
                             <option value="1" >Tiếng việt</option>

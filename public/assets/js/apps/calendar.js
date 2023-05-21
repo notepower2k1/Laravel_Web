@@ -79,13 +79,65 @@
           });
           fcPopover.show();
         }
+
       },
-      eventMouseLeave: function eventMouseLeave() {
+      eventMouseLeave: function eventMouseLeave(e) {
+    
+          removePopover();
+
+
+      },
+      eventDragStart: function eventDragStart(e) {
+
+       
+
         removePopover();
+
       },
-      eventDragStart: function eventDragStart() {
+
+    
+      eventDragStop: function eventDragStop(e) {
+
+
+
         removePopover();
+
       },
+
+      eventDrop:function eventDrop(e) {
+        var selectEvent = e.event;
+
+        deleteFromLocalStorage(selectEvent)
+
+        const obj = {
+          'id': selectEvent.id,
+          'title': selectEvent.title,
+          'start': selectEvent.startStr,
+          'end': selectEvent.endStr,
+          'className': selectEvent.classNames[0],
+          'description': selectEvent.extendedProps.description,
+          'status' : 1
+        }
+        saveInLocalStorage(obj);
+      },
+ 
+      eventResize:function eventResize(e) {
+        var selectEvent = e.event;
+
+        deleteFromLocalStorage(selectEvent)
+
+        const obj = {
+          'id': selectEvent.id,
+          'title': selectEvent.title,
+          'start': selectEvent.startStr,
+          'end': selectEvent.endStr,
+          'className': selectEvent.classNames[0],
+          'description': selectEvent.extendedProps.description,
+          'status' : 1
+        }
+        saveInLocalStorage(obj);
+      },
+
       eventClick: function eventClick(info) {
         // Get data
         var title = info.event._def.title;
@@ -150,26 +202,41 @@
       var eventStartTimeCheck = eventStartTime ? 'T' + eventStartTime + 'Z' : '';
       var eventEndTimeCheck = eventEndTime ? 'T' + eventEndTime + 'Z' : '';
       var id = MyLib.generateUid().toString();
-      calendar.addEvent({
-        id: id,
-        title: eventTitle,
-        start: eventStartDate + eventStartTimeCheck,
-        end: eventEndDate + eventEndTimeCheck,
-        className: "fc-" + eventTheme,
-        description: eventDescription
-      });
 
-      const obj = {
-        'id': id,
-        'title': eventTitle,
-        'start': eventStartDate + eventStartTimeCheck,
-        'end': eventEndDate + eventEndTimeCheck,
-        'className': "fc-" + eventTheme,
-        'description': eventDescription
+      if(eventTitle && eventStartDate && eventEndDate){
+          calendar.addEvent({
+            id: id,
+            title: eventTitle,
+            start: eventStartDate + eventStartTimeCheck,
+            end: eventEndDate + eventEndTimeCheck,
+            className: "fc-" + eventTheme,
+            description: eventDescription
+          });
+    
+          const obj = {
+            'id': id,
+            'title': eventTitle,
+            'start': eventStartDate + eventStartTimeCheck,
+            'end': eventEndDate + eventEndTimeCheck,
+            'className': "fc-" + eventTheme,
+            'description': eventDescription,
+            'status' : 1
+    
+          }
+          saveInLocalStorage(obj);
+    
+          addEventPopup.modal('hide');
       }
-      saveInLocalStorage(obj);
-
-      addEventPopup.modal('hide');
+      else{
+        Swal.fire({
+            icon: 'error',
+            title: `Vui lòng điền đủ thông tin!!!`,
+            showConfirmButton: false,
+            timer: 1500
+        });    
+  
+      }
+    
     });
     updateEventBtn.on("click", function (e) {
       e.preventDefault();
@@ -183,38 +250,53 @@
       var eventStartTimeCheck = eventStartTime ? 'T' + eventStartTime + 'Z' : '';
       var eventEndTimeCheck = eventEndTime ? 'T' + eventEndTime + 'Z' : '';
       var selectEvent = calendar.getEventById(editEventForm[0].dataset.id);
-      selectEvent.remove();
-      deleteFromLocalStorage(selectEvent)
 
-      var id = editEventForm[0].dataset.id;
-      calendar.addEvent({
-        id: id,
-        title: eventTitle,
-        start: eventStartDate + eventStartTimeCheck,
-        end: eventEndDate + eventEndTimeCheck,
-        className: "fc-" + eventTheme,
-        description: eventDescription
+
+      if(eventTitle && eventStartDate && eventEndDate){
+
+          selectEvent.remove();
+          deleteFromLocalStorage(selectEvent)
+
+          var id = editEventForm[0].dataset.id;
+          calendar.addEvent({
+            id: id,
+            title: eventTitle,
+            start: eventStartDate + eventStartTimeCheck,
+            end: eventEndDate + eventEndTimeCheck,
+            className: "fc-" + eventTheme,
+            description: eventDescription
+          });
+
+          const obj = {
+            'id': id,
+            'title': eventTitle,
+            'start': eventStartDate + eventStartTimeCheck,
+            'end': eventEndDate + eventEndTimeCheck,
+            'className': "fc-" + eventTheme,
+            'description': eventDescription,
+            'status' : 1
+          }
+          saveInLocalStorage(obj);
+          editEventPopup.modal('hide');
+        }
+          else{
+            Swal.fire({
+                icon: 'error',
+                title: `Vui lòng điền đủ thông tin!!!`,
+                showConfirmButton: false,
+                timer: 1500
+            });    
+      
+          }
       });
 
-      const obj = {
-        'id': id,
-        'title': eventTitle,
-        'start': eventStartDate + eventStartTimeCheck,
-        'end': eventEndDate + eventEndTimeCheck,
-        'className': "fc-" + eventTheme,
-        'description': eventDescription
-      }
-      saveInLocalStorage(obj);
-      editEventPopup.modal('hide');
-    });
-
-    deleteEventBtn.on("click", function (e) {
-      e.preventDefault();
-      var selectEvent = calendar.getEventById(editEventForm[0].dataset.id);
-      selectEvent.remove();
-      deleteFromLocalStorage(selectEvent)
-    });
-    
+      deleteEventBtn.on("click", function (e) {
+        e.preventDefault();
+        var selectEvent = calendar.getEventById(editEventForm[0].dataset.id);
+        selectEvent.remove();
+        deleteFromLocalStorage(selectEvent)
+      });
+      
     //suport event
 
     function saveInLocalStorage(obj){
@@ -234,7 +316,7 @@
 
     function deleteFromLocalStorage(selectEvent){
 
-      let event_id = selectEvent._def.publicId;
+      let event_id = selectEvent.id;
 
 
       let dataExist = window.localStorage.getItem('calendar');
@@ -299,6 +381,8 @@
         time[0] = +time[0] % 12 || 12;
       }
       time = time.join('');
+
+      console.log('????');
       return time;
     }
     function customCalSelect(cat) {

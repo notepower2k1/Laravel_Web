@@ -18,9 +18,19 @@
     }
     .title-book{
         text-decoration: none;
-        color:#33373a;
+        color:#474749;
+    }
+    .title-book:hover{
+        color: #d9ad50;
     }
 
+    .sort-item ,.sort-item-toggle{
+        text-decoration: none;
+        color: #474749;
+    }
+    .sort-item:hover ,.sort-item-toggle:hover{
+        color: #d9ad50;
+    }
     .nk-content{
         background-image:url('https://raw.githubusercontent.com/notepower2k1/MyImage/main/banner/main-banner-1.png') !important;
         background-repeat: no-repeat;
@@ -34,7 +44,7 @@
 @endsection
 @section('content')
 <div class="container">
-    <div class="nk-fmg" style="background-color:#ffffff">
+    <div class="nk-fmg border-0" style="background-color:#ffffff">
         <div class="nk-fmg-aside toggle-screen-lg" data-content="files-aside" data-toggle-overlay="true" data-toggle-body="true" data-toggle-screen="lg" data-simplebar="init"><div class="simplebar-wrapper" style="margin: 0px;"><div class="simplebar-height-auto-observer-wrapper"><div class="simplebar-height-auto-observer"></div></div><div class="simplebar-mask"><div class="simplebar-offset" style="right: 0px; bottom: 0px;"><div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content" style="height: 100%; overflow: hidden scroll;"><div class="simplebar-content" style="padding: 0px;">
             <div class="nk-fmg-aside-wrap">
                     <ul class="list-unstyled">               
@@ -47,7 +57,7 @@
                                 @foreach ($book_types as $book_type)
                                 <li class="type-option" data-value={{ $book_type->slug  }} data-option=1 data-id={{ $book_type->id }} >
                                     <p class="nk-fmg-menu-item">
-                                        <span class="nk-fmg-menu-text">{{ $book_type->name }}</span>
+                                        <span class="nk-fmg-menu-text">{{ $book_type->name }} ({{ $book_type->total }})</span>
                                     </p>
                                 </li>
                                 @endforeach
@@ -63,7 +73,7 @@
                                 @foreach ($document_types as $document_type)
                                 <li class="type-option" data-value={{ $document_type->slug  }} data-option=2 data-id={{ $document_type->id }} > 
                                     <p class="nk-fmg-menu-item">
-                                        <span class="nk-fmg-menu-text">{{ $document_type->name }}</span>
+                                        <span class="nk-fmg-menu-text">{{ $document_type->name }} ({{ $document_type->total }})</span>
                                     </p>
                                 </li>
                                 @endforeach
@@ -85,8 +95,9 @@
                 <div class="nk-block-head nk-block-head-sm">
                     <div class="nk-block-between position-relative">
                         <div class="nk-block-head-content">
+                        
                             
-                            <h3 class="nk-block-title page-title" id="search-type-total-h3">Tìm kiếm: {{ $total }} kết quả</h3>    
+
                         </div>
                         <div class="nk-block-head-content">
                             <ul class="nk-block-tools g-1">         
@@ -104,12 +115,53 @@
                         </div>    
                     </div>
                 </div>
-                <div class="nk-fmg-quick-list nk-block mt-2" style="min-height:100vh">          
+                <div class="d-flex justify-content-between" id ="sort-by-box">
+                    <div class="dropdown">
+                        <a class="dropdown-toggle sort-item-toggle" href="#" type="button" data-bs-toggle="dropdown">
+                            <span>Mới cập nhật</span><em class="icon ni ni-caret-down-fill"></em></a>
+                        <div class="dropdown-menu">
+                          <ul class="link-list-opt">
+                            <li><a href="#" class="sort-item" data-sort='updated_at' ><span>Mới cập nhật</span></a></li>
+                            <li><a href="#" class="sort-item" data-sort='created_at'><span>Mới đăng</span></a></li>                         
+                          </ul>
+                        </div>
+                    </div>
+                    
+                    @if($option == 1)
+                        <a href="#" class="sort-item" data-sort='reading_count'>Lượt đọc</a>
+                    @else
+                        <a href="#" class="sort-item" data-sort='downloading_count'>Lượt tải</a>
+                    @endif
+                   
+
+                    
+                   
+                        <a href="#"  class="sort-item" data-sort='follow'>Theo dõi</a>
+
+                    
+
+                    @if($option == 1)
+                       
+                            <a href="#"  class="sort-item" data-sort='score'>Đánh giá</a>
+
+                       
+                    @endif
+
+                  
+                        <a href="#"  class="sort-item" data-sort='comment'>Bình luận</a>
+
+                  
+                        <a href="#" class="sort-item" data-sort='page_count'>Số trang</a>
+
+                   
+                </div>    
+                <div class="nk-fmg-quick-list nk-block mt-4" style="min-height:100vh"> 
+                       
                     <div class="toggle-expand-content expanded" data-content="quick-access">
                         <div class="nk-files nk-files-view-grid">
                             @if($items)
                             <div class="content">
-                                @if($option_id == 1)
+                                @if($option == 1)
                                     <div class="row" id="render-div">
                                         @foreach ($items as $book)
                                             <div class="col-lg-6 col-md-6">
@@ -158,7 +210,7 @@
                                                     </div>
                                                     <div class="d-flex flex-column">                                 
                                                         <a class="title-book" href="/tai-lieu/{{$document->id}}/{{$document->slug}}">{{ Str::limit($document->name,40) }}</a>
-                                                        <span class="text-muted fs-13px ">{{ Str::limit($document->description,100) }}</span>
+                                                        <span class="text-muted fs-13px ">{{ Str::limit($document->description,80) }}</span>
                                                         <div class="d-flex justify-content-between mt-1">
                                                             <span class="text-muted fs-13px"><em class="icon ni ni-user-list"></em><span>{{ Str::limit($document->author,20) }}</span></span>
                                                    
@@ -209,15 +261,11 @@
 
 <script>
    
-  
-  
-
-   
 
     $(document).ready(function() {
         bookRender();
 
-        var option_id = {!! $option_id !!};
+        var option_id = {!! $option !!};
         var type_id = {!! $type_id !!};
 
         $(`*[data-id="${type_id}"][data-option="${option_id}"]`).addClass('active');
@@ -297,8 +345,7 @@
                     };
 
 
-                    const total = sources.length;
-                    $('#search-type-total-h3').text(`Tìm kiếm: ${total} kết quả`)
+                    
                     container.pagination(options);
                 }
                 
@@ -368,8 +415,7 @@
                     };
 
 
-                    const total = sources.length;
-                    $('#search-type-total-h3').text(`Tìm kiếm: ${total} kết quả`)
+             
                     container.pagination(options);
                 }
                 
@@ -405,7 +451,7 @@
             else{
                 option = 'the-loai-tai-lieu';
             }
-            window.location.href=`/the-loai/${option}/${type_slug}`;
+            window.location.href=`/the-loai/sort_by=created_at/${option}/${type_slug}`;
        
 
         })
@@ -446,10 +492,39 @@
             };
 
 
-            const total = sources.length;
-            $('#search-type-total-h3').text(`Tìm kiếm: ${total} kết quả`)
+      
 
             container.pagination(options);
         }
+
+
+        $('#sort-by-box').on('click','.sort-item',function(e){
+            e.preventDefault();
+
+            const sort_by = $(this).data('sort');
+
+            
+            var option_id = {!! $option !!};
+            var type_id = {!! $type_id !!};
+
+            if(type_id > 0){
+                var type_slug = $(`*[data-id="${type_id}"][data-option="${option_id}"]`).data('value');
+            
+                var option = '';
+                if(option_id == 1){
+                    option = 'the-loai-sach';
+                }
+                else{
+                    option = 'the-loai-tai-lieu';
+                }
+                window.location.href=`/the-loai/sort_by=${sort_by}/${option}/${type_slug}`;
+            }
+
+            else{
+                window.location.href=`/the-loai/sort_by=${sort_by}`;
+            }
+            
+
+        })
 </script>
 @endsection

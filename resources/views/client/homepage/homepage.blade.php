@@ -378,7 +378,7 @@
                                                 <div class="d-flex justify-content-between">
                                                     <span class="text-muted fs-13px"><em class="icon ni ni-user-list"></em><span>{{ $book->author }}</span></span>
                                                     
-                                                    <a href="the-loai/the-loai-sach/{{$book->types->slug}}" class="fs-13px"><span class="badge badge-dim bg-outline-danger">{{$book->types->name }}</span></a>
+                                                    <a href="/the-loai/sort_by=created_at/the-loai-sach/{{$book->types->slug}}" class="fs-13px"><span class="badge badge-dim bg-outline-danger">{{$book->types->name }}</span></a>
 
 
                                                 </div>
@@ -418,7 +418,7 @@
                                                 <li><a href="#">{{ $book->author }}</a></li>
                                             </ul>
                                             <h3 class="product-title fs-13px" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $book->name }}"><a href="/sach/{{$book->id}}/{{$book->slug}}"> {{ Str::limit($book->name,20) }}</a></h3>
-                                            <a href="the-loai/the-loai-sach/{{$book->types->slug}}" class="fs-13px"><span class="badge badge-dim bg-outline-danger">{{$book->types->name }}</span></a>
+                                            <a href="the-loai/sort_by=created_at/the-loai-sach/{{$book->types->slug}}" class="fs-13px"><span class="badge badge-dim bg-outline-danger">{{$book->types->name }}</span></a>
                                         </div>
                                     </div>          
                                 </div>
@@ -467,6 +467,43 @@
         </div>
     </div><!-- .nk-block -->  
 
+</section>
+
+<section class="mt-4">
+    <div class="container">
+        <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Mới cập nhật</h4>
+                </div><!-- .nk-block-head-content -->
+            </div><!-- .nk-block-between -->
+        </div><!-- .nk-block-head -->
+        <div class="">
+            <table class="table table-striped table-hover">
+                <tbody>
+                    @foreach ($new_documents as $document)
+                        <tr>
+                            <td> <span class="text-muted">{{ $document->types->name }}</span></td>
+                            <td> <a class="title-book " href="/tai-lieu/{{$document->id}}/{{$document->slug}}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $document->name }}">{{ Str::limit($document->name,80) }}</a></td>                
+                            <td>
+                            @foreach(explode(",",$document->author) as $author)                                                                       
+                            <a class="text-muted" href="/tac-gia/tac-gia-tai-lieu/{{ $author }}">{{ $author }}</a>
+                            @if($loop->index < count(explode(",",$document->author)) - 1)
+                            <span class="text-muted">,</span>
+                            @endif
+                            @endforeach        
+                     
+                            </td>
+                            <td>                     
+                            <span class="text-muted">{{ $document->time }}</span>                
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+              </table>
+        </div>
+    </div>
+   
 </section>
 
 <section class="mt-4">
@@ -574,39 +611,7 @@
     })
    
 
-    $('.type-option').click(function(){
-
-        var type_slug = $(this).attr('data-value');
-        var option = 'the-loai-sach';
-        
-        $.ajax({
-            url:'/the-loai-ket-qua',
-            type:"GET",
-            data : {
-                "type_slug": type_slug,
-                "option":option
-            },
-            })
-            .done(function(res) {
-
-                if(res.res.length > 0 ){        
-                    window.location.href=`/the-loai/${option}/${type_slug}`;
-                }       
-                else{
-                    Swal.fire({
-                        icon: 'error',
-                        title: `Thể loại chưa có tài liệu`,
-                        showConfirmButton: false,
-                        timer: 2500
-                    });
-                }
-            })
-            .fail(function(jqXHR, textStatus, errorThrown) {
-            // If fail
-            console.log(textStatus + ': ' + errorThrown);
-            })
-            
-    });
+    
 
     
 

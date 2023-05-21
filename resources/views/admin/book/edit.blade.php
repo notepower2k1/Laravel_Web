@@ -1,8 +1,11 @@
 @extends('admin/layouts.app')
 @section('pageTitle', 'Cập nhật sách điện tử')
 @section('content')
-<div class="nk-block-head-sub"><a class="back-to" href="{{ url()->previous() }}"><em class="icon ni ni-arrow-left"></em><span>Quay lại</span></a></div>
-
+<ul class="breadcrumb breadcrumb-arrow">
+    <li class="breadcrumb-item"><a href="/admin/book">Sách</a></li>
+    <li class="breadcrumb-item active"><a href="#">Cập nhật</a></li>
+  </ul>
+<hr>   
 	<div class="card shadow mb-4">
 		<div class="card-body ">
                 @if($errors->any())

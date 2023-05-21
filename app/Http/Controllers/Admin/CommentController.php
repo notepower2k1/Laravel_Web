@@ -59,11 +59,15 @@ class CommentController extends Controller
               if($total){
                   $document = Document::findOrFail($comment->identifier_id);
                   $document->totalComments = $document->totalComments - ($total + 1);
+                  $document->timestamps = false;
+
                   $document ->save();
               }
               else{
                   $document = Document::findOrFail($comment->identifier_id);
                   $document->totalComments = $document->totalComments - 1;
+                  $document->timestamps = false;
+
                   $document ->save();
               }
   
@@ -73,11 +77,15 @@ class CommentController extends Controller
               if($total){
                   $book = Book::findOrFail($comment->identifier_id);
                   $book->totalComments = $book->totalComments - ($total + 1);
+                  $book->timestamps = false;
+
                   $book ->save();
               }
               else{
                   $book = Book::findOrFail($comment->identifier_id);
                   $book->totalComments = $book->totalComments - 1;
+                  $book->timestamps = false;
+
                   $book ->save();
               }
            
@@ -90,11 +98,14 @@ class CommentController extends Controller
               if($total){
                   $post = ForumPosts::findOrFail($comment->identifier_id);
                   $post->totalComments = $post->totalComments - ($total + 1);
+                  $post->timestamps = false;
+
                   $post ->save();
               }
               else{
                   $post = ForumPosts::findOrFail($comment->identifier_id);
                   $post->totalComments = $post->totalComments - 1;
+                  $post->timestamps = false;
                   $post ->save();
               }
            
@@ -110,10 +121,6 @@ class CommentController extends Controller
     }
 
     public function get_content($item_id) {
-
-     
-      
-
       $comment = Comment::findOrFail($item_id);
       $content = $comment->content;
 
@@ -163,18 +170,23 @@ class CommentController extends Controller
             case 1:
                 $document = Document::findOrFail($reply->comments->identifier_id);
                 $document->totalComments = $document->totalComments - 1;
+                $document->timestamps = false;
                 $document ->save();
                 break;
             case 2:         
 
                 $book = Book::findOrFail($reply->comments->identifier_id);
                 $book->totalComments = $book->totalComments - 1;
+                $book->timestamps = false;
+
                 $book ->save();
                 break;
             case 3:
 
                 $post = ForumPosts::findOrFail($reply->comments->identifier_id);
                 $post->totalComments = $post->totalComments + 1;
+                $post->timestamps = false;
+
                 $post ->save();
                 break;
             default:

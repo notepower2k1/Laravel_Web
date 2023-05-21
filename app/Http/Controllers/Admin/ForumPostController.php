@@ -205,59 +205,38 @@ class ForumPostController extends Controller
         $forum_post = ForumPosts::findOrFail($post_id);
         $forum_post->deleted_at = Carbon::now()->toDateTimeString();
         $forum_post ->save();
+
+        $forum = Forum::findOrFail($forum_post->forumID);
+        $forum->numberOfPosts =$forum->numberOfPosts + 1;
+        $forum ->save();
     }   
 
 
-    public function statistics_post_page($year = null){
+    public function statistics_post_page($forum_id,$year = null){
         DB::statement("SET SQL_MODE=''");
             
         $allYears = DB::select("SELECT distinct year(forum_posts.created_at) as 'year'
         from forum_posts");
 
-        $totalByTypes = DB::select("SELECT Count(forum_posts.id) as 'total', forums.name 
-        from forum_posts join forums on forum_posts.forumID = forums.id 
-        and forum_posts.deleted_at is null
-        GROUP by forums.name");
+        $all_posts = ForumPosts::where('forumID','=',$forum_id)->where('deleted_at','=',null)->whereYear('created_at', '=', $year)->get();
 
-        
+        $forum = Forum::findOrFail($forum_id);
+        $all_forum = Forum::where('id','!=',$forum_id)->get();
+
         if($year == null){
 
             $year = Carbon::now()->year;
         }
-        $totalPostsPerMonth = DB::select("SELECT 
-            SUM(IF(month = 'Jan', total, 0)) AS 'Tháng 1', 
-            SUM(IF(month = 'Feb', total, 0)) AS 'Tháng 2', 
-            SUM(IF(month = 'Mar', total, 0)) AS 'Tháng 3', 
-            SUM(IF(month = 'Apr', total, 0)) AS 'Tháng 4', 
-            SUM(IF(month = 'May', total, 0)) AS 'Tháng 5', 
-            SUM(IF(month = 'Jun', total, 0)) AS 'Tháng 6', 
-            SUM(IF(month = 'Jul', total, 0)) AS 'Tháng 7', 
-            SUM(IF(month = 'Aug', total, 0)) AS 'Tháng 8', 
-            SUM(IF(month = 'Sep', total, 0)) AS 'Tháng 9', 
-            SUM(IF(month = 'Oct', total, 0)) AS 'Tháng 10', 
-            SUM(IF(month = 'Nov', total, 0)) AS 'Tháng 11', 
-            SUM(IF(month = 'Dec', total, 0)) AS 'Tháng 12' 
-            FROM ( 
-                SELECT DATE_FORMAT(forum_posts.created_at, '%b') AS month, 
-                COUNT(forum_posts.id) as total FROM forum_posts 
-                WHERE Year(forum_posts.created_at) = $year and forum_posts.deleted_at is null
-                GROUP BY DATE_FORMAT(forum_posts.created_at, '%m-%Y')
-        ) as sub");
+       
         
-        $totalPostsInYear = ForumPosts::whereYear('created_at', '=', $year)->where('deleted_at','=',null)->get();
-
-        $totalPostsPerDate = DB::select("SELECT Count(forum_posts.id) as 'total', DATE(forum_posts.created_at) as 'date'
-        from forum_posts 
-        WHERE YEAR(forum_posts.created_at) = $year and forum_posts.deleted_at is null
-        GROUP by  DATE(forum_posts.created_at)");
-        
-         return view('admin.forum_post.statistics')
-            ->with('allYears',$allYears)
-            ->with('totalPostsInYear',$totalPostsInYear->count())
-            ->with('totalPostsPerDate',$totalPostsPerDate)
-            ->with('statisticsYear',$year)
-            ->with('totalPostsPerMonth',$totalPostsPerMonth)
-            ->with('totalByTypes', $totalByTypes);
+        return view('admin.forum_post.statistics')
+        ->with('forum_name',$forum->name)
+        ->with('forum_id',$forum_id)
+        ->with('all_forum',$all_forum)
+        ->with('allYears',$allYears)
+        ->with('all_posts',$all_posts)
+        ->with('statisticsYear',$year);
+          
             
     }
 

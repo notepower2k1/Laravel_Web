@@ -19,9 +19,10 @@
                   
                     <div class="nk-content">    
                         <nav class="navbar navbar-light bg-light">
-                            <a class="ms-3 navbar-brand" href="/">
-                                Home
-                              </a>
+                            <a href="/" class="logo-link">
+                                <img class="logo-light logo-img" src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png" alt="logo">
+                                <img class="logo-dark logo-img" src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png" alt="logo-dark">
+                            </a>
                         </nav>                
                         <div class="nk-block nk-block-middle nk-auth-body">                         
                             <div class="nk-block-head">
@@ -60,7 +61,7 @@
                                      
                                         <div class="mt-4">
 
-                                            <button type="submit" class="btn btn-primary btn-lg" id="download-btn">Download</button>
+                                            <button type="submit" class="btn btn-primary btn-lg" id="download-btn">Tải xuống</button>
                                         </div>
                                     </form> 
                                 </div>
@@ -72,20 +73,20 @@
                                     <div class="col-lg-6 order-lg-last">
                                         <ul class="nav nav-sm justify-content-center justify-content-lg-end">
                                             <li class="nav-item">
-                                                <a class="nav-link" href="#">Terms &amp; Condition</a>
+                                                <a class="nav-link" href="/thong-tin/lien-he">Liên hệ</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link" href="#">Privacy Policy</a>
+                                                <a class="nav-link" href="/thong-tin/quy-dinh">Quy định</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link" href="#">Help</a>
+                                                <a class="nav-link" href="/thong-tin/huong-dan">Hỗ trợ</a>
                                             </li>
                                           
                                         </ul>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="nk-block-content text-center text-lg-start">
-                                            <p class="text-soft">© 2022 Dashlite. All Rights Reserved.</p>
+                                            <p class="text-soft">© 2023 Ebook - Your Online Library</p>
                                         </div>
                                     </div>
                                 </div>

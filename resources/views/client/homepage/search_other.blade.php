@@ -71,21 +71,62 @@
                     <ul class="align" id="render-div">
                         @foreach ($items as $book)
             
-                        <li>
-                            <div class="info mb-2">
-                                <dfn data-info="{{ $book->name }}"><em class="icon ni ni-book text-success"></em></dfn>
+                      
+                        <li class="item-book">
+                            <div class="d-sm-none d-md-block">
+                                <div class="info mb-2 d-flex justify-content-start">
+                                    @if($book->file == null)
+                                        <dfn data-info="{{ $book->numberOfChapter }} chương"><em class="icon ni ni-book text-success"></em></dfn>
+                                    @else
+                                        <dfn data-info="Tệp PDF"><em class="icon ni ni-file-pdf text-success"></em></dfn>
+                                    @endif
             
-                                <dfn data-info="{{ $book->author }}"><em class="icon ni ni-user text-info"></em></dfn>
+                                    @if($book->language == 1)
+                                    <dfn data-info="Tiếng Việt"><em class="icon ni ni-globe text-info"></em></dfn>
+                                    @else
+                                    <dfn data-info="Tiếng Anh"><em class="icon ni ni-globe text-info"></em></dfn>
+                                    @endif
+                                </div>
                             </div>
-                            
-            
                             <figure class='book'>    
                                     <ul class='paperback_front'>
                                         
                                         <li>
-                                            @if(\Carbon\Carbon::parse($book->created_at)->isToday())
-                                            <span class="ribbon">Mới</span>
-                                            @endif
+            
+                                            @switch($option)
+                                                @case('danh-gia-cao')
+                                                    <span class="ribbon">
+                                                        <span class="fs-9px">
+                                                            {{ $book->ratingScore }}
+                                                            <em class="icon ni ni-star-fill"></em>
+                                                        </span>
+                                                    </span>
+            
+                                                    @break
+                                            
+                                                @case('doc-nhieu')
+                                                    <span class="ribbon">
+                                                        <span class="fs-9px">
+                                                            {{ $book->totalReading }}
+                                                            <em class="icon ni ni-eye-fill"></em>
+                                                        </span>
+                                              
+            
+                                                    </span>
+            
+                                                    @break
+            
+                                                @case('moi-dang')
+                                                    <span class="ribbon">{{ $book->time }}</span>
+            
+                                                    @break
+            
+                                                @default
+                                                
+                                                @if(\Carbon\Carbon::parse($book->created_at)->isToday())
+                                                    <span class="ribbon">Mới</span>
+                                                @endif
+                                            @endswitch
             
                                             <img src="{{ $book->url }}" alt="" width="100%" height="100%">
                                         </li>
@@ -109,13 +150,23 @@
                                         <li></li>
                                         <li></li>
                                     </ul>
-                                    {{-- <figcaption>
+                                    <figcaption>
                                         <h4>{{ $book->name }}</h4>
-                                        <span>{{ $book->author }}</span>
-                                    </figcaption> --}}
+                                        @foreach(explode(",",$book->author) as $author)                                                                       
+                                            <a class="text-info" href="/tac-gia/tac-gia-sach/{{ $author }}">{{ $author }}</a>
+                                            @if($loop->index < count(explode(",",$book->author)) - 1)
+                                                ,
+                                            @endif
+                                    @endforeach       
+                                     
+                                    </figcaption>
                             </figure>
+            
+                       
+            
                         </li>
-                        @if($loop->iteration % 3 == 0 || $loop->iteration == $items->count()  )
+                        
+                        @if($loop->iteration % 2 == 0 || $loop->iteration == $items->count()  )
                         <div class="shelf d-none d-xl-block">
             
                             <div class="bookend_left"></div>
@@ -130,23 +181,50 @@
                     @else
                     <ul class="align" id="render-div">
                         @foreach ($items as $document)
-                        <li>
-                            <div class="info mb-2 d-flex justify-content-start">
-                                <dfn data-info="{{ $document->name }}"><em class="icon ni ni-file text-success"></em></dfn>
-                
-                                <dfn data-info="{{ $document->author }}"><em class="icon ni ni-user text-info"></em></dfn>
+                        <li class="item-book">
+                            <div class="d-sm-none d-md-block">
+                                <div class="info mb-2 d-flex justify-content-start">
+                                    <dfn data-info="{{ $document->numberOfPages }} trang"><em class="icon ni ni-file-pdf text-success"></em></dfn>
+                    
+                                    @if($document->language == 1)
+                                    <dfn data-info="Tiếng Việt"><em class="icon ni ni-globe text-info"></em></dfn>
+                                    @else
+                                    <dfn data-info="Tiếng Anh"><em class="icon ni ni-globe text-info"></em></dfn>
+                                    @endif                        
+                                </div>
                             </div>
+                           
                             <figure class='book'>
             
                                 <!-- Front -->
                 
                                     <ul class='hardcover_front'>
                                         <li>
-                                            @if(\Carbon\Carbon::parse($document->created_at)->isToday())
-                                            <span class="ribbon">Mới</span>
-                                            @endif
-                                            <img src="{{ $document->url }}" alt="" width="100%" height="100%">
+                                            @switch($option)
+                                                @case('luot-tai-cao')
+                                                    <span class="ribbon">
+                                                        <span class="fs-9px">
+                                                            {{ $document->totalDownloading }}
+                                                            <em class="icon ni ni-download"></em>
+                                                        </span>
+                                                    </span>
+        
+                                                    @break                  
+                                                @case('moi-dang')
+                                                    <span class="ribbon">{{ $document->time }}</span>
+        
+                                                    @break
+        
+                                                @default
+                                                
+                                                @if(\Carbon\Carbon::parse($document->created_at)->isToday())
+                                                    <span class="ribbon">Mới</span>
+                                                @endif
+                                            @endswitch
+                                        <img src="{{ $document->url }}" alt="" width="100%" height="100%">
+        
                                         </li>
+                                      
                                         <li></li>
                                     </ul>
                 
@@ -169,13 +247,23 @@
                                         <li></li>
                                         <li></li>
                                     </ul>
+                                    <figcaption>
+                                        <h4>{{ $document->name }}</h4>
+                                        @foreach(explode(",",$document->author) as $author)                                                                       
+                                            <a class="text-info" href="/tac-gia/tac-gia-tai-lieu/{{ $author }}">{{ $author }}</a>
+                                            @if($loop->index < count(explode(",",$document->author)) - 1)
+                                                ,
+                                            @endif
+                                        @endforeach                                    
+                                    </figcaption>
                                     <ul class='book_spine'>
                                         <li></li>
                                         <li></li>
                                     </ul>                          
                             </figure>
                         </li>
-                        @if($loop->iteration % 3 == 0 || $loop->iteration == $items->count()  )
+        
+                        @if($loop->iteration % 2 == 0 || $loop->iteration == $items->count()  )
                         <div class="shelf d-none d-xl-block">
             
                             <div class="bookend_left"></div>
@@ -232,7 +320,7 @@
 
         var options = {
             dataSource: sources,
-            pageSize: 12,
+            pageSize: 18,
             callback: function (response, pagination) {
                 var dataHtml = '<ul class="align">';
 

@@ -15,7 +15,7 @@ class ForumPosts extends Model
 
     protected $fillable = ['topic','content','forumID','userCreatedID','slug','totalComments'];
 
-    protected $appends = ['time'];
+    protected $appends = ['time','firstImage'];
 
     public function getTimeAttribute()
     {
@@ -28,6 +28,32 @@ class ForumPosts extends Model
     }
 
 
+    public function getFirstImageAttribute()
+    {
+        
+        $content = $this -> content;
+
+        //https://storage.googleapis.com/...
+        $urlRegex = '/(https?:\/\/storage.googleapis.com[^\s]+)/';
+    
+        preg_match_all($urlRegex, $content, $matches);
+        
+        $imageUrl = '';
+        if (count($matches) > 0) {
+            
+            if($matches[0]){
+                $temp = $matches[0][0];
+                $temp = substr($temp, 0, strpos($temp, '"'));
+                $imageUrl = $temp;
+            }
+
+        } else {
+            $imageUrl = '';
+
+        }
+
+        return $imageUrl;
+    }
 
     public function forums() {
         return $this->belongsTo(Forum::class,'forumID','id');

@@ -41,11 +41,11 @@ class UserController extends Controller
                 $message = 'Thành viên đã được mở khóa tài khoản';
 
                 Book::where('userCreatedID','=',$user->id)->update([
-                    'deleted_at' => null
+                    'isPublic' => 1
                 ]);
 
                 Document::where('userCreatedID','=',$user->id)->update([
-                    'deleted_at' => null
+                    'isPublic' => 1
                 ]);
 
                 ForumPosts::where('userCreatedID','=',$user->id)->update([
@@ -64,11 +64,11 @@ class UserController extends Controller
                 $message = 'Khóa tài khoản thành viên thành công';
 
                 Book::where('userCreatedID','=',$user->id)->update([
-                    'deleted_at' => Carbon::now()
+                    'isPublic' => 0
                 ]);
                 
                 Document::where('userCreatedID','=',$user->id)->update([
-                    'deleted_at' => Carbon::now()
+                    'isPublic' => 0
                 ]);
 
                 ForumPosts::where('userCreatedID','=',$user->id)->update([

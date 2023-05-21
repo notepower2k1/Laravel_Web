@@ -18,6 +18,7 @@ use App\Models\Follow;
 use App\Models\report;
 use App\Models\previewDocumentImages;
 use App\Models\readingHistory;
+use App\Models\ReportReason;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -64,27 +65,12 @@ class PagesController extends Controller
         return $book->slug;
 
     }
-    public function getMatrix(){
-
-        $bookRatings = ratingBook::all();
-        $matrix = array();
-
-        foreach($bookRatings as $book){
-            $users = User::where('id','=',$book->userID)->get();
-
-            foreach($users as $user){
-                $matrix[$user->name][$this->getBookSlug($book->bookID)] = $book->score;
-
-            }
-
-        }    
-
-        return $matrix;
-    }
 
     public function getMatrix2(){
 
-        $readingHistory = readingHistory::selectRaw('SUM(total) as total,bookID,userID')->groupBy(['bookID','userID'])->get();
+        $month = Carbon::now()->month;
+
+        $readingHistory = readingHistory::selectRaw('SUM(total) as total,bookID,userID')->whereMonth('created_at', $month)->groupBy(['bookID','userID'])->get();
         $matrix = array();
 
         foreach($readingHistory as $book){
@@ -137,22 +123,6 @@ class PagesController extends Controller
         return $ranks;
     } 
 
-    public function getRecommendationByRating(){
-
-        //Ranks by history log
-        $matrix = $this->getMatrix();
-
-        $list = $this->getRecommendation($matrix,Auth::user()->name);
-
-
-        $listUserNotReadBook = collect();
-        foreach ($list as $item=>$rating){
-            $book = Book::where('slug','=',$item)->first();
-            $listUserNotReadBook->push($book);
-        }
-
-        return $listUserNotReadBook;
-    }
     public function getRecommendationByType(){
 
         //Ranks by total reading
@@ -240,9 +210,7 @@ class PagesController extends Controller
 
         $new_books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('created_at')->take(8);
 
-        // $new_updated_books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->with(['chapters' => function($query) {
-        //     $query->orderBy('chapters.created_at', 'desc');
-        // }])->get();
+   
         
         $new_updated_books = Book::select([DB::RAW('DISTINCT(books.id)'),'books.*'])
             ->where('books.isPublic', '1')
@@ -265,6 +233,8 @@ class PagesController extends Controller
 
         $documents = Document::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('numberOfPages')->take(4);
 
+        $new_documents = Document::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('created_at')->take(9);
+
         $high_downloading_documents = Document::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('totalDownloading')->take(8);
 
         return view('client.homepage.homepage',[
@@ -275,6 +245,7 @@ class PagesController extends Controller
             'completed_books' => $completed_books,
             'random_books' => $random_books,
             'documents'=>$documents,
+            'new_documents' => $new_documents,
             'high_downloading_documents'=>$high_downloading_documents
         ]);
 
@@ -362,10 +333,11 @@ class PagesController extends Controller
 
     public function book_detail($book_id,$book_slug){
             
-        $book = Book::findOrFail($book_id);
+        $book = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->findOrFail($book_id);
+
         $chapters = Chapter::where('book_id','=',$book_id)->where('deleted_at','=',null)->get();
         $comments = Comment::where('type_id','=',2)->where('identifier_id','=',$book_id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
-        
+        $reportReasons = ReportReason::all();
         $userTotalReading = DB::table("reading_histories")
 	    ->select(DB::raw("SUM(total) as total,userID"))
 	    ->where("bookID",$book_id)
@@ -416,6 +388,10 @@ class PagesController extends Controller
         $user_documents = Document::where('userCreatedID','=',$book->users->id)->where('deleted_at','=',null)->where('isPublic','=',1)->get();
 
         return view('client.homepage.book_detail')
+        
+        ->with('reportReasons',$reportReasons)
+        ->with('book_name',$book->name)
+        ->with('book_id',$book_id)
         ->with('userTotalReading',$userTotalReading)
         ->with('user_books',$user_books)
         ->with('user_documents',$user_documents)
@@ -435,8 +411,9 @@ class PagesController extends Controller
 
     public function document_detail($document_id,$document_slug){
             
-        $document = Document::findOrFail($document_id);
+        $document = Document::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->findOrFail($document_id);
         $comments = Comment::where('type_id','=',1)->where('identifier_id','=',$document_id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
+        $reportReasons = ReportReason::all();
 
         $isMark = false;
         if(Auth::check()){
@@ -456,6 +433,9 @@ class PagesController extends Controller
 
 
         return view('client.homepage.document_detail')
+        ->with('document_name',$document->name)
+        ->with('reportReasons',$reportReasons)
+        ->with('document_id',$document_id)
         ->with('isMark',$isMark)
         ->with('previewImages',$previewImages)
         ->with('user_books',$user_books)
@@ -510,7 +490,9 @@ class PagesController extends Controller
 
 
         $book = Book::where('slug','=',$book_slug)->first();
+        $reportReasons = ReportReason::all();
 
+        $recommened_books = null;
         if(Auth::check()){
 
             $existHistory = readingHistory::where('userID','=',Auth::user()->id)->where('bookID','=',$book->id)->orderBy('id','desc')->first();
@@ -545,6 +527,10 @@ class PagesController extends Controller
                 ]);
             }
 
+            
+            $recommened_books = $this->getRecommendationByType()->chunk(2)[0];
+
+
         }
         
         $book->update([
@@ -566,7 +552,6 @@ class PagesController extends Controller
 
         $comments = Comment::where('type_id','=',2)->where('identifier_id','=',$book->id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
 
-        $recommened_books = $this->getRecommendationByType();
 
         $userTotalReading = DB::table("reading_histories")
 	    ->select(DB::raw("SUM(total) as total,userID"))
@@ -576,6 +561,7 @@ class PagesController extends Controller
 
 
         return view('client.homepage.chapter_detail')
+        ->with('reportReasons',$reportReasons)
         ->with('userTotalReading',$userTotalReading)
         ->with('comments',$comments)
         ->with('recommened_books',$recommened_books)
@@ -587,7 +573,57 @@ class PagesController extends Controller
        
     }
 
- 
+    public function read_book_pdf($book_id){
+
+        $book = Book::findOrFail($book_id);
+        
+        if(Auth::check()){
+
+            $existHistory = readingHistory::where('userID','=',Auth::user()->id)->where('bookID','=',$book->id)->orderBy('id','desc')->first();
+
+            if($existHistory){     
+
+                $existHistoryDate = new Carbon($existHistory->created_at);
+
+                if($existHistoryDate->isToday()){     
+
+                    $existHistory->update([
+                        'total' => $existHistory->total + 1
+                    ]);
+                    
+                }
+                
+                else{
+                    readingHistory::create([
+                        'bookID'=>$book->id,
+                        'userID'=>Auth::user()->id,
+                        'total'=>1
+                    ]);
+                }
+               
+
+            }
+            else{
+                readingHistory::create([
+                    'bookID'=>$book->id,
+                    'userID'=>Auth::user()->id,
+                    'total'=>1
+                ]);
+            }
+
+
+
+        }
+        
+        $book->update([
+            'totalReading' => $book->totalReading + 1
+        ]);
+        $book->save();
+
+        $url = $book->bookUrl;
+
+        return response()->json(['url' => $url]);
+    }
 
     public function post_navigation_page(){
 
@@ -601,9 +637,13 @@ class PagesController extends Controller
   
     public function follow_page(){
         
-        $follows = Follow::where('userID','=',Auth::user()->id)->orderBy('status', 'desc')->get();
+        $follow_isDone = Follow::where('userID','=',Auth::user()->id)->where('isDone','=',1)->orderBy('status', 'desc')->get();
+        $follow_notDone = Follow::where('userID','=',Auth::user()->id)->where('isDone','=',0)->orderBy('status', 'desc')->get();
+
         return view('client.homepage.follow')
-        ->with('follows',$follows);    
+        ->with('follow_isDone',$follow_isDone)
+        ->with('follow_notDone',$follow_notDone);    
+  
     }
 
     public function search_name_page(){
@@ -726,27 +766,6 @@ class PagesController extends Controller
             }
           
 
-            // $content = '<div class="col-lg-3 col-md-6 mt-3">'.
-            // ' <div class="card card-bordered product-card shadow">'.
-            //      '<div class="product-thumb">'.
-            //          '<img class="card-img-top" src="'.$item->url.'" alt="" width="300px" height="400px">'.                                                                            
-            //             ' <div class="product-actions item-search w-100 h-100">'.
-            //                 ' <div class="pricing-body text-center w-100 h-100">'.
-            //                     ' <div class="h-100 d-flex flex-column justify-content-center">'.
-            //                         ' <div class="pricing-amount">'.
-            //                            '<h6 class="bill text-white">' .$item->name.'</h6>'. 
-            //                            '<p class="text-white">Tác giả:'. $item->author .'</p>'.                                                   
-            //                         ' </div>'.
-            //                         ' <div class="pricing-action">'.
-            //                              '<a href="'.$href.'" class="btn btn-outline-light">Chi tiết</a>'.
-            //                      '    </div>'.
-            //                     ' </div>'.                                                                          
-            //                 ' </div>'.
-            //              '</div>'.
-            //    '  </div>'.                                         
-            // '</div>'.
-            // ' </div>';
-
 
 
             
@@ -760,40 +779,90 @@ class PagesController extends Controller
             )
         ]);
     }
-    public function search_type_page($option = null,$type_slug = null){
+    public function search_type_page( $sort_by = null,$option = null,$type_slug = null){
 
         $book_types = BookType::all();
         $document_types = DocumentType::all();
 
-        $option_id = 0;
-        $type_id = 0;
-        $total = 0;
         $items = collect();
        
         switch ($option) {
             case 'the-loai-sach':
-                $option_id = 1;
+                $option = 1;
                 $type_id = BookType::where('slug','=',$type_slug)->pluck('id')->firstOrFail();
-                $items = Book::where('type_id','=',$type_id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1);    
-                $total = $items->get()->count();      
+
+                if($sort_by == 'created_at'){
+                    $items = Book::where('type_id','=',$type_id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('created_at', 'desc')->get();
+                }
+                else if($sort_by == 'updated_at'){
+                    $items = Book::where('type_id','=',$type_id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('updated_at', 'desc')->get();
+                }
+                else if($sort_by == 'reading_count'){
+                    $items = Book::where('type_id','=',$type_id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('totalReading', 'desc')->get();
+                }       
+                else if($sort_by == 'comment'){
+                    $items = Book::where('type_id','=',$type_id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('totalComments', 'desc')->get();
+                }
+                else if($sort_by == 'follow'){
+                    $items = Book::where('type_id','=',$type_id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('totalBookMarking', 'desc')->get();
+                }
+                else if($sort_by == 'score'){
+                    $items = Book::where('type_id','=',$type_id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('ratingScore', 'desc')->get();
+                }
+                else if($sort_by == 'page_count'){
+                    $items = Book::where('type_id','=',$type_id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('numberOfChapter', 'desc')->get();
+                }
+                
                 break;
             case 'the-loai-tai-lieu':
-                $option_id = 2;
+                $option = 2;
                 $type_id = DocumentType::where('slug','=',$type_slug)->pluck('id')->firstOrFail();
-                $items = Document::where('type_id','=',$type_id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1);
-                $total = $items->get()->count();      
+
+                if($sort_by == 'created_at'){
+                    $items = Document::where('type_id','=',$type_id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('created_at', 'desc')->get();
+                }
+                else if($sort_by == 'updated_at'){
+                    $items = Document::where('type_id','=',$type_id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('updated_at', 'desc')->get();
+                }
+                else if($sort_by == 'downloading_count'){
+                    $items = Document::where('type_id','=',$type_id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('totalDownloading', 'desc')->get();
+                }       
+                else if($sort_by == 'comment'){
+                    $items = Document::where('type_id','=',$type_id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('totalComments', 'desc')->get();
+                }
+                else if($sort_by == 'follow'){
+                    $items = Document::where('type_id','=',$type_id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('totalDocumentMarking', 'desc')->get();
+                }      
+                else if($sort_by == 'page_count'){
+                    $items = Document::where('type_id','=',$type_id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('numberOfPages', 'desc')->get();
+                }
                 break;
-            case null:
-                $option_id = 1;
-                $type_id = -1;
-                $items = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1);    
-                $total = $items->get()->count();    
-                break;
+
             default:
-                $option_id = -1;
+                $option = 1;
                 $type_id = -1;
-                $items = null;    
-                $total = 0;      
+                if($sort_by == 'created_at'){
+                    $items = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('created_at', 'desc')->get();
+                }
+                else if($sort_by == 'updated_at'){
+                    $items = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('updated_at', 'desc')->get();
+                }
+                else if($sort_by == 'reading_count'){
+                    $items = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('totalReading', 'desc')->get();
+                }       
+                else if($sort_by == 'comment'){
+                    $items = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('totalComments', 'desc')->get();
+                }
+                else if($sort_by == 'follow'){
+                    $items = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('totalBookMarking', 'desc')->get();
+                }
+                else if($sort_by == 'score'){
+                    $items = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('ratingScore', 'desc')->get();
+                }
+                else if($sort_by == 'page_count'){
+                    $items = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->orderBy('numberOfChapter', 'desc')->get();
+                }
+              
         }
         
 
@@ -801,12 +870,11 @@ class PagesController extends Controller
 
         return view('client.homepage.search_type_page')
       
-        ->with('items',$items->get())
+        ->with('items',$items)
         ->with('document_types',$document_types)
         ->with('book_types',$book_types)
-        ->with('option_id',$option_id)
-        ->with('type_id',$type_id)
-        ->with('total',$total);
+        ->with('option',$option)
+        ->with('type_id',$type_id);
 
     }
 
@@ -956,6 +1024,8 @@ class PagesController extends Controller
 
         $lastPosts = ForumPosts::where('deleted_at','=',null)->orderBy('created_at', 'desc')->take(10)->get();
 
+
+        
         return view('client.forum.detail')
         ->with('lastPosts', $lastPosts)
         ->with('forums_posts',$forums_posts)
@@ -1036,14 +1106,22 @@ class PagesController extends Controller
     public function post_detail($forum_slug,$post_slug,$post_id){
 
         $post = ForumPosts::findOrFail($post_id);
+        $post->totalViews = $post->totalViews + 1;
+        $post->save();
+
+        $reportReasons = ReportReason::all();
+
 
         $comments = Comment::where('type_id','=',3)->where('identifier_id','=',$post_id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
 
         return view('client.forum.forum_posts.detail')
+        ->with('reportReasons',$reportReasons)
         ->with('comments',$comments)
         ->with('forum_slug',$forum_slug)
         ->with('post',$post);
 
+
+     
     }
 
    
@@ -1155,7 +1233,8 @@ class PagesController extends Controller
             'identifier_id' => intval($request->identifier_id),
             'type_id' => intval($request->type_id),
             'userID' => Auth::user()->id,
-            'status' =>1
+            'status' =>1,
+            'reason_id' => intval($request->reason)
         ]);
         $report->save();
 

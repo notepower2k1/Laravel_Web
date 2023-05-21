@@ -22,6 +22,26 @@
                 </div>
             </div>            
             <ul class="nk-menu nk-menu-main">             
+             
+
+                @if(!Request::is('tim-kiem'))
+                    <li class="nk-menu-item">
+                        {{-- <a href="/tim-kiem" class="nk-menu-link">
+                            <span class="nk-menu-text">
+                                <em class="icon ni ni-search"></em>
+                                Tìm kiếm               
+                            </span>
+                        
+                        </a> --}}
+                        <a href="#" class="nk-menu-link" data-bs-toggle="modal" data-bs-target="#modalSearchHomePage">
+                            <em class="icon ni ni-search"></em>
+                            <span class="nk-menu-text">
+                                Tìm kiếm               
+                            </span>
+                        </a>
+
+                    </li><!-- .nk-menu-item -->
+                @endif
                 <li class="nk-menu-item has-sub">
                     <a href="#" class="nk-menu-link nk-menu-toggle">
                         <em class="icon ni ni-menu-circled"></em>
@@ -126,27 +146,8 @@
                       
                     </ul><!-- .nk-menu-sub -->
                 </li>
-
-                @if(!Request::is('tim-kiem'))
-                    <li class="nk-menu-item">
-                        {{-- <a href="/tim-kiem" class="nk-menu-link">
-                            <span class="nk-menu-text">
-                                <em class="icon ni ni-search"></em>
-                                Tìm kiếm               
-                            </span>
-                        
-                        </a> --}}
-                        <a href="#" class="nk-menu-link" data-bs-toggle="modal" data-bs-target="#modalSearchHomePage">
-                            <em class="icon ni ni-search"></em>
-                            <span class="nk-menu-text">
-                                Tìm kiếm               
-                            </span>
-                        </a>
-
-                    </li><!-- .nk-menu-item -->
-                @endif
                 <li class="nk-menu-item {{ Request::is('the-loai') ? 'active' : '' }}">
-                    <a href="/the-loai" class="nk-menu-link">
+                    <a href="/the-loai/sort_by=created_at" class="nk-menu-link">
                         <em class="icon ni ni-menu-circled"></em>
 
                         <span class="nk-menu-text">
@@ -283,7 +284,7 @@
                                                     @case(1)
                                                     vừa bình luận về sách
                                                     <strong>
-                                                        {{ $comment_notification->identifier }}
+                                                        {{ $comment_notification->identifier->name }}
                                                     </strong>
                                                     của bạn
                                                     @break
@@ -291,7 +292,7 @@
                                                     @case(2)
                                                     vừa bình luận về tài liệu
                                                     <strong>
-                                                        {{ $comment_notification->identifier }}
+                                                        {{ $comment_notification->identifier->name }}
                                                     </strong>
                                                     của bạn
 
@@ -300,7 +301,7 @@
                                                     @case(3)
                                                     vừa bình luận về bài viết
                                                     <strong>
-                                                    {{ $comment_notification->identifier }}
+                                                    {{ $comment_notification->identifier->topic }}
                                                     </strong>
                                                     của bạn
                                                     @break
@@ -308,21 +309,21 @@
                                                     @case(4)
                                                     vừa trả lời bình luận của bạn trong sách
                                                     <strong>
-                                                    {{ $comment_notification->identifier}}
+                                                    {{ $comment_notification->identifier->name }}
                                                     </strong>
                                                     @break
 
                                                     @case(5)
                                                     vừa trả lời bình luận của bạn tài liệu
                                                     <strong>
-                                                    {{ $comment_notification->identifier }}
+                                                    {{ $comment_notification->identifier->name }}
                                                     </strong>
                                                     @break
 
                                                     @case(5)
                                                     vừa trả lời bình luận của bạn trong bài viết
                                                     <strong>
-                                                    {{ $comment_notification->identifier }}
+                                                    {{ $comment_notification->identifier->topic }}
                                                     </strong>
                                                     @break
                                                 @default

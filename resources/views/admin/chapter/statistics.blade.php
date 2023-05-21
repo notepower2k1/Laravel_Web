@@ -2,12 +2,6 @@
 @section('pageTitle', 'Thống kê chương')
 @section('additional-style')
 
-<style>
-    #doughnutChart{
-        width:500px;
-        height: 500px;
-    }
-</style>
 
 @endsection
 @section('content')
@@ -16,16 +10,17 @@
     <div class="container">
         <div class="row g-gs">
             <div class="col-12">
-                <div class="card card-bordered h-100">
+                <div class="card card-bordered">
                     <div class="card-inner">
                         <div class="card-title-group">
                             <div class="card-title card-title-sm">
-                            <h6 class="title">Thống kê số lượng theo sách</h6>
+                            <h6 class="title">Tổng số chương: {{ $totalChapters }}/1000</h6>
                             </div>
                         </div>
-                        <div class="mt-5 d-flex">
-                            <canvas id="doughnutChart"></canvas>    
-                        </div>
+                                             
+                        <div class="nk-knob text-center">
+                            <input type="text" class="knob-half" value="{{ $totalChapters }}" data-fgColor="#816bff" data-bgColor="#d9e5f7" data-max="1000" data-thickness=".07" data-width="240" data-height="125">
+                        </div>                       
                     </div>
                 </div>
             </div>
@@ -149,7 +144,6 @@
 @section('additional-scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.4/moment-with-locales.js"></script>
 <script>
     $(document).ready(function () {
 
@@ -193,46 +187,7 @@
 
     });
 
-    function createDonutChart() {
-
-        const ctx = document.getElementById('doughnutChart');
-     
-
-        var result = {!! json_encode($totalByTypes) !!};
-
-        const data = {
-            labels: result.map(object=>object.name),
-            datasets: [{
-                label: 'Số lượng',
-                data: result.map(object=>object.total),
-            
-                hoverOffset: 4
-            }]
-        };
-
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: data,
-            options: {  
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: 100,
-
-                plugins: {
-                 
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            textAlign: 'left',
-                        }
-                    }
-                },
-            },
-
-        });
-    
-    }
-    
+   
     function createLineChart(){
         const ctx = document.getElementById('salesOverview');
 
@@ -285,7 +240,6 @@
         
     }
 
-    createDonutChart()
     createLineChart()
 
     

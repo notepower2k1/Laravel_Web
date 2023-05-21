@@ -140,7 +140,6 @@
 
                                     </tbody>
                                 </table>
-                                <button class="d-none" id="open-modal-btn" data-bs-toggle='modal' data-bs-target='#passwordModalForm'></button></li>
                             </div>
                         </div><!-- .card-preview -->
                     </div> <!-- nk-block -->
@@ -149,7 +148,7 @@
 @endsection
 
 @section('modal')
-<div class="modal fade" id="passwordModalForm" style="display: none;" aria-hidden="true">
+<div class="modal fade" id="passwordModalForm" style="display: none;">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -339,7 +338,7 @@
 
 
 
-        $('#open-modal-btn').click();
+        $('#passwordModalForm').modal('show');
 
         $('#passwordForm').submit(function() {
             Swal.fire({

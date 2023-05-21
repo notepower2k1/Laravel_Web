@@ -75,23 +75,27 @@
                   @switch($comment->type_id)
                     @case(1)
 
-                      <a href="/admin/book/detail/{{$comment->identifier_id}}/{{ \Carbon\Carbon::now()->year }}">
+                      <a href="/admin/document/detail/{{$comment->identifier_id}}/{{ \Carbon\Carbon::now()->year }}">
                         <span class="badge rounded-pill bg-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $comment->identifier->name }}">
-                          {{ $comment->types->name }}
+                          {{ Str::limit($comment->identifier->name,30) }}
                         </span>
                       </a>
                      
                       @break
 
                     @case(2)
-                      <a href="/admin/document/detail/{{$comment->identifier_id}}/{{ \Carbon\Carbon::now()->year }}">
-                      <span class="badge rounded-pill bg-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $comment->identifier->name }}">{{ $comment->types->name }}</span>
+                      <a href="/admin/book/detail/{{$comment->identifier_id}}/{{ \Carbon\Carbon::now()->year }}">
+                      <span class="badge rounded-pill bg-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $comment->identifier->name }}">
+                        {{ Str::limit($comment->identifier->name,30) }}
+                      </span>
                       </a>
                       @break
 
                     @case(3)
                       <a href="/admin/forum/post/{{$comment->id}}/detail">
-                        <span class="badge rounded-pill bg-outline-success" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $comment->identifier->topic }}">{{  $comment->types->name }}</span>
+                        <span class="badge rounded-pill bg-outline-success" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $comment->identifier->topic }}">
+                          {{ Str::limit($comment->identifier->topic,30) }}
+                        </span>
                         @break
                       </a>
                     @default
@@ -118,7 +122,6 @@
                                           <em class="icon ni ni-notice"></em><span>Nội dung</span>
                                         </a>
 
-                                        <button class="d-none" data-bs-toggle="modal" data-bs-target="#modalContent" ></button>
                                       </li>
                                       <li><a href="/admin/comment/replies/{{ $comment->id }}"><em class="icon ni ni-reply-all"></em><span>Xem phản hồi</span></a></li>
                                   
@@ -292,7 +295,7 @@
             $('#modalContent').find('.modal-body').append(content);
 
             setTimeout(function(){ 
-              $(`#row-${comment_id}`).find('.content-btn').next().click();
+              $('#modalContent').modal('show');
             },500);
 
           

@@ -102,7 +102,7 @@
 
                                         @if ($book->status == -1)
                                             @if($notes->where('identifier_id','=',$book->id)->where('type_id','=',1)->count()>0)           
-                                                <a href="#" class="getReasonbtn" data-type = "1" data-identifier = {{ $book->id }}>
+                                                <a href="#" class="getReasonbtn" data-type = "1" data-identifier = {{ $book->id }} data-bs-toggle="tooltip" data-bs-placement="top" title="Xem lý do">
                                                     <span class="badge badge-dim rounded-pill bg-outline-danger">Từ chối</span>
                                                 </a>                           
                                             @else
@@ -178,7 +178,7 @@
 
                                         @if ($document->status == -1)
                                             @if($notes->where('identifier_id','=',$document->id)->where('type_id','=',2)->count()>0)           
-                                                <a href="#" class="getReasonbtn" data-type = "2" data-identifier = {{ $document->id }}>
+                                                <a href="#" class="getReasonbtn" data-type = "2" data-identifier = {{ $document->id }} data-bs-toggle="tooltip" data-bs-placement="top" title="Xem lý do">
                                                     <span class="badge badge-dim rounded-pill bg-outline-danger">Từ chối</span>
                                                 </a>                           
                                             @else
@@ -260,7 +260,7 @@
                                 <label class="form-label" for="book-search-1">Tên sách</label>
                                 <div class="form-control-wrap ">
                                     <select class="form-select book-search" id="book-search-1" name="book-search-1" data-placeholder="Chọn tên sách" required>
-
+                                        <option></option>
                                         @foreach ($name_search as $item )
                                         <option value="{{ $item->id }}">{{  $item->name }}</option>
                                         @endforeach                                   
@@ -286,6 +286,7 @@
                                             <label class="form-label" for="book-search-2">Tên sách</label>
                                             <div class="form-control-wrap ">
                                                 <select class="form-select book-search" id="book-search-2" name="book-search-2" data-placeholder="Chọn tên sách" required>
+                                                    <option></option>
 
                                                     @foreach ($name_search as $item )
                                                     <option value="{{ $item->id }}">{{  $item->name }}</option>
@@ -373,6 +374,8 @@
                                 <label class="form-label" for="document-search-1">Tên tài liệu</label>
                                 <div class="form-control-wrap ">
                                     <select class="form-select document-search" id="document-search-1" name="document-search-1" data-placeholder="Chọn tên tài liệu" required>
+                                        <option></option>
+
                                         @foreach ($document_search as $item )
                                         <option value="{{ $item->id }}">{{  $item->name }}</option>
                                         @endforeach    
@@ -397,6 +400,8 @@
                                             <label class="form-label" for="document-search-2">Tên tài liệu</label>
                                             <div class="form-control-wrap ">
                                                 <select class="form-select document-search" id="document-search-2" name="document-search-2" data-placeholder="Chọn tên tài liệu" required>
+                                                    <option></option>
+
                                                     @foreach ($document_search as $item )
                                                     <option value="{{ $item->id }}">{{  $item->name }}</option>
                                                     @endforeach    
@@ -511,6 +516,26 @@
 
     $(function(){
       
+        $('#book-search-1').select2({
+            placeholder:"Đổi sách",
+
+        });
+
+        $('#book-search-2').select2({
+            placeholder:"Đổi sách",
+
+        });
+
+        $('#document-search-1').select2({
+            placeholder:"Đổi tài liệu",
+
+        });
+
+        $('#document-search-2').select2({
+            placeholder:"Đổi tài liệu",
+        });
+
+
         $('#DataTables_Table_0 tbody').on('click','.delete-button',function(e){
             e.preventDefault();
             var item_id = $(this).data('id');

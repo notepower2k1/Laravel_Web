@@ -13,8 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->tinyInteger('status')->default('1');
+        Schema::create('report_reasons', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name');
         });
     }
 
@@ -25,8 +26,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('status');
-        });
+        Schema::dropIfExists('report_reasons');
     }
 };

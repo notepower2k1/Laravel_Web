@@ -36,34 +36,34 @@ class Notification extends Model
         switch ($option) {
             case 1:
                 $item = Book::findOrFail($this->identifier_id);
-                $identifier = $item->name;
+                $identifier = $item;
                 break;
             case 2:
                 $item = Document::findOrFail($this->identifier_id);        
-                $identifier = $item->name;
+                $identifier = $item;
   
                 break;
             case 3:
                 $item = ForumPosts::findOrFail($this->identifier_id);  
-                $identifier = $item->topic;
+                $identifier = $item;
         
                 break;
             case 4:
                 $item = Comment::findOrFail($this->identifier_id);
                 $book = Book::findOrFail($item->identifier_id);
-                $identifier = $book->name;
+                $identifier = $book;
        
                 break;
             case 5:
                 $item = Comment::findOrFail($this->identifier_id);
                 $document = Document::findOrFail($item->identifier_id);
-                $identifier = $document->name;
+                $identifier = $document;
          
                 break;
             case 6:
                 $item = Comment::findOrFail($this->identifier_id);
                 $post = ForumPosts::findOrFail($item->identifier_id);
-                $identifier = $post->name;
+                $identifier = $post;
          
                 break;
             default:

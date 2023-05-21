@@ -99,7 +99,7 @@
         $(document).on('click','#mark_all_bookMark_notifications',function(){
     
             $.ajax({
-                url:'/bookmark-status-all-update',
+                url:'/following-status-all-update',
                 type:"GET",
                 data:{            
                 }
@@ -127,7 +127,7 @@
             var id = $(this).data('id');
 
             $.ajax({
-                url:'/bookmark-status-update',
+                url:'/following-status-update',
                 type:"GET",
                 data:{          
                     'id':id
@@ -313,7 +313,8 @@
             $('#modalSearchHomePage').find(".search-option").parent().removeClass("active");
             var option_text = $(this).text();
             var option_value = $(this).attr('data-value');
-       
+
+            $('#modalSearchHomePage').find('#option_show').text(option_text);
             
             
             $(this).parent().addClass("active");

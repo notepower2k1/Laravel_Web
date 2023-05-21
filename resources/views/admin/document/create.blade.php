@@ -2,8 +2,11 @@
 @section('pageTitle', 'Thêm tài liệu')
 
 @section('content')
-<div class="nk-block-head-sub"><a class="back-to" href="{{ url()->previous() }}"><em class="icon ni ni-arrow-left"></em><span>Quay lại</span></a></div>
-
+<ul class="breadcrumb breadcrumb-arrow">
+  <li class="breadcrumb-item"><a href="/admin/document">Tài liệu</a></li>
+  <li class="breadcrumb-item active"><a href="#">Thêm tài liệu</a></li>
+</ul>
+<hr>   
 <div class="card shadow mb-4">
     <div class="card-body ">
             @if($errors->any())
@@ -45,15 +48,22 @@
             class="form-control col-6" accept=".pdf">
 
             <label class="mt-4">Ảnh bìa<sup>*</sup></label>
-            <div>
+            <div class="d-flex">
+              
+              <div class="me-2">
                 <canvas id="the-canvas" style="border:1px solid black;width:200px;height:300px" ></canvas>
 
+              </div>
+
+              <div class="flex-grow-1 align-self-end">
+                <input type="file"
+                name="image" id="imageFileInput" required
+                class="form-control mb-4 col-6" accept="image/*" data-bs-toggle="tooltip" data-bs-placement="top" title="Nếu bạn để trống hệ thống sẽ sử dụng ảnh mặc định!!!">
+              </div>
+              
+           
             </div>
-
-
-            <input type="file"
-            name="image" id="imageFileInput" required
-            class="form-control mb-4 col-6" accept="image/*" data-bs-toggle="tooltip" data-bs-placement="top" title="Nếu bạn để trống hệ thống sẽ sử dụng ảnh mặc định!!!">
+          
 
 
             <input type="file"  style="display: none" class="form-control" name="previewImages[]" id="previewImageInput" multiple />

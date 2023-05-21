@@ -119,12 +119,38 @@
             </div>
         </div>
     </div>
+
+    
+    <div class="modal fade" id="alertCalendarModal">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-body modal-body-xl text-center">
+                    <div class="nk-modal">
+                        <em class="nk-modal-icon icon icon-circle icon-circle-xxl ni ni-calendar-booking bg-warning"></em>
+                        <h4 class="nk-modal-title">Lịch kế hoạch ngày mai </h4>
+                        <div class="nk-modal-text">
+                            <div class="row g-gs" id='calendar-render-div'>
+                             
+                             
+                                
+                            </div>
+                        </div>
+                        <div class="nk-modal-action mt-5">
+                            <a href="#" class="btn btn-lg btn-mw btn-light" data-bs-dismiss="modal">Tắt thông báo</a>
+                        </div>
+                    </div>
+                </div><!-- .modal-body -->
+            </div>
+        </div>
+    </div>
     <script src=" {{ asset('assets/js/bundle.js?ver=3.1.2') }}"></script>
     <script src="{{ asset('assets/js/scripts.js?ver=3.1.2') }}"></script>
     <script src="{{ asset('assets/js/libs/datatable-btns.js?ver=3.1.2') }}"></script>
 
     {{-- <script src="{{ asset('assets/js/charts/gd-default.js?ver=3.1.2') }}"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.4/moment-with-locales.js"></script>
+
     @yield('additional-scripts')
     {{-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> --}}
@@ -136,6 +162,10 @@
         });
 
         $(function() {
+            // $("#alertCalendarModal").modal('show');
+            calendarEventAlert();
+
+
             $('#note-type').select2({
                 placeholder: "Chọn loại",
                 dropdownParent: $('#modalNote')
@@ -149,6 +179,110 @@
         })
         
 
+        function calendarEventAlert(){
+            const today = new Date(); 
+            let upComingEvent = [];
+            let type = {
+                "fc-event-primary":"Bảo trì",
+                "fc-event-success":"Unban",
+                "fc-event-info":"Thống kê",
+                "fc-event-warning":"Meeting",
+                "fc-event-pink":"Cá nhân",
+            }
+            const dataExist = window.localStorage.getItem('calendar');
+            if(dataExist){
+                var parseJson = JSON.parse(dataExist);
+
+                for (const [key, value] of Object.entries(type)) {
+
+                    parseJson.forEach(object => {
+                        if(object['className'] == key){
+                            object['className'] = value;
+                        }
+                    });
+                }
+                // window.localStorage.setItem('calendar',JSON.stringify(parseJson));
+                parseJson.forEach(element => {
+
+                    if(element.status == 1){
+                        let endDate = new Date(element.end);
+                        let startDate = new Date(element.start);
+
+                        var difference= Math.abs(endDate-today);
+
+                        var days = difference/(1000 * 3600 * 24);
+                    
+                        if(Math.round(days,1) == 1){
+                            upComingEvent.push(element);
+                  
+
+                            const startDateConvert = moment(startDate).format('LLLL').toString();
+                            const endDateConvert = moment(endDate).format('LLLL').toString();
+
+                            const htmlRender = 
+                            '<div class="col-6">'+
+                                        '<div class="card card-bordered">'+
+                                            '<div class="card-inner">'+
+                                                '<div class="kanban-item-title">'+
+                                                    `<h6 class="title">${element.title}</h6>`+
+                                                '</div>'+
+                                                '<div class="kanban-item-text text-start">'+
+                                                    `<span>${element.description}</span>`+
+                                                '</div>'+
+                                                '<ul class="kanban-item-tags">'+
+                                                    `<li><span class="badge bg-primary">${element.className}</span></li>`+
+                                                '</ul>'+
+                                                '<div class="kanban-item-meta text-start">'+
+                                                ' <ul class="link-list-menu">'+
+                                                    `<li><em class="icon ni ni-calendar"></em><span>${startDateConvert}</span></li>`+
+                                                    `<li><em class="icon ni ni-calendar-fill"></em><span>${endDateConvert}</span></li>`+
+                                                ' </ul>'+
+                                                '</div>'+
+                                            '</div>'+
+                                    ' </div>'+
+                            '</div>';
+
+                            $('#calendar-render-div').append(htmlRender);
+                        }
+                    }
+                  
+
+
+                });
+
+                if(upComingEvent.length > 0){
+                    $('#alertCalendarModal').modal('show');
+                }
+            }
+        }
+
+        $('#alertCalendarModal').on('click','a',function(e){
+            const today = new Date(); 
+
+            const dataExist = window.localStorage.getItem('calendar');
+            if(dataExist){
+                var parseJson = JSON.parse(dataExist);
+                var newData = parseJson.map(element => {
+                    let endDate = new Date(element.end);
+                    var difference= Math.abs(endDate-today);
+
+                    var days = difference/(1000 * 3600 * 24);
+                    
+                    if(Math.round(days,1) == 1){
+                        element.status = 0
+                    }
+
+
+                    return element;
+
+                });
+
+                window.localStorage.setItem('calendar',[]);
+                window.localStorage.setItem('calendar',JSON.stringify(newData));
+
+            }
+
+        });
         $(document).on("change","#note-type",function(e){
             e.preventDefault();
             const option = $(this).val();
@@ -191,7 +325,6 @@
             const identifier_id = form.find("select[name='identifier_id']").val();
             const type_id = form.find("select[name='type_id']").val();
 
-            console.log(content,identifier_id,type_id);
 
             if(content === '' || identifier_id == '-1' || type_id == '-1' ){
                 Swal.fire({
@@ -221,9 +354,9 @@
                         timer: 2500
                     });    
 
-                    setTimeout(() => {      
-                        $('#modalNote').modal('hide');
-                    }, 2500);
+                    // setTimeout(() => {      
+                    //     $('#modalNote').modal('hide');
+                    // }, 2500);
               
                 })
                     .fail(function(jqXHR, textStatus, errorThrown) {

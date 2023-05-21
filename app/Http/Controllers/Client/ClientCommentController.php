@@ -28,6 +28,15 @@ class ClientCommentController extends Controller
         
     }
 
+    public function get_content($item_id) {
+        $comment = Comment::findOrFail($item_id);
+        $content = $comment->content;
+  
+        $clean = clean($content);
+        return response()->json([
+          'content' => $clean,
+        ]);
+    }
 
     public function reply_index($comment_id){
 
@@ -40,6 +49,17 @@ class ClientCommentController extends Controller
        
     }
 
+     
+    public function get_replies_content($reply_id) {
+
+        $reply = Reply::findOrFail($reply_id);
+        $content = $reply->content;
+        $clean = clean($content);
+  
+        return response()->json([
+          'content' => $clean,
+        ]);
+    }
 
     public function user_comment(Request $request){
 
@@ -67,15 +87,17 @@ class ClientCommentController extends Controller
 
                 $document = Document::findOrFail($comment->identifier_id);
                 $document->totalComments = $document->totalComments + 1;
+                $document->timestamps = false;
+
                 $document ->save();
 
 
-                if(!$document->users->id == Auth::user()->id){
+                if($document->users->id != Auth::user()->id){
                     Notification::create([             
                         'identifier_id'=>$comment->identifier_id,
                         'type_id'=> 2, 
                         'senderID' => Auth::user()->id,
-                        'receiverID'=>$comment->documents->users->id,
+                        'receiverID'=>$document->users->id,
                         'status'=>1,
                     ]);
                 }
@@ -87,14 +109,16 @@ class ClientCommentController extends Controller
 
                 $book = Book::findOrFail($comment->identifier_id);
                 $book->totalComments = $book->totalComments + 1;
+                $book->timestamps = false;
+
                 $book ->save();
 
-                if(!$book->users->id == Auth::user()->id){
+                if($book->users->id != Auth::user()->id){
                     Notification::create([
                         'identifier_id'=>$comment->identifier_id,
                         'type_id'=> 1, 
                         'senderID' => Auth::user()->id,
-                        'receiverID'=>$comment->books->users->id,
+                        'receiverID'=>$book->users->id,
                         'status'=>1,
                     ]);
                 }
@@ -106,14 +130,16 @@ class ClientCommentController extends Controller
 
                 $post = ForumPosts::findOrFail($comment->identifier_id);
                 $post->totalComments = $post->totalComments + 1;
+                $post->timestamps = false;
+
                 $post ->save();
 
-                if(!$post->users->id == Auth::user()->id){
+                if($post->users->id != Auth::user()->id){
                     Notification::create([
                         'identifier_id'=>$comment->identifier_id,
                         'type_id'=> 3, 
                         'senderID' => Auth::user()->id,
-                        'receiverID'=>$comment->posts->users->id,
+                        'receiverID'=>$post->users->id,
                         'status'=>1,
                     ]);
                 }
@@ -161,6 +187,8 @@ class ClientCommentController extends Controller
 
                 $document = Document::findOrFail($reply->comments->identifier_id);
                 $document->totalComments = $document->totalComments + 1;
+                $document->timestamps = false;
+
                 $document ->save();
 
                 if($comment->users->id != Auth::user()->id){
@@ -182,6 +210,8 @@ class ClientCommentController extends Controller
 
                 $book = Book::findOrFail($reply->comments->identifier_id);
                 $book->totalComments = $book->totalComments + 1;
+                $book->timestamps = false;
+
                 $book ->save();
 
                 if($comment->users->id != Auth::user()->id){
@@ -201,6 +231,8 @@ class ClientCommentController extends Controller
 
                 $post = ForumPosts::findOrFail($reply->comments->identifier_id);
                 $post->totalComments = $post->totalComments + 1;
+                $post->timestamps = false;
+
                 $post ->save();
 
                 if($comment->users->id != Auth::user()->id){
@@ -253,11 +285,15 @@ class ClientCommentController extends Controller
             if($total){
                 $document = Document::findOrFail($comment->identifier_id);
                 $document->totalComments = $document->totalComments - ($total + 1);
+                $document->timestamps = false;
+
                 $document ->save();
             }
             else{
                 $document = Document::findOrFail($comment->identifier_id);
                 $document->totalComments = $document->totalComments - 1;
+                $document->timestamps = false;
+
                 $document ->save();
             }
 
@@ -267,11 +303,15 @@ class ClientCommentController extends Controller
             if($total){
                 $book = Book::findOrFail($comment->identifier_id);
                 $book->totalComments = $book->totalComments - ($total + 1);
+                $book->timestamps = false;
+
                 $book ->save();
             }
             else{
                 $book = Book::findOrFail($comment->identifier_id);
                 $book->totalComments = $book->totalComments - 1;
+                $book->timestamps = false;
+
                 $book ->save();
             }
          
@@ -285,11 +325,15 @@ class ClientCommentController extends Controller
             if($total){
                 $post = ForumPosts::findOrFail($comment->identifier_id);
                 $post->totalComments = $post->totalComments - ($total + 1);
+                $post->timestamps = false;
+
                 $post ->save();
             }
             else{
                 $post = ForumPosts::findOrFail($comment->identifier_id);
                 $post->totalComments = $post->totalComments - 1;
+                $post->timestamps = false;
+
                 $post ->save();
             }
          
@@ -322,6 +366,8 @@ class ClientCommentController extends Controller
             case 1:
                 $document = Document::findOrFail($reply->comments->identifier_id);
                 $document->totalComments = $document->totalComments - 1;
+                $document->timestamps = false;
+
                 $document ->save();
 
                 $totalComments = $document->totalComments;
@@ -331,6 +377,8 @@ class ClientCommentController extends Controller
 
                 $book = Book::findOrFail($reply->comments->identifier_id);
                 $book->totalComments = $book->totalComments - 1;
+                $book->timestamps = false;
+
                 $book ->save();
 
                 $totalComments = $book->totalComments;
@@ -340,6 +388,8 @@ class ClientCommentController extends Controller
 
                 $post = ForumPosts::findOrFail($reply->comments->identifier_id);
                 $post->totalComments = $post->totalComments + 1;
+                $post->timestamps = false;
+
                 $post ->save();
 
                 $totalComments = $post->totalComments;
@@ -398,8 +448,7 @@ class ClientCommentController extends Controller
 
     public function uploadCommentImage(Request $request){
 
-        $generatedImageName = 'image-'.$this->setNameForImage().'.'
-        .$request->file('file')->extension();
+        $generatedImageName = 'image-'.$request->file('file')->hashName();
         //move to a folder
 
         //upload image

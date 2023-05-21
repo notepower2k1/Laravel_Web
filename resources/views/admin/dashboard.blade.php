@@ -263,26 +263,6 @@
                         <div class="card-inner">
                             <div class="card-title-group">
                                 <div class="card-title">
-                                    <h6 class="title">Thống kê thành viên tham gia trong tuần</h6>
-                                </div>
-                            </div>
-                            <div class="data mt-2">
-                                <div class="data-group">
-                                    <div class="nk-ecwg6-ck">
-                                        <canvas id="weekUserBar"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div><!-- .card-inner -->
-                    </div><!-- .nk-ecwg -->
-                </div><!-- .card -->
-            </div><!-- .col -->
-            <div class="col-xxl-3 col-sm-6">
-                <div class="card">
-                    <div class="nk-ecwg nk-ecwg6">
-                        <div class="card-inner">
-                            <div class="card-title-group">
-                                <div class="card-title">
                                     <h6 class="title">Thống kê bài viết được đăng trong tuần</h6>
                                 </div>
                             </div>
@@ -297,7 +277,84 @@
                     </div><!-- .nk-ecwg -->
                 </div><!-- .card -->
             </div><!-- .col -->
-            <div class="col-xxl-6">
+            <div class="col-xxl-3 col-sm-6">
+                <div class="card">
+                    <div class="nk-ecwg nk-ecwg6">
+                        <div class="card-inner">
+                            <div class="card-title-group">
+                                <div class="card-title">
+                                    <h6 class="title">Thống kê thành viên tham gia trong tuần</h6>
+                                </div>
+                            </div>
+                            <div class="data mt-2">
+                                <div class="data-group">
+                                    <div class="nk-ecwg6-ck">
+                                        <canvas id="weekUserBar"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- .card-inner -->
+                    </div><!-- .nk-ecwg -->
+                </div><!-- .card -->
+            </div><!-- .col -->
+            
+            <div class="col-xxl-12">
+                <div class="card card-full">
+                    <div class="nk-ecwg nk-ecwg8 h-100">
+                        <div class="card-inner">
+                            <div class="card-title-group mb-3">
+                                <div class="card-title">
+                                    <h6 class="title">Thống kê trong tuần</h6>
+                                </div>                     
+                            </div>
+                            <div style=" height: 500px;">
+                                <canvas id="groupBar"></canvas>
+    
+                            </div>
+                        </div><!-- .card-inner -->
+                    </div>
+                </div><!-- .card -->
+            </div>
+           
+            <div class="col-xxl-3 col-md-12 col-lg-6">
+                <div class="card card-full overflow-hidden">
+                    <div class="nk-ecwg nk-ecwg7 h-100">
+                            
+                        <div class="d-flex flex-column justify-content-center align-items-center h-100">
+                            <div class="card-title-group mb-4">
+                                <div class="card-title">
+                                    <h6 class="title">Biểu đồ phần trăm tài liệu điện tử trong tuần</h6>
+                                </div>
+                            </div>
+                            <div class="nk-ecwg7-ck ms-auto me-auto" style="width:300px;height:300px">
+                                <canvas id="doughnutChart"></canvas>
+                            </div>
+                        
+                        </div><!-- .card-inner -->
+                    </div>
+                </div><!-- .card -->
+            </div>
+           
+            <div class="col-xxl-3 col-md-12 col-lg-6">
+                <div class="card card-full overflow-hidden">
+                    <div class="nk-ecwg nk-ecwg7 h-100">
+                            
+                        <div class="d-flex flex-column justify-content-center align-items-center h-100">
+                            <div class="card-title-group mb-4">
+                                <div class="card-title">
+                                    <h6 class="title">Biểu đồ tổng số lượng các đối tượng trong tuần</h6>
+                                </div>
+                            </div>
+                            <div class="nk-ecwg7-ck ms-auto me-auto" style="width:300px;height:300px">
+                                <canvas id="polarAreaChart"></canvas>
+                            </div>
+                        
+                        </div><!-- .card-inner -->
+                    </div>
+                </div><!-- .card -->
+            </div>
+
+            <div class="col-xxl-12">
                 <div class="card card-full">
                     <div class="nk-ecwg nk-ecwg8 h-100">
                         <div class="card-inner">
@@ -326,175 +383,6 @@
                     </div>
                 </div><!-- .card -->
             </div>
-            <div class="col-xxl-3 col-md-12 col-lg-5">
-                <div class="card card-full overflow-hidden">
-                    <div class="nk-ecwg nk-ecwg7 h-100">
-                            
-                        <div class="d-flex flex-column justify-content-center align-items-center h-100">
-                            <div class="card-title-group mb-4">
-                                <div class="card-title">
-                                    <h6 class="title">Thống kê loại tài liệu điện tử</h6>
-                                </div>
-                            </div>
-                            <div class="nk-ecwg7-ck ms-auto me-auto" style="width:300px;height:300px">
-                                <canvas id="doughnutChart"></canvas>
-                            </div>
-                        
-                        </div><!-- .card-inner -->
-                    </div>
-                </div><!-- .card -->
-            </div><!-- .col -->
-            <div class="col-xxl-3 col-md-12 col-lg-7">
-                <div class="card h-100">
-                    <div class="card-inner">
-                        <div class="nk-fmg-listing nk-block-lg">
-                            <div class="nk-block-head-xs">
-                                <div class="nk-block-between g-2">
-                                    <div class="nk-block-head-content">
-                                        <h6 class="nk-block-title title">Tài liệu nổi bật</h6>
-                                    </div>
-                                    <div class="nk-block-head-content">
-                                        <ul class="nk-block-tools g-3 nav">
-                                            <li><a data-bs-toggle="tab" href="#file-grid-view" class="nk-switch-icon active"><em class="icon ni ni-book"></em></a></li>
-                                            <li><a class="nk-switch-icon"><em class="icon ni ni-swap"></em></a></li>
-                                            <li><a data-bs-toggle="tab" href="#file-group-view" class="nk-switch-icon"><em class="icon ni ni-file-docs"></em></a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div><!-- .nk-block-head -->
-                            <div class="tab-content">
-                
-                                <div class="tab-pane active" id="file-grid-view">
-                                    @if($high_reading_book)
-                
-                                    <div class="nk-files nk-files-view-grid">                 
-                                        <div class="card card-bordered">
-                                            <div class="card-inner">
-                                                <div class="row">
-                                                    <div class="col-lg-6">
-                                                        <div class="product-gallery" >    
-                                                            <img src="{{ $high_reading_book->url }}" class="w-100" alt="">                                     
-                                                        </div>
-                                                    </div><!-- .col -->
-                                                    <div class="col-lg-6 d-flex align-items-end">
-                                                        <div class="product-info mb-5 me-xxl-5">
-                                                            <h2 class="product-title">{{ $high_reading_book->name }}                                                
-                                                            </h2>                                                         
-                                                            <p class="product-title">Tác giả: {{ $high_reading_book->author }}</p>                 
-                                                            <div class="product-meta">
-                                                                <h6 class="title">Ngôn ngữ: 
-                                                                    @if ($high_reading_book->language === 1)
-                                                                    <span class="text-success">Tiếng việt</span>
-                                                                    @else
-                                                                    <span class="text-info">Tiếng anh</span>
-                        
-                                                                    @endif 
-                                                                </h6>
-                                                                
-                                                            </div><!-- .product-meta -->                            
-                                                            <div class="product-meta">
-                                                                <h6 class="title">Thể loại</h6>                                     
-                                                                <span class="text-success">{{ $high_reading_book->types->name }}</span>
-                                                            </div><!-- .product-meta -->     
-                                                            <div class="product-meta">
-                                                                <h6 class="title">Đánh giá</h6>
-                                                                <span class="text-success">{{ $high_reading_book->ratingScore }}</span>
-                                                            </div><!-- .product-meta -->         
-                                                            <div class="product-meta">
-                                                                <h6 class="title">Lượt đọc</h6>
-                                                                <span class="text-success">{{ $high_reading_book->totalReading }}</span>
-                                                            </div><!-- .product-meta -->                        
-                                                            <div class="product-meta">
-                                                                <h6 class="title">Số bình luận</h6>
-                                                                <span class="text-success">{{ $high_reading_book->totalComments }}</span>
-                                                            </div><!-- .product-meta -->   
-                                                            <div class="product-meta">
-                                                                <h6 class="title">Lượt theo dõi</h6>
-                                                                <span class="text-success">{{ $high_reading_book->totalBookMarking }}</span>
-                                                            </div><!-- .product-meta -->   
-                                                        </div><!-- .product-info -->
-                                                        
-                                                        
-                                                    </div><!-- .col -->
-                                                </div><!-- .row -->                                            
-                                            </div>
-                                        </div>
-                                    </div><!-- .nk-files -->
-                                    @else
-                                    <p>Bạn chưa đăng sách nào</p>
-                                    @endif
-                
-                                </div><!-- .tab-pane -->
-                                
-                
-                                <div class="tab-pane" id="file-group-view">
-                                    @if($high_downloading_document)
-                
-                                    <div class="nk-files nk-files-view-group">
-                                        <div class="card card-bordered">
-                                            <div class="card-inner">
-                                                <div class="row">
-                                                    <div class="col-lg-6">
-                                                        <div class="product-gallery" >    
-                                                            <img src="{{ $high_downloading_document->url }}" class="w-100" alt="">                                     
-                                                        </div>
-                                                    </div><!-- .col -->
-                                                    <div class="col-lg-6 d-flex align-items-end">
-                                                        <div class="product-info mb-5 me-xxl-5">
-                                                            <h2 class="product-title">{{ $high_downloading_document->name }}                                                
-                                                            </h2>                                                         
-                                                            <p class="product-title">Tác giả: {{ $high_downloading_document->author }}</p>                 
-                                                            <div class="product-meta">
-                                                                <h6 class="title">Ngôn ngữ: 
-                                                                    @if ($high_downloading_document->language === 1)
-                                                                    <span class="text-success">Tiếng việt</span>
-                                                                    @else
-                                                                    <span class="text-info">Tiếng anh</span>
-                        
-                                                                    @endif 
-                                                                </h6>
-                                                                
-                                                            </div><!-- .product-meta -->                            
-                                                            <div class="product-meta">
-                                                                <h6 class="title">Thể loại</h6>                                     
-                                                                <span class="text-success">{{ $high_downloading_document->types->name }}</span>
-                                                            </div><!-- .product-meta -->                                               
-                                                            <div class="product-meta">
-                                                                <h6 class="title">Lượt tải</h6>
-                                                                <span class="text-success">{{ $high_downloading_document->totalDownloading }}</span>
-                                                            </div><!-- .product-meta -->                        
-                                                            <div class="product-meta">
-                                                                <h6 class="title">Số bình luận</h6>
-                                                                <span class="text-success">{{ $high_downloading_document->totalComments }}</span>
-                                                            </div><!-- .product-meta -->   
-                                                            <div class="product-meta">
-                                                                <h6 class="title">File đỉnh kèm</h6>
-                                                                <a href="{{ $high_downloading_document->documentUrl }}" >
-                                                                    file.{{ $high_downloading_document->extension }}
-                                                                </a>
-                                                            </div><!-- .product-meta -->   
-                                                        </div><!-- .product-info -->
-                                                        
-                                                        
-                                                    </div><!-- .col -->
-                                                </div><!-- .row -->                                            
-                                            </div>
-                                        </div>
-                                        
-                                    </div><!-- .nk-files -->
-                                    @else
-                                    <p>Bạn chưa đăng tài liệu nào</p>
-                
-                                    @endif
-                                </div><!-- .tab-pane -->
-                                
-                            </div><!-- .tab-content -->
-                        </div><!-- .nk-block -->
-                        
-                        
-                    </div><!-- .card-inner -->
-                </div><!-- .card -->
-            </div><!-- .col -->
             <div class="col-xxl-12">
                 <div class="card card-full">
                     <div class="card-inner">
@@ -859,14 +747,13 @@
             datasets: [{
                 label: 'Số lượng sách',
                 data:   Object.values(result[0]),
-                fill: true,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1,
-                backgroundColor: 'rgba(235,238,255,0.6)'
+                backgroundColor: "#1ee0ac",
             }]
         };
         const weekBookBar = new Chart(weekBookCanvas, {
-                type: 'bar',
+                type: 'line',
                 data: data,
                 options: {
                     responsive: true,
@@ -912,14 +799,13 @@
             datasets: [{
                 label: 'Số lượng tài liệu',
                 data:   Object.values(result[0]),
-                fill: true,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1,
-                backgroundColor: 'rgba(235,238,255,0.6)'
+                backgroundColor: "#364a63",
             }]
         };
         const weekDocumentBar = new Chart(weekDocumentCanvas, {
-                type: 'bar',
+                type: 'line',
                 data: data,
                 options: {
                     responsive: true,
@@ -964,14 +850,13 @@
             datasets: [{
                 label: 'Số lượng thành viên',
                 data:   Object.values(result[0]),
-                fill: true,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1,
-                backgroundColor: 'rgba(235,238,255,0.6)'
+                backgroundColor: "#f4bd0e",
             }]
         };
         const weekUserBar = new Chart(weekUserCanvas, {
-                type: 'bar',
+                type: 'line',
                 data: data,
                 options: {
                     responsive: true,
@@ -1017,14 +902,13 @@
             datasets: [{
                 label: 'Số lượng bài viết',
                 data:   Object.values(result[0]),
-                fill: true,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1,
-                backgroundColor: 'rgba(235,238,255,0.6)'
+                backgroundColor: "#09c2de",
             }]
         };
         const weekPostBar = new Chart(weekPostCanvas, {
-                type: 'bar',
+                type: 'line',
                 data: data,
                 options: {
                     responsive: true,
@@ -1052,7 +936,7 @@
                         },
 
                     }
-            }
+                }
                 
         });
     }
@@ -1064,8 +948,8 @@
         const ctx = document.getElementById('doughnutChart');
 
 
-        var books = {!! count($total_books) !!};
-        var documents = {!! count($total_documents) !!};
+        var books = {!! ($total_books) !!};
+        var documents = {!! ($total_documents) !!};
 
         const data = {
 
@@ -1074,7 +958,10 @@
                 label: 'Số lượng',
                 data: [books,documents],
                 hoverOffset: 4,
-        
+                backgroundColor: [
+                "#1ee0ac",
+                "#364a63"
+            ],
 
             }]
         };
@@ -1104,30 +991,57 @@
     createDonutChart();
 
 
-    $("#download-btn").click(function(e){
-        e.preventDefault();
-        var id = {!! $high_downloading_document->id !!}
-        $.ajax({
-                type:"GET",
-                url:'/tai-tai-lieu',
-                data : {
-                    "id": id
-                },
-                })
-                .done(function(res) {
-                // If successful           
-                    window.location.assign(res.url);
+    function createPolarAreaChart() {
+
+    const ctx = document.getElementById('polarAreaChart');
 
 
-                    
-                })
-                .fail(function(jqXHR, textStatus, errorThrown) {
-                // If fail
-                console.log(textStatus + ': ' + errorThrown);
-                })
-       
-        
-    })
+    var books = {!! $total_books !!};
+    var documents = {!! $total_documents !!};
+    var posts = {!! $total_posts !!};
+    var users = {!! $total_users !!};
+
+    const data = {
+
+        labels:['Sách','Tài liệu','Bài viết','Thành viên'],
+        datasets: [{
+            label: 'Số lượng',
+            data: [books,documents,posts,users],
+            hoverOffset: 4,
+            backgroundColor: [
+                "#1ee0ac",
+                "#364a63",
+                "#09c2de",
+                "#f4bd0e"
+            ],
+
+        }]
+    };
+
+    new Chart(ctx, {
+        type: 'polarArea',
+        data: data,
+        options: {  
+            responsive: true,
+            maintainAspectRatio: false,
+            
+
+
+            plugins: {
+            
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        textAlign: 'left',
+                    }
+                }
+            },
+        },
+
+    });
+
+    }
+    createPolarAreaChart();
 
 
     function arrayToCsv(data){
@@ -1262,6 +1176,68 @@
 
       
     })
-   
+    
+
+    function groupBar(){
+
+        const books = {!! json_encode($week_books) !!};
+        const documents = {!! json_encode($week_documents) !!};
+        const posts = {!! json_encode($week_posts) !!};
+        const members = {!! json_encode($week_members) !!};
+
+        var ctx = document.getElementById("groupBar");
+
+        var data = {
+        labels:  Object.keys(books[0]),
+        datasets: [{
+            label: "Số lượng sách",
+            backgroundColor: "#1ee0ac",
+            data: Object.values(books[0]),
+        }, {
+            label: "Số lượng tài liệu",
+            backgroundColor: "#364a63",
+            data: Object.values(documents[0]),
+
+        }, {
+            label: "Số lượng bài viết",
+            backgroundColor: "#09c2de",
+            data: Object.values(posts[0]),
+
+        },{
+            label: "Số lượng thành viên",
+            backgroundColor: "#f4bd0e",
+            data: Object.values(members[0]),
+        }]
+        };
+
+        var myBarChart = new Chart(ctx, {
+        type: 'bar',
+        data: data,
+        options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                    
+                        y: {
+                        ticks: {
+                            precision: 0,
+                            beginAtZero: true,
+
+                            }
+                        }
+                    },
+                    plugins: {
+                       
+                        tooltip: {
+                            displayColors:false
+                        },
+
+                    }
+                }
+        });
+
+    }
+
+    groupBar();
 </script>
 @endsection

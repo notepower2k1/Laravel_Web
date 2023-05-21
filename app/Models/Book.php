@@ -53,15 +53,22 @@ class Book extends Model
 
     public function getBookUrlAttribute()
     {
-        $expiresAt = new \DateTime('tomorrow');
-        $firebase_storage_path = 'bookFile/';     
-        
-        $imageReference = app('firebase.storage')->getBucket()->object($firebase_storage_path.$this -> file);
-
-        if ($imageReference) {
-            $fileURL = $imageReference->signedUrl($expiresAt);
-        } else {
+        if($this->file == null) {
             $fileURL = '';
+
+        }
+        else{
+            $expiresAt = new \DateTime('tomorrow');
+            $firebase_storage_path = 'bookFile/';     
+            
+            $imageReference = app('firebase.storage')->getBucket()->object($firebase_storage_path.$this -> file);
+    
+            if ($imageReference) {
+                $fileURL = $imageReference->signedUrl($expiresAt);
+            } else {
+                $fileURL = '';
+            }
+    
         }
 
         return $fileURL;

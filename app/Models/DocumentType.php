@@ -12,6 +12,15 @@ class DocumentType extends Model
     protected $primaryKey = 'id';
     public $incrementing = false;
 
+    protected $appends = ['total'];
+
+    public function getTotalAttribute()
+    {
+        $document = Document::where('type_id','=',$this->id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get();
+
+        return $document->count();
+    }
+
     public function documents() {
         return $this->hasMany(Document::class);
     }

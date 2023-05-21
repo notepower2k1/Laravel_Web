@@ -19,7 +19,7 @@
     rel="stylesheet" />
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
-    
+
    
     @yield('additional-style')
 

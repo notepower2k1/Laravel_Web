@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\Book;
 use App\Models\Document;
 use App\Models\ForumPosts;
+use App\Models\ReportReason;
 use Carbon\Carbon;
 
 class ProfileController extends Controller
@@ -24,7 +25,8 @@ class ProfileController extends Controller
 
     public function index()
     {
-        
+        $reportReasons = ReportReason::all();
+
         $user = Auth::user();
 
         $updatedDate = new Carbon($user->updated_at);
@@ -37,7 +39,9 @@ class ProfileController extends Controller
         }
 
 
-        return view('client.homepage.profile.index')->with('updateFlag', $updateFlag);
+        return view('client.homepage.profile.index')
+        ->with('reportReasons',$reportReasons)
+        ->with('updateFlag', $updateFlag);
      
     }
 

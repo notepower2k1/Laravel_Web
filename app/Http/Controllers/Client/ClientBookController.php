@@ -11,6 +11,7 @@ use App\Models\Follow;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\ratingBook;
+use App\Models\User;
 use Illuminate\Support\Str;
 
 
@@ -272,7 +273,115 @@ class ClientBookController extends Controller
     }
 
 
+    public function similarity_distance($matrix,$person1,$person2){
+
+        $similar = array();
+        $sum = 0;
+        foreach($matrix[$person1] as $key=>$value){
+
+            if (array_key_exists($key,$matrix[$person2])){
+                $similar[$key] = 1;
+            }
+
+        }
+
+       
+        if($similar==0){
+            return 0;
+        }
+
+        foreach($matrix[$person1] as $key=>$value){
+
+            if (array_key_exists($key,$matrix[$person2])){
+               
+                $sum = $sum + pow($value - $matrix[$person2][$key],2);
+            }
+        }
+
+        return 1 / (1+ sqrt($sum));
+    }
+
+    public function getBookSlug($id){
+        $book = Book::findOrFail($id);
+
+        return $book->slug;
+
+    }
+    public function getMatrix(){
+
+        $bookRatings = ratingBook::all();
+        $matrix = array();
+
+        foreach($bookRatings as $book){
+            $users = User::where('id','=',$book->userID)->get();
+
+            foreach($users as $user){
+                $matrix[$user->name][$this->getBookSlug($book->bookID)] = $book->score;
+
+            }
+
+        }    
+
+        return $matrix;
+    }
+
+    public function getRecommendation($matrix,$person){
+
+        $total = array();
+        $simsums = array();
+        $ranks = array();
+        foreach($matrix as $otherPerson=>$value){
+
+            if($otherPerson != $person){
+                $sim = $this->similarity_distance($matrix,$person,$otherPerson);
+
+                foreach($matrix[$otherPerson] as $key=>$value){
+                    if(!array_key_exists($key,$matrix[$person])){
+
+                        if(!array_key_exists($key,$total)){
+                            $total[$key]=0;
+
+                        }
+                        $total[$key]+=$matrix[$otherPerson][$key]*$sim;
+
+                        if(!array_key_exists($key,$simsums)){
+                            $simsums[$key]=0;
+                        }
+
+                        $simsums[$key]+=$sim;
+
+                    }
+                }
+            }
+        }
+
+        foreach($total as $key=>$value){
+            $ranks[$key] = $value/$simsums[$key];
+        }
+
+        array_multisort($ranks,SORT_DESC);  
+        return $ranks;
+    } 
+
+    public function getRecommendationByRating(){
+
+        //Ranks by history log
+        $matrix = $this->getMatrix();
+
+        $list = $this->getRecommendation($matrix,Auth::user()->name);
+
+
+        $listUserNotReadBook = collect();
+        foreach ($list as $item=>$rating){
+            $book = Book::where('slug','=',$item)->first();
+            $listUserNotReadBook->push($book);
+        }
+
+        return $listUserNotReadBook;
+    }
+
     public function ratingBook(Request $request){
+
 
         $rating_book_score = ratingBook::where('bookID','=',$request->id)->pluck('score')->toArray();
 
@@ -295,10 +404,49 @@ class ClientBookController extends Controller
         $ratingPersons = ratingBook::where('bookID','=',$request->id)->get();
 
         $book->save();
+
+        $recommened_book = $this->getRecommendationByRating()[0];
+
+        $item = '';
+        if($recommened_book){
+            $item = 
+            '<div class="d-flex mb-3">'.
+                '<div class="flex-grow-1">'.
+                    '<div class="d-flex flex-column h-100">'.
+                        '<h4>'.$recommened_book->name.'</h4>'.
+                    ' <span class="text-muted"><em class="icon ni ni-user-list"></em><span>'.$recommened_book->author.'</span></span>'.
+
+                    ' <span class="text-muted">Lượt đọc: <span>'.$recommened_book->totalReading.'</span><em class="icon ni ni-eye text-success"></em></span>'.
+                    ' <span class="text-muted">Đánh giá: <span>'.$recommened_book->ratingScore.'/5</span><em class="icon ni ni-star text-warning"></em></span>'.
+
+                        '<span>'.Str::limit($recommened_book->description,250).'</span>'.
+                        '<div class="d-inline">'.
+                            '<span class="p-1 badge badge-dim bg-outline-danger">'.$recommened_book->types->name.'</span> '  .   
+                    ' </div>'.
+
+
+                    ' <div class="flex-fill d-flex align-items-end">'.
+
+                        ' <a href="/sach/'.$recommened_book->id.'/'.$recommened_book->slug.'" class="btn btn-danger btn-lg rounded-pill px-4">Đọc ngay</a>'.
+                        '</div>'.
+                    '</div>'.
+            ' </div>'.
+                '<div class="item-image">'.
+                    '<a class="book-container" href="/sach/'.$recommened_book->id.'/'.$recommened_book->slug.'" target="_blank" rel="noreferrer noopener">'.
+                    '<div class="bookNonHover">'.
+                        '<img alt="" src="'.$recommened_book->url.'">'.
+                    '</div>'.
+                ' </a>'.
+                '</div>'.
+            '</div>';
+
+        }
+     
         return response()->json([
             'success' => 'Cảm ơn bạn đã đánh giá!!!!',
             'currentScore' => $book->ratingScore,
-            'totalOfRating' =>$ratingPersons->count()
+            'totalOfRating' =>$ratingPersons->count(),
+            'recommened_book' => $item
         ]);
         
        
@@ -312,15 +460,25 @@ class ClientBookController extends Controller
         //update new score
         $rating_book_score = ratingBook::where('bookID','=',$request->book_id)->pluck('score')->toArray();
 
-        $rating_book_score = array_filter($rating_book_score, fn($x)=>$x !== '');
-        $average = array_sum($rating_book_score)/count($rating_book_score);
-
-        $book = Book::findOrFail($request->book_id);
-        $book->ratingScore = round($average, 1);
-
-        $ratingPersons = ratingBook::where('bookID','=',$request->book_id)->get();
-
-        $book->save();
+        if(count($rating_book_score) > 0){
+            $rating_book_score = array_filter($rating_book_score, fn($x)=>$x !== '');
+            $average = array_sum($rating_book_score)/count($rating_book_score);
+    
+            $book = Book::findOrFail($request->book_id);
+            $book->ratingScore = round($average, 1);
+    
+            $ratingPersons = ratingBook::where('bookID','=',$request->book_id)->get();
+    
+            $book->save();
+        }
+        else{
+            $book = Book::findOrFail($request->book_id);
+            $book->ratingScore = 0;
+    
+            $ratingPersons = ratingBook::where('bookID','=',$request->book_id)->get();
+    
+            $book->save();
+        }
        
 
 
@@ -331,14 +489,25 @@ class ClientBookController extends Controller
         ]);
     }
 
-    public function changeFollowStatus(Request $request){
+    public function changeFollowIsDone(Request $request){
+
         $follow = Follow::findOrFail($request->id);
-        $follow->status = 0;
-        $follow ->save();
+
+        $isDone = $follow->isDone;
+
+        if($isDone == 0){
+            $follow->isDone = 1;
+            $follow ->save();
+        }
+        else{
+            $follow->isDone = 0;
+            $follow ->save();
+        }
+   
 
 
         return response()->json([
-            'success' => 'Đánh dấu thành công!!!',      
+            'success' => 'Đổi trạng thái thành công!!!',      
         ]);
       
     }

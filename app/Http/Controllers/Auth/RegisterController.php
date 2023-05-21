@@ -52,7 +52,7 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => ['required', 'alpha_dash', 'max:255','unique:users'],
+            'name' => ['required', 'alpha_dash', 'max:255','unique:users','regex:^[a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\ ]+$'],
             'email' => ['required', 'email:rfc,dns', 'unique:users'],
             'password' => [ 'required',
             'min:6',
@@ -91,6 +91,8 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
             'status' => 1
         ]);
+
+        $user->save();
 
         $profile = Profile::create([
             'displayName' => $user->name,

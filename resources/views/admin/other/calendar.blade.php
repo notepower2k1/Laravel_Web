@@ -117,19 +117,12 @@
                             <div class="form-group">
                                 <label class="form-label">Loại sự kiện</label>
                                 <div class="form-control-wrap">
-                                    <select id="event-theme" class="select-calendar-theme form-control" data-search="on">
-                                        <option value="event-primary">Công ty</option>
-                                        <option value="event-success">Hội thảo</option>
-                                        <option value="event-info">Hội nghị</option>
+                                    <select id="event-theme" class="select-calendar-theme form-control">
+                                        <option value="event-primary">Bảo trì</option>
+                                        <option value="event-success">Unban</option>
+                                        <option value="event-info">Thống kê</option>
                                         <option value="event-warning">Meeting</option>
-                                        {{-- <option value="event-danger">Business dinners</option> --}}
                                         <option value="event-pink">Cá nhân</option>
-                                        <option value="event-primary-dim">Đấu giá</option>
-                                        <option value="event-success-dim">Sự kiện mạng</option>
-                                        <option value="event-info-dim">Ra mắt sản phẩm</option>
-                                        <option value="event-warning-dim">Gây quỹ</option>
-                                        <option value="event-danger-dim">Tài trợ</option>
-                                        <option value="event-pink-dim">Sự kiện thể thao</option>
                                     </select>
                                 </div>
                             </div>
@@ -228,19 +221,20 @@
                             <div class="form-group">
                                 <label class="form-label">Loại sự kiện</label>
                                 <div class="form-control-wrap">
-                                    <select id="edit-event-theme" class="select-calendar-theme form-control" data-search="on">
-                                        <option value="event-primary">Công ty</option>
-                                        <option value="event-success">Hội thảo</option>
-                                        <option value="event-info">Hội nghị</option>
+                                    <select id="edit-event-theme" class="select-calendar-theme form-control">
+                                        <option value="event-primary">Bảo trì</option>
+                                        <option value="event-success">Unban</option>
+                                        <option value="event-info">Thống kê</option>
                                         <option value="event-warning">Meeting</option>
-                                        {{-- <option value="event-danger">Business dinners</option> --}}
                                         <option value="event-pink">Cá nhân</option>
-                                        <option value="event-primary-dim">Đấu giá</option>
+
+                                        {{-- <option value="event-danger">Business dinners</option> --}}
+                                        {{-- <option value="event-primary-dim">Đấu giá</option>
                                         <option value="event-success-dim">Sự kiện mạng</option>
                                         <option value="event-info-dim">Ra mắt sản phẩm</option>
                                         <option value="event-warning-dim">Gây quỹ</option>
                                         <option value="event-danger-dim">Tài trợ</option>
-                                        <option value="event-pink-dim">Sự kiện thể thao</option>
+                                        <option value="event-pink-dim">Sự kiện thể thao</option> --}}
                                     </select>
                                 </div>
                             </div>
@@ -320,6 +314,7 @@
         </div>
     </div>
 </div>
+
 @endsection
 @section('additional-scripts')
 <script src="{{ asset('assets/js/libs/fullcalendar.js?ver=3.1.2') }}"></script>
@@ -329,6 +324,8 @@
 
 <script>
      $(function() {
+
+      
 
         const today = {!! json_encode($today) !!};
         var dateObj = new Date(today);
@@ -341,6 +338,9 @@
         var vietnameseDate = vietnameseDate.charAt(0).toUpperCase() + vietnameseDate.slice(1)
 
         $('#moment-today-span').text(vietnameseDate);
+
+
+
     })
 
     function arrayToCsv(data){
@@ -357,19 +357,14 @@
     $('#exportcsvbtn').click(function(e) {
 
         let type = {
-            "fc-event-primary":"Công ty",
-            "fc-event-success":"Hội thảo",
-            "fc-event-info":"Hội nghị",
+            "fc-event-primary":"Bảo trì",
+            "fc-event-success":"Unban",
+            "fc-event-info":"Thống kê",
             "fc-event-warning":"Meeting",
             "fc-event-pink":"Cá nhân",
-            "fc-event-primary-dim":"Đấu giá",
-            "fc-event-success-dim":"Sự kiện mạng",
-            "fc-event-info-dim":"Ra mắt sản phẩm",
-            "fc-event-warning-dim":"Gây quỹ",
-            "fc-event-danger-dim":"Tài trợ",
-            "fc-event-pink-dim":"Sự kiện thể thao"
+       
         }
-
+     
         e.preventDefault();
         var localStorageData = window.localStorage.getItem('calendar');
         if(localStorageData){
@@ -383,6 +378,8 @@
                     object['className'] = value;
                 }
                 delete object['id'];
+                delete object['status'];
+
             });
         }
 

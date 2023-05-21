@@ -83,15 +83,15 @@ class ChapterController extends Controller
         ]);
         
         $name = '';
-
+        $slug = '';
         if($request->name == null){
             $name = '';
+            $slug =  Str::slug($request->code);
         }
         else{
             $name = $request->name;
+            $slug =  Str::slug($name);
         }
-
-        $slug =  Str::slug($request->name);
 
 
         $chapter_id = Chapter::insertGetId([
@@ -228,6 +228,11 @@ class ChapterController extends Controller
     public function customDelete($chapter_id){
         $chapter = Chapter::findOrFail($chapter_id);
         $chapter->deleted_at = Carbon::now()->toDateTimeString();
+
+        $book = Book::findOrFail($chapter->book_id);
+        $book->numberOfChapter = $book->numberOfChapter -1;
+        $book ->save();
+
         $chapter ->save();
     }   
 
@@ -238,11 +243,13 @@ class ChapterController extends Controller
         $allYears = DB::select("SELECT distinct year(chapters.created_at) as 'year'
         from chapters");
 
-        $totalByTypes = DB::select("SELECT Count(chapters.id) as 'total', books.name 
-        from chapters join books on chapters.book_id = books.id 
-        where chapters.deleted_at is null
+        $totalChapters = Book::all()->sum('numberOfChapter');
 
-        GROUP by books.name ");
+        // $totalByTypes = DB::select("SELECT Count(chapters.id) as 'total', books.name 
+        // from chapters join books on chapters.book_id = books.id 
+        // where chapters.deleted_at is null
+
+        // GROUP by books.name ");
 
         
         if($year == null){
@@ -277,12 +284,13 @@ class ChapterController extends Controller
         GROUP by  DATE(chapters.created_at)");
         
          return view('admin.chapter.statistics')
+            ->with('totalChapters',$totalChapters)
             ->with('allYears',$allYears)
             ->with('totalChaptersInYear',$totalChaptersInYear->count())
             ->with('totalChaptersPerDate',$totalChaptersPerDate)
             ->with('statisticsYear',$year)
-            ->with('totalChaptersPerMonth',$totalChaptersPerMonth)
-            ->with('totalByTypes', $totalByTypes);
+            ->with('totalChaptersPerMonth',$totalChaptersPerMonth);
+            // ->with('totalByTypes', $totalByTypes);
             
     }
 

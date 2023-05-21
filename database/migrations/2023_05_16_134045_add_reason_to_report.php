@@ -13,8 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->tinyInteger('status')->default('1');
+        Schema::table('reports', function (Blueprint $table) {
+            $table->unsignedInteger('reason_id');
+            $table->foreign('reason_id')
+            ->references('id')->on('report_reasons')->onDelete('cascade');
         });
     }
 
@@ -25,8 +27,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('status');
+        Schema::table('reports', function (Blueprint $table) {
+            $table->dropColumn('reason_id');
         });
     }
 };

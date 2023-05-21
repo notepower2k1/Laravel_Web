@@ -91,7 +91,7 @@
                                                     @foreach(explode(",",$document->author) as $author)                                                                       
                                                     <span class="badge badge-md rounded-pill bg-outline-info me-1 mt-1"><a class="text-info" href="/tac-gia/tac-gia-tai-lieu/{{ $author }}">{{ $author }}</a></span>
                                                     @endforeach        
-                                                    <span class="badge badge-md rounded-pill bg-outline-primary me-1 mt-1"><a class="text-primary" href="/the-loai/the-loai-tai-lieu/{{$document->types->slug}}">{{ $document->types->name }}</a>
+                                                    <span class="badge badge-md rounded-pill bg-outline-primary me-1 mt-1"><a class="text-primary" href="/the-loai/sort_by=created_at/the-loai-tai-lieu/{{$document->types->slug}}">{{ $document->types->name }}</a>
                                                     </span> 
 
                                                     @if ($document->language === 1)
@@ -152,7 +152,7 @@
                                                                 <button class="btn btn-xl btn-outline-secondary" id="document-mark-btn" disabled><em class="icon ni ni-bookmark"></em><span id="span-text">Đã đánh dấu</span></button>
                                                                 @endif
                                                             @else
-                                                            <a href="/login" class="btn btn-xl btn-warning"><em class="icon ni ni-bookmark"></em><span id="span-text">Đánh dấu</span></a>
+                                                            <a href="/login" class="btn btn-xl btn-outline-secondary"><em class="icon ni ni-bookmark"></em><span id="span-text">Đánh dấu</span></a>
                                                             @endif
                                                         </li>
                                                       
@@ -236,7 +236,7 @@
                                                                                 <p class="card-text">{{ Str::limit($user_book->description,100) }}</p>
                                                                                 <div class="d-flex justify-content-center">
                                                                                     
-                                                                                    <a href="the-loai/the-loai-sach/{{$user_book->types->slug}}" class="fs-13px"><span class="badge badge-dim bg-outline-danger">{{$user_book->types->name }}</span></a>
+                                                                                    <a href="the-loai/sort_by=created_at/the-loai-sach/{{$user_book->types->slug}}" class="fs-13px"><span class="badge badge-dim bg-outline-danger">{{$user_book->types->name }}</span></a>
                                 
                                 
                                                                                 </div>
@@ -256,7 +256,7 @@
                                                                                     <p class="card-text">{{ Str::limit($user_document->description,100) }}</p>
                                                                                     <div class="d-flex justify-content-center">
                                                                                         
-                                                                                        <a href="the-loai/the-loai-tai-lieu/{{$user_document->types->slug}}" class="fs-13px"><span class="badge badge-dim bg-outline-danger">{{$user_document->types->name }}</span></a>
+                                                                                        <a href="the-loai/sort_by=created_at/the-loai-tai-lieu/{{$user_document->types->slug}}" class="fs-13px"><span class="badge badge-dim bg-outline-danger">{{$user_document->types->name }}</span></a>
                                     
                                     
                                                                                     </div>
@@ -412,7 +412,7 @@
                                                                                                     </span>
                                                                                                     @if(Auth::user()->id != $comment->users->id)
                                                         
-                                                                                                    <span class="report-comment-btn me-2" data-id={{ $comment->id }} data-type=6 data-user="{{ $comment->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                                    <span class="report-comment-btn me-2" data-id={{ $comment->id }} data-type=7 data-user="{{ $comment->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
                                                                                                         <em class="icon ni ni-flag fs-16px"></em>
                                                                                                     </span>
                                                                                                     
@@ -515,7 +515,7 @@
                                                                                                     {{-- <span class="delete-reply-btn" data-id={{ $reply->id }}>
                                                                                                         <em class="icon ni ni-trash fs-16px me-2"></em>
                                                                                                     </span> --}}
-                                                                                                    <span class="report-comment-btn" data-id={{ $reply->id }} data-type=7 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                                    <span class="report-comment-btn" data-id={{ $reply->id }} data-type=9 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
                                                                                                         <em class="icon ni ni-flag fs-16px me-2 "></em>
                                                                                                     </span>
                                                                                                     {{-- <div class="custom-control custom-checkbox custom-control-pro custom-control-pro-icon no-control">
@@ -586,6 +586,8 @@
                         </div>                  
                     </div>
 
+                    @if(isset($documentsWithSameType))
+                        @if($documentsWithSameType->count() > 0)
                     <div class="card card-bordered">
                         <div class="card-inner">
                             <div class="nk-block-head nk-block-head-sm">
@@ -630,6 +632,8 @@
                             </div><!-- .nk-block -->  
                         </div>    
                     </div>
+                        @endif
+                    @endif
                 </div>
             </div>
           
@@ -639,7 +643,7 @@
 @section('modal')
 @if(Auth::check())
 
-<div class="modal fade" id="reportForm" style="display: none;" aria-hidden="true">
+<div class="modal fade" id="reportForm">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -652,16 +656,27 @@
                 <form class="form-validate is-alter" novalidate="novalidate">
                     @csrf
                     <input type="hidden" class="form-control" id="type_id" name="type_id" value=3>
-                    <input type="hidden" class="form-control" id="identifier_id" name="identifier_id" value={{ $document->id }}>
+                    <input type="hidden" class="form-control" id="identifier_id" name="identifier_id" value={{ $document_id }}>
 
                     <div class="form-group">
                         <label class="form-label" for="book-name">Tên tài liệu</label>
                         <div class="form-control-wrap">
-                            <input type="text" class="form-control" id="book-name" required="" value='{{ $document->name }}' readonly>
+                            <input type="text" class="form-control" id="book-name" required="" value='{{ $document_name }}' readonly>
                         </div>
                     </div>
+
                     <div class="form-group">
-                        <label class="form-label" for="description">Lý do</label>
+                        <label class="form-label" for="reason">Lý do</label>
+                        <div class="form-control-wrap">
+                            <select required class="form-control mb-4 col-6" name="reason" id="reason">
+                                @foreach ($reportReasons as $reason)
+                                <option value="{{ $reason->id }}" >{{ $reason->name }}</option>
+                                @endforeach
+                            </select>                        
+                        </div>                     
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="description">Ghi chú</label>
                         <div class="form-control-wrap">
                             <textarea class="form-control form-control-sm" id="description" name="description" placeholder="Lý do của bạn" required></textarea>
                         </div>
@@ -680,7 +695,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="reportFormComment" style="display: none;" aria-hidden="true">
+<div class="modal fade" id="reportFormComment" >
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -702,8 +717,19 @@
                             <input type="text" class="form-control" id="user-name" name="user-name" required="" readonly>
                         </div>
                     </div>
+
                     <div class="form-group">
-                        <label class="form-label" for="description">Lý do</label>
+                        <label class="form-label" for="reason">Lý do</label>
+                        <div class="form-control-wrap">
+                            <select required class="form-control mb-4 col-6" name="reason" id="reason">
+                                @foreach ($reportReasons as $reason)
+                                <option value="{{ $reason->id }}" >{{ $reason->name }}</option>
+                                @endforeach
+                            </select>                        
+                        </div>                     
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="description">Ghi chú</label>
                         <div class="form-control-wrap">
                             <textarea class="form-control form-control-sm" id="description" name="description" placeholder="Lý do của bạn" required></textarea>
                         </div>
@@ -722,7 +748,7 @@
 </div>
 
 
-<div class="modal fade" id="editCommentForm" style="display: none;" aria-hidden="true">
+<div class="modal fade" id="editCommentForm">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -866,7 +892,7 @@
     })
     $("#download-btn").click(function(e){  
 
-        const id = {!! $document->id !!};
+        const id = {!! $document_id !!};
 
         $.ajax({
             url:'/generation-link',
@@ -916,7 +942,8 @@
                 var type_id = form.find('input[name="type_id"]').val();
                 var identifier_id = form.find('input[name="identifier_id"]').val();
                 var description = form.find('textarea[name="description"]').val();
-                
+                const reason = form.find('select[name="reason"]').val();
+
                 if(description){
                         $.ajax({
                         url:'/bao-cao',
@@ -924,8 +951,9 @@
                         data:{
                             'description': description,
                             'identifier_id':identifier_id,
-                            'type_id':type_id
-                        }
+                            'type_id':type_id,
+                            'reason':reason
+                        }   
                         })
                         .done(function(res) {
                         
@@ -996,6 +1024,7 @@
                 const type_id = form.find('input[name="type_id"]').val();
                 const identifier_id = form.find('input[name="identifier_id"]').val();
                 const description = form.find('textarea[name="description"]').val();
+                const reason = form.find('select[name="reason"]').val();
 
 
   
@@ -1007,7 +1036,8 @@
                         data:{
                             'description': description,
                             'identifier_id':identifier_id,
-                            'type_id':type_id
+                            'type_id':type_id,
+                            'reason':reason
                         }
                         })
                         .done(function(res) {
@@ -1074,7 +1104,7 @@
     $(document).on('click','#comment-btn',function(){
         var content = $("#comment_area").val();
         
-        var item_id = {!! $document->id !!};
+        var item_id = {!! $document_id !!};
 
         $.ajax({
                 url:'/binh-luan',
@@ -1483,7 +1513,7 @@
 
 });
     $(document).on('click','#document-mark-btn',function(){
-        var document_id = {!! $document->id !!};
+        var document_id = {!! $document_id !!};
         
         $(this).attr("disabled", 'disabled');
         $('#span-text').text('Đã theo dõi');

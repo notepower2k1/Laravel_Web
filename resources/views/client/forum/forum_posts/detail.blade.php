@@ -1,6 +1,7 @@
 @extends('client/forum.layouts.app')
 @section('pageTitle', `${{$post->topic}}`)
 @section('additional-style')
+
 <style>
    
     .open-relies-btn:hover{
@@ -82,11 +83,11 @@
 
                         <div class="media mt-4" id="comment-{{ $comment->id }}">
                             <div class="d-flex flex-column me-3">
-                                <img class="border border-secondary" alt="Bootstrap Media Preview" src="{{ $comment->users->profile->url }}" width="80px" />
+                                <img class="border border-secondary" alt="Bootstrap Media Preview" src="{{ $comment->users->profile->url }}" width="100px" />
 
                                 @if(Auth::check())
 
-                                <button class="btn btn-icon btn-lg btn-success create-reply-btn" data-id={{ $comment->id }}>
+                                <button class="btn btn-icon btn-success create-reply-btn" data-id={{ $comment->id }}>
                                     <em class="icon ni ni-reply m-auto">
                                     </em>
                                 </button>
@@ -122,7 +123,7 @@
                                                                     </li>
                                                                     @if(Auth::user()->id != $comment->users->id)
                                                                     <li>
-                                                                        <a class="report-comment-btn" data-id={{ $comment->id }} data-type=10 data-user='{{ $comment->users->profile->displayName  }}'
+                                                                        <a class="report-comment-btn" data-id={{ $comment->id }} data-type=8 data-user='{{ $comment->users->profile->displayName  }}'
                                                                             data-bs-toggle="modal" data-bs-target="#reportFormComment"
                                                                             href="#">
                                                                             <em class="icon ni ni-flag"></em>
@@ -185,7 +186,7 @@
                                                                             @if(Auth::user()->id != $comment->users->id)
 
                                                                             <li>           
-                                                                                <a class="report-comment-btn" data-id={{ $comment->id }} data-type=11 data-user="{{ $comment->users->profile->displayName  }}" 
+                                                                                <a class="report-comment-btn" data-id={{ $comment->id }} data-type=9 data-user="{{ $comment->users->profile->displayName  }}" 
                                                                                     data-bs-toggle="modal" data-bs-target="#reportFormComment"
                                                                                     href="#">
                                                                                     <em class="icon ni ni-flag"></em>
@@ -251,7 +252,7 @@
 @section('modal')
 @if(Auth::check())
 
-<div class="modal fade" id="reportForm" style="display: none;" aria-hidden="true">
+<div class="modal fade" id="reportForm">
   <div class="modal-dialog" role="document">
       <div class="modal-content">
           <div class="modal-header">
@@ -272,8 +273,21 @@
                           <input type="text" class="form-control" id="book-name" required="" value='{{ $post->topic }}' readonly>
                       </div>
                   </div>
+
+
                   <div class="form-group">
-                      <label class="form-label" for="description">Lý do</label>
+                    <label class="form-label" for="reason">Lý do</label>
+                    <div class="form-control-wrap">
+                        <select required class="form-control mb-4 col-6" name="reason" id="reason">
+                            @foreach ($reportReasons as $reason)
+                            <option value="{{ $reason->id }}" >{{ $reason->name }}</option>
+                            @endforeach
+                        </select>                        
+                    </div>                     
+                </div>
+
+                  <div class="form-group">
+                      <label class="form-label" for="description">Ghi chú</label>
                       <div class="form-control-wrap">
                           <textarea class="form-control form-control-sm" id="description" name="description" placeholder="Lý do của bạn" required></textarea>
                       </div>
@@ -291,7 +305,7 @@
   </div>
 </div>
 
-<div class="modal fade" id="reportFormComment" style="display: none;" aria-hidden="true">
+<div class="modal fade" id="reportFormComment">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -313,8 +327,20 @@
                             <input type="text" class="form-control" id="user-name" name="user-name" required="" readonly>
                         </div>
                     </div>
+
                     <div class="form-group">
-                        <label class="form-label" for="description">Lý do</label>
+                        <label class="form-label" for="reason">Lý do</label>
+                        <div class="form-control-wrap">
+                            <select required class="form-control mb-4 col-6" name="reason" id="reason">
+                                @foreach ($reportReasons as $reason)
+                                <option value="{{ $reason->id }}" >{{ $reason->name }}</option>
+                                @endforeach
+                            </select>                        
+                        </div>                     
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="description">Ghi chú</label>
                         <div class="form-control-wrap">
                             <textarea class="form-control form-control-sm" id="description" name="description" placeholder="Lý do của bạn" required></textarea>
                         </div>
@@ -705,7 +731,8 @@
                 var type_id = form.find('input[name="type_id"]').val();
                 var identifier_id = form.find('input[name="identifier_id"]').val();
                 var description = form.find('textarea[name="description"]').val();
-                
+                const reason = form.find('select[name="reason"]').val();
+
                 if(description){
                         $.ajax({
                         url:'/bao-cao',
@@ -713,7 +740,8 @@
                         data:{
                             'description': description,
                             'identifier_id':identifier_id,
-                            'type_id':type_id
+                            'type_id':type_id,
+                            'reason':reason
                         }
                         })
                         .done(function(res) {
@@ -781,7 +809,8 @@
                 const type_id = form.find('input[name="type_id"]').val();
                 const identifier_id = form.find('input[name="identifier_id"]').val();
                 const description = form.find('textarea[name="description"]').val();
-  
+                const reason = form.find('select[name="reason"]').val();
+
                 
                 if(description){
                             $.ajax({
@@ -790,7 +819,8 @@
                         data:{
                             'description': description,
                             'identifier_id':identifier_id,
-                            'type_id':type_id
+                            'type_id':type_id,
+                            'reason':reason
                         }
                         })
                         .done(function(res) {

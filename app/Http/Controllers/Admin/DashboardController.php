@@ -201,9 +201,10 @@ class DashboardController extends Controller
         ) as sub");
 
 
-        $total_books = Book::where('deleted_at','=',null)->get();
-        $total_documents = Document::where('deleted_at','=',null)->get();
-        $total_posts = ForumPosts::where('deleted_at','=',null)->get();
+        $total_books = Book::where('deleted_at','=',null)->whereBetween('created_at', [$weekStartDate,$weekEndDate])->get();
+        $total_documents = Document::where('deleted_at','=',null)->whereBetween('created_at', [$weekStartDate,$weekEndDate])->get();
+        $total_posts = ForumPosts::where('deleted_at','=',null)->whereBetween('created_at', [$weekStartDate,$weekEndDate])->get();
+        $total_users = User::where('deleted_at','=',null)->whereBetween('email_verified_at', [$weekStartDate,$weekEndDate])->get();
 
 
         $high_reading_book = Book::where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('totalReading')->first();
@@ -220,9 +221,11 @@ class DashboardController extends Controller
         ->with('week_posts',$week_posts)
         ->with('user_today_info',$user_today_info)
         ->with('week_members',$week_members)
-        ->with('total_books',$total_books)
-        ->with('total_documents',$total_documents)
-        ->with('total_posts',$total_posts)
+        ->with('total_books',$total_books->count())
+        ->with('total_documents',$total_documents->count())
+        ->with('total_posts',$total_posts->count())
+        ->with('total_users',$total_users->count())
+
         ->with('today_book',$today_book)
         ->with('today_document',$today_document)
         ->with('high_reading_book',$high_reading_book)

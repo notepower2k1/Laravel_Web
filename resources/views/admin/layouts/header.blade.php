@@ -93,7 +93,7 @@
                                         <em class="icon icon-circle bg-danger-dim ni ni-alert"></em>
                                     </div>
                                     <div class="nk-notification-content">
-                                        <div class="nk-notification-text">Báo cáo mới về <span>{{ $report_notification->identifier  }}</span></div>
+                                        <div class="nk-notification-text">Báo cáo mới về <span>{{ Str::limit($report_notification->notify,100)  }}</span></div>
                                         <div class="nk-notification-time">{{ $report_notification->time }}</div>
                                     </div>
                                 </div>

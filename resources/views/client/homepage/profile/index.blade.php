@@ -45,163 +45,166 @@ https://cdn.jsdelivr.net/npm/jquery-ui-slider@1.12.1/jquery-ui.min.css
 @section('content')
 
 <div class="nk-block">
-    <div class="card card-bordered">
-        <div class="card-aside-wrap">
-         
-            <div class="card-aside card-aside-left user-aside toggle-slide toggle-slide-left toggle-break-lg" data-toggle-body="true" data-content="userAside" data-toggle-screen="lg" data-toggle-overlay="true">
-                <div class="card-inner-group" data-simplebar>
-                    <div class="card-inner">
-                        <div class="user-card">
-                            <div class="user-avatar bg-primary">
-                                    <img src={{ Auth::user()->profile->url}} alt="..." />
-
-                            </div>
-                            <div class="user-info">
-                                <span class="lead-text">{{Auth::user()->name}}</span>
-                                <span class="sub-text">{{Auth::user()->email}}</span>
-                            </div>
-                            <div class="user-action">
-                                <div class="dropdown">
-                                    <a class="btn btn-icon btn-trigger me-n2" data-bs-toggle="dropdown" href="#"><em class="icon ni ni-more-v"></em></a>
-                                    <div class="dropdown-menu dropdown-menu-end">
-                                        <ul class="link-list-opt no-bdr">
-                                            <li>
-                                                @if($updateFlag)
-                                                <a href="#" data-bs-toggle="modal" data-bs-target="#profile-edit"><em class="icon ni ni-camera-fill"></em><span>Thay đổi ảnh</span></a>
-
-                                                @else
-                                                <a href="#" class="fail-update-btn" ><em class="icon ni ni-camera-fill"></em><span>Thay đổi ảnh</span></a>
-
-                                                @endif
-
-                                            </li>
-                                            <li>
-                                                @if($updateFlag)
-                                                <a href="#" data-bs-toggle="modal" data-bs-target="#profile-edit"><em class="icon ni ni-edit-fill"></em><span>Thay đổi thông tin</span></a>
-
-                                                @else
-                                                <a href="#"  class="fail-update-btn" ><em class="icon ni ni-edit-fill"></em><span>Thay đổi thông tin</span></a>
-
-                                                @endif
-                                            </li>
-                                        </ul>
+    <div class="p-2">
+        <div class="card card-bordered shadow">
+            <div class="card-aside-wrap">
+             
+                <div class="card-aside card-aside-left user-aside toggle-slide toggle-slide-left toggle-break-lg" data-toggle-body="true" data-content="userAside" data-toggle-screen="lg" data-toggle-overlay="true">
+                    <div class="card-inner-group" data-simplebar>
+                        <div class="card-inner">
+                            <div class="user-card">
+                                <div class="user-avatar bg-primary">
+                                        <img src={{ Auth::user()->profile->url}} alt="..." />
+    
+                                </div>
+                                <div class="user-info">
+                                    <span class="lead-text">{{Auth::user()->name}}</span>
+                                    <span class="sub-text">{{Auth::user()->email}}</span>
+                                </div>
+                                <div class="user-action">
+                                    <div class="dropdown">
+                                        <a class="btn btn-icon btn-trigger me-n2" data-bs-toggle="dropdown" href="#"><em class="icon ni ni-more-v"></em></a>
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <ul class="link-list-opt no-bdr">
+                                                <li>
+                                                    @if($updateFlag)
+                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#profile-edit"><em class="icon ni ni-camera-fill"></em><span>Thay đổi ảnh</span></a>
+    
+                                                    @else
+                                                    <a href="#" class="fail-update-btn" ><em class="icon ni ni-camera-fill"></em><span>Thay đổi ảnh</span></a>
+    
+                                                    @endif
+    
+                                                </li>
+                                                <li>
+                                                    @if($updateFlag)
+                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#profile-edit"><em class="icon ni ni-edit-fill"></em><span>Thay đổi thông tin</span></a>
+    
+                                                    @else
+                                                    <a href="#"  class="fail-update-btn" ><em class="icon ni ni-edit-fill"></em><span>Thay đổi thông tin</span></a>
+    
+                                                    @endif
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
+                            </div><!-- .user-card -->
+                        </div><!-- .card-inner -->
+                        
+                        <div class="card-inner p-0">
+                            <ul class="link-list-menu">
+                                <li><a href="#"><em class="icon ni ni-user-fill-c"></em><span>Thông tin cá nhân</span></a></li>
+                                <li><a href="/quan-ly/binh-luan"><em class="icon ni ni-activity-round-fill"></em><span>Lịch sử hoạt động</span></a></li>
+                                <li>
+                                    @if($updateFlag)
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#profile-edit"><em class="icon ni ni-lock-alt-fill"></em><span>Cài đặt bảo mật</span></a>
+    
+                                    @else
+                                    <a href="#" class="fail-update-btn" ><em class="icon ni ni-lock-alt-fill"></em><span>Cài đặt bảo mật</span></a>
+    
+                                    @endif
+                                </li>
+                            </ul>
+                        </div><!-- .card-inner -->
+                    </div><!-- .card-inner-group -->
+                </div><!-- card-aside -->
+                <div class="card-inner card-inner-lg">
+                    <div class="nk-block-head nk-block-head-lg">
+                        <div class="nk-block-between">
+                            <div class="nk-block-head-content">
+                                <h4 class="nk-block-title">Thông tin cá nhân</h4>
+                                
                             </div>
-                        </div><!-- .user-card -->
-                    </div><!-- .card-inner -->
-                    
-                    <div class="card-inner p-0">
-                        <ul class="link-list-menu">
-                            <li><a href="#"><em class="icon ni ni-user-fill-c"></em><span>Thông tin cá nhân</span></a></li>
-                            <li><a href="/quan-ly/binh-luan"><em class="icon ni ni-activity-round-fill"></em><span>Lịch sử hoạt động</span></a></li>
-                            <li>
+                            <div class="nk-block-head-content align-self-start d-lg-none">
+                                <a href="#" class="toggle btn btn-icon btn-trigger mt-n1" data-target="userAside"><em class="icon ni ni-menu-alt-r"></em></a>
+                            </div>
+                        </div>
+                    </div><!-- .nk-block-head -->
+                    <div class="nk-block">
+                        <div class="nk-data data-list">
+                            <div class="data-head">
+                                <h6 class="overline-title">Thông tin cơ bản</h6>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-col">
+                                    <span class="data-label">Tên tài khoản</span>
+                                    <span class="data-value">{{Auth::user()->name}}</span>
+                                </div>
+                                <div class="data-col data-col-end"><span class="data-more disable"><em class="icon ni ni-lock-alt"></em></span></div>
+    
+                            </div><!-- data-item -->
+                            <div class="data-item">
+                                <div class="data-col">
+                                    <span class="data-label">Biệt danh</span>
+                                    <span class="data-value">{{Auth::user()->profile->displayName}}</span>
+                                </div>
                                 @if($updateFlag)
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#profile-edit"><em class="icon ni ni-lock-alt-fill"></em><span>Cài đặt bảo mật</span></a>
-
+                                <div class="data-col data-col-end">
+                                    <span class="data-more" data-bs-toggle="modal" data-bs-target="#profile-edit"><em class="icon ni ni-forward-ios"></em></span>
+                                </div>
                                 @else
-                                <a href="#" class="fail-update-btn" ><em class="icon ni ni-lock-alt-fill"></em><span>Cài đặt bảo mật</span></a>
-
+                                <div class="data-col data-col-end">
+                                    <span class="data-more fail-update-btn"><em class="icon ni ni-forward-ios"></em></span>
+                                </div>
                                 @endif
-                            </li>
-                        </ul>
-                    </div><!-- .card-inner -->
-                </div><!-- .card-inner-group -->
-            </div><!-- card-aside -->
-            <div class="card-inner card-inner-lg">
-                <div class="nk-block-head nk-block-head-lg">
-                    <div class="nk-block-between">
-                        <div class="nk-block-head-content">
-                            <h4 class="nk-block-title">Thông tin cá nhân</h4>
-                            
-                        </div>
-                        <div class="nk-block-head-content align-self-start d-lg-none">
-                            <a href="#" class="toggle btn btn-icon btn-trigger mt-n1" data-target="userAside"><em class="icon ni ni-menu-alt-r"></em></a>
-                        </div>
-                    </div>
-                </div><!-- .nk-block-head -->
-                <div class="nk-block">
-                    <div class="nk-data data-list">
-                        <div class="data-head">
-                            <h6 class="overline-title">Thông tin cơ bản</h6>
-                        </div>
-                        <div class="data-item">
-                            <div class="data-col">
-                                <span class="data-label">Tên tài khoản</span>
-                                <span class="data-value">{{Auth::user()->name}}</span>
+                            </div><!-- data-item -->
+                            <div class="data-item">
+                                <div class="data-col">
+                                    <span class="data-label">Email</span>
+                                    <span class="data-value">{{Auth::user()->email}}</span>
+                                </div>
+                                <div class="data-col data-col-end"><span class="data-more disable"><em class="icon ni ni-lock-alt"></em></span></div>
+                            </div><!-- data-item -->                                                                                                    
+                            <div class="data-item">
+                                <div class="data-col">
+                                    <span class="data-label">Giới tính</span>
+                                    <span class="data-value">
+                                    @switch(Auth::user()->profile->gender)
+                                    @case(0)
+                                        Nam
+                                        @break
+    
+                                    @case(1)
+                                        Nữ
+                                        @break
+    
+                                    @default
+                                        Không công khai
+                                    @endswitch
+                                    </span>
+                                </div>
+                                @if($updateFlag)
+                                <div class="data-col data-col-end">
+                                    <span class="data-more" data-bs-toggle="modal" data-bs-target="#profile-edit"><em class="icon ni ni-forward-ios"></em></span>
+                                </div>
+                                @else
+                                <div class="data-col data-col-end">
+                                    <span class="data-more fail-update-btn"><em class="icon ni ni-forward-ios"></em></span>
+                                </div>
+                                @endif
+                            </div><!-- data-item -->
+                        </div><!-- data-list -->
+                        <div class="nk-data data-list">
+                            <div class="data-head">
+                                <h6 class="overline-title">Thông tin khác</h6>
                             </div>
-                            <div class="data-col data-col-end"><span class="data-more disable"><em class="icon ni ni-lock-alt"></em></span></div>
-
-                        </div><!-- data-item -->
-                        <div class="data-item">
-                            <div class="data-col">
-                                <span class="data-label">Biệt danh</span>
-                                <span class="data-value">{{Auth::user()->profile->displayName}}</span>
-                            </div>
-                            @if($updateFlag)
-                            <div class="data-col data-col-end">
-                                <span class="data-more" data-bs-toggle="modal" data-bs-target="#profile-edit"><em class="icon ni ni-forward-ios"></em></span>
-                            </div>
-                            @else
-                            <div class="data-col data-col-end">
-                                <span class="data-more fail-update-btn"><em class="icon ni ni-forward-ios"></em></span>
-                            </div>
-                            @endif
-                        </div><!-- data-item -->
-                        <div class="data-item">
-                            <div class="data-col">
-                                <span class="data-label">Email</span>
-                                <span class="data-value">{{Auth::user()->email}}</span>
-                            </div>
-                            <div class="data-col data-col-end"><span class="data-more disable"><em class="icon ni ni-lock-alt"></em></span></div>
-                        </div><!-- data-item -->                                                                                                    
-                        <div class="data-item">
-                            <div class="data-col">
-                                <span class="data-label">Giới tính</span>
-                                <span class="data-value">
-                                @switch(Auth::user()->profile->gender)
-                                @case(0)
-                                    Nam
-                                    @break
-
-                                @case(1)
-                                    Nữ
-                                    @break
-
-                                @default
-                                    Không công khai
-                                @endswitch
-                                </span>
-                            </div>
-                            @if($updateFlag)
-                            <div class="data-col data-col-end">
-                                <span class="data-more" data-bs-toggle="modal" data-bs-target="#profile-edit"><em class="icon ni ni-forward-ios"></em></span>
-                            </div>
-                            @else
-                            <div class="data-col data-col-end">
-                                <span class="data-more fail-update-btn"><em class="icon ni ni-forward-ios"></em></span>
-                            </div>
-                            @endif
-                        </div><!-- data-item -->
-                    </div><!-- data-list -->
-                    <div class="nk-data data-list">
-                        <div class="data-head">
-                            <h6 class="overline-title">Thông tin khác</h6>
-                        </div>
-                        <div class="data-item">
-                            <div class="data-col">
-                                <span class="data-label">Ngày tham gia</span>
-                                <span class="data-value">{{Auth::user()->created_at->format('d/m/Y')}}</span>
-                            </div>
-                            <div class="data-col data-col-end"><span class="data-more disable"><em class="icon ni ni-lock-alt"></em></span></div>
-
-                        </div><!-- data-item -->
-                    
-                    </div><!-- data-list -->
-                </div><!-- .nk-block -->
-            </div>
-        </div><!-- .card-aside-wrap -->
-    </div><!-- .card -->
+                            <div class="data-item">
+                                <div class="data-col">
+                                    <span class="data-label">Ngày tham gia</span>
+                                    <span class="data-value">{{Auth::user()->created_at->format('d/m/Y')}}</span>
+                                </div>
+                                <div class="data-col data-col-end"><span class="data-more disable"><em class="icon ni ni-lock-alt"></em></span></div>
+    
+                            </div><!-- data-item -->
+                        
+                        </div><!-- data-list -->
+                    </div><!-- .nk-block -->
+                </div>
+            </div><!-- .card-aside-wrap -->
+        </div><!-- .card -->
+    </div>
+   
 </div><!-- .nk-block -->
 
 @endsection 
@@ -304,7 +307,7 @@ https://cdn.jsdelivr.net/npm/jquery-ui-slider@1.12.1/jquery-ui.min.css
                                             <label class="form-label" for="customFileLabel">Upload ảnh đại diện</label>
                                             <div class="form-control-wrap">
                                                 <div class="form-file">
-                                                    <input type="file" class="form-file-input" id="avatarUpload" name="image" required>
+                                                    <input type="file" accept="image/*" class="form-file-input" id="avatarUpload" name="image" required>
                                                     <label class="form-file-label" for="customFile">Chọn ảnh</label>
 
                                                 </div>
@@ -352,6 +355,12 @@ https://cdn.jsdelivr.net/npm/jquery-ui-slider@1.12.1/jquery-ui.min.css
                                     </div>
                                 </div>
                                 
+                                <div class="form-group">
+                                    {!! NoCaptcha::renderJs('vi') !!}
+                                    {!! NoCaptcha::display() !!}
+            
+                             
+                                </div>
                                 
                                 <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
                                 </form>
@@ -420,7 +429,7 @@ https://cdn.jsdelivr.net/npm/jquery-ui-slider@1.12.1/jquery-ui.min.js
         $("#zoom-slider").slider({
             orientation: "horizontal",
             range: "min",
-            max: 1,
+            max: 2,
             min: 0,
             value: 0,
             step: 0.0001,
@@ -528,7 +537,7 @@ https://cdn.jsdelivr.net/npm/jquery-ui-slider@1.12.1/jquery-ui.min.js
                 $('#min-zoom-val').html(minSliderZoom.toFixed(4));
 
                 $(".cr-slider-wrap").show();
-                $("#zoom-slider").slider("option", "max", 1);
+                $("#zoom-slider").slider("option", "max", 2);
                 $("#zoom-slider").slider("option", "min", minSliderZoom);
                 $("#zoom-slider").slider("value", minSliderZoom);
             },

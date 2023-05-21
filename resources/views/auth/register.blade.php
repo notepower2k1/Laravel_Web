@@ -5,7 +5,7 @@
         <div class="brand-logo pb-4 text-center">
             <a href="/" class="logo-link">
                 <img class="logo-light logo-img logo-img-lg" src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png" srcset="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png 2x" alt="logo">
-                <img class="logo-dark logo-img logo-img-lg" src=".https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png" srcset="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png 2x" alt="logo-dark">
+                <img class="logo-dark logo-img logo-img-lg" src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png" srcset="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png 2x" alt="logo-dark">
             </a>
         </div>
         <div class="card card-bordered">
@@ -109,5 +109,17 @@
   
 
 @endsection
-
+@section('additional-scripts')
+<script>
+ $('input').keyup(function(){
+        var input_val = $(this).val();
+        var inputRGEX = /^[a-zA-Z0-9]*$/;
+        var inputResult = inputRGEX.test(input_val);
+          if(!(inputResult))
+          {     
+            this.value = this.value.replace(/[^a-z0-9\s]/gi, '');
+          }
+       });
+</script>
+@endsection
 

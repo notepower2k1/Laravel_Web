@@ -15,7 +15,15 @@ class BookType extends Model
     //return $this->hasMany(Comment::class, 'foreign_key', 'local_key');
     //return $this->belongsTo(User::class, 'foreign_key', 'owner_key');
 
+    protected $appends = ['total'];
+
+    public function getTotalAttribute()
+    {
+        $book = Book::where('type_id','=',$this->id)->where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get();
+
+        return $book->count();
+    }
     public function books() {
-        return $this->hasMany(Book::class);
+        return $this->hasMany(Book::class,'type_id','id');
     }
 }

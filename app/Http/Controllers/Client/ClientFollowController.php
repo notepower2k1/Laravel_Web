@@ -28,7 +28,7 @@ class ClientFollowController extends Controller
             $document->totalDocumentMarking = $document->totalDocumentMarking + 1;
             $document->save();
 
-            $totalMarking = $document->totalDocumentkMarking;
+            $totalMarking = $document->totalDocumentMarking;
         }
         if($type == 2){
             $book = Book::findOrFail($request -> item_id);

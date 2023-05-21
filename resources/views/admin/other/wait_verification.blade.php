@@ -81,14 +81,12 @@
                                                           <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
                                                           <div class="dropdown-menu dropdown-menu-end">
                                                               <ul class="link-list-opt no-bdr">
-                                                                  <li><a href="/admin/book/{{ $book->id }}">
+                                                                  <li><a href="/admin/book/detail/{{ $book->id }}/{{ \Carbon\Carbon::now()->year }}">
                                                                     <em class="icon ni ni-eye"></em><span>Thông tin chi tiết</span>
                                                                   </a>
 
                                                                   </li>
-                                                                  <li><a href="/thanh-vien/{{ $book->users->id }}"><em class="icon ni ni-user"></em><span>Thông tin người đăng</span></a></li>
-                                                                  <li class="divider"></li>
-                                                                  <li><a href="#"><em class="icon ni ni-check"></em><span>Duyệt sách</span></a></li>
+                                                                  <li><a href="/admin/user/{{ $book->users->id }}"><em class="icon ni ni-user"></em><span>Thông tin người đăng</span></a></li>
 
                                                               </ul>
                                                           </div>
@@ -262,6 +260,10 @@
             timer: 2500
           });
 
+
+          setTimeout(() => {
+            $('#modalNote').modal('show');
+          }, 2500);
 
 
         })

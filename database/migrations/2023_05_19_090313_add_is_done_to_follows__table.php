@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->tinyInteger('status')->default('1');
+        Schema::table('follows', function (Blueprint $table) {
+            $table->tinyInteger('isDone')->default('0');
         });
     }
 
@@ -25,8 +25,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('status');
+        Schema::table('follows', function (Blueprint $table) {
+            $table->dropColumn('isDone');
+
         });
     }
 };

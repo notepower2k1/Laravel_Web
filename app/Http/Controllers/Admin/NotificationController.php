@@ -85,7 +85,7 @@ class NotificationController extends Controller
     }
 
     public function changeAllStatus(){
-        $notification = Notification::where('userID','=',Auth::user()->id)->update([
+        $notification = Notification::where('receiverID','=',Auth::user()->id)->update([
             'status' => 0
         ]);
 

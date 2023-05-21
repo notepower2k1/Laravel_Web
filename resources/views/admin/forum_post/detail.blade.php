@@ -5,10 +5,18 @@
 
 @section('content')
 
-<div class="nk-block-head-sub"><a class="back-to" href="{{ url()->previous() }}"><em class="icon ni ni-arrow-left"></em><span>Quay lại</span></a></div>
+<ul class="breadcrumb breadcrumb-arrow">
+    <li class="breadcrumb-item"><a href="/admin/forum">Diễn đàn</a></li>
+    <li class="breadcrumb-item"><a href="/admin/forum/post/{{ $post->forumID }}">Bài đăng</a></li>
+    <li class="breadcrumb-item active">Chi tiết</li>
+</ul>	
+<hr>
 
-
-
+<div class="d-flex justify-content-end mb-2">
+    <a href="#" class="btn btn-outline-danger delete-button" data-id="{{ $post->id }}" data-name="{{ $post->topic }}">
+    <em class="icon ni ni-trash"></em><span>Xóa</span>
+  </a>
+</div>
 <div class="nk-content-inner">
     <div class="nk-content-body">
         <div class="nk-block">
@@ -20,13 +28,7 @@
                             <div class="entry me-xxl-3">
                             
                             <div class="d-flex align-content-center">
-                                <h3>{{ $post->topic }}
-                                
-                                @if(Auth::check())
-                                <button type="button" class="btn btn-icon btn-lg ms-1" data-bs-toggle="modal" data-bs-target="#reportForm">
-                                    <em class="icon ni ni-alert" style="color:red"></em>
-                                </button>
-                                @endif
+                                <h3>{{ $post->topic }}   
                             </h3>
                             
                                 
@@ -144,4 +146,51 @@
     </div>
  
 </div>
+@endsection 
+
+@section('additional-scripts')
+<script>
+      $(document).on('click','.delete-button',function(){
+      var forum_postID = $(this).data('id');
+      var name = $(this).data('name');
+      var token = $("meta[name='csrf-token']").attr("content");
+
+      Swal.fire({
+          title: "Bạn muốn xóa bài đăng "+ name,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Xóa bài đăng',
+          cancelButtonText: 'Không'
+          }).then((result) => {
+          if (result.isConfirmed) {
+            
+              $.ajax({
+                  type:"GET",
+                  url:'/admin/forum/post/customDelete/' + forum_postID,
+                  data : {
+                  },
+                  })
+                  .done(function() {
+                  // If successful
+                      Swal.fire({
+                          icon: 'success',
+                          title: `Xóa bài đăng thành công`,
+                          showConfirmButton: false,
+                          timer: 2500
+                      });
+                      $("#row-" + forum_postID).fadeOut();
+                  })
+                  .fail(function(jqXHR, textStatus, errorThrown) {
+                  // If fail
+                  console.log(textStatus + ': ' + errorThrown);
+                  })
+          
+          }
+        })
+
+  
+    })
+</script>
 @endsection

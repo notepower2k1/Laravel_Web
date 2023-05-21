@@ -16,7 +16,7 @@
                         </div>
                         <input type="text" name="query" id="search" class="form-control col-sm-8" placeholder="Nhập tên tài liệu điện tử hoặc tác giả!!" aria-label="Search">                 
                         <div class="input-group-append">
-                            <button class="btn btn-outline-success btn-dim dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><span id='option_show'>Loại tài liệu</span><em class="icon mx-n1 ni ni-chevron-down"></em></button>
+                            <button class="btn btn-outline-success btn-dim dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><span id='option_show'>Sách điện tử</span><em class="icon mx-n1 ni ni-chevron-down"></em></button>
                             <div class="dropdown-menu dropdown-menu-end" style="">
                                 <ul class="link-list-opt no-bdr">
                                     <li class="active"><a class="search-option" data-value=1 >Sách điện tử</a></li>

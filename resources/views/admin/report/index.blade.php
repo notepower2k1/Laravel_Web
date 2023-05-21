@@ -56,9 +56,10 @@
                 <thead>
                     <tr class="nk-tb-item nk-tb-head">
                         <th class="nk-tb-col"><span class="sub-text">Ngày báo cáo</span></th>
-                        <th class="nk-tb-col tb-col-md"><span class="sub-text">Loại báo cáo</span></th>
+                        <th class="nk-tb-col tb-col-md"><span class="sub-text">Báo cáo về</span></th>
                         <th class="nk-tb-col tb-col-md"><span class="sub-text">Người báo cáo</span></th>
-                        <th class="nk-tb-col tb-col-md"><span class="sub-text">Tình trạng</span></th>
+                        <th class="nk-tb-col tb-col-md"><span class="sub-text">Lý do</span></th>
+
                         <th class="nk-tb-col nk-tb-col-tools text-end">
                         </th>
                     </tr>
@@ -77,25 +78,100 @@
                             </div>
                         </td>
                         <td class="nk-tb-col tb-col-md">
-                            <span>{{  $report->types->name }}</span>
+                            @switch ($report->type_id)
+                                @case(1)
+                    
+                                    <a href="/admin/book/detail/{{$report->identifier_id}}/{{ \Carbon\Carbon::now()->year }}">
+                                        <span class="badge rounded-pill bg-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->name }}">
+                                          {{ Str::limit($report->identifier->name,30) }}
+                                        </span>
+                                    </a>
+                                    @break;
+                                @case(2)
+                                    chương của sách 
+                                    <a href="/admin/book/chapter/{{$report->identifier_id}}">
+                                        <span class="badge rounded-pill bg-outline-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->books->name }}">
+                                        {{ Str::limit($report->identifier->code,30) }}
+                                        </span>
+                                    </a>
+                                    @break;
+                                @case(3)
+                                    <a href="/admin/document/detail/{{$report->identifier_id}}/{{ \Carbon\Carbon::now()->year }}">
+                                        <span class="badge rounded-pill bg-outline-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->name }}">
+                                        {{ Str::limit($report->identifier->name,30) }}
+                                        </span>
+                                    </a>
+                    
+                                    @break;
+                                @case(4)
+                                    <a href="/admin/forum/post/{{$report->identifier_id}}/detail">
+                                        <span class="badge rounded-pill bg-outline-info" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->topic }}">
+                                        {{ Str::limit($report->identifier->topic,30) }}
+                                        </span>
+                                    </a>
+                    
+                                   
+                                    @break;
+                                @case(5)
+                                    <a href="/admin/user/{{$report->identifier_id}}">
+                                        <span class="badge rounded-pill bg-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->name }}">
+                                        {{ Str::limit($report->identifier->name,30) }}
+                                        </span>
+                                    </a>
+                        
+                                    @break;
+                                @case(6)
+
+                                    <span>
+                                        Bình luận sách 
+
+                                    </span>
+
+                                    @break;
+                                @case(7)
+                                    <span>
+                                        Bình luận tài liệu 
+
+                                    </span>
+
+                                 
+                                   
+                    
+                    
+                                    @break;   
+                                @case(8)
+
+                                    <span>
+                                        Bình luận về bài viết
+
+                                    </span>
+
+                                 
+                                    @break;
+                                @case(9)
+
+                                    <span>
+                                        Phản hồi của bình luận
+
+                                    </span>
+                                    @break;   
+                           
+                                @default:
+                                    <a href="#"></a>
+                            
+                            @endswitch
                         </td>
                         <td class="nk-tb-col tb-col-md">
                             <span>{{ $report->users->email  }}</span>
 
                         </td>   
-                        <td class="nk-tb-col tb-col-md">    
-                            
-                            <div class="form-check form-switch">
-                                <input type="checkbox" 
-                                class="form-check-input"
-                                role="switch"
-                                data-id="{{ $report->id }}"
-                                {{ $report->status ? '':'checked' }}   />
-                            </div>
-                        </td>                                                                                                                                                                                                                  
+                        <td class="nk-tb-col tb-col-md">
+                            <span class="text-danger">{{ $report->reasons->name  }}</span>
+
+                        </td> 
+                                                                                                                                                                                                                                  
                         <td class="nk-tb-col nk-tb-col-tools">
                             <button class="btn btn-icon btn-lg ni ni-eye detail-btn" data-id="{{ $report->id }}"></button>
-                            <button class="d-none" id="show-modal-btn"  data-bs-toggle="modal" data-bs-target="#modalTabs"></button>
                         </td>
                     </tr><!-- .nk-tb-item  -->
                     @endforeach
@@ -119,19 +195,27 @@
                         <a class="nav-link active" data-bs-toggle="tab" href="#tabItem1" aria-selected="true" role="tab">Nội dung báo cáo</a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link" data-bs-toggle="tab" href="#tabItem2" aria-selected="false" role="tab" tabindex="-1">Người báo cáo</a>
+                        <a class="nav-link" data-bs-toggle="tab" href="#tabItem2" aria-selected="false" role="tab">Người báo cáo</a>
                     </li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active show" id="tabItem1" role="tabpanel">
+                        <h5><strong>Lý do báo cáo: </strong><span id="report-reason"></span></h5>
+                        <h5><strong>Ghi chú: </strong><span id="report-description"></span></h5>
+
+                        <hr>
                         <h4 class="title" id="report-title">Báo cáo về sách</h4>
                         <hr class="shadow hr">
                         <div id="item-detail-ul">
                         </div>         
                         <hr class="shadow hr">
-                        <h5><strong>Lý do báo cáo: </strong><span id="report-reason"></span></h5>
                         <hr class="shadow hr">
-                        <a href="#" class="btn btn-dim btn-danger" id="item-detail-url">Thông tin chi tiết</a>
+                        <a href="#" class="btn btn-dim btn-danger float-end" id="item-detail-url">Thông tin chi tiết</a>
+
+
+                        <button class="btn btn-outline-primary" data-id = '-1' id="resolve-report-btn">
+                            Xử lý báo cáo
+                        </button>
                     </div>
                     <div class="tab-pane" id="tabItem2" role="tabpanel">
                         <h6 class="title">Thông tin người báo cáo</h6>
@@ -139,7 +223,7 @@
                         <div id="user-detail-ul">
                         </div>             
                         <hr class="shadow hr">
-                        <a href="#" class="btn btn-dim btn-danger" id="user-detail-url">Thông tin chi tiết</a>
+                        <a href="#" class="btn btn-dim btn-danger float-end" id="user-detail-url">Thông tin chi tiết</a>
                     </div>
                 </div>
             </div>
@@ -161,7 +245,7 @@ $(function(){
       dom: 'Blfrtip',
       columnDefs: [     
           {
-              targets: [3],
+              targets: [4],
               orderable: false     
           }
       ],
@@ -223,32 +307,7 @@ $(function(){
     $('#DataTables_Table_0_length').addClass('mt-2');
     $('#DataTables_Table_0_filter').addClass('mt-2');
 
-    $('#DataTables_Table_0 tbody').on('change','.form-check-input',function(){
-        
-        var report_id = $(this).data('id');
-
-        
-        $.ajax({
-            type:"GET",
-            url:'/admin/report/update/changeStatus',
-            data: {'status':0,'id':report_id}   
-            })
-            .done(function() {
-            // If successful
-                Swal.fire({
-                        icon: 'success',
-                        title: `Xử lý báo cáo thành công`,
-                        showConfirmButton: false,
-                        timer: 2500
-                    });
-                $("#row-" + report_id).fadeOut();
   
-            })
-            .fail(function(jqXHR, textStatus, errorThrown) {
-            // If fail
-            console.log(textStatus + ': ' + errorThrown);
-            })
-    })
 
     $('#DataTables_Table_0 tbody').on('click','.detail-btn',function(){
         var report_id = $(this).data('id');
@@ -275,9 +334,10 @@ $(function(){
                 renderArea.append(`${res.content}`);
                 renderArea2.append(`${res.userContent}`);
 
-                $('#report-reason').text(`${res.reason}`)
-
-                $('#show-modal-btn').click();
+                $('#report-reason').text(`${res.reason}`);
+                $('#report-description').text(`${res.description}`);
+                $('#resolve-report-btn').data('id',report_id);
+                $('#modalTabs').modal('show');
 
 
 
@@ -317,5 +377,32 @@ $(function(){
 
   })
 
+
+    $(document).on('click','#resolve-report-btn',function(){
+        
+        var report_id = $(this).data('id');
+
+        
+        $.ajax({
+            type:"GET",
+            url:'/admin/report/update/changeStatus',
+            data: {'status':0,'id':report_id}   
+            })
+            .done(function() {
+            // If successful
+                Swal.fire({
+                        icon: 'success',
+                        title: `Xử lý báo cáo thành công`,
+                        showConfirmButton: false,
+                        timer: 2500
+                    });
+                $("#row-" + report_id).fadeOut();
+  
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            console.log(textStatus + ': ' + errorThrown);
+            })
+    })
 </script>
 @endsection

@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use App\Mail\VerifyMail;
+use App\Models\loginHistory;
 use Illuminate\Support\Facades\Mail;
 use Seshac\Otp\Otp;
 use App\Models\User;
@@ -102,6 +103,14 @@ class MailController extends Controller
             $user = User::where('email','=', $identifier)->firstOrFail();
             $user->email_verified_at = Carbon::now()->toDateTimeString();
             $user ->save();  
+
+
+            loginHistory::create([
+                'userID' => $user->id,
+                'created_at' => Carbon::now()
+            ]);
+
+            
             return response()->json([
                 'status' => 1,
                 'message' => $verify->message

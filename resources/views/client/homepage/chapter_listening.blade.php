@@ -2,182 +2,175 @@
 
 @section('additional-style')
 <style>
-  .btn2top .sticky-btn {
-  position: fixed;
-  bottom: -96px;
-  right: 60px;
-  background: dodgerblue;
-  opacity: .6;
-  border-radius: 50%;
-  transition: all 0.9s ease;
-}
-.btn2top .sticky-btn img {
-  width: 36px;
-  height: 36px;
-}
-.btn2top .sticky-btn.revealed {
-  bottom: 36px;
-  opacity: 1;
-}
-.btn2top a.sticky-btn {
-  font-family: sans-serif;
-  padding: 9px;
-  display: block;
-  transition: all 0.3s ease;
-  color: #fff;
-  text-decoration: none;
-}
-.btn2top a.sticky-btn:hover {
-  color: yellow;
-  cursor: pointer;
-}
 
-@media screen and (max-width: 768px) {
   .btn2top .sticky-btn {
-    right: 21px;
-  }  
-  .btn2top .sticky-btn.revealed {
-    bottom: 21px;
+    position: fixed;
+    bottom: 36px;
+    right: 60px;
+    background: dodgerblue;
+    opacity: .6;
+    border-radius: 50%;
+    transition: all 0.9s ease;
   }
-}
-
-/*
-*************************************************
----   SECTION   --->   WHATSAPP-STICKY  
-*************************************************
-*/
-
-
-.btn2contact .sticky-btn {
-  position: fixed;
-  bottom: -96px;
-  left: 33px;
-  background: rgba(255, 255, 255, 0.81);
-  padding: 12px;
-  border-radius: 50%;
-  transition: all 0.8s ease;
-}
-.btn2contact .sticky-btn:hover {
-  cursor: pointer;
-
-  background: rgba(255, 255, 255, 0.81);
-  transform: translateY(-3px);
-}
-.btn2contact .sticky-btn img {
-  width: 45px;
-}
-
-.btn2contact .sticky-btn.revealed {
-  bottom: 36px;
-  opacity: 1;
-}
-
-@media screen and (max-width: 768px) {
-  .btn2contact .sticky-btn {
-    left: 21px;
-  } 
-  .btn2contact .sticky-btn img {
+  .btn2top .sticky-btn img {
     width: 36px;
+    height: 36px;
   }
-  .btn2contact .sticky-btn.revealed {
-    bottom: 21px;
-  } 
-}
-</style>
+  
+  .btn2top a.sticky-btn {
+    font-family: sans-serif;
+    padding: 9px;
+    display: block;
+    transition: all 0.3s ease;
+    color: #fff;
+    text-decoration: none;
+  }
+  .btn2top a.sticky-btn:hover {
+    color: yellow;
+    cursor: pointer;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .btn2top .sticky-btn {
+      right: 21px;
+      bottom: 21px;
+  
+    }  
+  
+  }
+  
+  
+  
+  .btn2contact .sticky-btn {
+    position: fixed;
+    bottom: -96px;
+    left: 33px;
+    background: #F9FBE7;
+    padding: 12px;
+    border-radius: 50%;
+    transition: all 0.8s ease;
+    bottom: 36px;
+  
+  }
+  .btn2contact .sticky-btn:hover {
+    cursor: pointer;
+  
+    background: rgba(255, 255, 255, 0.81);
+    transform: translateY(-3px);
+  }
+  .btn2contact .sticky-btn img {
+    width: 45px;
+  
+  }
+  
+  
+  @media screen and (max-width: 768px) {
+    .btn2contact .sticky-btn {
+      bottom: 21px;
+  
+      left: 21px;
+    } 
+    .btn2contact .sticky-btn img {
+      width: 36px;
+    }
+    
+  }
+   
+  .nk-content{
+    background-color:#e5e5e5 !important;
+  }
+  </style>
 @endsection
 @section('content')
-<div class="nk-content-body">
-  {{-- <div class="nk-block-head nk-block-head-sm">
-      <div class="nk-block-between">
-          <div class="nk-block-head-content">
-                  <div class="toggle-expand-content expanded" data-content="pageMenu" style="display: block;">
-                      <ul class="nk-block-tools g-3">   
-                          <li class="nk-block-tools-opt">
-                              <a href="#" data-target="addProduct" class="toggle btn btn-icon btn-primary d-md-none"><em class="icon ni ni-setting"></em></a>
-                              <a href="#" data-target="addProduct" class="toggle btn btn-primary d-none d-md-inline-flex"><em class="icon ni ni-setting"></em></a>
-                             
-                            
-                          </li>
-                          <li class="nk-block-tools-opt">
-                            <button href="#" class="toggle btn btn-icon btn-primary d-md-none edit-chapter-button"><em class="icon ni ni-edit"></em></button>
-                            <button href="#" class="toggle btn btn-primary d-none d-md-inline-flex edit-chapter-button"><em class="icon ni ni-edit"></em><span>Chỉnh sửa bài nghe</span></button>
-
-                          </li>
-                      </ul>
-                  </div>
-          </div>
-      </div>
-  </div> --}}
-  <div class="nk-block">
+<div>
+ 
+  <div class="nk-block" id="content-box-detail">
     <div class="container">
-      <div class="card card-bordered h-100">
-
-    
+      
+      
+    <div class="card card-bordered">
+        <div class="">
+          <div class="d-flex justify-content-between">
+              <div class="p-2 ">
+                  @if($previous)
+                  <a href="{{ $previous->slug }}" class="btn btn-lg btn-outline-secondary">
+                    <em class="icon ni ni-arrow-long-left"></em>
+                    <span>Chương trước</span>
+                    </a>
+                  @else
+                  <button class="btn btn-lg  btn-outline-secondary" disabled>
+                    <em class="icon ni ni-arrow-long-left"></em>
+                    <span>Chương trước</span>
+            
+                  </button>
+                  @endif
+              </div>
+        
+              <div class="p-2">
+                <a href="/doc-sach/{{ $chapter->books->slug }}/{{  $chapter->slug }}" class="btn btn-lg btn-outline-secondary" >
+                    <em class="icon ni ni-book-read"></em><span>Sách đọc</span>
+                </a>
+              </div>
+            <div class="p-2">
+            
+              @if($next)
+              <a href="{{ $next->slug }}" class="btn btn-lg btn-outline-secondary">
+                <span>Chương sau</span>
+                <em class="icon ni ni-arrow-long-right"></em>
+        
+        
+              </a>
+              @else
+              <button class="btn btn-lg  btn-outline-secondary" disabled>
+                <span>Chương sau</span>
+                <em class="icon ni ni-arrow-long-right"></em>
+        
+              </button>
+              @endif
+            </div>
+          </div>
+        </div>
+      
         <div class="card-inner">
 
-          <div class="d-flex mb-3">
-            <div class="p-2">
-              @if($next)
-              <a href="{{ $next->slug }}" class="btn btn-icon btn-lg btn-primary"><em class="icon ni ni-arrow-long-right"></em></a>
-              @else
-              <button class="btn btn-icon btn-lg btn-primary" disabled><em class="icon ni ni-arrow-long-right"></em></button>
-              @endif
-            </div>
-            <div class="ms-auto p-2">
-              @if($previous)
-              <a href="{{ $previous->slug }}"  class="btn btn-icon btn-lg btn-primary"> <em class="icon ni ni-arrow-long-left"></em></a>
-              @else
-              <button  class="btn btn-icon btn-lg btn-primary" disabled><em class="icon ni ni-arrow-long-left"></em></button>
-              @endif
-    
-            </div>
-          </div>
-          
-          <div class="feature-box">
-          
-    
-              {{-- <div class="form-group">
-               
-              </div> --}}
-            
         
-          
-         </div>
-          <div class="title">
-          @if($chapter->name)
-          <h3 class="text-left">       
+        
+        <div class="title mb-2">
+            @if($chapter->name)
+            <h3 class="text-left">       
             {{$chapter->code}}: {{ $chapter->name }}
             </h3>
             @else
             <h3 class="text-left">       
-              {{$chapter->code}}
+                {{$chapter->code}}
             </h3>
-            @endif
-          </div>
-          <div class="d-flex bg-light">
-            <div class="p-2 flex-fill bg-light">
-              <em class="icon ni ni-book"></em>
-              <a href="/sach/{{$chapter->books->id  }}/{{ $chapter->books->slug  }}">{{ $chapter->books->name }}</a>
-            </div>
-            <div class="p-2 flex-fill bg-light">
-              <em class="icon ni ni-edit"></em>          
-              <a href="/thanh-vien/{{ $chapter->books->users->id }}">{{ $chapter->books->users->profile->displayName }}</a>
-            </div>
-            <div class="p-2 flex-fill bg-light">
-              <em class="icon ni ni-text"></em>
-              <span>{{ $chapter->numberOfWords }} chữ</span>
-            </div>
-            <div class="p-2 flex-fill bg-light">
-              <em class="icon ni ni-clock"></em>          
-              <span>{{ $chapter->updated_at }}</span>
-            </div>
+            @endif 
+        </div>
 
+        <div class="d-flex bg-light">
+            <div class="p-2 flex-fill bg-light">
+                <em class="icon ni ni-book"></em>
+                <a class="text-dark" href="/sach/{{$chapter->books->id  }}/{{ $chapter->books->slug  }}">{{ $chapter->books->name }}</a>
+            </div>
+            <div class="p-2 flex-fill bg-light">
+                <em class="icon ni ni-edit"></em>          
+                <a class="text-dark" href="/thanh-vien/{{ $chapter->books->users->id }}">{{ $chapter->books->users->profile->displayName }}</a>
+            </div>
+            <div class="p-2 flex-fill bg-light">
+                <em class="icon ni ni-text"></em>
+                <span>{{ $chapter->numberOfWords }} chữ</span>
+            </div>
+            <div class="p-2 flex-fill bg-light">
+                <em class="icon ni ni-clock"></em>          
+                <span>{{ $chapter->updated_at }}</span>
+            </div>
             <div class="p-2 flex-fll bg-light">
-                <button class="btn btn-sm btn-icon btn-outline-primary edit-chapter-button"><em class="icon ni ni-edit"></em></button>
+              <button class="btn btn-sm btn-icon btn-outline-secondary edit-chapter-button"><em class="icon ni ni-edit"></em></button>
 
-            </div>
           </div>
-          <div class="border px-2"
+            
+        </div>
+        <div class="border px-2"
             
           style="font-size: 16px;line-height:30px;">
     
@@ -185,21 +178,73 @@
             {{ $content }} 
     
           </div>
-    
-          </div>   
+  
+        </div>   
+
+        
+        </div>
+    </div>
+        
+    <div class="card card-bordered rounded">
+      <div class="">
+          <div class="d-flex justify-content-between">
+              <div class="p-2 ">
+                  @if($previous)
+                  <a href="{{ $previous->slug }}" class="btn btn-lg btn-outline-secondary">
+                    <em class="icon ni ni-arrow-long-left"></em>
+                    <span>Chương trước</span>
+                    </a>
+                  @else
+                  <button class="btn btn-lg  btn-outline-secondary" disabled>
+                    <em class="icon ni ni-arrow-long-left"></em>
+                    <span>Chương trước</span>
+            
+                  </button>
+                  @endif
+              </div>
+        
+              @if(Auth::check())
+            
+              <button type="button" class="btn btn-icon btn-lg ms-1" data-bs-toggle="modal" data-bs-target="#reportForm">
+                <em class="icon ni ni-alert" style="color:red"></em>
+              </button>
+            
+              @endif
+            <div class="p-2">
+            
+              @if($next)
+              <a href="{{ $next->slug }}" class="btn btn-lg btn-outline-secondary">
+                <span>Chương sau</span>
+                <em class="icon ni ni-arrow-long-right"></em>
+        
+        
+              </a>
+              @else
+              <button class="btn btn-lg  btn-outline-secondary" disabled>
+                <span>Chương sau</span>
+                <em class="icon ni ni-arrow-long-right"></em>
+        
+              </button>
+              @endif
+            </div>
           </div>
-        </div><!-- .nk-block -->
+      </div>
     </div>
+  
+        
+    
+    </div>
+  
     <div class="btn2top">
-      <a class="sticky-btn">
+        <a class="sticky-btn">
         <img src="https://byjaris.com/code/icons/chevron-up.svg">
-      </a>
+        </a>
     </div>
-    
-    
+  
+  
     <div class="btn2contact">
       <a target="blank" class="toggle sticky-btn" data-target="addProduct"> 
-        <img src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/svg/configure-svgrepo-com.svg">
+        <img src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/svg/config.png">
       </a>
     </div>
   </div>
@@ -302,11 +347,7 @@
               <div class="col-12">
                   <button class="btn btn-primary" id="save-setting"><em class="icon ni ni-plus"></em><span>Lưu cài đặt</span></button>
               </div>
-              <div class="col-12">
-                <a href="/doc-sach/{{ $chapter->books->slug }}/{{  $chapter->slug }}" class="btn btn-primary w-75" >
-                    <em class="icon ni ni-book-read"></em><span>Chuyển sang sách đọc</span>
-                </a>
-            </div>
+             
           </div>
       </div><!-- .nk-block -->
   </div></div></div></div><div class="simplebar-placeholder" style="width: auto; height: 697px;"></div></div><div class="simplebar-track simplebar-horizontal" style="visibility: hidden;"><div class="simplebar-scrollbar" style="width: 0px; display: none;"></div></div><div class="simplebar-track simplebar-vertical" style="visibility: visible;"><div class="simplebar-scrollbar" style="height: 636px; display: block; transform: translate3d(0px, 0px, 0px);"></div></div></div>
@@ -350,7 +391,6 @@
           window.scrollTo({top: 0})
           });
 
-          var scroll_offset = 50;
             $(window).scroll(function(){
               var $this = $(window);
 
@@ -363,19 +403,7 @@
               else{
                 $('.sticky-btn').show();
 
-              }
-            
-              if( $('.sticky-btn').length ) {
-                if( $this.scrollTop() > scroll_offset ) { 
-                  $('.sticky-btn').addClass('revealed');
-                } else {
-                  $('.sticky-btn').removeClass('revealed');
-                }	
-              }
-
-            
-            
-
+              } 
             });
 
             $("option[value='Microsoft HoaiMy Online (Natural) - Vietnamese (Vietnam)']").text('Giọng nữ');

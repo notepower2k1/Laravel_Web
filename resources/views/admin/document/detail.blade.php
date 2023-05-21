@@ -3,7 +3,18 @@
 @section('content')
 
 <div class="container">
-    <div class="nk-block-head-sub"><a class="back-to" href="{{ url()->previous() }}"><em class="icon ni ni-arrow-left"></em><span>Quay lại</span></a></div>
+    <ul class="breadcrumb breadcrumb-arrow">
+        <li class="breadcrumb-item"><a href="/admin/document">Tài liệu</a></li>
+        <li class="breadcrumb-item active"><a href="#">Chi tiết</a></li>
+      </ul>
+      <hr>   
+
+      <div class="d-flex justify-content-end mb-2">
+
+        <a href="#" class="btn btn-outline-danger delete-button" data-id="{{ $document->id }}" data-name="{{ $document->name }}">
+            <em class="icon ni ni-trash"></em><span>Xóa</span>
+        </a>
+      </div>
 
     <div class="nk-content-inner">
         <div class="nk-content-body">
@@ -627,6 +638,51 @@
         }
       })
     })
+
+    $(document).on('click','.delete-button',function(){
+      var document_id = $(this).data('id');
+      var name = $(this).data('name');
+      var token = $("meta[name='csrf-token']").attr("content");
+
+      Swal.fire({
+          title: "Bạn muốn xóa tài liệu "+ name,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Xóa tài liệu',
+          cancelButtonText: 'Không'
+          }).then((result) => {
+          if (result.isConfirmed) {
+            
+            $.ajax({
+              type:"GET",
+              url:'/admin/document/customDelete/' + document_id,
+              data : {
+              },
+              })
+              .done(function() {
+              // If successful
+                Swal.fire({
+                      icon: 'success',
+                      title: `Xóa tài liệu ${name} thành công`,
+                      showConfirmButton: false,
+                      timer: 2500
+                });
+
+                $("#row-" + document_id).fadeOut();
+              })
+              .fail(function(jqXHR, textStatus, errorThrown) {
+              // If fail
+              console.log(textStatus + ': ' + errorThrown);
+              })
+          
+          }
+        })
+
+   
+
+  })
 </script>
 
 @endsection

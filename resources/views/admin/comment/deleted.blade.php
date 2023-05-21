@@ -85,30 +85,33 @@
                         <td class="nk-tb-col tb-col-lg">
                           @switch($comment->type_id)
                             @case(1)
-        
-                              <a href="/admin/document/{{ $comment->identifier_id }}">
+
+                              <a href="/admin/document/detail/{{$comment->identifier_id}}/{{ \Carbon\Carbon::now()->year }}">
                                 <span class="badge rounded-pill bg-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $comment->identifier->name }}">
-                                  {{ $comment->types->name }}
+                                  {{ Str::limit($comment->identifier->name,30) }}
                                 </span>
                               </a>
-                             
+                            
                               @break
-        
+
                             @case(2)
-                              <a href="/admin/book/{{ $comment->identifier_id }}">
-                              <span class="badge rounded-pill bg-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $comment->identifier->name }}">{{ $comment->types->name }}</span>
+                              <a href="/admin/book/detail/{{$comment->identifier_id}}/{{ \Carbon\Carbon::now()->year }}">
+                              <span class="badge rounded-pill bg-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $comment->identifier->name }}">
+                                {{ Str::limit($comment->identifier->name,30) }}
+                              </span>
                               </a>
                               @break
-        
+
                             @case(3)
-                              <a href="#">
-                                <span class="badge rounded-pill bg-outline-success" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $comment->identifier->topic }}">{{  $comment->types->name }}</span>
+                              <a href="/admin/forum/post/{{$comment->id}}/detail">
+                                <span class="badge rounded-pill bg-outline-success" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $comment->identifier->topic }}">
+                                  {{ Str::limit($comment->identifier->topic,30) }}
+                                </span>
                                 @break
                               </a>
                             @default
                               <span class="badge rounded-pill bg-outline-success"></span>
                           @endswitch
-        
                         </td>
                         <td class="nk-tb-col tb-col-lg">
                           <span>{{  $comment->totalReplies  }}</span>

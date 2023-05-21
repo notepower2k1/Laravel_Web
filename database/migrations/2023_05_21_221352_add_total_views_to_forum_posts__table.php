@@ -13,8 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->tinyInteger('status')->default('1');
+        Schema::table('forum_posts', function (Blueprint $table) {
+            $table->integer('totalViews')->default('0');
+
         });
     }
 
@@ -25,8 +26,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('status');
+        Schema::table('forum_posts', function (Blueprint $table) {
+            $table->integer('totalViews')->default('0');
         });
     }
 };

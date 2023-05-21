@@ -37,9 +37,13 @@
                 <li class="item-book">
                     <div class="d-sm-none d-md-block">
                         <div class="info mb-2 d-flex justify-content-start">
-                            <dfn data-info="{{ $document->name }}"><em class="icon ni ni-file text-success"></em></dfn>
+                            <dfn data-info="{{ $document->numberOfPages }} trang"><em class="icon ni ni-file-pdf text-success"></em></dfn>
             
-                            <dfn data-info="{{ $document->author }}"><em class="icon ni ni-user text-info"></em></dfn>
+                            @if($document->language == 1)
+                            <dfn data-info="Tiếng Việt"><em class="icon ni ni-globe text-info"></em></dfn>
+                            @else
+                            <dfn data-info="Tiếng Anh"><em class="icon ni ni-globe text-info"></em></dfn>
+                            @endif                        
                         </div>
                     </div>
                    
@@ -96,6 +100,15 @@
                                 <li></li>
                                 <li></li>
                             </ul>
+                            <figcaption>
+                                <h4>{{ $document->name }}</h4>
+                                @foreach(explode(",",$document->author) as $author)                                                                       
+                                    <a class="text-info" href="/tac-gia/tac-gia-tai-lieu/{{ $author }}">{{ $author }}</a>
+                                    @if($loop->index < count(explode(",",$document->author)) - 1)
+                                        ,
+                                    @endif
+                                @endforeach                                    
+                            </figcaption>
                             <ul class='book_spine'>
                                 <li></li>
                                 <li></li>
@@ -103,7 +116,7 @@
                     </figure>
                 </li>
 
-                @if($loop->iteration % 3 == 0 || $loop->iteration == $documents->count()  )
+                @if($loop->iteration % 2 == 0 || $loop->iteration == $documents->count()  )
                 <div class="shelf d-none d-xl-block">
     
                     <div class="bookend_left"></div>
@@ -149,7 +162,7 @@
 
         var options = {
             dataSource: sources,
-            pageSize: 12,
+            pageSize: 18,
             callback: function (response, pagination) {
                 var dataHtml = '<ul class="align">';
 

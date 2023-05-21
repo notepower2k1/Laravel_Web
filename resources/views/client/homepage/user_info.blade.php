@@ -259,8 +259,20 @@
                             <input type="text" class="form-control" id="book-name" required="" value='{{ $user->profile->displayName }}' readonly>
                         </div>
                     </div>
+
                     <div class="form-group">
-                        <label class="form-label" for="description">Lý do</label>
+                        <label class="form-label" for="reason">Lý do</label>
+                        <div class="form-control-wrap">
+                            <select required class="form-control mb-4 col-6" name="reason" id="reason">
+                                @foreach ($reportReasons as $reason)
+                                <option value="{{ $reason->id }}" >{{ $reason->name }}</option>
+                                @endforeach
+                            </select>                        
+                        </div>                     
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="description">Ghi chú</label>
                         <div class="form-control-wrap">
                             <textarea class="form-control form-control-sm" id="description" name="description" placeholder="Lý do của bạn" required></textarea>
                         </div>
@@ -412,7 +424,8 @@ $.ajaxSetup({
                 var type_id = form.find('input[name="type_id"]').val();
                 var identifier_id = form.find('input[name="identifier_id"]').val();
                 var description = form.find('textarea[name="description"]').val();
-                
+                const reason = form.find('select[name="reason"]').val();
+
                 if(description){
                         $.ajax({
                         url:'/bao-cao',
@@ -420,7 +433,8 @@ $.ajaxSetup({
                         data:{
                             'description': description,
                             'identifier_id':identifier_id,
-                            'type_id':type_id
+                            'type_id':type_id,
+                            'reason':reason
                         }
                         })
                         .done(function(res) {

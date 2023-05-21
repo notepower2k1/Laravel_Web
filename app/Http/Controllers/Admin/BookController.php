@@ -174,7 +174,8 @@ class BookController extends Controller
         $reading_history = readingHistory::where('bookID','=',$id)->get();
         $rating_books = ratingBook::where('bookID','=',$id)->get();
 
-        $totalReadingPerMonth =  DB::select("SELECT 
+     
+            $totalReadingPerMonth =  DB::select("SELECT 
             SUM(IF(month = 'Jan', total, 0)) AS 'Tháng 1', 
             SUM(IF(month = 'Feb', total, 0)) AS 'Tháng 2', 
             SUM(IF(month = 'Mar', total, 0)) AS 'Tháng 3', 
@@ -195,26 +196,28 @@ class BookController extends Controller
             ) as sub");
 
         
-        $totalReadingInYear = readingHistory::where('bookID','=',$id)->whereYear('created_at', '=', $year)->sum('total');
+            $totalReadingInYear = readingHistory::where('bookID','=',$id)->whereYear('created_at', '=', $year)->sum('total');
 
 
-        $totalReadingPerDate = DB::select("SELECT SUM(reading_histories.total) as 'total', DATE(reading_histories.created_at) as 'date'
-        from reading_histories 
-        WHERE reading_histories.bookID = $id and YEAR(reading_histories.created_at) = $year
-        GROUP by reading_histories.bookID,DATE(reading_histories.created_at)");
+            $totalReadingPerDate = DB::select("SELECT SUM(reading_histories.total) as 'total', DATE(reading_histories.created_at) as 'date'
+            from reading_histories 
+            WHERE reading_histories.bookID = $id and YEAR(reading_histories.created_at) = $year
+            GROUP by reading_histories.bookID,DATE(reading_histories.created_at)");
 
-        $ratingScoreBase = DB::select("SELECT 
-        SUM(IF(base = 5, total, 0)) AS 'Mức điểm 5', 
-        SUM(IF(base = 4, total, 0)) AS 'Mức điểm 4', 
-        SUM(IF(base = 3, total, 0)) AS 'Mức điểm 3', 
-        SUM(IF(base = 2, total, 0)) AS 'Mức điểm 2', 
-        SUM(IF(base = 1, total, 0)) AS 'Mức điểm 1'
-        FROM(
-        SELECT  round(rating_books.score) as 'base' , count(rating_books.id) as
-        'total' FROM   rating_books
-        WHERE rating_books.bookID = $id 
-        GROUP BY base  
-        ORDER BY `base`) as sub");
+            $ratingScoreBase = DB::select("SELECT 
+            SUM(IF(base = 5, total, 0)) AS 'Mức điểm 5', 
+            SUM(IF(base = 4, total, 0)) AS 'Mức điểm 4', 
+            SUM(IF(base = 3, total, 0)) AS 'Mức điểm 3', 
+            SUM(IF(base = 2, total, 0)) AS 'Mức điểm 2', 
+            SUM(IF(base = 1, total, 0)) AS 'Mức điểm 1'
+            FROM(
+            SELECT  round(rating_books.score) as 'base' , count(rating_books.id) as
+            'total' FROM   rating_books
+            WHERE rating_books.bookID = $id 
+            GROUP BY base  
+            ORDER BY `base`) as sub");
+        
+       
 
         return view('admin.book.detail')
         ->with('notes',$notes)

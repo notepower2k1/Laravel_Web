@@ -4,7 +4,7 @@
     <div class="brand-logo pb-4 text-center">
         <a href="/" class="logo-link">
             <img class="logo-light logo-img logo-img-lg" src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png" srcset="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png 2x" alt="logo">
-            <img class="logo-dark logo-img logo-img-lg" src=".https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png" srcset="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png 2x" alt="logo-dark">
+            <img class="logo-dark logo-img logo-img-lg" src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png" srcset="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png 2x" alt="logo-dark">
         </a>
     </div>
 

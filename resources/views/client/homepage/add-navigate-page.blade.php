@@ -1,9 +1,9 @@
 @extends('client/homepage.layouts.app')
 @section('pageTitle', 'Chọn tài liệu điện tử muốn thêm')
 @section('content')
-  <div class="components-preview wide-md mx-auto mt-5">
+  <div class="components-preview wide-lg mx-auto mt-2">
         <div class="nk-block nk-block-lg">
-            <div class="card card-bordered">
+            <div class="card card-bordered shadow">
                 @if($errors->any())
                 <div class="alert alert-warning">
                     @foreach ($errors->all() as $error)
@@ -187,15 +187,31 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-sm-6" id="file_book_input"> 
-                                                    <div class="form-group">
-                                                        <label class="form-label" for="file_book">File đính kèm</label>
+                                           
 
-                                                        <input type="file"
-                                                        name="file_book" id="file_book"
-                                                        class="form-control col-6 mb-4 " accept=".pdf">
-                                                    </div>
+                                                <div id="file_book_input">
+                                                    <div id="accordion-2" class="accordion" >
+                                                        <div class="accordion-item" style="background-color:white">
+                                                            <a href="#" class="accordion-head" data-bs-toggle="collapse" data-bs-target="#accordion-item-2-1">
+                                                                <h6 class="title">Sách dạng file .pdf</h6>
+                                                                <span class="accordion-icon"></span>
+                                                            </a>
+                                                            <div class="accordion-body collapse" id="accordion-item-2-1" data-bs-parent="#accordion-2">
+                                                                <div class="accordion-inner">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label" for="file_book">File đính kèm</label>
+                    
+                                                                            <input type="file"
+                                                                            name="file_book" id="file_book"
+                                                                            class="form-control col-6 mb-4 " accept=".pdf">
+                                                                        </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>    
+                                                      </div>
                                                 </div>
+                                            
+
                                                 <div class="col-12">
                                                     <div class="form-group">
                                                         <label>Tiến độ<sup>*</sup></label>

@@ -41,12 +41,21 @@
 
           
             <li class="item-book">
-                <div class="info mb-2 d-sm-none d-md-block">
-                    <dfn data-info="{{ $book->name }}"><em class="icon ni ni-book text-success"></em></dfn>
+                <div class="d-sm-none d-md-block">
+                    <div class="info mb-2 d-flex justify-content-start">
+                        @if($book->file == null)
+                            <dfn data-info="{{ $book->numberOfChapter }} chương"><em class="icon ni ni-book text-success"></em></dfn>
+                        @else
+                            <dfn data-info="Tệp PDF"><em class="icon ni ni-file-pdf text-success"></em></dfn>
+                        @endif
 
-                    <dfn data-info="{{ $book->author }}"><em class="icon ni ni-user text-info"></em></dfn>
+                        @if($book->language == 1)
+                        <dfn data-info="Tiếng Việt"><em class="icon ni ni-globe text-info"></em></dfn>
+                        @else
+                        <dfn data-info="Tiếng Anh"><em class="icon ni ni-globe text-info"></em></dfn>
+                        @endif
+                    </div>
                 </div>
-             
                 <figure class='book'>    
                         <ul class='paperback_front'>
                             
@@ -109,17 +118,23 @@
                             <li></li>
                             <li></li>
                         </ul>
-                        {{-- <figcaption>
+                        <figcaption>
                             <h4>{{ $book->name }}</h4>
-                            <span>{{ $book->author }}</span>
-                        </figcaption> --}}
+                            @foreach(explode(",",$book->author) as $author)                                                                       
+                                <a class="text-info" href="/tac-gia/tac-gia-sach/{{ $author }}">{{ $author }}</a>
+                                @if($loop->index < count(explode(",",$book->author)) - 1)
+                                    ,
+                                @endif
+                        @endforeach       
+                         
+                        </figcaption>
                 </figure>
 
            
 
             </li>
             
-            @if($loop->iteration % 3 == 0 || $loop->iteration == $books->count()  )
+            @if($loop->iteration % 2 == 0 || $loop->iteration == $books->count()  )
             <div class="shelf d-none d-xl-block">
 
                 <div class="bookend_left"></div>
@@ -166,7 +181,7 @@
 
         var options = {
             dataSource: sources,
-            pageSize: 12,
+            pageSize: 18,
             callback: function (response, pagination) {
                 var dataHtml = '<ul class="align">';
 

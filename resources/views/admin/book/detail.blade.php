@@ -2,13 +2,27 @@
 @section('pageTitle', 'Chi tiết sách điện tử')
 @section('content')
 <div class="container">
-    <div class="nk-block-head-sub"><a class="back-to" href="{{ url()->previous() }}"><em class="icon ni ni-arrow-left"></em><span>Quay lại</span></a></div>
+
+    <ul class="breadcrumb breadcrumb-arrow">
+        <li class="breadcrumb-item"><a href="/admin/book">Sách</a></li>
+        <li class="breadcrumb-item active"><a href="#">Chi tiết</a></li>
+      </ul>
+    <hr>    
+
+    <div class="d-flex justify-content-end mb-2">
+        <a href="#" class="btn btn-outline-danger delete-button" data-id="{{ $book->id }}" data-name="{{ $book->name }}">
+            <em class="icon ni ni-trash"></em><span>Xóa</span>
+        </a>
+    </div>
+   
 
     <div class="nk-content-inner">
         <div class="nk-content-body">
             <div class="nk-block">
                 <div class="card card-bordered">
                     <div class="card-inner">
+
+                       
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="product-gallery" >    
@@ -125,162 +139,159 @@
                     </div>
                 </div>
 
-
-                <div class="">
-                    <ul class="nav nav-tabs">
-                        <li class="nav-item">
-                            <a class="nav-link active" data-bs-toggle="tab" href="#tabItem1">Số lượt đọc sách</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#tabItem2">Thống kê số lược đọc sách</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane active" id="tabItem1">
-                            <div class="card card-bordered">
-    
-                                <div class="card-inner">
-            
-                                    <table class="datatable-init-export nowrap nk-tb-list nk-tb-ulist mt-2" data-auto-responsive="false" data-export-title="Export">
-                                        <thead>
-                                            <tr class="nk-tb-item nk-tb-head">
-            
-                                                <th class="nk-tb-col"><span class="sub-text">Thời gian</span></th>
-                                                <th class="nk-tb-col"><span class="sub-text">Tài khoản</span></th>
-                                                <th class="nk-tb-col"><span class="sub-text">Lượt đọc</span></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        @foreach ($reading_history as $item)
-                                            <tr class="nk-tb-item">                
-                                                <td class="nk-tb-col">
-                                                    <span>{{  $item->created_at }}</span>
-                                                </td>
-                                                <td class="nk-tb-col">
-                                                <span>{{  $item->users->name }}</span>
-                                                </td>
-                                                <td class="nk-tb-col">
-                                                <span>{{ $item->total }}</span>
-                                                </td>                  
-                                            </tr>
-                                        @endforeach
-            
-                                        </tbody>
-                                    </table>     
+                    <div class="">
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#tabItem1">Số lượt đọc sách</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#tabItem2">Thống kê số lược đọc sách</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tabItem1">
+                                <div class="card card-bordered">
+        
+                                    <div class="card-inner">
+                
+                                        <table class="datatable-init-export nowrap nk-tb-list nk-tb-ulist mt-2" data-auto-responsive="false" data-export-title="Export">
+                                            <thead>
+                                                <tr class="nk-tb-item nk-tb-head">
+                
+                                                    <th class="nk-tb-col"><span class="sub-text">Thời gian</span></th>
+                                                    <th class="nk-tb-col"><span class="sub-text">Tài khoản</span></th>
+                                                    <th class="nk-tb-col"><span class="sub-text">Lượt đọc</span></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            @foreach ($reading_history as $item)
+                                                <tr class="nk-tb-item">                
+                                                    <td class="nk-tb-col">
+                                                        <span>{{  $item->created_at }}</span>
+                                                    </td>
+                                                    <td class="nk-tb-col">
+                                                    <span>{{  $item->users->name }}</span>
+                                                    </td>
+                                                    <td class="nk-tb-col">
+                                                    <span>{{ $item->total }}</span>
+                                                    </td>                  
+                                                </tr>
+                                            @endforeach
+                
+                                            </tbody>
+                                        </table>     
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="tab-pane" id="tabItem2">
-                            <div class="card card-bordered">
-                                <div class="card-inner">
-                                    <div class="row g-gs">
-                                        <div class="col-12" id="statistics-4">
-                                            <div class="card card-bordered h-100">
-                                                <div class="card-inner">
-                                                    <div class="card-title-group align-start gx-3 mb-3">
-                                                        <div class="card-title">
-                                                            <h6 class="title">Thống kê số lượt đọc sách</h6>
-                                                            <p>Thống kê tổng số lượt đọc sách trong vòng 12 tháng</p>
-                                                        </div>
-                                                        <div class="card-tools">
-                                                            <div class="dropdown">
-                                                                <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em><span>Chọn năm</span></a>
-                                                                <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em></a>
-                                                                <div class="dropdown-menu dropdown-menu-end">
-                                                                    <ul class="link-list-opt no-bdr">
-                                                                        @foreach ($allYears as $year)
-                                                                            <li><a href="/admin/book/{{ $book->id }}/{{ $year->year }}"><em class="icon ni ni-calendar"></em><span>Năm {{ $year->year }} </span></a></li>
-                                                                        @endforeach
-                                                                    
-                                                                    </ul>
+                            <div class="tab-pane" id="tabItem2">
+                                <div class="card card-bordered">
+                                    <div class="card-inner">
+                                        <div class="row g-gs">
+                                            <div class="col-12" id="statistics-4">
+                                                <div class="card card-bordered h-100">
+                                                    <div class="card-inner">
+                                                        <div class="card-title-group align-start gx-3 mb-3">
+                                                            <div class="card-title">
+                                                                <h6 class="title">Thống kê số lượt đọc sách</h6>
+                                                                <p>Thống kê tổng số lượt đọc sách trong vòng 12 tháng</p>
+                                                            </div>
+                                                            <div class="card-tools">
+                                                                <div class="dropdown">
+                                                                    <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em><span>Chọn năm</span></a>
+                                                                    <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em></a>
+                                                                    <div class="dropdown-menu dropdown-menu-end">
+                                                                        <ul class="link-list-opt no-bdr">
+                                                                            @foreach ($allYears as $year)
+                                                                                <li><a href="/admin/book/{{ $book->id }}/{{ $year->year }}"><em class="icon ni ni-calendar"></em><span>Năm {{ $year->year }} </span></a></li>
+                                                                            @endforeach
+                                                                        
+                                                                        </ul>
+                                                                    </div>
                                                                 </div>
                                                             </div>
+                                                        </div>
+                                                        <div class="nk-sale-data-group align-center justify-between gy-3 gx-5">
+                                                            <div class="nk-sale-data">
+                                                                <span class="amount">Tổng lượt đọc: {{ $totalReadingInYear }}</span>
+                                                            </div>
+                                                            <div class="nk-sale-data">
+                                                                <span class="amount sm">Năm: {{ $statisticsYear }}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="" style="height:400px">
+                                                            <canvas id="chart4"></canvas>
                                                         </div>
                                                     </div>
-                                                    <div class="nk-sale-data-group align-center justify-between gy-3 gx-5">
-                                                        <div class="nk-sale-data">
-                                                            <span class="amount">Tổng lượt đọc: {{ $totalReadingInYear }}</span>
-                                                        </div>
-                                                        <div class="nk-sale-data">
-                                                            <span class="amount sm">Năm: {{ $statisticsYear }}</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="" style="height:400px">
-                                                        <canvas id="chart4"></canvas>
-                                                    </div>
-                                                </div>
-                                            </div><!-- .card -->
-                                        </div><!-- .col -->
-                    
-                                        <div class="col-12" id="statistics-5">
-                                            <div class="card card-bordered h-100">
-                                                <div class="card-inner">
-                                                    <div class="card-title-group align-start gx-3 mb-3">
-                                                        <div class="card-title">
-                                                            <h6 class="title">Thống kê số lượt đọc sách</h6>
-                                                            <p>Thống kê tổng số lượt đọc sách theo ngày trong tháng</p>
-                                                        </div>
-                                                        <div class="card-tools">
-                                                            <div class="dropdown">
-                                                                <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em><span>Chọn tháng</span></a>
-                                                                <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em></a>
-                                                                <div class="dropdown-menu dropdown-menu-end">
-                                                                    <ul class="link-list-opt no-bdr">
-                                                                        @for ($i = 1 ; $i < 13 ; $i++)
-                                                                            <li class="month-selection-li-5" data-value="{{ $i }}"><a style="cursor: pointer;"><span>Tháng {{ $i }}</span></a></li>
-                                                                        @endfor
-                                                                    </ul>
+                                                </div><!-- .card -->
+                                            </div><!-- .col -->
+                        
+                                            <div class="col-12" id="statistics-5">
+                                                <div class="card card-bordered h-100">
+                                                    <div class="card-inner">
+                                                        <div class="card-title-group align-start gx-3 mb-3">
+                                                            <div class="card-title">
+                                                                <h6 class="title">Thống kê số lượt đọc sách</h6>
+                                                                <p>Thống kê tổng số lượt đọc sách theo ngày trong tháng</p>
+                                                            </div>
+                                                            <div class="card-tools">
+                                                                <div class="dropdown">
+                                                                    <a href="#" class="btn btn-primary btn-dim d-none d-sm-inline-flex" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em><span>Chọn tháng</span></a>
+                                                                    <a href="#" class="btn btn-icon btn-primary btn-dim d-sm-none" data-bs-toggle="dropdown"><em class="icon ni ni-calendar"></em></a>
+                                                                    <div class="dropdown-menu dropdown-menu-end">
+                                                                        <ul class="link-list-opt no-bdr">
+                                                                            @for ($i = 1 ; $i < 13 ; $i++)
+                                                                                <li class="month-selection-li-5" data-value="{{ $i }}"><a style="cursor: pointer;"><span>Tháng {{ $i }}</span></a></li>
+                                                                            @endfor
+                                                                        </ul>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="analytic-ov">
-                                                        <div class="analytic-data-group analytic-ov-group g-3">
-                                                            <div class="analytic-data analytic-ov-data d-flex flex-column  align-items-center">
-                                                                <div class="title">Tổng</div>
-                                                                <div class="amount">
-                                                                    <span id="total-5"></span>
+                                                        <div class="analytic-ov">
+                                                            <div class="analytic-data-group analytic-ov-group g-3">
+                                                                <div class="analytic-data analytic-ov-data d-flex flex-column  align-items-center">
+                                                                    <div class="title">Tổng</div>
+                                                                    <div class="amount">
+                                                                        <span id="total-5"></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
+                                                                    <div class="title">Min</div>
+                                                                    <div class="amount">                               
+                                                                        <span id="min-5"></span>
+                                    
+                                                                    </div>
+                                                                </div>
+                                                                <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
+                                                                    <div class="title">Max</div>
+                                                                    <div class="amount">
+                                                                        <span id="max-5"></span>
+                                    
+                                                                    </div>
+                                                                </div>
+                                                                <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
+                                                                    <div class="title">Tháng</div>
+                                                                    <div class="amount">
+                                                                        <span id="month-selection-span-5"></span>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
-                                                                <div class="title">Min</div>
-                                                                <div class="amount">                               
-                                                                    <span id="min-5"></span>
-                                
-                                                                </div>
+                                                            <div class="analytic-ov-ck" style=" height: 300px;">
+                                                                <canvas id="chart5"></canvas>
                                                             </div>
-                                                            <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
-                                                                <div class="title">Max</div>
-                                                                <div class="amount">
-                                                                    <span id="max-5"></span>
-                                
-                                                                </div>
-                                                            </div>
-                                                            <div class="analytic-data analytic-ov-data d-flex flex-column align-items-center">
-                                                                <div class="title">Tháng</div>
-                                                                <div class="amount">
-                                                                    <span id="month-selection-span-5"></span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="analytic-ov-ck" style=" height: 300px;">
-                                                            <canvas id="chart5"></canvas>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                
                                 </div>
-                              
-                            </div>
+                        </div>
                     </div>
-                </div>
-              
                
                         
           
-
                 <div class="mt-5 ">
                     <ul class="nav nav-tabs">
                         <li class="nav-item">
@@ -354,7 +365,6 @@
                         </div>
                     </div>
                 </div>
-               
              
             </div>
            
@@ -374,143 +384,185 @@
 <script>
   //custom datatable
 
-  $(document).ready(function () {
-    $('#DataTables_Table_0').DataTable().destroy();
-    
-    $('#DataTables_Table_0').DataTable( {
-      dom: 'Blfrtip',
-      "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "Tất cả"] ],
-      "language": {
-          "lengthMenu": "Hiển thị: _MENU_ đối tượng",
-          "search": "Tìm kiếm _INPUT_",
-          'info':"",
-          "zeroRecords": "Không tìm thấy dữ liệu",
-          "infoEmpty": "Không có dữ liệu hợp lệ",
-          "infoFiltered": "(Lọc từ _MAX_ dữ liệu)",
-          "paginate": {
-            "first":      "Đầu tiên",
-            "last":       "Cuối cùng",
-            "next":       "Tiếp theo",
-            "previous":   "Trước đó"
+    $(document).ready(function () {
+        $('#DataTables_Table_0').DataTable().destroy();
+        
+        $('#DataTables_Table_0').DataTable( {
+        dom: 'Blfrtip',
+        "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "Tất cả"] ],
+        "language": {
+            "lengthMenu": "Hiển thị: _MENU_ đối tượng",
+            "search": "Tìm kiếm _INPUT_",
+            'info':"",
+            "zeroRecords": "Không tìm thấy dữ liệu",
+            "infoEmpty": "Không có dữ liệu hợp lệ",
+            "infoFiltered": "(Lọc từ _MAX_ dữ liệu)",
+            "paginate": {
+                "first":      "Đầu tiên",
+                "last":       "Cuối cùng",
+                "next":       "Tiếp theo",
+                "previous":   "Trước đó"
+            },
+        buttons: {
+                colvis: 'Thay đổi số cột'
+            }
         },
-       buttons: {
-            colvis: 'Thay đổi số cột'
-        }
-      },
-      buttons: [
-            
-            {
-                extend: 'colvis',
-                columns: ':not(.noVis)'
-            },
-      
-            {
-                extend: 'copyHtml5',
-                exportOptions: {
-                    columns: [0,1,2]
-                }
-            },
-            {
-                extend: 'excelHtml5',
-                exportOptions: {
-                    columns: [0,1,2]
-                }
-            },
-            {
-                extend: 'pdfHtml5',
-                exportOptions: {
-                    columns: [0,1,2]
-                }
-            },
-            {
-                extend: 'csvHtml5',
-                exportOptions: {
-                    columns: [0,1,2]
-                }
-            },
-            
-        ],
-    
-    });
+        buttons: [
+                
+                {
+                    extend: 'colvis',
+                    columns: ':not(.noVis)'
+                },
+        
+                {
+                    extend: 'copyHtml5',
+                    exportOptions: {
+                        columns: [0,1,2]
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [0,1,2]
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: [0,1,2]
+                    }
+                },
+                {
+                    extend: 'csvHtml5',
+                    exportOptions: {
+                        columns: [0,1,2]
+                    }
+                },
+                
+            ],
+        
+        });
 
-    $('#DataTables_Table_0_wrapper').addClass('d-flex row');
-    $('#DataTables_Table_0_length').addClass('mt-2');
-    $('#DataTables_Table_0_filter').addClass('mt-2');
+        $('#DataTables_Table_0_wrapper').addClass('d-flex row');
+        $('#DataTables_Table_0_length').addClass('mt-2');
+        $('#DataTables_Table_0_filter').addClass('mt-2');
 
 
 
-    $('#DataTables_Table_1').DataTable().destroy();
-    
-    $('#DataTables_Table_1').DataTable( {
-      dom: 'Blfrtip',
-      "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "Tất cả"] ],
-      "language": {
-          "lengthMenu": "Hiển thị: _MENU_ đối tượng",
-          "search": "Tìm kiếm _INPUT_",
-          'info':"",
-          "zeroRecords": "Không tìm thấy dữ liệu",
-          "infoEmpty": "Không có dữ liệu hợp lệ",
-          "infoFiltered": "(Lọc từ _MAX_ dữ liệu)",
-          "paginate": {
-            "first":      "Đầu tiên",
-            "last":       "Cuối cùng",
-            "next":       "Tiếp theo",
-            "previous":   "Trước đó"
+        $('#DataTables_Table_1').DataTable().destroy();
+        
+        $('#DataTables_Table_1').DataTable( {
+        dom: 'Blfrtip',
+        "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "Tất cả"] ],
+        "language": {
+            "lengthMenu": "Hiển thị: _MENU_ đối tượng",
+            "search": "Tìm kiếm _INPUT_",
+            'info':"",
+            "zeroRecords": "Không tìm thấy dữ liệu",
+            "infoEmpty": "Không có dữ liệu hợp lệ",
+            "infoFiltered": "(Lọc từ _MAX_ dữ liệu)",
+            "paginate": {
+                "first":      "Đầu tiên",
+                "last":       "Cuối cùng",
+                "next":       "Tiếp theo",
+                "previous":   "Trước đó"
+            },
+        buttons: {
+                colvis: 'Thay đổi số cột'
+            }
         },
-       buttons: {
-            colvis: 'Thay đổi số cột'
+        buttons: [
+                
+                {
+                    extend: 'colvis',
+                    columns: ':not(.noVis)'
+                },
+        
+                {
+                    extend: 'copyHtml5',
+                    exportOptions: {
+                        columns: [0,1,2]
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [0,1,2]
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: [0,1,2]
+                    }
+                },
+                {
+                    extend: 'csvHtml5',
+                    exportOptions: {
+                        columns: [0,1,2]
+                    }
+                },
+                
+            ],
+        
+        });
+
+        $('#DataTables_Table_1_wrapper').addClass('d-flex row');
+        $('#DataTables_Table_1_length').addClass('mt-2');
+        $('#DataTables_Table_1_filter').addClass('mt-2');
+
+
+        var yearSelected = {!! $statisticsYear !!};
+
+        var temp = {!! \Carbon\Carbon::now()->format('YmdH') !!};
+
+        var currentMonth = temp.toString().substring(4,6);
+
+        defaultRenderChart5(currentMonth);
+
+    })
+
+    $(document).on('click','.delete-button',function(){
+
+    var book_id = $(this).data('id');
+    var name = $(this).data('name');
+    var token = $("meta[name='csrf-token']").attr("content");
+
+    Swal.fire({
+        title: "Bạn muốn xóa sách "+ name,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Xóa sách',
+        cancelButtonText: 'Không'
+        }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+            type:"GET",
+            url:'/admin/book/customDelete/' + book_id,
+            data : {
+            },
+            })
+            .done(function() {
+            // If successful
+                Swal.fire({
+                    icon: 'success',
+                    title: `Xóa sách ${name} thành công`,
+                    showConfirmButton: false,
+                    timer: 2500
+                });
+
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            console.log(textStatus + ': ' + errorThrown);
+            })
+        
         }
-      },
-      buttons: [
-            
-            {
-                extend: 'colvis',
-                columns: ':not(.noVis)'
-            },
-      
-            {
-                extend: 'copyHtml5',
-                exportOptions: {
-                    columns: [0,1,2]
-                }
-            },
-            {
-                extend: 'excelHtml5',
-                exportOptions: {
-                    columns: [0,1,2]
-                }
-            },
-            {
-                extend: 'pdfHtml5',
-                exportOptions: {
-                    columns: [0,1,2]
-                }
-            },
-            {
-                extend: 'csvHtml5',
-                exportOptions: {
-                    columns: [0,1,2]
-                }
-            },
-            
-        ],
-    
-    });
+    })
+    })
 
-    $('#DataTables_Table_1_wrapper').addClass('d-flex row');
-    $('#DataTables_Table_1_length').addClass('mt-2');
-    $('#DataTables_Table_1_filter').addClass('mt-2');
-
-
-    var yearSelected = {!! $statisticsYear !!};
-
-    var temp = {!! \Carbon\Carbon::now()->format('YmdH') !!};
-
-    var currentMonth = temp.toString().substring(4,6);
-
-    defaultRenderChart5(currentMonth);
-
-})
 
      function defaultRenderChart5(currentMonth){
         $('#statistics-5').find('#month-selection-span-5').text(currentMonth);

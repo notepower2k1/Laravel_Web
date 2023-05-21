@@ -10,11 +10,6 @@ use Illuminate\Support\Facades\Auth;
 
 class ClientUserController extends Controller
 {
-    public function changePassword()
-    {
-        return view('client.homepage.profile.change-password');
-     
-    }
 
     public function update(Request $request, $id)
     {
@@ -24,11 +19,15 @@ class ClientUserController extends Controller
             'regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%]).*$/',
             'confirmed'
             ],
+            'g-recaptcha-response' => 'required|captcha'
+
         ],[
             'password.required' => 'Bạn không thể để trống mật khẩu',
             'password.min' => 'Mật khẩu quá ngắn',
             'password.regex' =>'Mật khẩu phải có chữ viết hoa, số và không có ký tự đặc biệt',
-            'password.confirmed' =>'Bạn cần xác thực mật khẩu'
+            'password.confirmed' =>'Bạn cần xác thực mật khẩu',
+            'g-recaptcha-response.required' => 'Bạn cần phải xác thực captcha'
+
         ]);
        
        $user = User::findOrFail($id)

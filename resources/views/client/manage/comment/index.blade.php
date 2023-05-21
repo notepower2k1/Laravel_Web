@@ -38,21 +38,34 @@
                           </td>
                           <td class="nk-tb-col tb-col-lg">
                             @switch($comment->type_id)
-                              @case(1)
-                                <span class="badge rounded-pill bg-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $comment->identifier->name }}">{{ $comment->types->name }}</span>
-                                @break
+                            @case(1)
 
-                              @case(2)
-                                <span class="badge rounded-pill bg-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $comment->identifier->name }}">{{ $comment->types->name }}</span>
-                                @break
+                              <a href="/quan-ly/chi-tiet-tai-lieu/{{$comment->identifier_id}}">
+                                <span class="badge rounded-pill bg-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Nhấn vào để xem bình luận">
+                                  {{ Str::limit($comment->identifier->name,30) }}
+                                </span>
+                              </a>
+                            
+                              @break
 
-                              @case(3)
-                                <span class="badge rounded-pill bg-outline-success" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $comment->identifier->topic }}">{{  $comment->types->name }}</span>
-                                @break
+                            @case(2)
+                              <a href="/quan-ly/chi-tiet-sach/{{$comment->identifier_id}}">
+                              <span class="badge rounded-pill bg-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top"  title="Nhấn vào để xem bình luận">
+                                {{ Str::limit($comment->identifier->name,30) }}
+                              </span>
+                              </a>
+                              @break
 
-                              @default
-                                <span class="badge rounded-pill bg-outline-success"></span>
-                            @endswitch
+                            @case(3)
+                              <a href="/dien-dan/{{ $comment->identifier->forums->slug }}/{{ $comment->identifier->slug }}/{{ $comment->identifier->id }}">
+                                <span class="badge rounded-pill bg-outline-success" data-bs-toggle="tooltip" data-bs-placement="top"  title="Nhấn vào để xem bình luận">
+                                  {{ Str::limit($comment->identifier->topic,30) }}
+                                </span>
+                                @break
+                              </a>
+                            @default
+                              <span class="badge rounded-pill bg-outline-success"></span>
+                          @endswitch
 
                           </td>
                           <td class="nk-tb-col tb-col-lg">
@@ -69,6 +82,13 @@
                                                   <em class="icon ni ni-trash"></em><span>Xóa</span>
                                                 </a>
   
+                                                <li>
+                                                  <a href="#" class="content-btn" data-id={{ $comment->id }}>
+                                                    <em class="icon ni ni-notice"></em><span>Nội dung</span>
+                                                  </a>
+          
+                                                </li>
+
                                                 </li>
                                                 <li><a href="/quan-ly/binh-luan/phan-hoi/{{ $comment->id }}"><em class="icon ni ni-reply-all"></em><span>Xem phản hồi</span></a></li>
                                             
@@ -95,7 +115,23 @@
         
    
 @endsection
-
+@section('modal')
+<div class="modal fade" tabindex="-1" id="modalContent">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Nội dung</h5>
+              <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                  <em class="icon ni ni-cross"></em>
+              </a>
+          </div>
+          <div class="modal-body">
+              
+          </div>
+      </div>
+  </div>
+</div>
+@endsection
 
 @section('additional-scripts')
 <script src="{{ asset('assets/js/libs/datatable-btns.js?ver=3.1.2') }}"></script>
@@ -149,7 +185,36 @@
 
     })
 
-   
+    $('#DataTables_Table_0 tbody').on('click','.content-btn',function(e){
+          e.preventDefault();
+
+        
+          var comment_id = $(this).data('id');
+          $('#modalContent').find('.modal-body').empty();
+
+
+          $.ajax({
+          type:"GET",
+          url:'/quan-ly/binh-luan/getContent/' + comment_id,     
+          })
+          .done(function(res) {
+          // If successful
+            const content = res.content;
+
+            $('#modalContent').find('.modal-body').append(content);
+
+            setTimeout(function(){ 
+              $('#modalContent').modal('show');
+            },500);
+
+          
+          })
+          .fail(function(jqXHR, textStatus, errorThrown) {
+          // If fail
+          console.log(textStatus + ': ' + errorThrown);
+          });
+      
+    });
 
 });
 

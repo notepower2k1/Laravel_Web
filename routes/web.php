@@ -41,7 +41,7 @@ use App\Http\Controllers\Client\LikeController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::group(['middleware' => ['isVerified']],function(){
+Route::group(['middleware' => ['isVerified','isBanned']],function(){
     
 
 // Route::get('/summarizeText',[PagesController::class,'summarizeText']);
@@ -75,13 +75,16 @@ Route::get("/tai-tai-lieu",[PagesController::class,'download_document']);
 
  
 Route::get("/doc-sach/{book_slug}/{chapter_slug}",[PagesController::class,'read_book']);
+Route::get("/doc-sach-pdf/{book_id}",[PagesController::class,'read_book_pdf']);
+
 Route::get("/sach-noi/{book_slug}/{chapter_slug}",[PagesController::class,'listening_book']);
 
 
 Route::get("/tim-kiem",[PagesController::class,'search_name_page']);
 Route::get("/tim-kiem-ket-qua",[PagesController::class,'search_name']);
 
-Route::get("/the-loai/{option?}/{type_slug?}",[PagesController::class,'search_type_page']);
+Route::get("/the-loai/sort_by={sort_by}/{option?}/{type_slug?}",[PagesController::class,'search_type_page']);
+
 Route::get("/tac-gia/{option}/{author}",[PagesController::class,'search_author_page']);
 Route::get("/ngon-ngu/{option}/{language}",[PagesController::class,'search_language_page']);
 Route::get("/tinh-trang/{option}/{isCompleted}",[PagesController::class,'search_status_page']);
@@ -111,7 +114,7 @@ Route::post('/upload', [ClientCommentController::class,'uploadCommentImage']);
 
 Route::get("/notification-update",[NotificationController::class,'changeStatus']);
 Route::get("/notification-all-update",[NotificationController::class,'changeAllStatus']);
-Route::get("/following-status-update-no-direct",[ClientBookController::class,'changeFollowStatus']);
+Route::get("/following-isDone-update",[ClientBookController::class,'changeFollowIsDone']);
 Route::get("/following-status-update",[NotificationController::class,'changeFollowStatus']);
 Route::get("/following-status-all-update",[NotificationController::class,'changeAllFollowStatus']);
 
@@ -167,7 +170,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
     Route::resource("/forum",ForumController::class,['except' => ['destroy']]);
     Route::get("/forum/customDelete/{forum_id}",[ForumController::class,'customDelete']);
     Route::get("/forum/update/changeStatus",[ForumController::class,'changeForumStatus']);
-    
+    Route::get("/statistics/forum/{forum_id}/{year?}",[ForumController::class,'statistics_forum_page']);
+
 
     Route::resource("/document",DocumentController::class,['except' => ['destroy','show']]);
     Route::get("/document/detail/{id}/{year?}",[DocumentController::class,'show']);
@@ -192,7 +196,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
     Route::get("/deleted/post/filter/{fromDate}/{toDate}",[ForumPostController::class,'getFilterValueDeleted']);
 
     Route::get("/deleted/post/recovery",[ForumPostController::class,'recoveryItem']);
-    Route::get("/statistics/post/{year?}",[ForumPostController::class,'statistics_post_page']);
+    Route::get("/statistics/post/{forum_id}/{year?}",[ForumPostController::class,'statistics_post_page']);
 
     Route::get("/forum/post/customDelete/{post_id}",[ForumPostController::class,'customDelete']);
 
@@ -273,7 +277,11 @@ Route::group(['prefix' => 'quan-ly',  'middleware' => ['auth']], function()
 
     Route::get("/bai-viet",[ClientForumPostController::class,'index']);
     Route::get("/binh-luan",[ClientCommentController::class,'index']);
+    Route::get("/binh-luan/getContent/{item_id}",[ClientCommentController::class,'get_content']);
+
     Route::get("/binh-luan/phan-hoi/{comment_id}",[ClientCommentController::class,'reply_index']);
+    
+    Route::get("/binh-luan/phan-hoi/getContent/{item_id}",[ClientCommentController::class,'get_replies_content']);
 
 
 });

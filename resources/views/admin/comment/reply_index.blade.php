@@ -79,8 +79,6 @@
                                                         <a href="#" class="content-btn" data-id={{ $reply->id }}>
                                                         <em class="icon ni ni-notice"></em><span>Nội dung</span>
                                                         </a>
-                                                        <button class="d-none" data-bs-toggle="modal" data-bs-target="#modalContent" ></button>
-
                                                     </li>
                                                 </ul>
                                             </div>
@@ -250,7 +248,7 @@
                 $('#modalContent').find('.modal-body').append(content);
 
                 setTimeout(function(){ 
-                $(`#row-${comment_id}`).find('.content-btn').next().click();
+                    $('#modalContent').modal('show');
                 },500);
             })
             .fail(function(jqXHR, textStatus, errorThrown) {

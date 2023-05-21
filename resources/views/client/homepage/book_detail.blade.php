@@ -3,6 +3,7 @@
 @section('additional-style')
 <link rel="stylesheet" href="{{ asset('assets/css/book3d.css') }}">
 <link href="{{ asset('js/pagination/pagination.css') }}" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="{{ asset('assets/css/infohelper.css') }}">
 
 <style>
     .chapter-items{
@@ -95,7 +96,7 @@
                                                 @foreach(explode(",",$book->author) as $author)                                                                       
                                                 <span class="badge badge-md rounded-pill bg-outline-info me-1 mt-1"><a class="text-info" href="/tac-gia/tac-gia-sach/{{ $author }}">{{ $author }}</a></span>
                                                 @endforeach        
-                                                <span class="badge badge-md rounded-pill bg-outline-primary me-1 mt-1"><a class="text-primary" href="/the-loai/the-loai-sach/{{$book->types->slug}}">{{ $book->types->name }}</a>
+                                                <span class="badge badge-md rounded-pill bg-outline-primary me-1 mt-1"><a class="text-primary" href="/the-loai/sort_by=created_at/the-loai-sach/{{$book->types->slug}}">{{ $book->types->name }}</a>
                                                 </span> 
 
                                                 @if ($book->language === 1)
@@ -166,18 +167,18 @@
                                                             <button class="btn btn-lg btn-outline-secondary" id="book-mark-btn" disabled><em class="icon ni ni-bookmark"></em><span id="span-text">Đã đánh dấu</span></button>
                                                             @endif
                                                         @else
-                                                        <a href="/login" class="btn btn-lg btn-warning"><em class="icon ni ni-bookmark"></em><span id="span-text">Đánh dấu</span></a>
+                                                        <a href="/login" class="btn btn-lg btn-outline-secondary"><em class="icon ni ni-bookmark"></em><span id="span-text">Đánh dấu</span></a>
                                                         @endif
                                                     </li>
                                                     @if($book->file)
                                                     <li class="ms-n1">
                                                         @if(Auth::check())
 
-                                                        <a href="#" id="download-btn" class="btn btn-lg btn-primary">
-                                                            <em class="icon ni ni-download"></em><span>PDF</span>
+                                                        <a href="#" id="read-pdf-btn" class="btn btn-lg btn-warning">
+                                                            <em class="icon ni ni-arrow-right-circle"></em><span>PDF</span>
                                                         </a>
                                                         @else
-                                                        <a href="/login" class="btn btn-lg btn-primary"><em class="icon ni ni-download"></em><span id="span-text">PDF</span></a>
+                                                        <a href="/login" class="btn btn-lg btn-warning"><em class="icon ni ni-download"></em><span id="span-text">PDF</span></a>
 
                                                         @endif
                                                     </li>
@@ -270,7 +271,7 @@
                                                                             <p class="card-text">{{ Str::limit($user_book->description,100) }}</p>
                                                                             <div class="d-flex justify-content-center">
                                                                                 
-                                                                                <a href="the-loai/the-loai-sach/{{$user_book->types->slug}}" class="fs-13px"><span class="badge badge-dim bg-outline-danger">{{$user_book->types->name }}</span></a>
+                                                                                <a href="the-loai/sort_by=created_at/the-loai-sach/{{$user_book->types->slug}}" class="fs-13px"><span class="badge badge-dim bg-outline-danger">{{$user_book->types->name }}</span></a>
                             
                             
                                                                             </div>
@@ -290,7 +291,7 @@
                                                                                 <p class="card-text">{{ Str::limit($user_document->description,100) }}</p>
                                                                                 <div class="d-flex justify-content-center">
                                                                                     
-                                                                                    <a href="the-loai/the-loai-tai-lieu/{{$user_document->types->slug}}" class="fs-13px"><span class="badge badge-dim bg-outline-danger">{{$user_document->types->name }}</span></a>
+                                                                                    <a href="the-loai/sort_by=created_at/the-loai-tai-lieu/{{$user_document->types->slug}}" class="fs-13px"><span class="badge badge-dim bg-outline-danger">{{$user_document->types->name }}</span></a>
                                 
                                 
                                                                                 </div>
@@ -328,8 +329,9 @@
                                                         <span>{{$chapter->code}}</span>                                                 
                                                         @endif                                              
                                                     </a>
-                                                    <span class="text-muted fs-12px">({{ $chapter->time }})</span>
-
+                                                    <dfn data-info="{{ $chapter->created_at }}">
+                                                        <span class="text-muted">({{ $chapter->time }})</span>
+                                                    </dfn>
                                                    
                                                     <div class="w-100">
                                                         <hr class="hr">
@@ -627,9 +629,9 @@
                                                                                             
 
                                                                                                 
-                                                                                                @if(Auth::user()->id != $comment->users->id)
+                                                                                                @if(Auth::user()->id != $reply->users->id)
 
-                                                                                                <span class="report-comment-btn" data-id={{ $reply->id }} data-type=7 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                                <span class="report-comment-btn" data-id={{ $reply->id }} data-type=9 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
                                                                                                     <em class="icon ni ni-flag fs-16px me-2 "></em>
                                                                                                 </span>
                                                                                                 @endif
@@ -856,33 +858,36 @@
                                 
                                         <div class="nk-block">
                                             <div class="slider-init" data-slick='{"slidesToShow": 4, "slidesToScroll": 2, "infinite":false, "responsive":[ {"breakpoint": 992,"settings":{"slidesToShow": 2}}, {"breakpoint": 768,"settings":{"slidesToShow": 1}} ]}'>
-                                                @foreach ($booksWithSameType as $bookWithSameType)
-                                                    <div class="col" >
+                                                @foreach ($booksWithSameType as $book)
+                                                    <div class="col high_rating_books" >
                                                         <div class="card card-bordered product-card shadow">
-                                                            <div class="product-thumb">                                  
-                                                                <img class="card-img-top" src="{{ $bookWithSameType->url }}" alt=""  width="300px" height="350px">          
-                                                                <div class="product-actions book_sameType h-100 w-100">
-                                                                    <div class="pricing-body d-flex text-center align-items-center w-100 h-100">   
-                                                                        <div class="row">
-                                                                            <div class="pricing-amount">
-                                                                                <h6 class="text-white">{{ $bookWithSameType->name }}</h6>
-                                                                                <p class="text-white">Tác giả: {{ $bookWithSameType->author }}</p>
-                                                                                <p class="text-white">Số chương: {{ $bookWithSameType->numberOfChapter }}</p>
-                                                                            </div>
-                                                                            <div class="pricing-action">
-                                                                                <a href="/sach/{{$bookWithSameType->id}}/{{$bookWithSameType->slug}}" class="btn btn-outline-light">Chi tiết</a>
-                                                                            </div>
-                                                                        </div>                                        
-                                                                        
-                                                                    </div>
-                                                                </div>
+                                                            <div class="product-thumb shine">
+                                                                <a href="/sach/{{$book->id}}/{{$book->slug}}">
+                                                                    <img class="card-img-top" src="{{ $book->url }}" alt="" width="300px" height="350px">
+                                                                </a>
+                                                            
+                                                                <ul class="product-badges">
+                                                                    <li><span class="badge bg-success">{{ $book->ratingScore }}/5</span></li>
+                                                                </ul>    
+                                                            
+                                                                
+                                                                <ul class="product-actions d-flex h-100 align-items-center" >
+                                                                    <li ><a href="/sach/{{$book->id}}/{{$book->slug}}" >
+                                                                        <em class="icon icon-circle bg-success ni ni-book-read"></em>
+                                                                    </a></li>
+                                                                </ul>
                                                             </div>
-                                                        
+                                                            <div class="card-inner text-center">
+                                                                <ul class="product-tags">
+                                                                    <li><a href="/tac-gia/tac-gia-sach/{{ $book->author }}">{{ $book->author }}</a></li>
+                                                                </ul>
+                                                                <h3 class="product-title fs-13px" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $book->name }}"><a href="/sach/{{$book->id}}/{{$book->slug}}"> {{ Str::limit($book->name,25) }}</a></h3>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 @endforeach
-                                    
-                                    
+                            
+                            
                                             </div>
                                         </div><!-- .nk-block -->  
                                 
@@ -901,7 +906,7 @@
 
 @section('modal')
 @if(Auth::check())
-<div class="modal fade" id="reportFormBook" style="display: none;" aria-hidden="true">
+<div class="modal fade" id="reportFormBook" >
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -914,21 +919,34 @@
                 <form class="form-validate is-alter" novalidate="novalidate">
                     @csrf
                     <input type="hidden" class="form-control" id="type_id" name="type_id" value=1>
-                    <input type="hidden" class="form-control" id="identifier_id" name="identifier_id" value={{ $book->id }}>
+                    <input type="hidden" class="form-control" id="identifier_id" name="identifier_id" value={{ $book_id }}>
 
                     <div class="form-group">
                         <label class="form-label" for="book-name">Tên sách</label>
                         <div class="form-control-wrap">
-                            <input type="text" class="form-control" id="book-name" required="" value='{{ $book->name }}' readonly>
+                            <input type="text" class="form-control" id="book-name" required="" value='{{ $book_name }}' readonly>
                         </div>
                     </div>
+
                     <div class="form-group">
-                        <label class="form-label" for="description">Lý do</label>
+                        <label class="form-label" for="reason">Lý do</label>
+                        <div class="form-control-wrap">
+                            <select required class="form-control mb-4 col-6" name="reason" id="reason">
+                                @foreach ($reportReasons as $reason)
+                                <option value="{{ $reason->id }}" >{{ $reason->name }}</option>
+                                @endforeach
+                            </select>                        
+                        </div>                     
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="description">Ghi chú</label>
                         <div class="form-control-wrap">
                             <textarea class="form-control form-control-sm" id="description" name="description" placeholder="Lý do của bạn" required></textarea>
-                        </div>
-                      
+                        </div>                     
                     </div>
+
+
                     <div class="form-group text-right">
                         <button id="submitReportFormBook" class="btn btn-lg btn-primary">Báo cáo</button>
                     </div>
@@ -942,7 +960,7 @@
 </div>
 
 
-<div class="modal fade" id="reportFormComment" style="display: none;" aria-hidden="true">
+<div class="modal fade" id="reportFormComment" >
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -964,8 +982,20 @@
                             <input type="text" class="form-control" id="user-name" name="user-name" required="" readonly>
                         </div>
                     </div>
+
                     <div class="form-group">
-                        <label class="form-label" for="description">Lý do</label>
+                        <label class="form-label" for="reason">Lý do</label>
+                        <div class="form-control-wrap">
+                            <select required class="form-control mb-4 col-6" name="reason" id="reason">
+                                @foreach ($reportReasons as $reason)
+                                <option value="{{ $reason->id }}" >{{ $reason->name }}</option>
+                                @endforeach
+                            </select>                        
+                        </div>                     
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="description">Ghi chú</label>
                         <div class="form-control-wrap">
                             <textarea class="form-control form-control-sm" id="description" name="description" placeholder="Lý do của bạn" required></textarea>
                         </div>
@@ -984,7 +1014,7 @@
 </div>
 
 
-<div class="modal fade" id="editCommentForm" style="display: none;" aria-hidden="true">
+<div class="modal fade" id="editCommentForm" >
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -1011,6 +1041,26 @@
             
             </div>
            
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="recommedRatingBook">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+                <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <em class="icon ni ni-cross"></em>
+                </a>
+            <div class="modal-body modal-body-lg text-left" id='render-recommend-div'>
+            
+                
+            </div>
+            <div class="modal-footer bg-lighter">
+                <div class="text-center w-100">
+                    <p>Gợi ý cho bạn</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -1061,7 +1111,7 @@
         if(readingLog){
 
         const log = JSON.parse(readingLog);
-        const current_book_id = {!! $book->id !!}
+        const current_book_id = {!! $book_id !!}
         objIndex = log.findIndex((obj => obj.book_id == current_book_id));
 
         if(objIndex >= 0){
@@ -1117,7 +1167,6 @@
 
     function chapterRender(){
         const container = $('#tabItem6').find('#pagination');
-        const book_slug = @json($book->slug);
 
   
 
@@ -1226,6 +1275,12 @@
         }
     }
 
+    $(document).on('keypress','#rating-text-box',function(e){
+        if (e.keyCode == 13) {
+            $('#rating-btn').click();
+        }
+    });
+
     $(document).on('click','#rating-btn',function(){
 
         const content = $('#rating-text-box').val();
@@ -1242,7 +1297,7 @@
         }
 
         if(content.length){
-            var book_id = {!! $book->id !!};
+            var book_id = {!! $book_id !!};
 
             $.ajax({
                 url:'/sach-danh-gia',
@@ -1307,6 +1362,19 @@
 
                     }
                 });
+
+                setTimeout(function() {
+                    if (res.recommened_book){
+
+                    const item = res.recommened_book;
+                    $('#recommedRatingBook').find('.modal-body').append(item);
+
+                    $('#recommedRatingBook').modal('show');
+                    }
+                },2600)
+              
+
+                
             })
         .fail(function(jqXHR, textStatus, errorThrown) {
         // If fail
@@ -1352,7 +1420,7 @@
     $(document).on('click','#comment-btn',function(){
         var content = $("#comment_area").val();
         
-        var book_id = {!! $book->id !!};
+        var book_id = {!! $book_id !!};
 
         $.ajax({
                 url:'/binh-luan',
@@ -1385,7 +1453,7 @@
     })
     
     $('#book-mark-btn').click(function(){
-        var book_id = {!! $book->id !!};
+        var book_id = {!! $book_id !!};
         
         $(this).attr("disabled", 'disabled');
         $('#span-text').text('Đã theo dõi');
@@ -1437,7 +1505,8 @@
                 var type_id = form.find('input[name="type_id"]').val();
                 var identifier_id = form.find('input[name="identifier_id"]').val();
                 var description = form.find('textarea[name="description"]').val();
-                
+                var reason = form.find('select[name="reason"]').val();
+
                 if(description){
                             $.ajax({
                         url:'/bao-cao',
@@ -1445,7 +1514,8 @@
                         data:{
                             'description': description,
                             'identifier_id':identifier_id,
-                            'type_id':type_id
+                            'type_id':type_id,
+                            'reason':reason
                         }
                         })
                         .done(function(res) {
@@ -1518,6 +1588,7 @@
                 const type_id = form.find('input[name="type_id"]').val();
                 const identifier_id = form.find('input[name="identifier_id"]').val();
                 const description = form.find('textarea[name="description"]').val();
+                var reason = form.find('select[name="reason"]').val();
 
 
   
@@ -1529,7 +1600,9 @@
                         data:{
                             'description': description,
                             'identifier_id':identifier_id,
-                            'type_id':type_id
+                            'type_id':type_id,
+                            'reason':reason
+
                         }
                         })
                         .done(function(res) {
@@ -1952,7 +2025,7 @@
     $(document).on('click','.delete-rating-btn',function(e){
         e.preventDefault();
         const rating_id = $(this).data('id');
-        const book_id = {!! $book->id !!};
+        const book_id = {!! $book_id !!};
 
         Swal.fire({
                 title: "Bạn muốn xóa đánh giá này này?",
@@ -1995,31 +2068,45 @@
                             starWidth: "17px",   
                         });
 
-                    for(i=0;i<totalOfRating;i++){
+                        $("#rateYo3").rateYo({
+                            maxValue: 5,
+                            numStars: 5,
+                            halfStar: true,
+                            starWidth: "30px",
+                            spacing: "10px",
 
-                        const score = $(`#rateYo-${i}`).data('person-rating-score');
+                            multiColor: {
 
-                        if(score == 5){
-                            color = '#20c997';
-                        }
-                        if(score >=4 && score <5){
-                            color = '#1ee0ac';
-                        }
-                        if(score >=3 && score <4){
-                            color = '#09c2de';
-                        }
-                        if(score >=2 && score <3){
-                            color = '#f4bd0e';
-                        }
-                        if (score >=1 && score <2){
-                            color = '#e85347';
-                        }
-
-                        $(`#rateYo-${i}`).rateYo({
-                            rating: score,
-                            starWidth: "20px",   
-                            ratedFill: color,           
+                            "startColor": "#FF0000", //RED
+                            "endColor"  : "#00FF00"  //GREEN
+                            },
                         });
+
+                        for(i=0;i<totalOfRating;i++){
+
+                            const score = $(`#rateYo-${i}`).data('person-rating-score');
+
+                            if(score == 5){
+                                color = '#20c997';
+                            }
+                            if(score >=4 && score <5){
+                                color = '#1ee0ac';
+                            }
+                            if(score >=3 && score <4){
+                                color = '#09c2de';
+                            }
+                            if(score >=2 && score <3){
+                                color = '#f4bd0e';
+                            }
+                            if (score >=1 && score <2){
+                                color = '#e85347';
+                            }
+
+                            $(`#rateYo-${i}`).rateYo({
+                                rating: score,
+                                starWidth: "20px",   
+                                ratedFill: color,           
+                            });
 
                         const temp =  $('#rating-box').find('.ratingPersonCount').text();
                         
@@ -2156,16 +2243,40 @@
 
     })
 
-    $("#download-btn").click(function(e){  
-        e.preventDefault();
-        const id = {!! $book->id !!};
+    // $("#download-btn").click(function(e){  
+    //     e.preventDefault();
+    //     const id = {!! $book_id !!};
 
-        $.ajax({
-            url:'/generation-link',
+    //     $.ajax({
+    //         url:'/generation-link',
+    //         type:"GET",
+    //         data:{
+    //             'id':id,
+    //             'option':1
+    //         }
+    //         })
+    //         .done(function(res) {
+                
+    //             window.location.href = res.url;
+    //         })
+
+    //         .fail(function(jqXHR, textStatus, errorThrown) {
+    //         // If fail
+    //         console.log(textStatus + ': ' + errorThrown);
+    //         })
+
+    //     })
+
+
+        $('#read-pdf-btn').click(function(e) {
+            e.preventDefault();
+            const book_id = {!! $book_id !!};
+
+            $.ajax({
+            url:'/doc-sach-pdf/' + book_id,
             type:"GET",
             data:{
-                'id':id,
-                'option':1
+        
             }
             })
             .done(function(res) {
@@ -2179,6 +2290,6 @@
             })
 
         })
-
+     
 </script>
 @endsection

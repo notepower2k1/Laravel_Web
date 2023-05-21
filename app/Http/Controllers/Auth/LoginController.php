@@ -82,7 +82,7 @@ class LoginController extends Controller
 
             if(Auth::user()->status == 0){
                 Auth::logout();
-                return redirect('login')->with('fail', 'Tài khoản của bạn đã bị khóa');
+                return redirect('login')->with('fail', 'Tài khoản của bạn đã bị khóa. Liên hệ quản trị viên để biết thêm chi tiết');
             }
 
             loginHistory::create([

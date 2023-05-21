@@ -59,15 +59,17 @@ class ClientChapterController extends Controller
         ]);
         
         $name = '';
-
+        $slug = '';
         if($request->name == null){
             $name = '';
+            $slug =  Str::slug($request->code);
         }
         else{
             $name = $request->name;
+            $slug =  Str::slug($name);
         }
 
-        $slug =  Str::slug($request->name);
+      
 
 
         $chapter_id = Chapter::insertGetId([
@@ -211,6 +213,11 @@ class ClientChapterController extends Controller
     public function customDelete($chapter_id){
         $chapter = Chapter::findOrFail($chapter_id);
         $chapter->deleted_at = Carbon::now()->toDateTimeString();
+
+        $book = Book::findOrFail($chapter->book_id);
+        $book->numberOfChapter = $book->numberOfChapter -1;
+        $book ->save();
+
         $chapter ->save();
     }   
         

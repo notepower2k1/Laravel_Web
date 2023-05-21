@@ -214,47 +214,47 @@
     $('#DataTables_Table_0_length').addClass('mt-2');
     $('#DataTables_Table_0_filter').addClass('mt-2');
     $('#DataTables_Table_0 tbody').on('click','.delete-button',function(){
-    var forum_postID = $(this).data('id');
-    var name = $(this).data('name');
-    var token = $("meta[name='csrf-token']").attr("content");
+      var forum_postID = $(this).data('id');
+      var name = $(this).data('name');
+      var token = $("meta[name='csrf-token']").attr("content");
 
-    Swal.fire({
-        title: "Bạn muốn xóa bài đăng "+ name,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Xóa bài đăng',
-        cancelButtonText: 'Không'
-        }).then((result) => {
-        if (result.isConfirmed) {
-           
-            $.ajax({
-                type:"GET",
-                url:'/admin/forum/post/customDelete/' + forum_postID,
-                data : {
-                },
-                })
-                .done(function() {
-                // If successful
-                    Swal.fire({
-                        icon: 'success',
-                        title: `Xóa bài đăng thành công`,
-                        showConfirmButton: false,
-                        timer: 2500
-                    });
-                    $("#row-" + forum_postID).fadeOut();
-                })
-                .fail(function(jqXHR, textStatus, errorThrown) {
-                // If fail
-                console.log(textStatus + ': ' + errorThrown);
-                })
-         
-        }
-      })
+      Swal.fire({
+          title: "Bạn muốn xóa bài đăng "+ name,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Xóa bài đăng',
+          cancelButtonText: 'Không'
+          }).then((result) => {
+          if (result.isConfirmed) {
+            
+              $.ajax({
+                  type:"GET",
+                  url:'/admin/forum/post/customDelete/' + forum_postID,
+                  data : {
+                  },
+                  })
+                  .done(function() {
+                  // If successful
+                      Swal.fire({
+                          icon: 'success',
+                          title: `Xóa bài đăng thành công`,
+                          showConfirmButton: false,
+                          timer: 2500
+                      });
+                      $("#row-" + forum_postID).fadeOut();
+                  })
+                  .fail(function(jqXHR, textStatus, errorThrown) {
+                  // If fail
+                  console.log(textStatus + ': ' + errorThrown);
+                  })
+          
+          }
+        })
 
- 
-  })
+  
+    })
 });
 
     function customFormatDate(date){

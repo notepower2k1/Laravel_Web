@@ -2,6 +2,8 @@
 @section('pageTitle', `{{$forum->name}}`)
 @section('additional-style')
 <link href="{{ asset('js/pagination/pagination.css') }}" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="{{ asset('assets/css/infohelper.css') }}">
+
 @endsection
 
 @section('navbar-Footer')
@@ -97,15 +99,15 @@
                                 </li>
                                 @if (Auth::check())
                                     @if($forum->status == 0)
-
-                                    @else
-                                    <li class="nk-block-tools-opt d-none d-sm-block">
-                                        <a href="#" data-bs-toggle="modal" data-bs-target="#modalForm" class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Thêm bài viết</span></a>
-                                    </li>
                                     
-                                    <li class="nk-block-tools-opt d-block d-sm-none">
-                                        <a href="#" class="btn btn-icon btn-primary"><em class="icon ni ni-plus"></em></a>
-                                    </li>
+                                    @else
+                                        <li class="nk-block-tools-opt d-none d-sm-block">
+                                            <a href="#" data-bs-toggle="modal" data-bs-target="#modalForm" class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Thêm bài viết</span></a>
+                                        </li>
+                                        
+                                        <li class="nk-block-tools-opt d-block d-sm-none">
+                                            <a href="#" class="btn btn-icon btn-primary"><em class="icon ni ni-plus"></em></a>
+                                        </li>
                                     @endif
                              
                                 @endif
@@ -138,9 +140,17 @@
                            <div class="p-2">
                                 <div class="d-flex">
                                     <div class="">
-                                        <div class="nk-tnx-type-icon bg-info-dim text-info">                                      
-                                            <em class="icon ni ni-chat-fill"></em>                                    
-                                        </div>
+                                            @if($post->firstImage)
+                                            <div class="me-2">                                      
+
+                                                <img src="{{ $post->firstImage }}" alt=""  class="rounded-circle" style="width:50px;height:50px">
+                                            </div>
+            
+                                            @else
+                                            <div class="nk-tnx-type-icon bg-info-dim text-info" style="width:50px;height:50px">                                      
+                                                <em class="icon ni ni-chat-fill" style="font-size:30px"></em>                                    
+                                            </div>
+                                        @endif
                                     </div>
                                     <div class="flex-grow-1">                                
                                             <div class="forum-topic d-flex justify-between mb-2">
@@ -162,7 +172,10 @@
                                             <div class="d-flex justify-between">
                                                 <span class="badge badge-dim bg-azure-dim text-azure"><em class="icon ni ni-user"></em><span>{{ $post->users->profile->displayName }}</span></span>
                                                 <span class="badge badge-dim bg-info"><em class="icon ni ni-comments"></em><span>{{ $post->totalComments }}</span></span>
-                                                <span class="badge badge-dim bg-success" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $post->created_at }}"><em class="icon ni ni-clock"></em><span>{{ $post->time }}</span></span>
+                                                <dfn data-info="{{ $post->created_at }}">
+                                                    <span class="badge badge-dim bg-success"><em class="icon ni ni-clock"></em><span>{{ $post->time }}</span></span>
+                                                </dfn>
+
                                             </div>                                      
                                     </div>                               
                                 </div>           
@@ -193,8 +206,18 @@
                     <ul class="nk-activity">
                         @foreach ($lastPosts as $lastPost)
                         <li class="nk-activity-item">
-                            <div class="nk-tnx-type-icon bg-info-dim text-info">                                      
-                                <em class="icon ni ni-chat-fill"></em>                                    
+                            <div class="">
+                                @if($lastPost->firstImage)
+                                <div class="me-2">                                      
+
+                                    <img src="{{ $lastPost->firstImage }}" alt=""  class="rounded-circle" style="width:50px;height:50px">
+                                </div>
+
+                                @else
+                                <div class="nk-tnx-type-icon bg-info-dim text-info" style="width:50px;height:50px">                                      
+                                    <em class="icon ni ni-chat-fill" style="font-size:30px"></em>                                    
+                                </div>
+                            @endif
                             </div>
                             <div class="nk-activity-data">
                                 <div class="label">
@@ -231,6 +254,14 @@
                 </a>
             </div>
             <div class="modal-body">
+                @if($errors->any())
+                <div class="alert alert-warning">
+                    @foreach ($errors->all() as $error)
+                        <div class="">{{ $error }}</div>
+                    @endforeach
+    
+                </div>
+                @endif
                 <form action="/bai-viet" method="POST" id="addForm">
                     @csrf                     
 
@@ -335,7 +366,7 @@
 
 
     
-    $('#add-btn').click(function(){
+    $(document).on('click','#add-btn',function(){
         var content = tinymce.activeEditor.getContent("myTextarea");
         if(content){
 
@@ -356,7 +387,7 @@
         }
     })
 
-    $('.delete-btn').click(function(){
+    $(document).on('click','.delete-btn',function(){
         var forum_post_id = $(this).attr('data-id');
         
         Swal.fire({
@@ -423,6 +454,8 @@
 
         var options = {
             dataSource: sources,
+            pageSize: 8,
+
             callback: function (response, pagination) {
                 var dataHtml = '<div class="row g-gs">';
 

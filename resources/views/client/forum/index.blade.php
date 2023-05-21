@@ -13,12 +13,12 @@
                                 <div class="d-flex">
                                     
                                     @if($forum->status == 0)
-                                    <div class="nk-tnx-type-icon bg-danger-dim text-danger">                                      
-                                            <em class="icon ni ni-folders-fill"></em>                                    
+                                    <div class="nk-tnx-type-icon bg-danger-dim text-danger" style="width:50px;height:50px">                                      
+                                            <em class="icon ni ni-folders-fill" style="font-size:30px"></em>                                    
                                     </div>
                                     @else
-                                    <div class="nk-tnx-type-icon bg-success-dim text-success">                                      
-                                        <em class="icon ni ni-folders-fill"></em>                                    
+                                    <div class="nk-tnx-type-icon bg-success-dim text-success" style="width:50px;height:50px">                                      
+                                        <em class="icon ni ni-folders-fill" style="font-size:30px"></em>                                    
                                     </div>
                                     @endif
                                     <div class="flex-grow-1 ">
@@ -64,8 +64,18 @@
                 <ul class="nk-activity">
                     @foreach ($lastPosts as $lastPost)
                     <li class="nk-activity-item">
-                        <div class="nk-tnx-type-icon bg-info-dim text-info">                                      
-                            <em class="icon ni ni-chat-fill"></em>                                    
+                        <div class="">
+                            @if($lastPost->firstImage)
+                                <div class="me-2">                                      
+
+                                    <img src="{{ $lastPost->firstImage }}" alt=""  class="rounded-circle" style="width:50px;height:50px">
+                                </div>
+
+                                @else
+                                <div class="nk-tnx-type-icon bg-info-dim text-info" style="width:50px;height:50px">                                      
+                                    <em class="icon ni ni-chat-fill" style="font-size:30px"></em>                                    
+                                </div>
+                            @endif
                         </div>
                         <div class="nk-activity-data">
                             <div class="label">
