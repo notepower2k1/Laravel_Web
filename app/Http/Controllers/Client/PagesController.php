@@ -137,70 +137,33 @@ class PagesController extends Controller
             $listUserNotReadBook->push($book);
         }
 
-        return $listUserNotReadBook;
+        // return $listUserNotReadBook;
 
 
-        // $userID = Auth::user()->id;
+        $userID = Auth::user()->id;
 
-        // $rankTypeBook = DB::select("SELECT books.type_id, 
-        // SUM(`total`) as 'total' FROM reading_histories join books 
-        // on reading_histories.bookID = books.id WHERE `userID` = $userID
-        // GROUP BY `books`.`type_id` 
-        // ORDER BY total desc
-        // limit 2");
+        $rankTypeBook = DB::select("SELECT books.type_id, 
+        SUM(`total`) as 'total' FROM reading_histories join books 
+        on reading_histories.bookID = books.id WHERE `userID` = $userID
+        GROUP BY `books`.`type_id` 
+        ORDER BY total desc
+        limit 2");
 
-        // $listUserNotReadBookByTypeRank = collect();
+        $listUserNotReadBookByTypeRank = collect();
 
-        // foreach ($rankTypeBook as $rank){
-        //     $temp = $listUserNotReadBook->where('type_id',$rank->type_id);
-
-
-        //     if($temp->count() > 0 ){
-        //         $listUserNotReadBookByTypeRank->push($temp);
-
-        //     }
-        // }
-        // return $listUserNotReadBookByTypeRank->first();
-
-        // $listbooks = Book::all()->pluck('id')->toArray();
-
-        // $listUserReadBookID = readingHistory::where('userID',Auth::user()->id)->pluck('bookID')->toArray(); 
-
-        // $listUserNotReadBookID = array_diff($listbooks, $listUserReadBookID);
-
-        // $listUserNotReadBookID = array_values($listUserNotReadBookID);
-
-        // $listUserNotReadBook = collect();
-
-        // foreach ($listUserNotReadBookID as $bookID){
-        //     $book = Book::findOrFail($bookID);
-        //     $listUserNotReadBook->push($book);
-        // }
-    
-        // $userID = Auth::user()->id;
-
-        // $rankTypeBook = DB::select("SELECT books.type_id, 
-        // SUM(`total`) as 'total' FROM reading_histories join books 
-        // on reading_histories.bookID = books.id WHERE `userID` = $userID
-        // GROUP BY `books`.`type_id` 
-        // ORDER BY total desc
-        // limit 2");
-
-        // $listUserNotReadBookWithTypeRank = collect();
-
-        // foreach ($rankTypeBook as $rank){
-        //     $temp = $listUserNotReadBook->where('type_id',$rank->type_id);
+        foreach ($rankTypeBook as $rank){
+            $temp = $listUserNotReadBook->where('type_id',$rank->type_id);
 
 
-        //     if($temp->count() > 0 ){
-        //         $listUserNotReadBookWithTypeRank->push($temp);
+            if($temp->count() > 0 ){
+                $listUserNotReadBookByTypeRank->push($temp);
 
-        //     }
-        // }
+            }
+        }
 
-        // $listUserNotReadBookByTypeRank = $listUserNotReadBookWithTypeRank->SortByDesc('totalReading');
 
-        // return $listUserNotReadBookByTypeRank;
+
+        return $listUserNotReadBookByTypeRank->first();
     }
 
    
@@ -251,6 +214,90 @@ class PagesController extends Controller
 
     }
 
+    public function preview_item(Request $request){
+
+        $option = $request->option;
+        $item_id = $request->item_id;
+
+
+        if($option == '1'){
+            $book = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->findOrFail($item_id);
+            $item = '';
+            if($book){
+                $item = 
+                '<div class="d-flex mb-3">'.
+                    '<div class="flex-grow-1">'.
+                        '<div class="d-flex flex-column h-100">'.
+                            '<h4>'.$book->name.'</h4>'.
+                        ' <span class="text-muted"><em class="icon ni ni-user-list"></em><span>'.$book->author.'</span></span>'.
+    
+                        ' <span class="text-muted">Lượt đọc: <span>'.$book->totalReading.'</span><em class="icon ni ni-eye text-success"></em></span>'.
+                        ' <span class="text-muted">Đánh giá: <span>'.$book->ratingScore.'/5</span><em class="icon ni ni-star text-warning"></em></span>'.
+    
+                            '<span>'.Str::limit($book->description,200).'</span>'.
+                            '<div class="d-inline">'.
+                                '<span class="p-1 badge badge-dim bg-outline-danger">'.$book->types->name.'</span> '  .   
+                        ' </div>'.
+    
+    
+                        ' <div class="flex-fill d-flex align-items-end">'.
+    
+                            ' <a href="/sach/'.$book->id.'/'.$book->slug.'" class="btn btn-danger btn-lg px-4">Chi tiết</a>'.
+                            '</div>'.
+                        '</div>'.
+                ' </div>'.
+                    '<div class="item-image">'.
+                        '<a class="book-container" href="/sach/'.$book->id.'/'.$book->slug.'" target="_blank" rel="noreferrer noopener">'.
+                        '<div class="bookNonHover">'.
+                            '<img alt="" src="'.$book->url.'">'.
+                        '</div>'.
+                    ' </a>'.
+                    '</div>'.
+                '</div>';
+    
+            }
+        }
+
+        else{
+            $document = Document::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->findOrFail($item_id);
+            $item = '';
+            if($document){
+                $item = 
+                '<div class="d-flex mb-3">'.
+                    '<div class="flex-grow-1">'.
+                        '<div class="d-flex flex-column h-100">'.
+                            '<h4>'.$document->name.'</h4>'.
+                        ' <span class="text-muted"><em class="icon ni ni-user-list"></em><span>'.$document->author.'</span></span>'.
+    
+                        ' <span class="text-muted">Lượt tải: <span>'.$document->totalDownloading.'</span><em class="icon ni ni-download text-success"></em></span>'.
+    
+                            '<span>'.Str::limit($document->description,200).'</span>'.
+                            '<div class="d-inline">'.
+                                '<span class="p-1 badge badge-dim bg-outline-danger">'.$document->types->name.'</span> '  .   
+                        ' </div>'.
+    
+    
+                        ' <div class="flex-fill d-flex align-items-end">'.
+    
+                            ' <a href="/tai-lieu/'.$document->id.'/'.$document->slug.'" class="btn btn-danger btn-lg px-4">Chi tiết</a>'.
+                            '</div>'.
+                        '</div>'.
+                ' </div>'.
+                    '<div class="item-image">'.
+                        '<a class="book-container" href="/sach/'.$document->id.'/'.$document->slug.'" target="_blank" rel="noreferrer noopener">'.
+                        '<div class="bookNonHover">'.
+                            '<img alt="" src="'.$document->url.'">'.
+                        '</div>'.
+                    ' </a>'.
+                    '</div>'.
+                '</div>';
+    
+            }
+        }
+       
+
+        return response()->json(['item' => $item]);
+    }
     public function book_page_more($option = null){
 
         $books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get();
@@ -334,7 +381,6 @@ class PagesController extends Controller
     public function book_detail($book_id,$book_slug){
             
         $book = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->findOrFail($book_id);
-
         $chapters = Chapter::where('book_id','=',$book_id)->where('deleted_at','=',null)->get();
         $comments = Comment::where('type_id','=',2)->where('identifier_id','=',$book_id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
         $reportReasons = ReportReason::all();
@@ -387,8 +433,19 @@ class PagesController extends Controller
         $user_books = Book::where('userCreatedID','=',$book->users->id)->where('deleted_at','=',null)->where('isPublic','=',1)->where('id','!=',$book->id)->get();
         $user_documents = Document::where('userCreatedID','=',$book->users->id)->where('deleted_at','=',null)->where('isPublic','=',1)->get();
 
+     
+        $reportBook = report::where('identifier_id','=',$book_id)->where('type_id','=',1)->first();
+
+        $reportComment = report::where('type_id','=',6);
+
+        $reportReply = report::where('type_id','=',9);
+
+      
         return view('client.homepage.book_detail')
-        
+        ->with('reportBook',$reportBook)
+        ->with('reportComment',$reportComment)
+        ->with('reportReply',$reportReply)
+
         ->with('reportReasons',$reportReasons)
         ->with('book_name',$book->name)
         ->with('book_id',$book_id)
@@ -404,8 +461,6 @@ class PagesController extends Controller
         ->with('isRating',$isRating)
         ->with('ratingScore',$book->ratingScore)
         ->with('booksWithSameType',$booksWithSameType);
-
-       
 
     }
 
@@ -432,7 +487,18 @@ class PagesController extends Controller
         $previewImages = previewDocumentImages::where('documentID','=',$document_id)->get();
 
 
+        $reportDocument = report::where('identifier_id','=',$document_id)->where('type_id','=',3)->first();
+
+        $reportComment = report::where('type_id','=',7);
+
+        $reportReply = report::where('type_id','=',9);
+
+
         return view('client.homepage.document_detail')
+        ->with('reportDocument',$reportDocument)
+        ->with('reportComment',$reportComment)
+        ->with('reportReply',$reportReply)
+
         ->with('document_name',$document->name)
         ->with('reportReasons',$reportReasons)
         ->with('document_id',$document_id)
@@ -528,8 +594,9 @@ class PagesController extends Controller
             }
 
             
-            $recommened_books = $this->getRecommendationByType()->chunk(2)[0];
+            // $recommened_books = $this->getRecommendationByType()->chunk(2)[0];
 
+            $recommened_books = $this->getRecommendationByType();
 
         }
         
@@ -560,7 +627,18 @@ class PagesController extends Controller
 	    ->get();
 
 
+        $reportChapter = report::where('identifier_id','=',$chapter->id)->where('type_id','=',2)->first();
+
+        $reportComment = report::where('type_id','=',6);
+
+        $reportReply = report::where('type_id','=',9);
+
+
         return view('client.homepage.chapter_detail')
+        ->with('reportChapter',$reportChapter)
+        ->with('reportComment',$reportComment)
+        ->with('reportReply',$reportReply)
+
         ->with('reportReasons',$reportReasons)
         ->with('userTotalReading',$userTotalReading)
         ->with('comments',$comments)
@@ -570,7 +648,7 @@ class PagesController extends Controller
         ->with('chapter',$chapter)
         ->with('chapters',$chapters);
 
-       
+
     }
 
     public function read_book_pdf($book_id){
@@ -1114,7 +1192,18 @@ class PagesController extends Controller
 
         $comments = Comment::where('type_id','=',3)->where('identifier_id','=',$post_id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
 
+
+        $reportPost= report::where('identifier_id','=',$post_id)->where('type_id','=',4)->first();
+
+        $reportComment = report::where('type_id','=',8);
+
+        $reportReply = report::where('type_id','=',9);
+
         return view('client.forum.forum_posts.detail')
+        ->with("reportPost",$reportPost)
+        ->with("reportComment",$reportComment)
+        ->with("reportReply",$reportReply)
+
         ->with('reportReasons',$reportReasons)
         ->with('comments',$comments)
         ->with('forum_slug',$forum_slug)

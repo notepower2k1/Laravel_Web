@@ -1,13 +1,15 @@
 @extends('client/forum.layouts.app')
 @section('pageTitle', `${{$post->topic}}`)
 @section('additional-style')
+<link rel="stylesheet" href="{{ asset('assets/css/infohelper.css') }}">
 
 <style>
    
     .open-relies-btn:hover{
         cursor: pointer;
     }
-  
+ 
+
 </style>
 @endsection
 @section('content')
@@ -24,19 +26,36 @@
             <div class="row g-gs flex-lg-row-reverse">
                 
                 <div class="col-lg-12">
-                    <div class="entry me-xxl-3">
+                    <div class="entry ">
                     
-                        <div class="d-flex align-content-center">
-                        <h3>{{ $post->topic }}
-                            
+                        <div class="d-flex align-items-center" id="post-info">
+                            <h3 class="text-left">{{ $post->topic }}
+                           
+                            </h3>                         
                             @if(Auth::check())
-                            <button type="button" class="btn btn-icon btn-lg ms-1" data-bs-toggle="modal" data-bs-target="#reportForm">
-                            <em class="icon ni ni-alert" style="color:red"></em>
-                            </button>
+
+                                @if($reportPost)
+
+                                    @if($reportPost->isEnabled)
+                                        <button type="button" class="btn btn-icon mb-2" data-bs-toggle="modal" data-bs-target="#reportForm">
+                                            <em class="icon ni ni-flag " style="color:red"></em>
+                                        </button>
+                                    @else
+
+                                    <dfn data-info="Đã có người báo cáo">
+                                        <button type="button" class="btn btn-icon border-0 mb-2" disabled>
+                                            <em class="icon ni ni-flag" style="color:red"></em>
+                                        </button>
+                                    </dfn>
+                                    
+                                    @endif
+                                @else
+                                    <button type="button" class="btn btn-icon mb-2" data-bs-toggle="modal" data-bs-target="#reportForm">
+                                        <em class="icon ni ni-flag " style="color:red"></em>
+                                    </button>
+                                @endif
+                        
                             @endif
-                        </h3>
-                        
-                        
                         </div>
                         <span class="text-mute ff-italic fw-bold">Đăng bởi: <a href="/thanh-vien/{{ $post->users->id }}" class="text-primary fs-14px">{{ $post->users->profile->displayName }}</a></span>
                         <br>
@@ -51,15 +70,21 @@
                 
                 </div><!-- .col -->
             </div><!-- .row -->
-            <div class="d-flex align-items-center border bg-gray-200 p-1 mt-3 fs-11px">
-                <em class="icon ni ni-clock"></em>
-                <span> Update vào lúc {{  $post->updated_at->format("H:i Y/m/d") }}</span>  
+            <div class="d-flex align-items-center border bg-gray-200 p-1 mt-3 fs-11px justify-content-between">
+                <div>
+                    <em class="icon ni ni-clock"></em>
+                    <span> Update vào lúc {{  $post->updated_at->format("H:i Y/m/d") }}</span>  
+                </div>
+                <div>
+                    <em class="icon ni ni-eye"></em>
+                    <span> {{ $post->totalViews }} lượt xem</span>  
+                </div>
             </div>
             </div>
         
     </div>
 
-    <div class="card card-bordered">
+    <div class="card card-bordered"  style=" background: hsla(48, 100%, 96%, 1)">
         <div class="card-inner">        
             <div class="d-flex justify-content-between">
                 <h5><span class="total-comment-span">{{ $post->totalComments }} </span>bình luận</h5>
@@ -122,14 +147,38 @@
                                                                         </a>
                                                                     </li>
                                                                     @if(Auth::user()->id != $comment->users->id)
-                                                                    <li>
-                                                                        <a class="report-comment-btn" data-id={{ $comment->id }} data-type=8 data-user='{{ $comment->users->profile->displayName  }}'
-                                                                            data-bs-toggle="modal" data-bs-target="#reportFormComment"
-                                                                            href="#">
-                                                                            <em class="icon ni ni-flag"></em>
-                                                                            <span>Báo cáo bình luận</span>
-                                                                        </a>
-                                                                    </li>
+                                                                        @if($reportComment->where('identifier_id','=',$comment->id)->first())
+                                                                            @if($reportComment->where('identifier_id','=',$comment->id)->first()->isEnabled)
+                                                                                <li>
+                                                                                    <a class="report-comment-btn" data-id={{ $comment->id }} data-type=8 data-user="{{ $comment->users->profile->displayName  }}" 
+                                                                                        data-bs-toggle="modal" data-bs-target="#reportFormComment"
+                                                                                        href="#">
+                                                                                        <em class="icon ni ni-flag"></em>
+                                                                                        <span>Báo cáo bình luận</span>
+                                                                                    </a>
+                                                                                </li>
+                                                                            @else
+
+
+                                                                            <li style="background-color:rgb(215, 208, 208)">
+                                                                                <a>
+                                                                                    <em class="icon ni ni-flag"></em>
+                                                                                    <span>Đã báo cáo</span>
+                                                                                </a>
+                                                                            </li>
+                                                                            @endif
+                                                                        @else
+                                                                            <li>
+
+                                                                                <a class="report-comment-btn" data-id={{ $comment->id }} data-type=8 data-user="{{ $comment->users->profile->displayName  }}" 
+                                                                                    data-bs-toggle="modal" data-bs-target="#reportFormComment"
+                                                                                    href="#">
+                                                                                    <em class="icon ni ni-flag"></em>
+                                                                                    <span>Báo cáo bình luận</span>
+                                                                                </a>
+                                                                            </li>
+                                                                        @endif
+                                                                    
                                                                     @endif
                                                                 </ul>
                                                                 </div>
@@ -185,14 +234,42 @@
                                                                             </li>
                                                                             @if(Auth::user()->id != $comment->users->id)
 
-                                                                            <li>           
-                                                                                <a class="report-comment-btn" data-id={{ $comment->id }} data-type=9 data-user="{{ $comment->users->profile->displayName  }}" 
-                                                                                    data-bs-toggle="modal" data-bs-target="#reportFormComment"
-                                                                                    href="#">
-                                                                                    <em class="icon ni ni-flag"></em>
-                                                                                    <span>Báo cáo bình luận</span>
-                                                                                </a>
-                                                                            </li>
+                                                                                    @if($reportReply->where('identifier_id','=',$reply->id)->first())
+                                                                                        @if($reportReply->where('identifier_id','=',$reply->id)->first()->isEnabled)
+                                                                                            <li>
+                                                                                                <a class="report-comment-btn" data-id={{ $reply->id }} data-type=9 data-user="{{ $reply->users->profile->displayName  }}" 
+                                                                                                    data-bs-toggle="modal" data-bs-target="#reportFormComment"
+                                                                                                    href="#">
+                                                                                                    <em class="icon ni ni-flag"></em>
+                                                                                                    <span>Báo cáo bình luận</span>
+                                                                                                </a>
+                                                                                            </li>
+
+                                                                                        @else
+
+                                                                                        <li style="background-color:rgb(215, 208, 208)">
+                                                                                            <a>
+                                                                                                <em class="icon ni ni-flag"></em>
+                                                                                                <span>Đã báo cáo</span>
+                                                                                            </a>
+                                                                                        </li>
+                                                                                        @endif
+                                                                                     
+                                                                                        
+                                                                                        @endif
+                                                                                    @else
+                                                                                        <li>           
+
+                                                                                            <a class="report-comment-btn" data-id={{ $reply->id }} data-type=9 data-user="{{ $reply->users->profile->displayName  }}" 
+                                                                                                data-bs-toggle="modal" data-bs-target="#reportFormComment"
+                                                                                                href="#">
+                                                                                                <em class="icon ni ni-flag"></em>
+                                                                                                <span>Báo cáo bình luận</span>
+                                                                                            </a>
+                                                                                        </li>
+                                                                                    @endif
+
+                                                                              
                                                                             @endif
                                                                         </ul>
                                                                         </div>
@@ -230,7 +307,6 @@
 
             @if (Auth::check())
             <div class="create-comment-box shadow p-3">
-                <h2>Viết bình luận</h2>
                 <textarea id="mytextarea" 
                     required 
                     name="content" 
@@ -757,6 +833,8 @@
                             setTimeout(()=>{
                                 form.modal('hide');
                             }, 2500);
+                            $("#post-info").load(" #post-info > *");
+
                         })
 
                         .fail(function(jqXHR, textStatus, errorThrown) {
@@ -788,7 +866,6 @@
         form.find('input[name="type_id"]').val(type_id);
         form.find('input[name="identifier_id"]').val(identifier_id);
         
-        console.log(identifier_id,type_id,userName);
     })
     $('#submitReportFormComment').click(function (e) {
 
@@ -835,6 +912,9 @@
                             setTimeout(()=>{
                                 form.modal('hide');
                             }, 2500);
+
+                            $("#comment-box").load(" #comment-box > *")
+
                         })
                         .fail(function(jqXHR, textStatus, errorThrown) {
                         // If fail

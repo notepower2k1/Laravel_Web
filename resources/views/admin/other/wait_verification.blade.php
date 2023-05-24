@@ -100,7 +100,7 @@
                                       <tr class="nk-tb-item" id ="row-document-{{ $document->id }}">             
                                           <td class="nk-tb-col nk-tb-col-check">
                                               <div class="custom-control custom-control-sm custom-checkbox notext">
-                                                  <input type="checkbox" name='selection' class="custom-control-input" id="uid-document-{{ $document->id }}" data-id="{{ $document->id }}"  data-option="0">
+                                                  <input type="checkbox" name='selection' class="custom-control-input" id="uid-document-{{ $document->id }}" data-id="{{ $document->id }}"  data-option="2">
                                                   <label class="custom-control-label" for="uid-document-{{ $document->id }}"></label>
                                               </div>
                                           </td>                             
@@ -261,9 +261,16 @@
           });
 
 
+          const firstOption = data[0].option;
+
+          $("#note-type").select2().select2('val',[`${firstOption}`]);
+
           setTimeout(() => {
-            $('#modalNote').modal('show');
-          }, 2500);
+              const firstDataID = data[0].id;
+
+              $('#note-object').select2().select2('val',[`${firstDataID}`]);
+              $('#modalNote').modal('show');
+            }, 2500);
 
 
         })
@@ -277,7 +284,7 @@
                   });
         })
 
-    
+   
 
     })
 

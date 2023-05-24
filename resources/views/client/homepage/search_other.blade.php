@@ -63,7 +63,7 @@
             </div>
         </div>
         <hr>
-        <div class="nk-content">
+        <div class="nk-block">
             @if(isset($items))
             @if($items)
                 <div class="content">
@@ -75,11 +75,8 @@
                         <li class="item-book">
                             <div class="d-sm-none d-md-block">
                                 <div class="info mb-2 d-flex justify-content-start">
-                                    @if($book->file == null)
-                                        <dfn data-info="{{ $book->numberOfChapter }} chương"><em class="icon ni ni-book text-success"></em></dfn>
-                                    @else
-                                        <dfn data-info="Tệp PDF"><em class="icon ni ni-file-pdf text-success"></em></dfn>
-                                    @endif
+                                    <dfn data-info="{{ $book->types->name }}"><em class="icon ni ni-book text-success"></em></dfn>
+                                      
             
                                     @if($book->language == 1)
                                     <dfn data-info="Tiếng Việt"><em class="icon ni ni-globe text-info"></em></dfn>
@@ -184,7 +181,7 @@
                         <li class="item-book">
                             <div class="d-sm-none d-md-block">
                                 <div class="info mb-2 d-flex justify-content-start">
-                                    <dfn data-info="{{ $document->numberOfPages }} trang"><em class="icon ni ni-file-pdf text-success"></em></dfn>
+                                    <dfn data-info="{{ $document->types->name }}"><em class="icon ni ni-file-pdf text-success"></em></dfn>
                     
                                     @if($document->language == 1)
                                     <dfn data-info="Tiếng Việt"><em class="icon ni ni-globe text-info"></em></dfn>

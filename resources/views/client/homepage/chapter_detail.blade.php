@@ -2,6 +2,7 @@
 
 @section('additional-style')
 <link href="{{ asset('js/pagination/pagination.css') }}" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="{{ asset('assets/css/infohelper.css') }}">
 
 <style>
 
@@ -80,6 +81,10 @@
  
 .nk-content{
   background-color:#e5e5e5 !important;
+}
+
+.delete-reply-btn,.create-reply-btn,.delete-comment-btn,.report-comment-btn,.like-reply-btn,.like-comment-btn,.edit-comment-btn:hover,.open-relies-btn:hover{
+        cursor: pointer;
 }
 </style>
 @endsection
@@ -199,13 +204,34 @@
               @endif
             </div>
         
-              @if(Auth::check())
+
+            <div id="report-render-div" class="d-flex align-items-center">
+                    @if(Auth::check())
             
-              <button type="button" class="btn btn-icon btn-lg ms-1" data-bs-toggle="modal" data-bs-target="#reportForm">
-                <em class="icon ni ni-alert" style="color:red"></em>
-              </button>
-            
-              @endif
+                    @if($reportChapter)
+                        @if($reportChapter->isEnabled)
+                            <button type="button" class="btn btn-lg btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#reportForm">
+                                <em class="icon ni ni-flag" ></em>
+                            </button>
+                        @else
+    
+                        <dfn data-info="Đã có người báo cáo">
+                            <button type="button" class="btn btn-lg btn-outline-secondary" disabled>
+                                <em class="icon ni ni-flag"></em>
+                            </button>
+                        </dfn>
+                        
+                        @endif
+                    @else
+                        <button type="button" class="btn btn-lg btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#reportForm">
+                            <em class="icon ni ni-flag" ></em>
+                        </button>
+                    @endif
+                
+                
+                @endif
+            </div>
+           
             <div class="p-2">
             
               @if($next)
@@ -254,7 +280,7 @@
                         @if(Auth::check())
                         <div class="d-flex">                                                     
                             <img class="rounded border shadow me-2 flex-grow-2" src="{{ Auth::user()->profile->url }}" id="comment_avatar" style="width:128px;height:128px">
-  
+
                             <div class="nk-chat-editor border flex-grow-1 bg-light" id="main-comment-box">
                                 <div class="nk-chat-editor-form">
                                     <div class="form-control-wrap">
@@ -284,10 +310,10 @@
                                                             <div class="flex-grow-1">
                                                                 <span class="d-block font-weight-bold name">{{ $comment->users->profile->displayName }}</span>
                                                                 
-  
+
                                                                 <div class="d-flex">
                                                                     @foreach ($userTotalReading as $userTotal )
-  
+
                                                                     @if($userTotal->userID == $comment->users->id)
                                                                         <div class="otherInfo me-5">
                                                                             <em class="icon ni ni-eye"></em>
@@ -303,7 +329,7 @@
                                                                 </div>
                                                                
                                                             </div>
-  
+
                                                           
                                                             
                                                         </div>
@@ -328,7 +354,7 @@
                                                                             <em class="icon ni ni-edit fs-16px"></em>
                                                                             <span>Chỉnh sửa bình luận</span>
                                                                         </a>
-  
+
                                                                     
                                                                     </li>
                                                                 </ul>
@@ -346,7 +372,7 @@
                                                     </p>
                                                 </div>
                                             </div>
-  
+
                                             
                                                 <div class="bg-white">
                                                     <div class="d-flex align-items-center justify-content-between">
@@ -355,12 +381,12 @@
                                                                 <p class="open-relies-btn fw-bold" data-id="{{ $comment->id }}">Xem {{ $comment->totalReplies }} phản hồi</p>
                                                             </div>
                                                         @else
-  
+
                                                             <div></div>
                                                         @endif
                                                         
                                                         <div class="ms-2">
-  
+
                                                             @if($comment->likes->count() > 0)
                                                                 @if(Auth::check()) 
                                                                     @if($comment->likes->where("userID",'=',Auth::user()->id)->where('isLike','=',1)->count() > 0)   
@@ -372,7 +398,7 @@
                                                                             <em class="icon ni ni-thumbs-up fs-16px">{{ $comment->totalLikes }}</em>
                                                                         </span>
                                                                     @endif
-  
+
                                                                 @else
                                                                     <span class="me-2">
                                                                         <em class="icon ni ni-thumbs-up fs-16px">{{ $comment->totalLikes }}</em>
@@ -390,13 +416,30 @@
                                                                     <em class="icon ni ni-reply fs-16px "></em>
                                                                 </span>
                                                                 
-  
+
                                                           
                                                                 @if(Auth::user()->id != $comment->users->id)
-  
-                                                                <span class="report-comment-btn me-2" data-id={{ $comment->id }} data-type=6 data-user="{{ $comment->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
-                                                                    <em class="icon ni ni-flag fs-16px"></em>
-                                                                </span>
+
+                                                                        @if($reportComment->where('identifier_id','=',$comment->id)->first())
+                                                                            @if($reportComment->where('identifier_id','=',$comment->id)->first()->isEnabled)
+                                                                                <span class="report-comment-btn me-2" data-id={{ $comment->id }} data-type=6 data-user="{{ $comment->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                    <em class="icon ni ni-flag fs-16px"></em>
+                                                                                </span>
+                                                                            @else
+
+                                                                            <dfn data-info="Đã có người báo cáo">
+                                                                                <span class="me-2" style="color:gray">
+                                                                                    <em class="icon ni ni-flag fs-16px"></em>
+                                                                                </span>
+                                                                            </dfn>
+                                                                            
+                                                                            @endif
+                                                                        @else
+                                                                            <span class="report-comment-btn me-2" data-id={{ $comment->id }} data-type=6 data-user="{{ $comment->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                <em class="icon ni ni-flag fs-16px"></em>
+                                                                            </span>
+                                                                        @endif
+                                                                  
                                                                 @endif
                                                                
                                                                 
@@ -426,7 +469,7 @@
                                                                 
                                                                 <div class="d-flex">
                                                                     @foreach ($userTotalReading as $userTotal )
-  
+
                                                                     @if($userTotal->userID == $reply->users->id)
                                                                         <div class="otherInfo me-5">
                                                                             <em class="icon ni ni-eye"></em>
@@ -464,7 +507,7 @@
                                                                             <em class="icon ni ni-edit fs-16px"></em>
                                                                             <span>Chỉnh sửa phản hồi</span>
                                                                         </a>
-  
+
                                                                         
                                                                     </li>
                                                                     </ul>
@@ -480,7 +523,7 @@
                                                     </div>
                                                 </div>
                                                 
-  
+
                                                 <div class="ms-2">
                                                     <div class="d-flex align-items-center">
                                                         @if($reply->likes->count() > 0)
@@ -494,7 +537,7 @@
                                                                         <em class="icon ni ni-thumbs-up fs-16px">{{ $reply->totalLikes }}</em>
                                                                     </span>
                                                                 @endif
-  
+
                                                             @else
                                                                 <span class="me-2">
                                                                     <em class="icon ni ni-thumbs-up fs-16px">{{ $reply->totalLikes }}</em>
@@ -508,17 +551,29 @@
                                                         @endif
                                                         
                                                         @if(Auth::check()) 
-                                                            
-  
-                                                                
-                                                                @if(Auth::user()->id != $comment->users->id)
-  
-                                                                <span class="report-comment-btn" data-id={{ $reply->id }} data-type=7 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
-                                                                    <em class="icon ni ni-flag fs-16px me-2 "></em>
-                                                                </span>
-                                                                @endif
-                                                               
-                                                          
+                                                                @if(Auth::user()->id != $reply->users->id)
+
+                                                                    @if($reportReply->where('identifier_id','=',$reply->id)->first())
+                                                                        @if($reportReply->where('identifier_id','=',$reply->id)->first()->isEnabled)
+                                                                            <span class="report-comment-btn" data-id={{ $reply->id }} data-type=9 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                <em class="icon ni ni-flag fs-16px me-2 "></em>
+                                                                            </span>
+                                                                        @else
+
+                                                                            <dfn data-info="Đã có người báo cáo">
+                                                                                <span class="me-2" style="color:gray">
+                                                                                    <em class="icon ni ni-flag fs-16px"></em>
+                                                                                </span>
+                                                                            </dfn>
+                                                                        
+                                                                        @endif
+                                                                    @else
+
+                                                                        <span class="report-comment-btn" data-id={{ $reply->id }} data-type=9 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                            <em class="icon ni ni-flag fs-16px me-2 "></em>
+                                                                        </span>
+                                                                    @endif
+                                                                @endif                                                                                
                                                         @endif
                                                     </div>
                                                 </div>
@@ -526,24 +581,24 @@
                                             </div> 
                                             <hr>
                                         </div>
-  
+
                                         @endif
                                         
-  
+
                                     @endforeach
                                 </div>
                             
                             @endforeach
                             </div>
                        
-  
-  
+
+
                             {{-- <div class="col-md-12 d-flex justify-content-end mt-4">                          
                                 {{ $comments->links('vendor.pagination.custom',['elements' => $comments]) }}
                             </div> --}}
-  
+
                             @if ($comments->count() > 0)
-  
+
                             <div class="data-container"></div>
                             <div class="col-md-12 d-flex justify-content-end mt-4">                          
                                 <div id="pagination"></div>
@@ -574,7 +629,7 @@
                         </div>
                         <div class="info mt-2">
                             <h5 class="card-title">{{ $book->name }}</h5>
-                            <p class="card-text">{{ Str::limit($book->description,150) }}</p>
+                            <p class="card-text">{{ Str::limit($book->description,100) }}</p>
                             <div class="d-flex justify-content-between">
                                 <span class="text-muted fs-13px"><em class="icon ni ni-user-list"></em><span>{{ $book->author }}</span></span>
                                 
@@ -615,7 +670,7 @@
                         @if(Auth::check())
                         <div class="d-flex">                                                     
                             <img class="rounded border shadow me-2 flex-grow-2" src="{{ Auth::user()->profile->url }}" id="comment_avatar" style="width:128px;height:128px">
-  
+
                             <div class="nk-chat-editor border flex-grow-1 bg-light" id="main-comment-box">
                                 <div class="nk-chat-editor-form">
                                     <div class="form-control-wrap">
@@ -645,10 +700,10 @@
                                                             <div class="flex-grow-1">
                                                                 <span class="d-block font-weight-bold name">{{ $comment->users->profile->displayName }}</span>
                                                                 
-  
+
                                                                 <div class="d-flex">
                                                                     @foreach ($userTotalReading as $userTotal )
-  
+
                                                                     @if($userTotal->userID == $comment->users->id)
                                                                         <div class="otherInfo me-5">
                                                                             <em class="icon ni ni-eye"></em>
@@ -664,7 +719,7 @@
                                                                 </div>
                                                                
                                                             </div>
-  
+
                                                           
                                                             
                                                         </div>
@@ -689,7 +744,7 @@
                                                                             <em class="icon ni ni-edit fs-16px"></em>
                                                                             <span>Chỉnh sửa bình luận</span>
                                                                         </a>
-  
+
                                                                     
                                                                     </li>
                                                                 </ul>
@@ -707,7 +762,7 @@
                                                     </p>
                                                 </div>
                                             </div>
-  
+
                                             
                                                 <div class="bg-white">
                                                     <div class="d-flex align-items-center justify-content-between">
@@ -716,12 +771,12 @@
                                                                 <p class="open-relies-btn fw-bold" data-id="{{ $comment->id }}">Xem {{ $comment->totalReplies }} phản hồi</p>
                                                             </div>
                                                         @else
-  
+
                                                             <div></div>
                                                         @endif
                                                         
                                                         <div class="ms-2">
-  
+
                                                             @if($comment->likes->count() > 0)
                                                                 @if(Auth::check()) 
                                                                     @if($comment->likes->where("userID",'=',Auth::user()->id)->where('isLike','=',1)->count() > 0)   
@@ -733,7 +788,7 @@
                                                                             <em class="icon ni ni-thumbs-up fs-16px">{{ $comment->totalLikes }}</em>
                                                                         </span>
                                                                     @endif
-  
+
                                                                 @else
                                                                     <span class="me-2">
                                                                         <em class="icon ni ni-thumbs-up fs-16px">{{ $comment->totalLikes }}</em>
@@ -751,13 +806,30 @@
                                                                     <em class="icon ni ni-reply fs-16px "></em>
                                                                 </span>
                                                                 
-  
+
                                                           
                                                                 @if(Auth::user()->id != $comment->users->id)
-  
-                                                                <span class="report-comment-btn me-2" data-id={{ $comment->id }} data-type=6 data-user="{{ $comment->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
-                                                                    <em class="icon ni ni-flag fs-16px"></em>
-                                                                </span>
+
+                                                                        @if($reportComment->where('identifier_id','=',$comment->id)->first())
+                                                                            @if($reportComment->where('identifier_id','=',$comment->id)->first()->isEnabled)
+                                                                                <span class="report-comment-btn me-2" data-id={{ $comment->id }} data-type=6 data-user="{{ $comment->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                    <em class="icon ni ni-flag fs-16px"></em>
+                                                                                </span>
+                                                                            @else
+
+                                                                            <dfn data-info="Đã có người báo cáo">
+                                                                                <span class="me-2" style="color:gray">
+                                                                                    <em class="icon ni ni-flag fs-16px"></em>
+                                                                                </span>
+                                                                            </dfn>
+                                                                            
+                                                                            @endif
+                                                                        @else
+                                                                            <span class="report-comment-btn me-2" data-id={{ $comment->id }} data-type=6 data-user="{{ $comment->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                <em class="icon ni ni-flag fs-16px"></em>
+                                                                            </span>
+                                                                        @endif
+                                                                  
                                                                 @endif
                                                                
                                                                 
@@ -787,7 +859,7 @@
                                                                 
                                                                 <div class="d-flex">
                                                                     @foreach ($userTotalReading as $userTotal )
-  
+
                                                                     @if($userTotal->userID == $reply->users->id)
                                                                         <div class="otherInfo me-5">
                                                                             <em class="icon ni ni-eye"></em>
@@ -825,7 +897,7 @@
                                                                             <em class="icon ni ni-edit fs-16px"></em>
                                                                             <span>Chỉnh sửa phản hồi</span>
                                                                         </a>
-  
+
                                                                         
                                                                     </li>
                                                                     </ul>
@@ -841,7 +913,7 @@
                                                     </div>
                                                 </div>
                                                 
-  
+
                                                 <div class="ms-2">
                                                     <div class="d-flex align-items-center">
                                                         @if($reply->likes->count() > 0)
@@ -855,7 +927,7 @@
                                                                         <em class="icon ni ni-thumbs-up fs-16px">{{ $reply->totalLikes }}</em>
                                                                     </span>
                                                                 @endif
-  
+
                                                             @else
                                                                 <span class="me-2">
                                                                     <em class="icon ni ni-thumbs-up fs-16px">{{ $reply->totalLikes }}</em>
@@ -869,17 +941,29 @@
                                                         @endif
                                                         
                                                         @if(Auth::check()) 
-                                                            
-  
-                                                                
-                                                                @if(Auth::user()->id != $comment->users->id)
-  
-                                                                <span class="report-comment-btn" data-id={{ $reply->id }} data-type=7 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
-                                                                    <em class="icon ni ni-flag fs-16px me-2 "></em>
-                                                                </span>
-                                                                @endif
-                                                               
-                                                          
+                                                                @if(Auth::user()->id != $reply->users->id)
+
+                                                                    @if($reportReply->where('identifier_id','=',$reply->id)->first())
+                                                                        @if($reportReply->where('identifier_id','=',$reply->id)->first()->isEnabled)
+                                                                            <span class="report-comment-btn" data-id={{ $reply->id }} data-type=9 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                <em class="icon ni ni-flag fs-16px me-2 "></em>
+                                                                            </span>
+                                                                        @else
+
+                                                                            <dfn data-info="Đã có người báo cáo">
+                                                                                <span class="me-2" style="color:gray">
+                                                                                    <em class="icon ni ni-flag fs-16px"></em>
+                                                                                </span>
+                                                                            </dfn>
+                                                                        
+                                                                        @endif
+                                                                    @else
+
+                                                                        <span class="report-comment-btn" data-id={{ $reply->id }} data-type=9 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                            <em class="icon ni ni-flag fs-16px me-2 "></em>
+                                                                        </span>
+                                                                    @endif
+                                                                @endif                                                                                
                                                         @endif
                                                     </div>
                                                 </div>
@@ -887,24 +971,24 @@
                                             </div> 
                                             <hr>
                                         </div>
-  
+
                                         @endif
                                         
-  
+
                                     @endforeach
                                 </div>
                             
                             @endforeach
                             </div>
                        
-  
-  
+
+
                             {{-- <div class="col-md-12 d-flex justify-content-end mt-4">                          
                                 {{ $comments->links('vendor.pagination.custom',['elements' => $comments]) }}
                             </div> --}}
-  
+
                             @if ($comments->count() > 0)
-  
+
                             <div class="data-container"></div>
                             <div class="col-md-12 d-flex justify-content-end mt-4">                          
                                 <div id="pagination"></div>
@@ -1606,6 +1690,9 @@ $.ajaxSetup({
                             setTimeout(()=>{
                                 form.modal('hide');
                             }, 2500);
+
+                            $("#comment-box").load(" #comment-box > *");
+
                         })
 
                         .fail(function(jqXHR, textStatus, errorThrown) {
@@ -2215,6 +2302,9 @@ $.ajaxSetup({
                             setTimeout(()=>{
                                 $('#close-btn').click();
                             }, 2500);
+                            $("#report-render-div").load(" #report-render-div > *");
+
+                            
                         })
 
                         .fail(function(jqXHR, textStatus, errorThrown) {

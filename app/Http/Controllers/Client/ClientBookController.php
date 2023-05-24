@@ -427,7 +427,7 @@ class ClientBookController extends Controller
 
                     ' <div class="flex-fill d-flex align-items-end">'.
 
-                        ' <a href="/sach/'.$recommened_book->id.'/'.$recommened_book->slug.'" class="btn btn-danger btn-lg rounded-pill px-4">Đọc ngay</a>'.
+                        ' <a href="/sach/'.$recommened_book->id.'/'.$recommened_book->slug.'" class="btn btn-danger btn-lg px-4">Đọc ngay</a>'.
                         '</div>'.
                     '</div>'.
             ' </div>'.

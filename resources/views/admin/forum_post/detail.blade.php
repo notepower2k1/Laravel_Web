@@ -192,5 +192,14 @@
 
   
     })
+
+    $(document).on('click','.open-relies-btn',function() {
+
+        const comment_id = $(this).data('id');
+
+        $(`.replies-item-${comment_id}`).fadeToggle();
+    });
 </script>
+
+
 @endsection

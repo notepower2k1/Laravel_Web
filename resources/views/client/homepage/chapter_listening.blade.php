@@ -170,15 +170,11 @@
           </div>
             
         </div>
-        <div class="border px-2"
-            
-          style="font-size: 16px;line-height:30px;">
+        <div class="border px-2" style="font-size: 16px;line-height:3; white-space: break-spaces;" id="text" >
     
-          <div style="white-space: break-spaces;"  id="text" contenteditable="true">
+        
             {{ $content }} 
-    
-          </div>
-  
+
         </div>   
 
         
@@ -289,13 +285,13 @@
                   <div class="form-group">
                       <label class="form-label" for="regular-price">Tương tác</label>
                       <div class="d-flex">
-                        <button class="flex-fill btn btn-icon btn-lg btn-success" id="play-button">
+                        <button class="flex-fill btn btn-icon btn-lg btn-outline-success" id="play-button">
                             <em class="icon ni ni-play m-auto"></em>
                         </button>
-                        <button class="flex-fill btn btn-icon btn-lg btn-danger" id="pause-button">
+                        <button class="flex-fill btn btn-icon btn-lg btn-outline-danger" id="pause-button">
                             <em class="icon ni ni-pause m-auto"></em>
                         </button>
-                        <button class="flex-fill btn btn-icon btn-lg btn-warning" id="stop-button">
+                        <button class="flex-fill btn btn-icon btn-lg btn-outline-warning" id="stop-button">
                             <em class="icon ni ni-stop m-auto"></em>
                         </button>
                       </div>
@@ -310,7 +306,7 @@
                         </label>
                       </label>
                       <div class="form-control-wrap">
-                        <input id="pitch" type="range" min="0.1" max="5" step="0.1" value="1" class="form-range">
+                        <input id="pitch" type="range" min="0.1" max="2" step="0.1" value="1" class="form-range">
                         <output for="pitch">1</output>
                       </div>
                   </div>
@@ -339,7 +335,7 @@
                         </label>
                     </label>
                     <div class="form-control-wrap">
-                        <input id="volume" type="range" min="0" max="1" step="0.1" value="1" class="form-range">
+                        <input id="volume" type="range" min="0" max="2" step="0.1" value="1" class="form-range">
                         <output for="volume">1</output>
                     </div>
                 </div>
@@ -385,6 +381,10 @@
       
         $(function(){
 
+          $("option[value='Microsoft HoaiMy Online (Natural) - Vietnamese (Vietnam)']").text('Giọng nữ');
+          $("option[value='Microsoft NamMinh Online (Natural) - Vietnamese (Vietnam)']").text('Giọng nam');
+          
+          $("#text").text( $.trim( $("#text").text() ));
           $('#change-chapter').select2({});
 
           $('.btn2top').on('click', function() {
@@ -406,8 +406,7 @@
               } 
             });
 
-            $("option[value='Microsoft HoaiMy Online (Natural) - Vietnamese (Vietnam)']").text('Giọng nữ');
-            $("option[value='Microsoft NamMinh Online (Natural) - Vietnamese (Vietnam)']").text('Giọng nam');
+        
 
             const settingLog = window.localStorage.getItem('settingListening');
 

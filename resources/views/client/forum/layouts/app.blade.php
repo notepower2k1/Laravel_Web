@@ -48,6 +48,7 @@
             background-color:rgba(25,45,64,0.3);
           
         }
+
         .nk-content{
             background: hsla(27, 85%, 81%, 1);
 

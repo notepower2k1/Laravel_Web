@@ -3,6 +3,7 @@
 @section('additional-style')
 <link rel="stylesheet" href="{{ asset('assets/css/book3d.css') }}">
 <link href="{{ asset('js/pagination/pagination.css') }}" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="{{ asset('assets/css/infohelper.css') }}">
 
 <style>
     .open-relies-btn:hover{
@@ -75,16 +76,35 @@
                                         </div><!-- .col -->
                                         <div class="col-lg-6 mt-4">
                                             <div class="product-info mb-5 me-xxl-5">
-                                                    <h3 class="product-title">{{ $document->name }}
-                                                    
-                                                        @if(Auth::check())
+                                                <div class="d-flex justify-content-between align-items-center" id="document-info">
+                                                    <h3 class="text-left">{{ $document->name }}
+                                                   
+                                                    </h3>                         
+                                                    @if(Auth::check())
             
-                                                        <button type="button" class="btn btn-icon btn-lg ms-1" data-bs-toggle="modal" data-bs-target="#reportForm">
-                                                            <em class="icon ni ni-alert" style="color:red"></em>
-                                                        </button>
+                                                        @if($reportDocument)
+
+                                                            @if($reportDocument->isEnabled)
+                                                                <button type="button" class="btn btn-icon mb-2" data-bs-toggle="modal" data-bs-target="#reportForm">
+                                                                    <em class="icon ni ni-flag " style="color:red"></em>
+                                                                </button>
+                                                            @else
             
+                                                            <dfn data-info="Đã có người báo cáo">
+                                                                <button type="button" class="btn btn-icon border-0 mb-2" disabled>
+                                                                    <em class="icon ni ni-flag" style="color:red"></em>
+                                                                </button>
+                                                            </dfn>
+                                                            
+                                                            @endif
+                                                        @else
+                                                            <button type="button" class="btn btn-icon mb-2" data-bs-toggle="modal" data-bs-target="#reportForm">
+                                                                <em class="icon ni ni-flag " style="color:red"></em>
+                                                            </button>
                                                         @endif
-                                                    </h3>    
+                                                
+                                                    @endif
+                                                </div>
                                                 
                                             
                                                 <div class="d-flex flex-wrap">
@@ -283,13 +303,13 @@
                                                                     <em class="icon ni ni-sort-line"></em>    
                                                                 </a>
                                                                 <div class="dropdown-menu">
-                                                                <ul class="link-list-opt">
+                                                                  <ul class="link-list-opt">
                                                                     <li><a href="#" id="sort-comment-new"><span>Mới nhất</span></a></li>
                                                                     <li><a href="#" id="sort-comment-old"><span>Cũ nhất</span></a></li>
                                                             
-                                                                </ul>
+                                                                  </ul>
                                                                 </div>
-                                                            </div>                                                      
+                                                              </div>                                                      
                                                         </div>
                                                         <div class="list-group mt-3">
                                                             @if(Auth::check())
@@ -314,7 +334,7 @@
                                                             @endif
                                                             <div id="comment-box">
                                                                 
-                                                                <div id="comment-render-div">
+                                                                <div id ="comment-render-div">
                                                                     @foreach ($comments as $comment)
                                                                     <div id="comment-{{ $comment->id }}">
                                                                             <div class="d-flex flex-column comment-section">
@@ -324,37 +344,47 @@
                                                                                                 <img class="rounded border shadow me-2" src="{{ $comment->users->profile->url }}" width="60px">
                                                                                                 <div class="flex-grow-1">
                                                                                                     <span class="d-block font-weight-bold name">{{ $comment->users->profile->displayName }}</span>
-                                                                                                    <em class="icon ni ni-clock"></em>
-                                                                                                    <span class="text-muted">{{ $comment->time }}</span>
+                                                                                                    
+    
+                                                                                                    <div class="timeComment">
+                                                                                                        <em class="icon ni ni-clock"></em>
+                                                                                                        <span class="text-muted">{{ $comment->time }}</span>
+                                                                                                    </div>
+                                                                                                      
+                                                                                                   
+                                                                                                   
                                                                                                 </div>
+    
+                                                                                              
+                                                                                                
                                                                                             </div>
-                                                                                        
+                                                                                          
                                                                                             @if(Auth::check())
                                                                                                 @if(Auth::user()->id == $comment->users->id || Auth::user()->role == 1)
-                                                                                                    <div class="dropdown">
-                                                                                                        <a class="dropdown-toggle text-dark" href="#" type="button" data-bs-toggle="dropdown">
-                                                                                                            <em class="icon ni ni-more-v"></em>
-                                                                                                        </a>
-                                                                                                        <div class="dropdown-menu">
-                                                                                                        <ul class="link-list-opt">
-                                                                                                            <li>
-                                                                                                                <a class="delete-comment-btn" data-id={{ $comment->id }}>
-                                                                                                                    <em class="icon ni ni-trash"></em>
-                                                                                                                    <span>Xóa bình luận</span>
-                                                                                                                </a>
-                                                                                                            
-                                                                                                            </li>
-                                                                                                            <li> 
-                                                                                                                <a class="edit-comment-btn" data-id="{{ $comment->id }}" data-option="1">
-                                                                                                                    <em class="icon ni ni-edit fs-16px"></em>
-                                                                                                                    <span>Chỉnh sửa bình luận</span>
-                                                                                                                </a>
-            
-                                                                                                            
-                                                                                                            </li>
-                                                                                                        </ul>
-                                                                                                        </div>
+                                                                                                <div class="dropdown">
+                                                                                                    <a class="dropdown-toggle text-dark" href="#" type="button" data-bs-toggle="dropdown">
+                                                                                                        <em class="icon ni ni-more-v"></em>
+                                                                                                    </a>
+                                                                                                    <div class="dropdown-menu">
+                                                                                                    <ul class="link-list-opt">
+                                                                                                        <li>
+                                                                                                            <a class="delete-comment-btn" data-id={{ $comment->id }}>
+                                                                                                                <em class="icon ni ni-trash"></em>
+                                                                                                                <span>Xóa bình luận</span>
+                                                                                                            </a>
+                                                                                                        
+                                                                                                        </li>
+                                                                                                        <li> 
+                                                                                                            <a class="edit-comment-btn" data-id="{{ $comment->id }}" data-option="1">
+                                                                                                                <em class="icon ni ni-edit fs-16px"></em>
+                                                                                                                <span>Chỉnh sửa bình luận</span>
+                                                                                                            </a>
+    
+                                                                                                        
+                                                                                                        </li>
+                                                                                                    </ul>
                                                                                                     </div>
+                                                                                                </div>
                                                                                                 @endif
                                                                                             @endif
                                                                                         </div>
@@ -399,30 +429,50 @@
                                                                                                             <em class="icon ni ni-thumbs-up fs-16px">{{ $comment->totalLikes }}</em>
                                                                                                         </span>
                                                                                                     @endif
-                                                                                            
+                                                                                             
                                                                                                 @else
                                                                                                     <span class="like-comment-btn me-2" data-id={{ $comment->id }}>
                                                                                                         <em class="icon ni ni-thumbs-up fs-16px">{{ $comment->totalLikes }}</em>
                                                                                                     </span>
                                                                                                 @endif
-                                                                                            
+                                                                                               
                                                                                                 @if(Auth::check())
                                                                                                     <span class="create-reply-btn me-2" data-id={{ $comment->id }}>
                                                                                                         <em class="icon ni ni-reply fs-16px "></em>
                                                                                                     </span>
+                                                                                                    
+                                
+                                                                                              
                                                                                                     @if(Auth::user()->id != $comment->users->id)
-                                                        
-                                                                                                    <span class="report-comment-btn me-2" data-id={{ $comment->id }} data-type=7 data-user="{{ $comment->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
-                                                                                                        <em class="icon ni ni-flag fs-16px"></em>
-                                                                                                    </span>
-                                                                                                    
-                                                                                            
-                                                                                                    
+    
+                                                                                                            @if($reportComment->where('identifier_id','=',$comment->id)->first())
+                                                                                                                @if($reportComment->where('identifier_id','=',$comment->id)->first()->isEnabled)
+                                                                                                                    <span class="report-comment-btn me-2" data-id={{ $comment->id }} data-type=7 data-user="{{ $comment->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                                                        <em class="icon ni ni-flag fs-16px"></em>
+                                                                                                                    </span>
+                                                                                                                @else
+    
+                                                                                                                <dfn data-info="Đã có người báo cáo">
+                                                                                                                    <span class="me-2" style="color:gray">
+                                                                                                                        <em class="icon ni ni-flag fs-16px"></em>
+                                                                                                                    </span>
+                                                                                                                </dfn>
+                                                                                                                
+                                                                                                                @endif
+                                                                                                            @else
+                                                                                                                <span class="report-comment-btn me-2" data-id={{ $comment->id }} data-type=7 data-user="{{ $comment->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                                                    <em class="icon ni ni-flag fs-16px"></em>
+                                                                                                                </span>
+                                                                                                            @endif
+                                                                                                      
                                                                                                     @endif
+                                                                                                   
+                                                                                                    
+                                                                                                   
                                                                                                 @endif
                                                                                             </div>
                                                                                             
-                                                                                        
+                                                                                          
                                                                                         </div>
                                                                                         
                                                                                                 
@@ -441,37 +491,44 @@
                                                                                                 <img class="rounded border shadow me-2" src="{{ $reply->users->profile->url }}" width="60px">
                                                                                                 <div class="flex-grow-1">
                                                                                                     <span class="d-block font-weight-bold name">{{ $reply->users->profile->displayName }}</span>
-                                                                                                    <em class="icon ni ni-clock"></em>
-                                                                                                    <span class="text-muted">{{ $reply->time }}</span>
+                                                                                                    
+                                                                                                   
+                                                                                                        <div class="timeComment">
+                                                                                                            <em class="icon ni ni-clock"></em>
+                                                                                                            <span class="text-muted">{{ $reply->time }}</span>
+                                                                                                        </div>
+                                                                                                      
+                                                                                                   
+                                                                                                   
                                                                                                 </div>
                                                                                             </div>
-                                                                                        
+                                                                                          
                                                                                             @if(Auth::check())
                                                                                                 @if(Auth::user()->id == $reply->users->id || Auth::user()->role == 1)
-                                                                                                    <div class="dropdown">
-                                                                                                        <a class="dropdown-toggle text-dark" href="#" type="button" data-bs-toggle="dropdown">
-                                                                                                            <em class="icon ni ni-more-v"></em>
-                                                                                                        </a>
-                                                                                                        <div class="dropdown-menu">
+                                                                                                <div class="dropdown">
+                                                                                                    <a class="dropdown-toggle text-dark" href="#" type="button" data-bs-toggle="dropdown">
+                                                                                                        <em class="icon ni ni-more-v"></em>
+                                                                                                    </a>
+                                                                                                    <div class="dropdown-menu">
                                                                                                         <ul class="link-list-opt">
-                                                                                                            <li>
-                                                                                                                <a class="delete-reply-btn" data-id={{ $reply->id }}>
-                                                                                                                    <em class="icon ni ni-trash"></em>
-                                                                                                                    <span>Xóa phản hồi</span>
-                                                                                                                </a>
+                                                                                                        <li>
+                                                                                                            <a class="delete-reply-btn" data-id={{ $reply->id }}>
+                                                                                                                <em class="icon ni ni-trash"></em>
+                                                                                                                <span>Xóa phản hồi</span>
+                                                                                                            </a>
                                                                                                             
-                                                                                                            </li>
-                                                                                                            <li> 
-                                                                                                                <a class="edit-comment-btn" data-id="{{ $reply->id }}" data-option="2">
-                                                                                                                    <em class="icon ni ni-edit fs-16px"></em>
-                                                                                                                    <span>Chỉnh sửa phản hồi</span>
-                                                                                                                </a>
-            
+                                                                                                        </li>
+                                                                                                        <li> 
+                                                                                                            <a class="edit-comment-btn" data-id="{{ $reply->id }}" data-option="2">
+                                                                                                                <em class="icon ni ni-edit fs-16px"></em>
+                                                                                                                <span>Chỉnh sửa phản hồi</span>
+                                                                                                            </a>
+    
                                                                                                             
-                                                                                                            </li>
+                                                                                                        </li>
                                                                                                         </ul>
-                                                                                                        </div>
                                                                                                     </div>
+                                                                                                </div>
                                                                                                 @endif
                                                                                             @endif
                                                                                         </div>
@@ -510,26 +567,33 @@
                                                                                             @endif
                                                                                             
                                                                                             @if(Auth::check()) 
-                                                                                                @if(Auth::user()->id != $reply->users->id)
+                                                                                                    @if(Auth::user()->id != $reply->users->id)
     
-                                                                                                    {{-- <span class="delete-reply-btn" data-id={{ $reply->id }}>
-                                                                                                        <em class="icon ni ni-trash fs-16px me-2"></em>
-                                                                                                    </span> --}}
-                                                                                                    <span class="report-comment-btn" data-id={{ $reply->id }} data-type=9 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
-                                                                                                        <em class="icon ni ni-flag fs-16px me-2 "></em>
-                                                                                                    </span>
-                                                                                                    {{-- <div class="custom-control custom-checkbox custom-control-pro custom-control-pro-icon no-control">
-                                                                                                        <input type="checkbox" class="custom-control-input edit-reply-btn" name="edit-reply-btn" id="edit-reply-btn-{{ $reply->id }}" value={{ $reply->id }}>
-                                                                                                        <label class="" name="edit-reply-btn" for="edit-reply-btn-{{ $reply->id }}">
-                                                                                                            <em class="icon ni ni-edit fs-16px">
-                                                                                                            </em>
-                                                                                                        </label>
-                                                                                                    </div> --}}
-                                                                                                @endif
+                                                                                                        @if($reportReply->where('identifier_id','=',$reply->id)->first())
+                                                                                                            @if($reportReply->where('identifier_id','=',$reply->id)->first()->isEnabled)
+                                                                                                                <span class="report-comment-btn" data-id={{ $reply->id }} data-type=9 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                                                    <em class="icon ni ni-flag fs-16px me-2 "></em>
+                                                                                                                </span>
+                                                                                                            @else
+    
+                                                                                                                <dfn data-info="Đã có người báo cáo">
+                                                                                                                    <span class="me-2" style="color:gray">
+                                                                                                                        <em class="icon ni ni-flag fs-16px"></em>
+                                                                                                                    </span>
+                                                                                                                </dfn>
+                                                                                                            
+                                                                                                            @endif
+                                                                                                        @else
+    
+                                                                                                            <span class="report-comment-btn" data-id={{ $reply->id }} data-type=9 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                                                <em class="icon ni ni-flag fs-16px me-2 "></em>
+                                                                                                            </span>
+                                                                                                        @endif
+                                                                                                    @endif                                                                                
                                                                                             @endif
                                                                                         </div>
                                                                                     </div>
-                                                                                
+                                                                                   
                                                                                 </div> 
                                                                                 <hr>
                                                                             </div>
@@ -539,18 +603,25 @@
         
                                                                         @endforeach
                                                                     </div>
-                                                                    
-                                                                    @endforeach
+                                                                
+                                                                @endforeach
                                                                 </div>
-                                                              
+                                                           
+    
+    
+                                                                {{-- <div class="col-md-12 d-flex justify-content-end mt-4">                          
+                                                                    {{ $comments->links('vendor.pagination.custom',['elements' => $comments]) }}
+                                                                </div> --}}
+    
                                                                 @if ($comments->count() > 0)
-
+    
                                                                 <div class="data-container"></div>
                                                                 <div class="col-md-12 d-flex justify-content-end mt-4">                          
                                                                     <div id="pagination"></div>
                                                                 </div>
                                                                 @endif
                                                             </div>
+                                                           
                                                             
                                                         
                                                                 
@@ -601,30 +672,41 @@
                         
                             <div class="nk-block">
                                 <div class="slider-init" data-slick='{"slidesToShow": 4, "slidesToScroll": 2, "infinite":false, "responsive":[ {"breakpoint": 992,"settings":{"slidesToShow": 2}}, {"breakpoint": 768,"settings":{"slidesToShow": 1}} ]}'>
-                                    @foreach ($documentsWithSameType as $documentWithSameType)
-                                        <div class="col" >
-                                            <div class="card card-bordered product-card shadow">
-                                                <div class="product-thumb">                                  
-                                                    <img class="card-img-top" src="{{ $documentWithSameType->url }}" alt=""  width="300px" height="350px">          
-                                                    <div class="product-actions book_sameType h-100 w-100">
-                                                        <div class="pricing-body d-flex text-center align-items-center w-100 h-100">   
-                                                            <div class="row">
-                                                                <div class="pricing-amount">
-                                                                    <h6 class="text-white">{{ $documentWithSameType->name }}</h6>
-                                                                    <p class="text-white">Tác giả: {{ $documentWithSameType->author }}</p>
-                                                                    <p class="text-white">Số trang: {{ $documentWithSameType->numberOfPages }}</p>
-                                                                </div>
-                                                                <div class="pricing-action">
-                                                                    <a href="/tai-lieu/{{$documentWithSameType->id}}/{{$documentWithSameType->slug}}" class="btn btn-outline-light">Chi tiết</a>
-                                                                </div>
-                                                            </div>                                        
-                                                            
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            
+                                    @foreach ($documentsWithSameType as $document)
+                                    <div class="col high_rating_books" >
+                                        <div class="card card-bordered product-card shadow">
+                                            <div class="product-thumb shine">
+                                                <a href="/tai-lieu/{{$document->id}}/{{$document->slug}}">
+                                                    <img class="card-img-top" src="{{ $document->url }}" alt="" width="300px" height="350px">
+                                                </a>                                
+                                                
+                                                <ul class="product-actions d-flex h-100 align-items-center" >
+                                                    <li >
+                                                        <a href="#" class="preview-book-btn" data-id ={{ $document->id }} data-option="2">
+                                                            <em class="icon icon-circle bg-success ni ni-book-read"></em>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="card-inner text-center">
+                                                <ul class="product-tags">
+    
+                                                    <li  data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $document->author }}">
+                                                        @foreach(explode(",",$document->author) as $author)
+                                                        @if($loop->iteration == 1)                                                                
+                        
+                                                        <a href="/tac-gia/tac-gia-tai-lieu/{{ $author }}">{{ $author }}</a>
+                                                        @else
+                                                        <span>,...</span>
+                                                        @endif
+                                                        @endforeach
+                                                    </li>        
+                                                </ul>
+    
+                                                <h3 class="product-title fs-13px" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $document->name }}"><a href="/tai-lieu/{{$document->id}}/{{$document->slug}}"> {{ Str::limit($document->name,25) }}</a></h3>
                                             </div>
                                         </div>
+                                    </div>
                                     @endforeach
                         
                         
@@ -779,7 +861,16 @@
     </div>
 </div>
 @endif
-
+<div class="modal fade" id="previewItemModal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-body modal-body-lg text-left">
+            
+                
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @endsection
@@ -968,6 +1059,9 @@
                             setTimeout(()=>{
                                 form.modal('hide');
                             }, 2500);
+
+                            $("#document-info").load(" #document-info > *");
+
                         })
 
                         .fail(function(jqXHR, textStatus, errorThrown) {
@@ -1053,6 +1147,9 @@
                             setTimeout(()=>{
                                 form.modal('hide');
                             }, 2500);
+
+                            $("#comment-box").load(" #comment-box > *");
+
                         })
 
                         .fail(function(jqXHR, textStatus, errorThrown) {
@@ -1542,6 +1639,36 @@
             console.log(textStatus + ': ' + errorThrown);
             })
 
+    })
+    $('.preview-book-btn').on('click', function(e) {
+            e.preventDefault();
+            const item_id = $(this).data('id');
+            const option = $(this).data('option');
+
+            $.ajax({
+                    url:'/preview-item',
+                    type:"GET",
+                    data:{
+                        'option': option,
+                        'item_id':item_id,
+                    }
+                })
+                .done(function(res) {  
+
+                    const item = res.item;
+
+                    if (item){
+
+                        $('#previewItemModal').find('.modal-body').empty().append(item);
+
+                        $('#previewItemModal').modal('show');
+                    }
+
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                // If fail
+                console.log(textStatus + ': ' + errorThrown);
+                })
     })
 </script>
 @endsection

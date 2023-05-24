@@ -354,9 +354,9 @@
                         timer: 2500
                     });    
 
-                    // setTimeout(() => {      
-                    //     $('#modalNote').modal('hide');
-                    // }, 2500);
+                    setTimeout(() => {      
+                        $('#modalNote').modal('hide');
+                    }, 2500);
               
                 })
                     .fail(function(jqXHR, textStatus, errorThrown) {

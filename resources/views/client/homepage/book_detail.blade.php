@@ -83,15 +83,36 @@
                                     </div><!-- .col -->
                                     <div class="col-lg-6 mt-4">
                                         <div class="product-info mb-5 me-xxl-5">
-                                            <h3 class="product-title">{{ $book->name }}
+
+                                            <div class="d-flex justify-content-between align-items-center" id="book-info">
+                                                <h3 class="text-left">{{ $book->name }}
+                                               
+                                                </h3>                         
                                                 @if(Auth::check())
-    
-                                                <button type="button" class="btn btn-icon btn-lg ms-1" data-bs-toggle="modal" data-bs-target="#reportFormBook">
-                                                    <em class="icon ni ni-alert" style="color:red"></em>
-                                                </button>
-                                                @endif
-                                            </h3>                         
+
+                                                    @if($reportBook)
+                                                        @if($reportBook->isEnabled)
+                                                            <button type="button" class="btn btn-icon mb-2" data-bs-toggle="modal" data-bs-target="#reportFormBook">
+                                                                <em class="icon ni ni-flag " style="color:red"></em>
+                                                            </button>
+                                                        @else
+        
+                                                        <dfn data-info="Đã có người báo cáo">
+                                                            <button type="button" class="btn btn-icon border-0 mb-2" disabled>
+                                                                <em class="icon ni ni-flag" style="color:red"></em>
+                                                            </button>
+                                                        </dfn>
+                                                        
+                                                        @endif
+                                                    @else
+                                                        <button type="button" class="btn btn-icon mb-2" data-bs-toggle="modal" data-bs-target="#reportFormBook">
+                                                            <em class="icon ni ni-flag " style="color:red"></em>
+                                                        </button>
+                                                    @endif
                                             
+                                                @endif
+                                            </div>
+                                           
                                             <div class="d-flex flex-wrap">
                                                 @foreach(explode(",",$book->author) as $author)                                                                       
                                                 <span class="badge badge-md rounded-pill bg-outline-info me-1 mt-1"><a class="text-info" href="/tac-gia/tac-gia-sach/{{ $author }}">{{ $author }}</a></span>
@@ -204,6 +225,7 @@
                                         </span></a>
                                     </li>
                                     @endif
+                                    
                                     <li class="nav-item">
                                         <a class="nav-link" data-bs-toggle="tab" href="#tabItem7"><span>Bình luận
                                             <span class="badge badge-dim bg-orange total-comment-span">{{ $book->totalComments }}</span> </span></a>
@@ -512,9 +534,26 @@
                                                                                           
                                                                                                 @if(Auth::user()->id != $comment->users->id)
 
-                                                                                                <span class="report-comment-btn me-2" data-id={{ $comment->id }} data-type=6 data-user="{{ $comment->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
-                                                                                                    <em class="icon ni ni-flag fs-16px"></em>
-                                                                                                </span>
+                                                                                                        @if($reportComment->where('identifier_id','=',$comment->id)->first())
+                                                                                                            @if($reportComment->where('identifier_id','=',$comment->id)->first()->isEnabled)
+                                                                                                                <span class="report-comment-btn me-2" data-id={{ $comment->id }} data-type=6 data-user="{{ $comment->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                                                    <em class="icon ni ni-flag fs-16px"></em>
+                                                                                                                </span>
+                                                                                                            @else
+
+                                                                                                            <dfn data-info="Đã có người báo cáo">
+                                                                                                                <span class="me-2" style="color:gray">
+                                                                                                                    <em class="icon ni ni-flag fs-16px"></em>
+                                                                                                                </span>
+                                                                                                            </dfn>
+                                                                                                            
+                                                                                                            @endif
+                                                                                                        @else
+                                                                                                            <span class="report-comment-btn me-2" data-id={{ $comment->id }} data-type=6 data-user="{{ $comment->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                                                <em class="icon ni ni-flag fs-16px"></em>
+                                                                                                            </span>
+                                                                                                        @endif
+                                                                                                  
                                                                                                 @endif
                                                                                                
                                                                                                 
@@ -626,17 +665,29 @@
                                                                                         @endif
                                                                                         
                                                                                         @if(Auth::check()) 
-                                                                                            
-
-                                                                                                
                                                                                                 @if(Auth::user()->id != $reply->users->id)
 
-                                                                                                <span class="report-comment-btn" data-id={{ $reply->id }} data-type=9 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
-                                                                                                    <em class="icon ni ni-flag fs-16px me-2 "></em>
-                                                                                                </span>
-                                                                                                @endif
-                                                                                               
-                                                                                          
+                                                                                                    @if($reportReply->where('identifier_id','=',$reply->id)->first())
+                                                                                                        @if($reportReply->where('identifier_id','=',$reply->id)->first()->isEnabled)
+                                                                                                            <span class="report-comment-btn" data-id={{ $reply->id }} data-type=9 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                                                <em class="icon ni ni-flag fs-16px me-2 "></em>
+                                                                                                            </span>
+                                                                                                        @else
+
+                                                                                                            <dfn data-info="Đã có người báo cáo">
+                                                                                                                <span class="me-2" style="color:gray">
+                                                                                                                    <em class="icon ni ni-flag fs-16px"></em>
+                                                                                                                </span>
+                                                                                                            </dfn>
+                                                                                                        
+                                                                                                        @endif
+                                                                                                    @else
+
+                                                                                                        <span class="report-comment-btn" data-id={{ $reply->id }} data-type=9 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                                            <em class="icon ni ni-flag fs-16px me-2 "></em>
+                                                                                                        </span>
+                                                                                                    @endif
+                                                                                                @endif                                                                                
                                                                                         @endif
                                                                                     </div>
                                                                                 </div>
@@ -872,9 +923,11 @@
                                                             
                                                                 
                                                                 <ul class="product-actions d-flex h-100 align-items-center" >
-                                                                    <li ><a href="/sach/{{$book->id}}/{{$book->slug}}" >
-                                                                        <em class="icon icon-circle bg-success ni ni-book-read"></em>
-                                                                    </a></li>
+                                                                    <li >
+                                                                        <a href="#" class="preview-book-btn" data-id ={{ $book->id }} data-option="1">
+                                                                            <em class="icon icon-circle bg-success ni ni-book-read"></em>
+                                                                        </a>
+                                                                    </li>
                                                                 </ul>
                                                             </div>
                                                             <div class="card-inner text-center">
@@ -1060,6 +1113,18 @@
                 <div class="text-center w-100">
                     <p>Gợi ý cho bạn</p>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="previewItemModal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-body modal-body-lg text-left">
+            
+                
             </div>
         </div>
     </div>
@@ -1367,7 +1432,7 @@
                     if (res.recommened_book){
 
                     const item = res.recommened_book;
-                    $('#recommedRatingBook').find('.modal-body').append(item);
+                    $('#recommedRatingBook').find('.modal-body').empty().append(item);
 
                     $('#recommedRatingBook').modal('show');
                     }
@@ -1376,10 +1441,10 @@
 
                 
             })
-        .fail(function(jqXHR, textStatus, errorThrown) {
-        // If fail
-        console.log(textStatus + ': ' + errorThrown);
-        })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            console.log(textStatus + ': ' + errorThrown);
+            })
         }
         else{
             Swal.fire({
@@ -1531,6 +1596,9 @@
                             setTimeout(()=>{
                                 form.modal('hide');
                             }, 2500);
+
+                            $("#book-info").load(" #book-info > *");
+
                         })
 
                         .fail(function(jqXHR, textStatus, errorThrown) {
@@ -1618,6 +1686,9 @@
                             setTimeout(()=>{
                                 form.modal('hide');
                             }, 2500);
+
+                            $("#comment-box").load(" #comment-box > *");
+
                         })
 
                         .fail(function(jqXHR, textStatus, errorThrown) {
@@ -2290,6 +2361,37 @@
             })
 
         })
-     
+
+
+    $('.preview-book-btn').on('click', function(e) {
+            e.preventDefault();
+            const item_id = $(this).data('id');
+            const option = $(this).data('option');
+
+            $.ajax({
+                    url:'/preview-item',
+                    type:"GET",
+                    data:{
+                        'option': option,
+                        'item_id':item_id,
+                    }
+                })
+                .done(function(res) {  
+
+                    const item = res.item;
+
+                    if (item){
+
+                        $('#previewItemModal').find('.modal-body').empty().append(item);
+
+                        $('#previewItemModal').modal('show');
+                    }
+
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                // If fail
+                console.log(textStatus + ': ' + errorThrown);
+                })
+    })
 </script>
 @endsection

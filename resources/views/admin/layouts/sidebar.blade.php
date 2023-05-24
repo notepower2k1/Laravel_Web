@@ -140,7 +140,7 @@
                       <a href="/admin/post" class="nk-menu-link"><span class="nk-menu-text">Dữ liệu</span></a>
                   </li>
                   <li class="nk-menu-item {{ Request::is('admin/statistics/post/*') ? 'active' : '' }}">
-                      <a href="/admin/statistics/post/1/{{ \Carbon\Carbon::now()->year }}" class="nk-menu-link"><span class="nk-menu-text">Thống kê</span></a>
+                      <a href="/admin/statistics/post/1/{{ \Carbon\Carbon::now()->month }}/{{ \Carbon\Carbon::now()->year }}" class="nk-menu-link"><span class="nk-menu-text">Thống kê</span></a>
                   </li>
                   <li class="nk-menu-item {{ Request::is('admin/deleted/post') ? 'active' : '' }}">
                     <a href="/admin/deleted/post" class="nk-menu-link"><span class="nk-menu-text">Dữ liệu đã xóa</span></a>

@@ -232,8 +232,8 @@
     $('#DataTables_Table_0_wrapper').addClass('d-flex row');
     $('#DataTables_Table_0_length').addClass('mt-2');
     $('#DataTables_Table_0_filter').addClass('mt-2');
-    $('#DataTables_Table_0 tbody').on('click','.delete-button-book',function(){
-        
+    $('#DataTables_Table_0 tbody').on('click','.delete-button-book',function(e){
+            e.preventDefault();
             var comment_id = $(this).data('id');
 
             Swal.fire({

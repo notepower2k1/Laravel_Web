@@ -106,13 +106,13 @@
                                             <td class="nk-tb-col nk-tb-col-tools">
                                               <ul class="nk-tb-actions gx-1">                                            
                                                   <li class="nk-tb-action-hidden">
-                                                      <button class="btn btn-trigger btn-icon btn-email" data-email={{ $user->email }}  data-name="{{ $user->name }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Gửi email">
-                                                          <em class="icon ni ni-mail-fill"></em>
+                                                      <button class="btn btn-trigger btn-icon btn-email" data-email={{ $user->email }}  data-name="{{ $user->name }}" >
+                                                          <em class="icon ni ni-mail-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="Gửi email"></em>
                                                       </button>
                                                   </li>
                                                   <li class="nk-tb-action-hidden">
-                                                      <button class="btn btn-trigger btn-icon btn-suspend" data-id={{ $user->id }} data-value={{ $user->status }} data-bs-toggle="tooltip" data-bs-placement="top" title="Đình chỉ">
-                                                          <em class="icon ni ni-user-cross-fill"></em>
+                                                      <button class="btn btn-trigger btn-icon btn-suspend" data-id={{ $user->id }} data-value={{ $user->status }}>
+                                                          <em class="icon ni ni-user-cross-fill"  data-bs-toggle="tooltip" data-bs-placement="top" title="Đình chỉ"></em>
                                                       </button>
                                                   </li>
                                                   <li>
@@ -310,6 +310,16 @@
                     contentHTML = '<span class="tb-status text-success">Hoạt động</span>' 
                 }
                 else if (res.status == 0){
+
+                    const option = 3;
+
+                    $("#note-type").select2().select2('val',[`${option}`]);
+
+                    setTimeout(() => {
+                        $('#note-object').select2().select2('val',[`${user_id}`]);
+                        $('#modalNote').modal('show');
+                    }, 2500);
+
                     contentHTML = '<span class="tb-status text-danger">Đình chỉ</span>' 
                 }
 
@@ -317,6 +327,8 @@
                 $("#status-" + user_id).append(contentHTML);
 
                 $(`.btn-suspend[data-id="${user_id}"]`).data('value',`${res.status}`);
+
+
 
             })
             .fail(function(jqXHR, textStatus, errorThrown) {

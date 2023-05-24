@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class report extends Model
 {
@@ -17,7 +18,7 @@ class report extends Model
     protected $fillable = ['description','identifier_id','userID','status','type_id','reason_id'];
 
     
-    protected $appends = ['time','notify','identifier'];
+    protected $appends = ['time','notify','identifier','isEnabled'];
 
     public function getTimeAttribute()
     {
@@ -159,7 +160,17 @@ class report extends Model
 
     }
 
+    public function getIsEnabledAttribute(){
 
+        $report = report::where('identifier_id','=',$this->identifier_id)->where('type_id',$this->type_id)->get();
+        $flag = true;
+        if($report->count() >= 5){
+            $flag = false;
+        }
+        return $flag;
+    }
+
+    
     public function types() {
         return $this->belongsTo(reportType::class,'type_id','id');
     }

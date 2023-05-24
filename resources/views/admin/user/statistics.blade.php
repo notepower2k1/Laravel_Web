@@ -685,6 +685,7 @@
                 borderColor: 'rgb(75, 192, 192)',
                 backgroundColor: 'rgba(235,238,255,0.6)',
                 tension: 0.2,
+                fill:true
 
 
             }]
@@ -811,6 +812,7 @@
                 borderColor: 'rgb(75, 192, 192)',
                 backgroundColor: 'rgba(235,238,255,0.6)',
                 tension: 0.2,
+                fill:true
 
 
             }]

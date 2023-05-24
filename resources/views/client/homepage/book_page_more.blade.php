@@ -43,11 +43,8 @@
             <li class="item-book">
                 <div class="d-sm-none d-md-block">
                     <div class="info mb-2 d-flex justify-content-start">
-                        @if($book->file == null)
-                            <dfn data-info="{{ $book->numberOfChapter }} chương"><em class="icon ni ni-book text-success"></em></dfn>
-                        @else
-                            <dfn data-info="Tệp PDF"><em class="icon ni ni-file-pdf text-success"></em></dfn>
-                        @endif
+                        <dfn data-info="{{ $book->types->name }}"><em class="icon ni ni-book text-success"></em></dfn>
+                      
 
                         @if($book->language == 1)
                         <dfn data-info="Tiếng Việt"><em class="icon ni ni-globe text-info"></em></dfn>
@@ -135,13 +132,13 @@
             </li>
             
             @if($loop->iteration % 2 == 0 || $loop->iteration == $books->count()  )
-            <div class="shelf d-none d-xl-block">
+                <div class="shelf d-none d-xl-block">
 
-                <div class="bookend_left"></div>
-                  <div class="bookend_right"></div>
-                  <div class="reflection"></div>
-              
-            </div>
+                    <div class="bookend_left"></div>
+                    <div class="bookend_right"></div>
+                    <div class="reflection"></div>
+                
+                </div>
             @endif
             @endforeach   
 

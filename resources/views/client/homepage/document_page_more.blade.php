@@ -37,7 +37,7 @@
                 <li class="item-book">
                     <div class="d-sm-none d-md-block">
                         <div class="info mb-2 d-flex justify-content-start">
-                            <dfn data-info="{{ $document->numberOfPages }} trang"><em class="icon ni ni-file-pdf text-success"></em></dfn>
+                            <dfn data-info="{{ $document->types->name }}"><em class="icon ni ni-file-pdf text-success"></em></dfn>
             
                             @if($document->language == 1)
                             <dfn data-info="Tiếng Việt"><em class="icon ni ni-globe text-info"></em></dfn>

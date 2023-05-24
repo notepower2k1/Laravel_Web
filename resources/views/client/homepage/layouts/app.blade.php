@@ -47,6 +47,18 @@
             text-decoration: none;
             color:#b78a28;
         }
+
+        .preview-book-btn >em {
+            -webkit-transition: background-color 1s ease-out;
+            -moz-transition: background-color 1s ease-out;
+            -o-transition: background-color 1s ease-out;
+            transition: background-color 1s ease-out;
+        }
+
+        .preview-book-btn > em:hover{
+            color:#f5f4f2;
+            background-color:orange !important ;
+        }
     </style>
 </head>
 <body class="nk-body bg-lighter preload">
@@ -310,6 +322,10 @@
 
         
         $('#modalSearchHomePage').on('click','.search-option',function(){
+            const renderBox = $('#modalSearchHomePage').find('#renderArea-ul');
+
+            renderBox.empty();
+
             $('#modalSearchHomePage').find(".search-option").parent().removeClass("active");
             var option_text = $(this).text();
             var option_value = $(this).attr('data-value');

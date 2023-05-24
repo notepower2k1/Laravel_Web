@@ -49,7 +49,7 @@ Route::group(['middleware' => ['isVerified','isBanned']],function(){
 
 // Route::get("/tom-tat-tai-lieu",[PagesController::class,'summarizePage']);
 
-Route::get('/test',[PagesController::class,'test']);
+Route::get('/preview-item',[PagesController::class,'preview_item']);
 Route::get('/',[PagesController::class,'home_page']);
 
 
@@ -196,7 +196,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
     Route::get("/deleted/post/filter/{fromDate}/{toDate}",[ForumPostController::class,'getFilterValueDeleted']);
 
     Route::get("/deleted/post/recovery",[ForumPostController::class,'recoveryItem']);
-    Route::get("/statistics/post/{forum_id}/{year?}",[ForumPostController::class,'statistics_post_page']);
+    Route::get("/statistics/post/{forum_id}/{month}/{year}",[ForumPostController::class,'statistics_post_page']);
 
     Route::get("/forum/post/customDelete/{post_id}",[ForumPostController::class,'customDelete']);
 

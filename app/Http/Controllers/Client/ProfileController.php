@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\Book;
 use App\Models\Document;
 use App\Models\ForumPosts;
+use App\Models\report;
 use App\Models\ReportReason;
 use Carbon\Carbon;
 
@@ -25,7 +26,6 @@ class ProfileController extends Controller
 
     public function index()
     {
-        $reportReasons = ReportReason::all();
 
         $user = Auth::user();
 
@@ -40,7 +40,6 @@ class ProfileController extends Controller
 
 
         return view('client.homepage.profile.index')
-        ->with('reportReasons',$reportReasons)
         ->with('updateFlag', $updateFlag);
      
     }
@@ -135,12 +134,19 @@ class ProfileController extends Controller
    
     public function user_info($user_id){
 
+        $reportReasons = ReportReason::all();
+
         $user = User::where('deleted_at','=',null)->findOrFail($user_id);
         $books = Book::where('userCreatedID','=',$user->id)->where('deleted_at','=',null)->where('isPublic','=',1)->get();
         $documents = Document::where('userCreatedID','=',$user->id)->where('deleted_at','=',null)->where('isPublic','=',1)->get();
         $posts = ForumPosts::where('userCreatedID','=',$user->id)->where('deleted_at','=',null)->get();
 
+        $reportUser = report::where('identifier_id','=',$user_id)->where('type_id','=',5)->first();
+
+
         return view('client.homepage.user_info')
+        ->with('reportUser',$reportUser)
+        ->with('reportReasons',$reportReasons)
         ->with('posts',$posts)
         ->with('books',$books)
         ->with('documents',$documents)

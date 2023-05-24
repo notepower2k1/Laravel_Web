@@ -124,7 +124,7 @@
                             <div class="card card-bordered product-card shadow">
                                 <div class="product-thumb shine">
                                     <a href="/sach/{{$book->id}}/{{$book->slug}}">
-                                        <img class="card-img-top" src="{{ $book->url }}" alt="" width="300px" height="350px">
+                                        <img class="card-img-top border" src="{{ $book->url }}" alt="" width="300px" height="350px">
                                     </a>
                                 
                                     <ul class="product-badges">
@@ -133,13 +133,16 @@
                                 
                                     
                                     <ul class="product-actions d-flex h-100 align-items-center" >
-                                        <li ><a href="/sach/{{$book->id}}/{{$book->slug}}" >
-                                            <em class="icon icon-circle bg-success ni ni-book-read"></em>
-                                        </a></li>
+                                        <li >
+                                            <a href="#" class="preview-book-btn" data-id ={{ $book->id }} data-option="1">
+                                                <em class="icon icon-circle bg-success ni ni-book-read"></em>
+                                            </a>
+                                        </li>
                                     </ul>
                                 </div>
                                 <div class="card-inner text-center">
                                     <ul class="product-tags">
+                                        
                                         <li><a href="/tac-gia/tac-gia-sach/{{ $book->author }}">{{ $book->author }}</a></li>
                                     </ul>
                                     <h3 class="product-title fs-13px" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $book->name }}"><a href="/sach/{{$book->id}}/{{$book->slug}}"> {{ Str::limit($book->name,25) }}</a></h3>
@@ -408,7 +411,7 @@
                             <div class="card card-bordered shadow">
                                 <div class="d-flex">
                                     <div class="flex-fill" style="position: relative; width:140px">    
-                                        <a href="/sach/{{$book->id}}/{{$book->slug}}">
+                                        <a href="#" class="preview-book-btn" data-id ={{ $book->id }} data-option="1">
                                             <img class="high-reading-book-images" src="{{ $book->url }}" alt="">                            
                                         </a>                                                     
                                     </div>
@@ -457,10 +460,19 @@
                 <div class="col document-card d-flex justify-content-center">
                     <div class="card card-bordered product-card shadow ">
                         <div class="product-thumb shine">
-                            <a href="/tai-lieu/{{$document->id}}/{{$document->slug}}">
+                            <a href="#" class="preview-book-btn" data-id ={{ $document->id }} data-option="2">
                                 <img class=" document-card-image" src="{{ $document->url }}" alt="" width="300px" height="350px">
-                            </a>                       
-                        </div>            
+                            </a>     
+                            
+                            <ul class="product-actions d-flex h-100 align-items-center" >
+                                <li >
+                                    <a href="#" class="preview-book-btn" data-id ={{ $document->id }} data-option="2">
+                                        <em class="icon icon-circle bg-success ni ni-book-read"></em>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>  
+                                  
                     </div>
                 </div>
             @endforeach
@@ -486,13 +498,17 @@
                             <td> <span class="text-muted">{{ $document->types->name }}</span></td>
                             <td> <a class="title-book " href="/tai-lieu/{{$document->id}}/{{$document->slug}}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $document->name }}">{{ Str::limit($document->name,80) }}</a></td>                
                             <td>
-                            @foreach(explode(",",$document->author) as $author)                                                                       
-                            <a class="text-muted" href="/tac-gia/tac-gia-tai-lieu/{{ $author }}">{{ $author }}</a>
-                            @if($loop->index < count(explode(",",$document->author)) - 1)
-                            <span class="text-muted">,</span>
-                            @endif
-                            @endforeach        
-                     
+
+                                @foreach(explode(",",$document->author) as $author)
+                                    @if($loop->index < 3)                                                                
+       
+                                        <a class="text-muted" href="/tac-gia/tac-gia-tai-lieu/{{ $author }}">{{ $author }}</a>
+                                        @if($loop->index < 2)
+                                        <span class="text-muted">,</span>
+                                        @endif
+                                    @endif
+                                @endforeach        
+
                             </td>
                             <td>                     
                             <span class="text-muted">{{ $document->time }}</span>                
@@ -537,28 +553,38 @@
                             @foreach ($high_downloading_documents as $document)
 
 
-                                <div class="col" >
+                                <div class="col high_rating_books" >
                                     <div class="card card-bordered product-card shadow">
-                                        <div class="product-thumb">                                  
-                                            <img class="card-img-top" src="{{ $document->url }}" alt=""  width="300px" height="350px">          
-                                            <div class="product-actions high_downloading_documents h-100 w-100">
-                                                <div class="pricing-body text-center w-100 h-100">   
-                                                    <div class="h-100 d-flex flex-column justify-content-center">
-                                                        <div class="pricing-amount">
-                                                            <h6 class="text-white">{{ $document->name }}</h6>
-                                                            <p class="text-white">Tác giả: {{ $document->author }}</p>
-                                                            <p class="text-white">Số trang: {{ $document->numberOfPages }}</p>
-                                                            <p class="text-white">Lượt tải: {{ $document->totalDownloading }}</p>
-                                                        </div>
-                                                        <div class="pricing-action">
-                                                            <a href="/tai-lieu/{{$document->id}}/{{$document->slug}}" class="btn btn-outline-light">Chi tiết</a>
-                                                        </div>
-                                                    </div>                                        
-                                                    
-                                                </div>
-                                            </div>
+                                        <div class="product-thumb shine">
+                                            <a href="/tai-lieu/{{$document->id}}/{{$document->slug}}">
+                                                <img class="card-img-top border" src="{{ $document->url }}" alt="" width="300px" height="350px">
+                                            </a>                                
+                                            
+                                            <ul class="product-actions d-flex h-100 align-items-center" >
+                                                <li >
+                                                    <a href="#" class="preview-book-btn" data-id ={{ $document->id }} data-option="2">
+                                                        <em class="icon icon-circle bg-success ni ni-book-read"></em>
+                                                    </a>
+                                                </li>
+                                            </ul>
                                         </div>
-                                    
+                                        <div class="card-inner text-center">
+                                            <ul class="product-tags">
+
+                                                <li  data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $document->author }}">
+                                                    @foreach(explode(",",$document->author) as $author)
+                                                    @if($loop->iteration == 1)                                                                
+                    
+                                                    <a href="/tac-gia/tac-gia-tai-lieu/{{ $author }}">{{ $author }}</a>
+                                                    @else
+                                                    <span>,...</span>
+                                                    @endif
+                                                    @endforeach
+                                                </li>        
+                                            </ul>
+
+                                            <h3 class="product-title fs-13px" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $document->name }}"><a href="/tai-lieu/{{$document->id}}/{{$document->slug}}"> {{ Str::limit($document->name,25) }}</a></h3>
+                                        </div>
                                     </div>
                                 </div>
                             @endforeach
@@ -572,6 +598,19 @@
 </section>
 
    
+@endsection
+
+@section('modal')
+<div class="modal fade" id="previewItemModal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-body modal-body-lg text-left">
+            
+                
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 @section('additional-scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
@@ -611,7 +650,36 @@
     })
    
 
-    
+    $('.preview-book-btn').on('click', function(e) {
+        e.preventDefault();
+        const item_id = $(this).data('id');
+        const option = $(this).data('option');
+
+        $.ajax({
+                url:'/preview-item',
+                type:"GET",
+                data:{
+                    'option': option,
+                    'item_id':item_id,
+                }
+            })
+            .done(function(res) {  
+
+                const item = res.item;
+
+                if (item){
+
+                    $('#previewItemModal').find('.modal-body').empty().append(item);
+
+                    $('#previewItemModal').modal('show');
+                }
+
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            console.log(textStatus + ': ' + errorThrown);
+            })
+    })
 
     
 

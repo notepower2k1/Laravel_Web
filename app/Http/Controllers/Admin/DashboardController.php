@@ -27,18 +27,20 @@ class DashboardController extends Controller
 
         $itemList = $request->data;
 
-        //0 - document && 1 - Book
+        //2 - document && 1 - Book
         foreach($itemList as $item){
 
-            if($item['option'] == "0"){
-                $document = Document::findOrFail($item['id']);
-                $document->status = 1;
-                $document ->save();
-            }
-            else if($item['option'] == "1"){
+           
+            if($item['option'] == "1"){
                 $book = Book::findOrFail($item['id']);
                 $book->status = 1;
                 $book ->save();
+            }
+
+            else if($item['option'] == "2"){
+                $document = Document::findOrFail($item['id']);
+                $document->status = 1;
+                $document ->save();
             }
         }
 

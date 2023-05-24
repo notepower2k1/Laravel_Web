@@ -239,8 +239,8 @@
     $('#DataTables_Table_0_length').addClass('mt-2');
     $('#DataTables_Table_0_filter').addClass('mt-2');
 
-    $('#DataTables_Table_0 tbody').on('click','.content-btn',function(){
-      
+    $('#DataTables_Table_0 tbody').on('click','.content-btn',function(e){
+        e.preventDefault();
         var comment_id = $(this).data('id');
         $('#modalContent').find('.modal-body').empty();
 

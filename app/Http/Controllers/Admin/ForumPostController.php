@@ -82,12 +82,14 @@ class ForumPostController extends Controller
 
         $request->validate([
             'topic' => 'required|min:10|max:255',
-            'content' => 'required',
+            'content' => 'required|min:10|max:5000',
         ],[
             'topic.required' => 'Bài viết nên có chủ đề',
             'topic.min' => 'Chủ đề bài viết quá ngắn',
             'topic.max' => 'Chủ đề bài viết quá dài',
-            'content.required' => 'Bài viết phải có nội dung'
+            'content.required' => 'Bài viết phải có nội dung',
+            'content.min' => 'Nội dung bài viết quá ngắn',
+            'content.max' => 'Nội dung bài viết quá dài',
         ]);
         
 
@@ -150,15 +152,17 @@ class ForumPostController extends Controller
     {
         $request->validate([
             'topic' => 'required|min:10|max:255',
-            'content' => 'required',
+            'content' => 'required|min:10|max:5000',
         ],[
             'topic.required' => 'Bài viết nên có chủ đề',
             'topic.min' => 'Chủ đề bài viết quá ngắn',
             'topic.max' => 'Chủ đề bài viết quá dài',
-            'content.required' => 'Bài viết phải có nội dung'
+            'content.required' => 'Bài viết phải có nội dung',
+            'content.min' => 'Nội dung bài viết quá ngắn',
+            'content.max' => 'Nội dung bài viết quá dài',
         ]);
 
-        $slug =  Str::slug($request->topic);
+        $slug =  Str::slug($request->topic).'-'. $this->TimeToText();
 
 
         $generatedImageName="";
@@ -212,30 +216,56 @@ class ForumPostController extends Controller
     }   
 
 
-    public function statistics_post_page($forum_id,$year = null){
+    public function percentGrowth($now,$previous){
+        return $now - $previous;  
+    }
+
+
+    public function statistics_post_page($forum_id,$month,$year){
         DB::statement("SET SQL_MODE=''");
             
+        
+       
         $allYears = DB::select("SELECT distinct year(forum_posts.created_at) as 'year'
         from forum_posts");
 
-        $all_posts = ForumPosts::where('forumID','=',$forum_id)->where('deleted_at','=',null)->whereYear('created_at', '=', $year)->get();
+        $all_posts = ForumPosts::where('forumID','=',$forum_id)->where('deleted_at','=',null)->whereYear('created_at', '=', $year)->whereMonth('created_at', '=', $month)->get();
 
         $forum = Forum::findOrFail($forum_id);
         $all_forum = Forum::where('id','!=',$forum_id)->get();
 
-        if($year == null){
 
-            $year = Carbon::now()->year;
-        }
+        $total_comments = $all_posts->sum('totalComments');
+        $total_views = $all_posts->sum('totalViews');
        
+        $previous_month = Carbon::now()->subMonth(1)->month;
+
+        $all_posts_previous_month = ForumPosts::where('forumID','=',$forum_id)->where('deleted_at','=',null)->whereYear('created_at', '=', $year)->whereMonth('created_at', '=', $previous_month)->get();
+
+        $total_comments_previous = $all_posts_previous_month->sum('totalComments');
+        $total_views_previous = $all_posts_previous_month->sum('totalViews');
+
         
+        $percentGrowthComment = $this->percentGrowth($total_comments,$total_comments_previous);
+        $percentGrowthView = $this->percentGrowth($total_views,$total_views_previous);
+        $percentGrowthPost = $this->percentGrowth($all_posts->count(),$all_posts_previous_month->count());
+
+
         return view('admin.forum_post.statistics')
+        ->with('previousMonth',$previous_month)
+        ->with('percentGrowthComment',$percentGrowthComment)
+        ->with('percentGrowthView',$percentGrowthView)
+        ->with('percentGrowthPost',$percentGrowthPost)
+        ->with('totalComments',$total_comments)
+        ->with('totalViews',$total_views)
         ->with('forum_name',$forum->name)
         ->with('forum_id',$forum_id)
         ->with('all_forum',$all_forum)
         ->with('allYears',$allYears)
         ->with('all_posts',$all_posts)
-        ->with('statisticsYear',$year);
+        ->with('statisticsYear',$year)
+        ->with('statisticsMonth',$month);
+
           
             
     }

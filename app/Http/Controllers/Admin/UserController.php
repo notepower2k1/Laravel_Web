@@ -19,6 +19,8 @@ use App\Models\ForumPosts;
 use App\Models\Note;
 use App\Models\PostComment;
 use App\Models\PostCommentReply;
+use App\Models\Reply;
+use App\Models\ReplyLike;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
@@ -57,6 +59,75 @@ class UserController extends Controller
                     'deleted_at' => null
                 ]);
 
+                Reply::where('userID','=',$user->id)->update([
+                    'deleted_at' => null
+                ]);
+
+                $totalComments = Comment::where('userID','=',$user->id)->where('deleted_at','=',null)->get();
+     
+                foreach ($totalComments as $comment){
+
+                    if($comment->type_id == 1){
+                        $allRepliesOfComment = Reply::where('commentID','=',$comment->id)->where('deleted_at','=',null)->get();
+                        $total = $allRepliesOfComment->count();
+
+                        if($total){
+                            $document = Document::findOrFail($comment->identifier_id);
+                            $document->totalComments = $document->totalComments + ($total + 1);
+                            $document->timestamps = false;
+          
+                            $document ->save();
+                        }
+                        else{
+                            $document = Document::findOrFail($comment->identifier_id);
+                            $document->totalComments = $document->totalComments + 1;
+                            $document->timestamps = false;
+          
+                            $document ->save();
+                        }
+                
+                    }
+                    else if($comment->type_id == 2){
+                       
+                        $allRepliesOfComment = Reply::where('commentID','=',$comment->id)->where('deleted_at','=',null)->get();
+                        $total = $allRepliesOfComment->count();
+
+                        if($total){
+                            $book = Book::findOrFail($comment->identifier_id);
+                            $book->totalComments = $book->totalComments + ($total + 1);
+                            $book->timestamps = false;
+          
+                            $book ->save();
+                        }
+                        else{
+                            $book = Book::findOrFail($comment->identifier_id);
+                            $book->totalComments = $book->totalComments + 1;
+                            $book->timestamps = false;
+          
+                            $book ->save();
+                        }
+                    }
+                    else if ($comment->type_id == 3){
+                      
+                        $allRepliesOfComment = Reply::where('commentID','=',$comment->id)->where('deleted_at','=',null)->get();
+                        $total = $allRepliesOfComment->count();
+
+
+                        if($total){
+                                $post = ForumPosts::findOrFail($comment->identifier_id);
+                                $post->totalComments = $post->totalComments + ($total + 1);
+                                $post->timestamps = false;
+
+                                $post ->save();
+                        }
+                        else{
+                                $post = ForumPosts::findOrFail($comment->identifier_id);
+                                $post->totalComments = $post->totalComments + 1;
+                                $post->timestamps = false;
+                                $post ->save();
+                        }
+                    }
+                }
 
                 break;
             case 1:
@@ -80,7 +151,79 @@ class UserController extends Controller
                     'deleted_at' => Carbon::now()
                 ]);
     
-              
+
+                Reply::where('userID','=',$user->id)->update([
+                    'deleted_at' => Carbon::now()
+                ]);
+
+                $totalComments = Comment::where('userID','=',$user->id)->where('deleted_at','!=',null)->get();
+     
+                foreach ($totalComments as $comment){
+
+                    if($comment->type_id == 1){
+                        $allRepliesOfComment = Reply::where('commentID','=',$comment->id)->where('deleted_at','!=',null)->get();
+                        $total = $allRepliesOfComment->count();
+
+                        if($total){
+                            $document = Document::findOrFail($comment->identifier_id);
+                            $document->totalComments = $document->totalComments - ($total + 1);
+                            $document->timestamps = false;
+          
+                            $document ->save();
+                        }
+                        else{
+                            $document = Document::findOrFail($comment->identifier_id);
+                            $document->totalComments = $document->totalComments - 1;
+                            $document->timestamps = false;
+          
+                            $document ->save();
+                        }
+                
+                    }
+                    else if($comment->type_id == 2){
+                       
+                        $allRepliesOfComment = Reply::where('commentID','=',$comment->id)->where('deleted_at','!=',null)->get();
+                        $total = $allRepliesOfComment->count();
+
+                        if($total){
+                            $book = Book::findOrFail($comment->identifier_id);
+                            $book->totalComments = $book->totalComments - ($total + 1);
+                            $book->timestamps = false;
+          
+                            $book ->save();
+                        }
+                        else{
+                            $book = Book::findOrFail($comment->identifier_id);
+                            $book->totalComments = $book->totalComments - 1;
+                            $book->timestamps = false;
+          
+                            $book ->save();
+                        }
+                    }
+                    else if ($comment->type_id == 3){
+                      
+                        $allRepliesOfComment = Reply::where('commentID','=',$comment->id)->where('deleted_at','!=',null)->get();
+                        $total = $allRepliesOfComment->count();
+
+
+                        if($total){
+                                $post = ForumPosts::findOrFail($comment->identifier_id);
+                                $post->totalComments = $post->totalComments - ($total + 1);
+                                $post->timestamps = false;
+
+                                $post ->save();
+                        }
+                        else{
+                                $post = ForumPosts::findOrFail($comment->identifier_id);
+                                $post->totalComments = $post->totalComments - 1;
+                                $post->timestamps = false;
+                                $post ->save();
+                        }
+                    }
+                }
+
+
+
                 break;
             default:
                 $message = 'Xảy ra lỗi';

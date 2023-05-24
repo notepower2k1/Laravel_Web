@@ -20,17 +20,7 @@
                                     <h5>{{ $user->profile->displayName }}</h5>
                                 </div>
                             </div>
-                        </div>
-                        @if(Auth::check() && Auth::user()->role == 1)
-                        <div class="card-inner card-inner-sm">
-                            <ul class="btn-toolbar justify-center gx-1">
-                                <li><a href="#" class="btn btn-trigger btn-icon"><em class="icon ni ni-shield-off"></em></a></li>
-                                <li><a href="#" class="btn btn-trigger btn-icon"><em class="icon ni ni-mail"></em></a></li>
-                                <li><a href="#" class="btn btn-trigger btn-icon"><em class="icon ni ni-bookmark"></em></a></li>
-                                <li><a href="#" class="btn btn-trigger btn-icon text-danger"><em class="icon ni ni-na"></em></a></li>
-                            </ul>
-                        </div>
-                        @endif
+                        </div>              
                         <div class="card-inner">
                             <div class="row text-center">
                                 <div class="col-4">
@@ -97,7 +87,8 @@
             </div><!-- .col -->
             <div class="col-lg-8 col-xl-8 col-xxl-9">
                 <div class="card card-bordered">
-                    <div class="card-inner">               
+                    <div class="card-inner">   
+                        
                         <div class="nk-block">
                             <h6 class="lead-text mb-3">Sách đã đăng</h6>
                             <div class="nk-tb-list nk-tb-ulist is-compact border round-sm">
@@ -137,11 +128,17 @@
                                 
                             
                             </div><!-- .nk-tb-list -->
+
+                            @if($books->count() > 0)
+
                             <div class="col-md-12 d-flex justify-content-end mt-4">                          
                                 <div id="pagination-1"></div>
                             </div>
+                            @endif
                         </div>
-    
+                      
+                                                
+
                         <div class="nk-block" >
                             <h6 class="lead-text mb-3">Tài liệu đã đăng</h6>
                             <div class="nk-tb-list nk-tb-ulist is-compact border round-sm">
@@ -178,10 +175,15 @@
                                   
                                               
                             </div><!-- .nk-tb-list -->
+                            @if($documents->count() > 0)
+
                             <div class="col-md-12 d-flex justify-content-end mt-4">                          
                                 <div id="pagination-2"></div>
-                            </div>      
-                        </div>                 
+                            </div>    
+                            @endif  
+                        </div>  
+                        
+                     
                         <div class="nk-block">
                             <h6 class="lead-text">Gửi e-mail</h6>
                             <div class="card card-bordered">
@@ -207,24 +209,41 @@
                                     </div>
                                 </div><!-- .nk-card-inner -->
                             </div><!-- .nk-card -->
-                            <h6 class="lead-text">Báo cáo</h6>
-                            <div class="card card-bordered">
-                                <div class="card-inner">
-                                    <div class="between-center flex-wrap flex-md-nowrap g-3">
-                                        <div class="media media-center gx-3 wide-xs">
-                                            <div class="media-object">
-                                                <em class="icon icon-circle icon-circle-lg ni ni-alert" ></em>
+
+                            @if(Auth::check())
+                                @if(Auth::user()->id != $user->id)
+                                <h6 class="lead-text">Báo cáo</h6>
+                                <div class="card card-bordered">
+                                    <div class="card-inner">
+                                        <div class="between-center flex-wrap flex-md-nowrap g-3">
+                                            <div class="media media-center gx-3 wide-xs">
+                                                <div class="media-object">
+                                                    <em class="icon icon-circle icon-circle-lg ni ni-alert" ></em>
+                                                </div>
+                                                <div class="media-content">
+                                                    <p>Báo cáo thành viên này</p>
+                                                </div>
                                             </div>
-                                            <div class="media-content">
-                                                <p>Báo cáo thành viên này</p>
+                                            <div class="nk-block-actions flex-shrink-0" id="report-div">
+                                                @if($reportUser)
+
+                                                    @if($reportUser->isEnabled)
+                                                        <a href="#" class="btn btn btn-dim btn-primary" data-bs-toggle="modal" data-bs-target="#reportForm">Báo cáo</a>
+                                                    @else
+    
+                                                        <a class="btn btn-primary">Đã báo cáo</a>
+
+                                                    
+                                                    @endif
+                                                @else
+                                                    <a href="#" class="btn btn btn-dim btn-primary" data-bs-toggle="modal" data-bs-target="#reportForm">Báo cáo</a>
+                                                @endif
                                             </div>
                                         </div>
-                                        <div class="nk-block-actions flex-shrink-0">
-                                            <a href="#" class="btn btn btn-dim btn-primary" data-bs-toggle="modal" data-bs-target="#reportForm">Báo cáo</a>
-                                        </div>
-                                    </div>
-                                </div><!-- .nk-card-inner -->
-                            </div><!-- .nk-card -->
+                                    </div><!-- .nk-card-inner -->
+                                </div><!-- .nk-card -->
+                                @endif
+                            @endif
                         </div>
                     </div><!-- .card-inner -->
                 </div><!-- .card -->
@@ -238,7 +257,7 @@
 @section('modal')
 
 @if(Auth::check())
-<div class="modal fade" id="reportForm" style="display: none;" aria-hidden="true">
+<div class="modal fade" id="reportForm">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -450,6 +469,9 @@ $.ajaxSetup({
                             setTimeout(()=>{
                                 $('#close-btn').click();
                             }, 2500);
+
+                            $("#report-div").load(" #report-div > *");
+
                         })
 
                         .fail(function(jqXHR, textStatus, errorThrown) {
