@@ -120,11 +120,13 @@
                                                           <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
                                                           <div class="dropdown-menu dropdown-menu-end">
                                                               <ul class="link-list-opt no-bdr">
-                                                                  <li><a href="#" class="delete-button" data-id="{{ $chapter->id }}" data-name="{{ $chapter->code }}">
-                                                                    <em class="icon ni ni-trash"></em><span>Xóa</span>
-                                                                  </a>
-
+                                                                  <li>
+                                                                    <a href="#" class="delete-button" data-id="{{ $chapter->id }}" data-name="{{ $chapter->code }}">
+                                                                        <em class="icon ni ni-trash"></em><span>Xóa</span>
+                                                                    </a>
                                                                   </li>
+                                                                  <li><a href="/admin/book/chapter/{{$chapter->id}}/detail"><em class="icon ni ni-eye"></em><span>Chi tiết</span></a></li>
+
                                                                   <li><a href="/admin/book/chapter/{{$chapter->id}}/edit"><em class="icon ni ni-edit"></em><span>Cập nhật</span></a></li>
                                                                
 

@@ -60,7 +60,7 @@ class PagesController extends Controller
     }
 
     public function getBookSlug($id){
-        $book = Book::findOrFail($id);
+        $book = Book::where('id',$id)->where('deleted_at',null)->first();
 
         return $book->slug;
 
@@ -125,45 +125,82 @@ class PagesController extends Controller
 
     public function getRecommendationByType(){
 
-        //Ranks by total reading
-        $matrix = $this->getMatrix2();
+            //Ranks by total reading
+            $matrix = $this->getMatrix2();
 
-        $list = $this->getRecommendation($matrix,Auth::user()->name);
-
-
-        $listUserNotReadBook = collect();
-        foreach ($list as $item=>$total){
-            $book = Book::where('slug','=',$item)->first();
-            $listUserNotReadBook->push($book);
-        }
-
-        // return $listUserNotReadBook;
-
-
-        $userID = Auth::user()->id;
-
-        $rankTypeBook = DB::select("SELECT books.type_id, 
-        SUM(`total`) as 'total' FROM reading_histories join books 
-        on reading_histories.bookID = books.id WHERE `userID` = $userID
-        GROUP BY `books`.`type_id` 
-        ORDER BY total desc
-        limit 2");
-
-        $listUserNotReadBookByTypeRank = collect();
-
-        foreach ($rankTypeBook as $rank){
-            $temp = $listUserNotReadBook->where('type_id',$rank->type_id);
-
-
-            if($temp->count() > 0 ){
-                $listUserNotReadBookByTypeRank->push($temp);
-
+            $list = $this->getRecommendation($matrix,Auth::user()->name);
+    
+    
+            $listUserNotReadBook = collect();
+            foreach ($list as $item=>$total){
+                $book = Book::where('slug','=',$item)->first();
+                $listUserNotReadBook->push($book);
             }
-        }
-
-
-
-        return $listUserNotReadBookByTypeRank->first();
+    
+            // return $listUserNotReadBook;
+    
+    
+            $userID = Auth::user()->id;
+    
+            $rankTypeBook = DB::select("SELECT books.type_id, 
+            SUM(`total`) as 'total' FROM reading_histories join books 
+            on reading_histories.bookID = books.id WHERE `userID` = $userID
+            GROUP BY `books`.`type_id` 
+            ORDER BY total desc
+            limit 2");
+    
+            $listUserNotReadBookByTypeRank = collect();
+    
+            foreach ($rankTypeBook as $rank){
+                $temp = $listUserNotReadBook->where('type_id',$rank->type_id);
+    
+    
+                if($temp->count() > 0 ){
+                    $listUserNotReadBookByTypeRank->push($temp);
+    
+                }
+            }
+            return $listUserNotReadBookByTypeRank->first();
+    
+            // $listbooks = Book::all()->pluck('id')->toArray();
+    
+            // $listUserReadBookID = readingHistory::where('userID',Auth::user()->id)->pluck('bookID')->toArray(); 
+    
+            // $listUserNotReadBookID = array_diff($listbooks, $listUserReadBookID);
+    
+            // $listUserNotReadBookID = array_values($listUserNotReadBookID);
+    
+            // $listUserNotReadBook = collect();
+    
+            // foreach ($listUserNotReadBookID as $bookID){
+            //     $book = Book::findOrFail($bookID);
+            //     $listUserNotReadBook->push($book);
+            // }
+        
+            // $userID = Auth::user()->id;
+    
+            // $rankTypeBook = DB::select("SELECT books.type_id, 
+            // SUM(`total`) as 'total' FROM reading_histories join books 
+            // on reading_histories.bookID = books.id WHERE `userID` = $userID
+            // GROUP BY `books`.`type_id` 
+            // ORDER BY total desc
+            // limit 2");
+    
+            // $listUserNotReadBookWithTypeRank = collect();
+    
+            // foreach ($rankTypeBook as $rank){
+            //     $temp = $listUserNotReadBook->where('type_id',$rank->type_id);
+    
+    
+            //     if($temp->count() > 0 ){
+            //         $listUserNotReadBookWithTypeRank->push($temp);
+    
+            //     }
+            // }
+    
+            // $listUserNotReadBookByTypeRank = $listUserNotReadBookWithTypeRank->SortByDesc('totalReading');
+    
+            // return $listUserNotReadBookByTypeRank;
     }
 
    
@@ -391,7 +428,7 @@ class PagesController extends Controller
 	    ->get();
 
 
-        $booksWithSameType = Book::where('type_id','=',$book->type_id)->where('id','!=',$book->id)->get();
+        $booksWithSameType = Book::where('type_id','=',$book->type_id)->where('id','!=',$book->id)->where('deleted_at','=',null)->get();
         $isMark = false;
         $isRating = false;
     
@@ -434,18 +471,19 @@ class PagesController extends Controller
         $user_documents = Document::where('userCreatedID','=',$book->users->id)->where('deleted_at','=',null)->where('isPublic','=',1)->get();
 
      
-        $reportBook = report::where('identifier_id','=',$book_id)->where('type_id','=',1)->first();
+        $reportBook = report::where('identifier_id','=',$book_id)->where('type_id','=',1)->where('deleted_at','=',null)->first();
 
-        $reportComment = report::where('type_id','=',6);
+        $reportComment = report::where('type_id','=',6)->where('deleted_at','=',null);
 
-        $reportReply = report::where('type_id','=',9);
+        $reportReply = report::where('type_id','=',9)->where('deleted_at','=',null);
+        $reportRating = report::where('type_id','=',10)->where('deleted_at','=',null);
 
       
         return view('client.homepage.book_detail')
         ->with('reportBook',$reportBook)
         ->with('reportComment',$reportComment)
         ->with('reportReply',$reportReply)
-
+        ->with('reportRating',$reportRating)
         ->with('reportReasons',$reportReasons)
         ->with('book_name',$book->name)
         ->with('book_id',$book_id)
@@ -482,16 +520,16 @@ class PagesController extends Controller
         $user_books = Book::where('userCreatedID','=',$document->users->id)->where('deleted_at','=',null)->where('isPublic','=',1)->get();
         $user_documents = Document::where('userCreatedID','=',$document->users->id)->where('deleted_at','=',null)->where('id','!=',$document->id)->where('isPublic','=',1)->get();
 
-        $documentsWithSameType = Document::where('type_id','=',$document->type_id)->where('id','!=',$document->id)->get();
+        $documentsWithSameType = Document::where('type_id','=',$document->type_id)->where('id','!=',$document->id)->where('deleted_at','=',null)->get();
 
         $previewImages = previewDocumentImages::where('documentID','=',$document_id)->get();
 
 
-        $reportDocument = report::where('identifier_id','=',$document_id)->where('type_id','=',3)->first();
+        $reportDocument = report::where('identifier_id','=',$document_id)->where('type_id','=',3)->where('deleted_at','=',null)->first();
 
-        $reportComment = report::where('type_id','=',7);
+        $reportComment = report::where('type_id','=',7)->where('deleted_at','=',null);
 
-        $reportReply = report::where('type_id','=',9);
+        $reportReply = report::where('type_id','=',9)->where('deleted_at','=',null);
 
 
         return view('client.homepage.document_detail')
@@ -555,7 +593,7 @@ class PagesController extends Controller
     public function read_book($book_slug,$chapter_slug){
 
 
-        $book = Book::where('slug','=',$book_slug)->first();
+        $book = Book::where('slug','=',$book_slug)->where('deleted_at','=',null)->first();
         $reportReasons = ReportReason::all();
 
         $recommened_books = null;
@@ -627,11 +665,11 @@ class PagesController extends Controller
 	    ->get();
 
 
-        $reportChapter = report::where('identifier_id','=',$chapter->id)->where('type_id','=',2)->first();
+        $reportChapter = report::where('identifier_id','=',$chapter->id)->where('type_id','=',2)->where('deleted_at','=',null)->first();
 
-        $reportComment = report::where('type_id','=',6);
+        $reportComment = report::where('type_id','=',6)->where('deleted_at','=',null);
 
-        $reportReply = report::where('type_id','=',9);
+        $reportReply = report::where('type_id','=',9)->where('deleted_at','=',null);
 
 
         return view('client.homepage.chapter_detail')
@@ -1183,7 +1221,7 @@ class PagesController extends Controller
     }
     public function post_detail($forum_slug,$post_slug,$post_id){
 
-        $post = ForumPosts::findOrFail($post_id);
+        $post = ForumPosts::where('id',$post_id)->where('deleted_at','=',null)->get();
         $post->totalViews = $post->totalViews + 1;
         $post->save();
 
@@ -1193,11 +1231,11 @@ class PagesController extends Controller
         $comments = Comment::where('type_id','=',3)->where('identifier_id','=',$post_id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
 
 
-        $reportPost= report::where('identifier_id','=',$post_id)->where('type_id','=',4)->first();
+        $reportPost= report::where('identifier_id','=',$post_id)->where('type_id','=',4)->where('deleted_at','=',null)->first();
 
-        $reportComment = report::where('type_id','=',8);
+        $reportComment = report::where('type_id','=',8)->where('deleted_at','=',null);
 
-        $reportReply = report::where('type_id','=',9);
+        $reportReply = report::where('type_id','=',9)->where('deleted_at','=',null);
 
         return view('client.forum.forum_posts.detail')
         ->with("reportPost",$reportPost)
@@ -1327,8 +1365,10 @@ class PagesController extends Controller
         ]);
         $report->save();
 
+       
+
         return response()->json([
-            'report' => 'Báo cáo thành công!!!'
+            'report' => 'Báo cáo thành công!!!',
         ]);
    }
 
@@ -1348,7 +1388,13 @@ class PagesController extends Controller
 
         $content = strip_tags($chapter->content);
 
+        $reportChapter = report::where('identifier_id','=',$chapter->id)->where('type_id','=',2)->first();
+
+        $reportReasons = ReportReason::all();
+
         return view('client.homepage.chapter_listening')
+        ->with('reportReasons',$reportReasons)
+        ->with('reportChapter',$reportChapter)
         ->with('content',$content)
         ->with('next',$next)
         ->with('previous',$previous)

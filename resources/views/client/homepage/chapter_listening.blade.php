@@ -199,13 +199,32 @@
                   @endif
               </div>
         
-              @if(Auth::check())
+              <div id="report-render-div" class="d-flex align-items-center">
+                @if(Auth::check())
+        
+                @if($reportChapter)
+                    @if($reportChapter->isEnabled)
+                        <button type="button" class="btn btn-lg btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#reportForm">
+                            <em class="icon ni ni-flag" ></em>
+                        </button>
+                    @else
+
+                    <dfn data-info="Đã có người báo cáo">
+                        <button type="button" class="btn btn-lg btn-outline-secondary" disabled>
+                            <em class="icon ni ni-flag"></em>
+                        </button>
+                    </dfn>
+                    
+                    @endif
+                @else
+                    <button type="button" class="btn btn-lg btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#reportForm">
+                        <em class="icon ni ni-flag" ></em>
+                    </button>
+                @endif
             
-              <button type="button" class="btn btn-icon btn-lg ms-1" data-bs-toggle="modal" data-bs-target="#reportForm">
-                <em class="icon ni ni-alert" style="color:red"></em>
-              </button>
             
-              @endif
+            @endif
+        </div>
             <div class="p-2">
             
               @if($next)
@@ -351,12 +370,73 @@
 
 
 
+@section('modal')
+@if(Auth::check())
 
+<div class="modal fade" id="reportForm" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Báo cáo chương</h5>
+                <button id="close-btn" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <em class="icon ni ni-cross"></em>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-validate is-alter" novalidate="novalidate">
+                    @csrf
+                    <input type="hidden" class="form-control" id="type_id" name="type_id" value=2>
+                    <input type="hidden" class="form-control" id="identifier_id" name="identifier_id" value={{ $chapter->id }}>
+
+                    <div class="form-group">
+                        <label class="form-label" for="chapter-code">Tên chương</label>
+                        <div class="form-control-wrap">
+                            <input type="text" class="form-control" id="chapter-code" required="" value='{{ $chapter->code }}' readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="reason">Lý do</label>
+                        <div class="form-control-wrap">
+                            <select required class="form-control mb-4 col-6" name="reason" id="reason">
+                                @foreach ($reportReasons as $reason)
+                                <option value="{{ $reason->id }}" >{{ $reason->name }}</option>
+                                @endforeach
+                            </select>                        
+                        </div>                     
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="description">Ghi chú</label>
+                        <div class="form-control-wrap">
+                            <textarea class="form-control form-control-sm" id="description" name="description" placeholder="Lý do của bạn" required></textarea>
+                        </div>
+                      
+                    </div>
+                    <div class="form-group text-right">
+                        <button id="report-btn" class="btn btn-lg btn-primary">Báo cáo</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer bg-light">
+                <span class="sub-text">Báo cáo bởi {{ Auth::user()->profile->displayName }}</span>
+            </div>
+
+        </div>
+    </div>
+</div>
+@endif
+@endsection
 @endsection
 @section('additional-scripts')
 
     <script>
-        
+        $.ajaxSetup({
+          headers: {
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          }
+        });
+
         const voiceList = document.querySelector("select");
 
         // grab the UI elements to work with
@@ -702,6 +782,75 @@
 
        
 
+          $('#report-btn').click(function(e){
 
+e.preventDefault();
+Swal.fire({
+    icon: 'info',
+    html:
+        'Tài khoản của bạn có thể bị <b>khóa</b> nếu bạn cố tình báo cáo sai',
+    showCloseButton: true,
+    focusConfirm: false,
+    showCancelButton: true,
+    confirmButtonText: 'Báo cáo',
+    cancelButtonText: `Không báo cáo`,
+    }).then((result) => {
+    /* Read more about isConfirmed, isDenied below */
+    if (result.isConfirmed) {
+
+        var form = $('#reportForm');
+
+        var type_id = form.find('input[name="type_id"]').val();
+        var identifier_id = form.find('input[name="identifier_id"]').val();
+        var description = form.find('textarea[name="description"]').val();
+        const reason = form.find('select[name="reason"]').val();
+
+        if(description){
+                $.ajax({
+                url:'/bao-cao',
+                type:"POST",
+                data:{
+                    'description': description,
+                    'identifier_id':identifier_id,
+                    'type_id':type_id,
+                    'reason':reason
+                }
+                })
+                .done(function(res) {
+                
+                    Swal.fire({
+                            icon: 'success',
+                            title: `${res.report}`,
+                            showConfirmButton: false,
+                            timer: 2500
+                        });     
+
+                    
+                    setTimeout(()=>{
+                        $('#close-btn').click();
+                    }, 2500);
+                    $("#report-render-div").load(" #report-render-div > *");
+
+                    
+                })
+
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                // If fail
+                console.log(textStatus + ': ' + errorThrown);
+                })
+        }
+        else{
+            Swal.fire('Vui lòng nhập lý do!!!', '', 'info')
+        }
+
+      
+
+
+
+    } else if (result.isDenied) {
+        Swal.fire('Báo cáo thất bại', '', 'info')
+    }
+})
+})
     </script>
 @endsection

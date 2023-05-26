@@ -92,7 +92,7 @@ class ClientChapterController extends Controller
         ]);
         
         //update status book_mark
-        Follow::where('type_id','=',2)->where('identifier_id','=',$request->book_id)->update([
+        Follow::where('type_id','=',2)->where('identifier_id','=',$request->book_id)->where('isDone','=',1)->update([
             'status' => 1
         ]);
 
@@ -119,6 +119,14 @@ class ClientChapterController extends Controller
         ->with('book_id',$id);
 
 
+    }
+
+    public function detail($id){
+        
+        $chapter = Chapter::findOrFail($id);
+
+        return view('client.manage.chapter.detail')
+        ->with('chapter',$chapter);
     }
 
     /**

@@ -92,6 +92,12 @@ class report extends Model
                 $notify = 'phản hồi bình luận của '.$item->users->name.' về bình luận của '.$comment->users->name;
 
                 break;
+
+            case 10:
+                $item = ratingBook::findOrFail($this->identifier_id);
+                $notify = 'Đánh giá của '.$item->users->name.' về sách '.$item->books->name;
+
+                break;
             default:
                 $notify = null;
         }
@@ -152,6 +158,11 @@ class report extends Model
 
                 break;   
           
+            case 10:
+                $temp = ratingBook::findOrFail($this->identifier_id);
+                $item = Book::findOrFail($temp->bookID);
+
+                break;   
             default:
                 $item = null;
         }

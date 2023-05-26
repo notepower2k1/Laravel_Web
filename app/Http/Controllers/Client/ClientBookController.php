@@ -7,10 +7,14 @@ use Illuminate\Http\Request;
 use App\Models\Book;
 use App\Models\bookMark;
 use App\Models\BookType;
+use App\Models\Comment;
 use App\Models\Follow;
+use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\ratingBook;
+use App\Models\Reply;
+use App\Models\report;
 use App\Models\User;
 use Illuminate\Support\Str;
 
@@ -264,6 +268,46 @@ class ClientBookController extends Controller
         $book = Book::findOrFail($book_id);
         $book->deleted_at = Carbon::now()->toDateTimeString();
         $book ->save();
+
+        $comments = Comment::where('identifier_id','=',$book_id)->where('type_id','=','2')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString()
+        ]);
+
+        
+     
+        foreach($comments as $comment){
+            Reply::where('commentID','=',$comment->id)->update([
+                'deleted_at' => Carbon::now()->toDateTimeString()
+            ]);
+
+            report::where('identifier_id','=',$comment)->where('type_id','=','9')->update([
+                'deleted_at' => Carbon::now()->toDateTimeString()
+            ]);
+        }
+
+
+        Notification::where('identifier_id','=',$book_id)->where('type_id','=','1')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString()
+        ]);
+
+        Notification::where('identifier_id','=',$book_id)->where('type_id','=','4')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString()
+        ]);
+
+        report::where('identifier_id','=',$book_id)->where('type_id','=','1')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString()
+        ]);
+
+        report::where('identifier_id','=',$book_id)->where('type_id','=','6')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString()
+        ]);
+
+        report::where('identifier_id','=',$book_id)->where('type_id','=','10')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString()
+        ]);
+
+        $follows = Follow::where('identifier_id','=',$book_id)->where('type_id','=','2')->get();
+        $follows->delete();
     }   
     public function changeBookStatus(Request $request){
         $book = Book::findOrFail($request->id);
@@ -309,7 +353,10 @@ class ClientBookController extends Controller
     }
     public function getMatrix(){
 
-        $bookRatings = ratingBook::all();
+        $month = Carbon::now()->month;
+
+
+        $bookRatings = ratingBook::whereMonth('created_at', $month)->get();
         $matrix = array();
 
         foreach($bookRatings as $book){

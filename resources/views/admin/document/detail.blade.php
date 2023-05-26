@@ -9,11 +9,18 @@
       </ul>
       <hr>   
 
-      <div class="d-flex justify-content-end mb-2">
+      <div class="d-flex justify-content-end mb-2"  id ="document-render-div">
 
-        <a href="#" class="btn btn-outline-danger delete-button" data-id="{{ $document->id }}" data-name="{{ $document->name }}">
-            <em class="icon ni ni-trash"></em><span>Xóa</span>
-        </a>
+        @if($document->deleted_at == null)
+            <a href="#" class="btn btn-outline-danger delete-button" data-id="{{ $document->id }}" data-name="{{ $document->name }}">
+                <em class="icon ni ni-trash"></em><span>Xóa</span>
+            </a>
+        @else
+            <button class="btn btn-outline-primary" id="verification_item_button" data-id="{{ $document->id }}" data-name="{{ $document->name }}">
+                <em class="icon ni ni-file-check-fill"></em>
+                <span>Khôi phục dữ liệu</span>
+            </button>
+        @endif
       </div>
 
     <div class="nk-content-inner">
@@ -670,7 +677,8 @@
                       timer: 2500
                 });
 
-                $("#row-" + document_id).fadeOut();
+                $('#document-render-div').load(' #document-render-div > *');
+
               })
               .fail(function(jqXHR, textStatus, errorThrown) {
               // If fail
@@ -683,6 +691,45 @@
    
 
   })
+
+  $(document).on('click','#verification_item_button',function(){
+        const document_id = $(this).data('id');
+        var data = [];
+        data.push(document_id);
+        
+
+        $.ajax({ 
+            type:"GET",
+            url:'/admin/deleted/document/recovery',
+            data: {'data':data}   
+            })
+            .done(function() {
+            // If successful
+       
+
+            Swal.fire({
+                icon: 'success',
+                title: `Khôi phục thành công!!!`,
+                showConfirmButton: false,
+                timer: 2500
+            });
+
+            $('#document-render-div').load(' #document-render-div > *');
+
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            Swal.fire({
+                        icon: 'error',
+                        title: `Đổi trạng thái không thành công`,
+                        showConfirmButton: false,
+                        timer: 2500
+                    });
+            })
+
+
+
+    })
 </script>
 
 @endsection

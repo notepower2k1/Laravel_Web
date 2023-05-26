@@ -8,10 +8,14 @@ use Illuminate\Http\Request;
 use App\Models\Book;
 use App\Models\BookType;
 use App\Models\Chapter;
+use App\Models\Comment;
 use App\Models\Follow;
 use App\Models\Note;
+use App\Models\Notification;
 use App\Models\ratingBook;
 use App\Models\readingHistory;
+use App\Models\Reply;
+use App\Models\report;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -342,6 +346,46 @@ class BookController extends Controller
         $book = Book::findOrFail($book_id);
         $book->deleted_at = Carbon::now()->toDateTimeString();
         $book ->save();
+
+
+        $comments = Comment::where('identifier_id','=',$book_id)->where('type_id','=','2')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString()
+        ]);
+
+        
+        foreach($comments as $comment){
+            Reply::where('commentID','=',$comment->id)->update([
+                'deleted_at' => Carbon::now()->toDateTimeString()
+            ]);
+
+            report::where('identifier_id','=',$comment)->where('type_id','=','9')->update([
+                'deleted_at' => Carbon::now()->toDateTimeString()
+            ]);
+        }
+
+
+        Notification::where('identifier_id','=',$book_id)->where('type_id','=','1')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString()
+        ]);
+
+        Notification::where('identifier_id','=',$book_id)->where('type_id','=','4')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString()
+        ]);
+
+        report::where('identifier_id','=',$book_id)->where('type_id','=','1')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString()
+        ]);
+
+        report::where('identifier_id','=',$book_id)->where('type_id','=','6')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString()
+        ]);
+
+        report::where('identifier_id','=',$book_id)->where('type_id','=','10')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString()
+        ]);
+
+        $follows = Follow::where('identifier_id','=',$book_id)->where('type_id','=','2')->get();
+        $follows->delete();
     }   
 
     public function changeBookStatus(Request $request){

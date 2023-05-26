@@ -111,6 +111,8 @@
                                                 <em class="icon ni ni-trash"></em><span>Xóa</span>
                                                 </a>
                                                 </li>
+                                                <li><a href="/admin/book/chapter/{{$chapter->id}}/detail"><em class="icon ni ni-eye"></em><span>Chi tiết</span></a></li>
+
                                                 <li><a href="/admin/book/chapter/{{$chapter->id}}/edit"><em class="icon ni ni-edit"></em><span>Cập nhật</span></a></li>
                                             
 

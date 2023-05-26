@@ -21,6 +21,7 @@ use App\Models\PostComment;
 use App\Models\PostCommentReply;
 use App\Models\Reply;
 use App\Models\ReplyLike;
+use App\Models\report;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
@@ -62,6 +63,11 @@ class UserController extends Controller
                 Reply::where('userID','=',$user->id)->update([
                     'deleted_at' => null
                 ]);
+
+        
+             
+
+
 
                 $totalComments = Comment::where('userID','=',$user->id)->where('deleted_at','=',null)->get();
      
@@ -156,6 +162,10 @@ class UserController extends Controller
                     'deleted_at' => Carbon::now()
                 ]);
 
+                report::where('identifier_id','=',$user->id)->where('type_id','=','5')->update([
+                    'deleted_at' => Carbon::now()->toDateTimeString()
+                ]);
+                
                 $totalComments = Comment::where('userID','=',$user->id)->where('deleted_at','!=',null)->get();
      
                 foreach ($totalComments as $comment){

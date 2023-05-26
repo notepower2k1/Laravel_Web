@@ -42,9 +42,9 @@ class AppServiceProvider extends ServiceProvider
             
             view()->composer('admin.layouts.app',function($view){
                 $note_types = NoteType::all();
-                $books = Book::all();
-                $documents = Document::all();
-                $users = User::all();
+                $books = Book::where('deleted_at','=',null)->get();
+                $documents = Document::where('deleted_at','=',null)->get();
+                $users = User::where('deleted_at','=',null)->get();
 
                 $view
                 ->with('books',$books)
@@ -55,7 +55,7 @@ class AppServiceProvider extends ServiceProvider
 
             
             view()->composer('admin.layouts.header', function ($view) {
-                $report_notifications = report::where('status','=',1)->get();
+                $report_notifications = report::where('status','=',1)->where('deleted_at','=',null)->get();
                 $view
                 ->with('report_notifications',$report_notifications);  
             });
@@ -80,7 +80,7 @@ class AppServiceProvider extends ServiceProvider
 
                 if(Auth::check()){   
                     $follow_notifications = Follow::where('userID','=',Auth::user()->id)->where('status','=',1)->get();
-                    $comment_notifications = Notification::where('receiverID','=',Auth::user()->id)->where('status','=',1)->get();
+                    $comment_notifications = Notification::where('receiverID','=',Auth::user()->id)->where('deleted_at','=',null)->where('status','=',1)->get();
 
                     $view
                     ->with('follow_notifications',$follow_notifications)

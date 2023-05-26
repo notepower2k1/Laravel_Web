@@ -8,6 +8,9 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\ForumPosts;
 use App\Models\Forum;
+use App\Models\Notification;
+use App\Models\Reply;
+use App\Models\report;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -213,6 +216,39 @@ class ForumPostController extends Controller
         $forum = Forum::findOrFail($forum_post->forumID);
         $forum->numberOfPosts =$forum->numberOfPosts + 1;
         $forum ->save();
+
+
+        $comments = Comment::where('identifier_id','=',$post_id)->where('type_id','=','3')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString()
+        ]);
+
+        
+        foreach($comments as $comment){
+            Reply::where('commentID','=',$comment->id)->update([
+                'deleted_at' => Carbon::now()->toDateTimeString()
+            ]);
+
+            report::where('identifier_id','=',$comment)->where('type_id','=','9')->update([
+                'deleted_at' => Carbon::now()->toDateTimeString()
+            ]);
+        }
+
+
+        Notification::where('identifier_id','=',$post_id)->where('type_id','=','3')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString()
+        ]);
+
+        Notification::where('identifier_id','=',$post_id)->where('type_id','=','6')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString()
+        ]);
+
+        report::where('identifier_id','=',$post_id)->where('type_id','=','4')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString()
+        ]);
+
+        report::where('identifier_id','=',$post_id)->where('type_id','=','8')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString()
+        ]);
     }   
 
 

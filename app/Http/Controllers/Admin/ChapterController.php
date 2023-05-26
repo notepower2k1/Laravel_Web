@@ -113,7 +113,7 @@ class ChapterController extends Controller
             'updated_at' => Carbon::now()->toDateTimeString(),
         ]);
         //update status book_mark
-        Follow::where('type_id','=',2)->where('identifier_id','=',$request->book_id)->update([
+        Follow::where('type_id','=',2)->where('identifier_id','=',$request->book_id)->where('isDone','=',1)->update([
             'status' => 1
         ]);
 
@@ -205,6 +205,13 @@ class ChapterController extends Controller
         
     }
 
+    public function detail($id){
+        
+        $chapter = Chapter::findOrFail($id);
+
+        return view('admin.chapter.detail')
+        ->with('chapter',$chapter);
+    }
     /**
      * Remove the specified resource from storage.
      *
@@ -231,6 +238,8 @@ class ChapterController extends Controller
 
         $book = Book::findOrFail($chapter->book_id);
         $book->numberOfChapter = $book->numberOfChapter -1;
+        $book->timestamps = false;
+
         $book ->save();
 
         $chapter ->save();

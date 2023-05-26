@@ -172,11 +172,28 @@
   $(document).ready(function () {
     $('#DataTables_Table_0 thead').on('change','#uid',function(){
         var checkBoxes = $("input[name=selection]");
+       
         checkBoxes.prop("checked", !checkBoxes.prop("checked"));
-        
+        if(checkBoxes.length > 1){
+          $('#reject_item_button').prop('disabled', true)
+        }
+        else{
+          $('#reject_item_button').prop('disabled', false)
+        }
     });
   });
 
+  $("input[type='checkbox'][name=selection]").on("change",function(){
+      var checkBoxes = $("input[type='checkbox'][name=selection]:checked");
+
+      if(checkBoxes.length > 1){
+        $('#reject_item_button').prop('disabled', true)
+      }
+      else{
+        $('#reject_item_button').prop('disabled', false)
+
+      }
+  })
   $('#verification_item_button').click(function(){
       var checkBoxes = $("input[type='checkbox'][name=selection]:checked");
 

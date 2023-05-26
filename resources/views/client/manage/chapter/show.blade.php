@@ -102,6 +102,8 @@
                                                         </a>
     
                                                         </li>
+                                                        <li><a href="/quan-ly/chi-tiet-chuong/{{ $chapter->id }}"><em class="icon ni ni-eye"></em><span>Chi tiết</span></a></li>
+
                                                         <li><a href="/quan-ly/cap-nhat-chuong/{{ $chapter->id }}"><em class="icon ni ni-edit"></em><span>Cập nhật</span></a></li>
                                                     
     

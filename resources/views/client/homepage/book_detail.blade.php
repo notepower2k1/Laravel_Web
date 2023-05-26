@@ -436,8 +436,11 @@
                                                                                                     @endif
                                                                                                     @endforeach
                                                                                                     <div class="timeComment">
-                                                                                                        <em class="icon ni ni-clock"></em>
-                                                                                                        <span class="text-muted">{{ $comment->time }}</span>
+                                                                                                        <dfn data-info="{{ $comment->created_at }}">
+
+                                                                                                            <em class="icon ni ni-clock"></em>
+                                                                                                            <span class="text-muted">{{ $comment->time }}</span>
+                                                                                                        </dfn>
                                                                                                     </div>
                                                                                                   
                                                                                                 </div>
@@ -592,8 +595,11 @@
                                                                                                     @endif
                                                                                                     @endforeach
                                                                                                     <div class="timeComment">
-                                                                                                        <em class="icon ni ni-clock"></em>
-                                                                                                        <span class="text-muted">{{ $reply->time }}</span>
+                                                                                                        <dfn data-info="{{ $reply->created_at }}">
+
+                                                                                                            <em class="icon ni ni-clock"></em>
+                                                                                                            <span class="text-muted">{{ $reply->time }}</span>
+                                                                                                        </dfn>
                                                                                                     </div>
                                                                                                   
                                                                                                 </div>
@@ -793,6 +799,8 @@
                                                                                         </a>
                                                                                     @endif
                                                                                 @endif
+
+                                                                                
                                                                             </div>
                                                                             <div class="d-flex justify-content-between">
                                                                                 <div>
@@ -806,16 +814,20 @@
                                                                                 
                                                                                 @foreach ($userTotalReading as $userTotal )
 
-                                                                                @if($userTotal->userID == $person->users->id)
-                                                                                    <div class="otherInfo">
-                                                                                        <em class="icon ni ni-eye"></em>
-                                                                                        <span class="text-muted">Đã đọc: {{ $userTotal->total }} lần</span>
-                                                                                    </div>
-                                                                                @endif
+                                                                                    @if($userTotal->userID == $person->users->id)
+                                                                                        <div class="otherInfo">
+                                                                                            <em class="icon ni ni-eye"></em>
+                                                                                            <span class="text-muted">Đã đọc: {{ $userTotal->total }} lần</span>
+                                                                                        </div>
+                                                                                    @endif
                                                                                 @endforeach
                                                                                 <div class="timeComment">
-                                                                                    <em class="icon ni ni-clock"></em>
-                                                                                    <span class="text-muted">{{ $person->time }}</span>
+                                                                                    <dfn data-info="{{ $person->created_at }}">
+
+                                                                                        <em class="icon ni ni-clock"></em>
+                                                                                        <span class="text-muted">{{ $person->time }}</span>
+                                                                                    </dfn>                                                                                                <dfn data-info="{{ $reply->created_at }}">
+
                                                                                 </div>
                                                                                   
                                                                                
@@ -829,6 +841,35 @@
                                                                     <div class="rating-content mt-2">
                                                                         <p class="text-muted">{{ $person->content }}</p>     
                                                                     </div>  
+
+                                                                    <div class="d-flex flex-row-reverse" id="report-rating-div">
+                                                                        @if(Auth::check()) 
+                                                                            @if(Auth::user()->id != $person->users->id)
+
+                                                                                @if($reportRating->where('identifier_id','=',$person->id)->first())
+                                                                                    @if($reportRating->where('identifier_id','=',$person->id)->first()->isEnabled)
+                                                                                        <span href="#" class="report-rating-btn" data-id={{ $person->id }} data-user="{{ $person->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormRating">
+                                                                                            <em class="icon ni ni-flag fs-16px me-2 "></em>
+                                                                                        </span>
+                                                                                    @else
+
+                                                                                        <dfn data-info="Đã có người báo cáo">
+                                                                                            <span class="me-2" style="color:gray">
+                                                                                                <em class="icon ni ni-flag fs-16px"></em>
+                                                                                            </span>
+                                                                                        </dfn>
+                                                                                    
+                                                                                    @endif
+                                                                                @else
+
+                                                                                    <span href="#" class="report-rating-btn" data-id={{ $person->id }} data-user="{{ $person->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormRating">
+                                                                                        <em class="icon ni ni-flag fs-16px me-2 "></em>
+                                                                                    </span>
+                                                                                @endif
+                                                                            @endif                                                                                
+                                                                        @endif
+                                                                    </div>
+                                                                   
                                                                     <hr>
                                                                 </div>
                                                               
@@ -1066,6 +1107,56 @@
     </div>
 </div>
 
+<div class="modal fade" id="reportFormRating" >
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Báo cáo đánh giá</h5>
+                <button class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <em class="icon ni ni-cross"></em>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-validate is-alter" novalidate="novalidate">
+                    @csrf
+                    <input type="hidden" class="form-control" id="identifier_id" name="identifier_id" value=0>
+
+                    <div class="form-group">
+                        <label class="form-label" for="user-name">Đánh giá bởi</label>
+                        <div class="form-control-wrap">
+                            <input type="text" class="form-control" id="user-name" name="user-name" required="" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="reason">Lý do</label>
+                        <div class="form-control-wrap">
+                            <select required class="form-control mb-4 col-6" name="reason" id="reason">
+                                @foreach ($reportReasons as $reason)
+                                <option value="{{ $reason->id }}" >{{ $reason->name }}</option>
+                                @endforeach
+                            </select>                        
+                        </div>                     
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="description">Ghi chú</label>
+                        <div class="form-control-wrap">
+                            <textarea class="form-control form-control-sm" id="description" name="description" placeholder="Lý do của bạn" required></textarea>
+                        </div>
+                      
+                    </div>
+                    <div class="form-group text-right">
+                        <button id="submitReportFormRating" class="btn btn-lg btn-primary">Báo cáo</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer bg-light">
+                <span class="sub-text">Báo cáo bởi {{ Auth::user()->profile->displayName }}</span>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="modal fade" id="editCommentForm" >
     <div class="modal-dialog" role="document">
@@ -1637,6 +1728,20 @@
 
     })
 
+    $(document).on('click','.report-rating-btn',function(e){
+        e.preventDefault();
+        const form = $('#reportFormRating');
+
+        const identifier_id = $(this).data('id');
+        const userName = $(this).data('user');
+
+        form.find('input[name="user-name"]').val(userName);
+        form.find('input[name="type_id"]').val(type_id);
+        form.find('input[name="identifier_id"]').val(identifier_id);
+       
+
+    })
+
     $('#submitReportFormComment').click(function (e) {
         e.preventDefault();
         Swal.fire({
@@ -1711,6 +1816,114 @@
 
     });
 
+
+    $('#submitReportFormRating').click(function (e) {
+        e.preventDefault();
+        Swal.fire({
+            icon: 'info',
+            html:
+                'Tài khoản của bạn có thể bị <b>khóa</b> nếu bạn cố tình báo cáo sai',
+            showCloseButton: true,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'Báo cáo',
+            cancelButtonText: `Không báo cáo`,
+            }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                const form = $('#reportFormRating');
+
+                const type_id = 10;
+                const identifier_id = form.find('input[name="identifier_id"]').val();
+                const description = form.find('textarea[name="description"]').val();
+                var reason = form.find('select[name="reason"]').val();
+
+
+  
+                
+                if(description){
+                            $.ajax({
+                        url:'/bao-cao',
+                        type:"POST",
+                        data:{
+                            'description': description,
+                            'identifier_id':identifier_id,
+                            'type_id':type_id,
+                            'reason':reason
+
+                        }
+                        })
+                        .done(function(res) {
+                        
+                            Swal.fire({
+                                    icon: 'success',
+                                    title: `${res.report}`,
+                                    showConfirmButton: false,
+                                    timer: 2500
+                                });     
+
+                            
+                           
+
+                            $("#rating-box").load(" #rating-box > *",function() {
+                                const totalOfRating = $('#rating-list-content').children().size();
+                    
+                
+
+                                for(i=0;i<totalOfRating;i++){
+
+                                    const score = $(`#rateYo-${i}`).data('person-rating-score');
+
+                                    if(score == 5){
+                                        color = '#20c997';
+                                    }
+                                    if(score >=4 && score <5){
+                                        color = '#1ee0ac';
+                                    }
+                                    if(score >=3 && score <4){
+                                        color = '#09c2de';
+                                    }
+                                    if(score >=2 && score <3){
+                                        color = '#f4bd0e';
+                                    }
+                                    if (score >=1 && score <2){
+                                        color = '#e85347';
+                                    }
+
+                                    $(`#rateYo-${i}`).rateYo({
+                                        rating: score,
+                                        starWidth: "20px",   
+                                        ratedFill: color,           
+                                    });
+
+
+                                }
+                            });
+
+                            setTimeout(()=>{
+                                form.modal('hide');
+                            }, 2500);
+                        })
+
+                        .fail(function(jqXHR, textStatus, errorThrown) {
+                        // If fail
+                        console.log(textStatus + ': ' + errorThrown);
+                        })
+                }
+                else{
+                    Swal.fire('Vui lòng nhập lý do!!!', '', 'info')
+                }
+
+              
+
+
+
+            } else if (result.isDenied) {
+                Swal.fire('Báo cáo thất bại', '', 'info')
+            }
+        })
+
+    });
 
     $(document).on('click','.delete-comment-btn',function(e){
         e.preventDefault();

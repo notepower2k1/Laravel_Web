@@ -21,10 +21,18 @@
         <div class="card card-bordered card-preview" id="mark-book-box" >
             <ul class="nav nav-tabs nav-tabs-s2">
                 <li class="nav-item">
-                    <a class="nav-link active" data-bs-toggle="tab" href="#tabItem9">Đang xem</a>
+                    <a class="nav-link active" data-bs-toggle="tab" href="#tabItem9">
+                        Đang xem 
+                        <span class="badge rounded-pill bg-outline-warning">{{ $follow_notDone->count() }}</span>
+                    
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" href="#tabItem10">Đã xem xong</a>
+                    <a class="nav-link" data-bs-toggle="tab" href="#tabItem10">
+                        Đã xem xong
+                        <span class="badge rounded-pill bg-outline-warning">{{ $follow_isDone->count() }}</span>
+
+                    </a>
                 </li>
             </ul>
             <div class="tab-content">
@@ -59,7 +67,7 @@
                                                 @endif
                                             </div>
                                             <div class="ms-2">
-                                                <span class="tb-lead text-">{{ $follow->identifier->name }}<span class="dot dot-success d-md-none ms-1"></span></span>
+                                                <span class="tb-lead text-">{{ Str::limit($follow->identifier->name,50) }}<span class="dot dot-success d-md-none ms-1"></span></span>
                                             </div>
                                         </div>
                                     </td>
@@ -150,7 +158,7 @@
                                                 @endif
                                             </div>
                                             <div class="ms-2">
-                                                <span class="tb-lead text-">{{ $follow->identifier->name }}<span class="dot dot-success d-md-none ms-1"></span></span>
+                                                <span class="tb-lead text-">{{ Str::limit($follow->identifier->name,50) }}<span class="dot dot-success d-md-none ms-1"></span></span>
                                             </div>
                                         </div>
                                     </td>
@@ -187,8 +195,8 @@
                                           
                                             <li class="me-2">
                 
-                                                <button class="btn btn-info me-sm-n1 check-book-mark" data-id="{{ $follow->id }}" data-name="{{ $follow->identifier->name }}">
-                                                    <em class="icon ni ni-check-thick"></em>
+                                                <button class="btn btn-warning me-sm-n1 check-book-mark" data-id="{{ $follow->id }}" data-name="{{ $follow->identifier->name }}">
+                                                    <em class="icon ni ni-done"></em>
                                                 </button>
                                                 
                                                

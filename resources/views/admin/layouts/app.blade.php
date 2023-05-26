@@ -205,20 +205,32 @@
                 parseJson.forEach(element => {
 
                     if(element.status == 1){
-                        let endDate = new Date(element.end);
-                        let startDate = new Date(element.start);
+                        let temp = new Date(element.end);
 
-                        var difference= Math.abs(endDate-today);
+                        //remove timezone offset
+                        let endDate = new Date(temp.toISOString().slice(0, -1));
+
+                        let temp2 = new Date(element.start);
+
+                         //remove timezone offset
+                        let startDate = new Date(temp2.toISOString().slice(0, -1));
+
+                        var difference= Math.abs(startDate-today);
 
                         var days = difference/(1000 * 3600 * 24);
                     
-                        if(Math.round(days,1) == 1){
+                        if(days <= 1 && days > 0){
+
+                            console.log(Math.round(days,1));
+
                             upComingEvent.push(element);
                   
 
                             const startDateConvert = moment(startDate).format('LLLL').toString();
                             const endDateConvert = moment(endDate).format('LLLL').toString();
 
+                            console.log(startDateConvert);
+                            console.log(endDateConvert);
                             const htmlRender = 
                             '<div class="col-6">'+
                                         '<div class="card card-bordered">'+
@@ -264,11 +276,11 @@
                 var parseJson = JSON.parse(dataExist);
                 var newData = parseJson.map(element => {
                     let endDate = new Date(element.end);
-                    var difference= Math.abs(endDate-today);
+                    var difference= Math.abs(startDate-today);
 
                     var days = difference/(1000 * 3600 * 24);
                     
-                    if(Math.round(days,1) == 1){
+                    if(days <= 1 && days > 0){
                         element.status = 0
                     }
 

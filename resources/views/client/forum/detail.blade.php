@@ -223,7 +223,9 @@
                                 <div class="label">
                                     <a class="title text-dark fw-bold" href="/dien-dan/{{ $lastPost->forums->slug }}/{{ $lastPost->slug }}/{{ $lastPost->id }}">{{ $lastPost->topic }}</a>
                                 </div>
-                                <span class="time">{{ $lastPost->time }}</span>
+                                <dfn class="time" data-info="{{ $lastPost->created_at }}">
+                                   {{ $lastPost->time }}
+                                </dfn>
                             </div>
                         </li>
                         @endforeach

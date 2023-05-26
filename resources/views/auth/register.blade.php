@@ -111,7 +111,7 @@
 @endsection
 @section('additional-scripts')
 <script>
- $('input').keyup(function(){
+ $('input[name=name]').keyup(function(){
         var input_val = $(this).val();
         var inputRGEX = /^[a-zA-Z0-9]*$/;
         var inputResult = inputRGEX.test(input_val);

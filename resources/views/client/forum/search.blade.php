@@ -40,45 +40,57 @@
                 <div class="data-container"></div>
 
                 <div class="row g-gs" id="render-div">
-                    @foreach ( $forums_posts as $post )
-                    <div class="col-lg-12" id="post-{{ $post->id }}">
-                        <div class="card card-bordered text-soft">
-                           <div class="p-2">
-                                <div class="d-flex">
-                                    <div class="">
-                                        <div class="nk-tnx-type-icon bg-success-dim text-success">                                      
-                                            <em class="icon ni ni-folders-fill"></em>                                    
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1">                                
-                                            <div class="forum-topic d-flex justify-between mb-2">
-                                                <a class="text-dark fw-bold" href="/dien-dan/{{ $post->forums->slug }}/{{ $post->slug }}/{{ $post->id }}">{{$post->topic }}</a>
-
-                                                @if (Auth::check() && Auth::user()->id === $post->users->id)
-                                                <div class="drodown">
-                                                    <a href="#" class="dropdown-toggle btn btn-sm btn-icon btn-trigger mt-n1 me-n1" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                                    <div class="dropdown-menu dropdown-menu-end">
-                                                        <ul class="link-list-opt no-bdr">
-                                                            <li><a href="/cap-nhat-bai-viet/{{ $post->forums->slug }}/{{ $post->id }}"><em class="icon ni ni-edit"></em><span>Chỉnh sửa bài viết</span></a></li>
-                                                            <li><a href="#" data-id={{ $post->id }} class="delete-btn"><em class="icon ni ni-check-round-cut"></em><span>Xóa bài viết</span></a></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>  
-                                                @endif
-                                            </div>
-                                        
-                                            <div class="d-flex justify-between">
-                                                <span class="badge badge-dim bg-azure-dim text-azure"><em class="icon ni ni-user"></em><span>{{ $post->users->profile->displayName }}</span></span>
-                                                <span class="badge badge-dim bg-info"><em class="icon ni ni-comments"></em><span>{{ $post->totalComments }}</span></span>
-                                                <span class="badge badge-dim bg-success" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $post->created_at }}"><em class="icon ni ni-clock"></em><span>{{ $post->time }}</span></span>
-                                            </div>                                      
-                                    </div>                               
-                                </div>           
-                           </div>
-                                           
-                           
+                    @foreach ( $forums_posts->groupBy('forums.name') as $forumName => $posts )
+                        <div class="col-lg-12">
+                            <div class="card card-bordered shadow">
+                                <div class="p-2 forum-title">
+                                    <h5 style="color:#FEA1A1">Diễn đàn: {{$forumName }}</h5>
+                                </div>
+                            </div>
                         </div>
-                    </div><!-- .col -->
+                       
+                        @foreach ($posts as $post )
+                            <div class="col-lg-12" id="post-{{ $post->id }}">
+                                <div class="card card-bordered text-soft">
+                                    <div class="p-2">
+                                            <div class="d-flex">
+                                                <div class="">
+                                                    <div class="nk-tnx-type-icon bg-success-dim text-success">                                      
+                                                        <em class="icon ni ni-folders-fill"></em>                                    
+                                                    </div>
+                                                </div>
+                                                <div class="flex-grow-1">                                
+                                                        <div class="forum-topic d-flex justify-between mb-2">
+                                                            <a class="text-dark fw-bold" href="/dien-dan/{{ $post->forums->slug }}/{{ $post->slug }}/{{ $post->id }}">{{$post->topic }}</a>
+
+                                                            @if (Auth::check() && Auth::user()->id === $post->users->id)
+                                                            <div class="drodown">
+                                                                <a href="#" class="dropdown-toggle btn btn-sm btn-icon btn-trigger mt-n1 me-n1" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                                                                <div class="dropdown-menu dropdown-menu-end">
+                                                                    <ul class="link-list-opt no-bdr">
+                                                                        <li><a href="/cap-nhat-bai-viet/{{ $post->forums->slug }}/{{ $post->id }}"><em class="icon ni ni-edit"></em><span>Chỉnh sửa bài viết</span></a></li>
+                                                                        <li><a href="#" data-id={{ $post->id }} class="delete-btn"><em class="icon ni ni-check-round-cut"></em><span>Xóa bài viết</span></a></li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>  
+                                                            @endif
+                                                        </div>
+                                                    
+                                                        <div class="d-flex justify-between">
+                                                            <span class="badge badge-dim bg-azure-dim text-azure"><em class="icon ni ni-user"></em><span>{{ $post->users->profile->displayName }}</span></span>
+                                                            <span class="badge badge-dim bg-info"><em class="icon ni ni-comments"></em><span>{{ $post->totalComments }}</span></span>
+                                                            <span class="badge badge-dim bg-success" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $post->created_at }}"><em class="icon ni ni-clock"></em><span>{{ $post->time }}</span></span>
+                                                        </div>                                      
+                                                </div>                               
+                                            </div>           
+                                    </div>                              
+                                </div>
+                            </div>
+
+                           
+                        @endforeach
+                      
+
                     @endforeach
                 
                  
@@ -104,7 +116,10 @@
                                 <div class="label">
                                     <a class="title text-dark fw-bold" href="/dien-dan/{{ $lastPost->forums->slug }}/{{ $lastPost->slug }}/{{ $lastPost->id }}">{{ $lastPost->topic }}</a>
                                 </div>
-                                <span class="time">{{ $lastPost->time }}</span>
+                                <dfn data-info="{{ $lastPost->created_at }}">
+
+                                    <span class="time">{{ $lastPost->time }}</span>
+                                </dfn>
                             </div>
                         </li>
                         @endforeach

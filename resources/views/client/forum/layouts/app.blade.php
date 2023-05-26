@@ -19,7 +19,8 @@
     rel="stylesheet" />
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
-    
+    <link rel="stylesheet" href="{{ asset('assets/css/infohelper.css') }}">
+
    
     @yield('additional-style')
 
@@ -61,7 +62,7 @@
             filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#F8CBA6", endColorstr="#ECF9FF", GradientType=1 );
         }
 
-        .card , .drodown > div , .pagination{
+        .card , .drodown > div , .pagination , .forum-title{
             background: hsla(48, 100%, 96%, 1);
 
             background: linear-gradient(0deg, hsla(48, 100%, 96%, 1) 0%, hsla(199, 100%, 96%, 1) 100%);

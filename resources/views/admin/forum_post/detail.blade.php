@@ -12,11 +12,19 @@
 </ul>	
 <hr>
 
-<div class="d-flex justify-content-end mb-2">
-    <a href="#" class="btn btn-outline-danger delete-button" data-id="{{ $post->id }}" data-name="{{ $post->topic }}">
-    <em class="icon ni ni-trash"></em><span>Xóa</span>
-  </a>
-</div>
+    <div class="d-flex justify-content-end mb-2" id="post-render-div">
+
+        @if($post->deleted_at == null)
+        <a href="#" class="btn btn-outline-danger delete-button" data-id="{{ $post->id }}" data-name="{{ $post->topic }}">
+            <em class="icon ni ni-trash"></em><span>Xóa</span>
+        </a>
+        @else
+        <button class="btn btn-outline-primary" id="verification_item_button" data-id="{{ $post->id }}" data-name="{{ $post->topic }}">
+            <em class="icon ni ni-file-check-fill"></em>
+            <span>Khôi phục dữ liệu</span>
+        </button>
+        @endif
+    </div>
 <div class="nk-content-inner">
     <div class="nk-content-body">
         <div class="nk-block">
@@ -180,7 +188,8 @@
                           showConfirmButton: false,
                           timer: 2500
                       });
-                      $("#row-" + forum_postID).fadeOut();
+                      $('#post-render-div').load(' #post-render-div > *')
+
                   })
                   .fail(function(jqXHR, textStatus, errorThrown) {
                   // If fail
@@ -199,6 +208,45 @@
 
         $(`.replies-item-${comment_id}`).fadeToggle();
     });
+
+    $(document).on('click','#verification_item_button',function(){
+
+        const post_id = $(this).data('id');
+
+        var data = [];
+        data.push(post_id);
+
+        $.ajax({ 
+            type:"GET",
+            url:'/admin/deleted/post/recovery',
+            data: {'data':data}   
+            })
+            .done(function() {
+            // If successful
+         
+            Swal.fire({
+                icon: 'success',
+                title: `Khôi phục thành công!!!`,
+                showConfirmButton: false,
+                timer: 2500
+            });
+
+            $('#post-render-div').load(' #post-render-div > *')
+
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            Swal.fire({
+                        icon: 'error',
+                        title: `Đổi trạng thái không thành công`,
+                        showConfirmButton: false,
+                        timer: 2500
+                    });
+            })
+
+
+
+    })
 </script>
 
 

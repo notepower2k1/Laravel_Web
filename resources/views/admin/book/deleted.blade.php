@@ -266,7 +266,7 @@
     });
   });
 
-  $('#verification_item_button').click(function(){
+  $(document).on('click','#verification_item_button',function(){
       var checkBoxes = $("input[type='checkbox'][name=selection]:checked");
 
       var data = [];

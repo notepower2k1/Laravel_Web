@@ -12,6 +12,7 @@ use App\Models\Comment;
 use App\Models\Document;
 
 use App\Models\ForumPosts;
+use App\Models\ratingBook;
 use App\Models\Reply;
 use App\Models\User;
 use Carbon\Carbon;
@@ -102,7 +103,7 @@ class ReportController extends Controller
                     '</div>'.
                 '</div>';     
                 $title = 'Báo cáo về chương'  .'('.$report->created_at.')';
-                $itemUrl = '/admin/book/chapter/'.$report->identifier_id;
+                $itemUrl = '/admin/book/chapter/'.$item->books->id;
 
                 break;
             case 3:
@@ -213,7 +214,7 @@ class ReportController extends Controller
                 '</div>';     
              
                 $title = 'Báo cáo về bình luận của sách' .'('.$report->created_at.')';
-                $itemUrl = '/admin/book/detail'.'/'.$book->id.'/'.Carbon::now()->year;
+                $itemUrl = '/sach/'.$book->id.'/'.$book->slug;
 
                 break;
             case 7:
@@ -245,7 +246,7 @@ class ReportController extends Controller
                     '</div>'.
                 '</div>';     
                 $title = 'Báo cáo về bình luận của tài liệu' .'('.$report->created_at.')';
-                $itemUrl = '/admin/document/detail'.'/'.$document->id.'/'.Carbon::now()->year;
+                $itemUrl = '/tai-lieu/'.$document->id.'/'.$document->slug;
 
                 break;   
             case 8:
@@ -268,6 +269,9 @@ class ReportController extends Controller
                     '<li><strong>Lần cập nhật cuối</strong>: '. $updateTime . '</li>'.
                 '</ul>';
 
+                $title = 'Báo cáo về bình luận bài viết' .'('.$report->created_at.')';
+                $itemUrl = '/dien-dan/'.$post->forums->slug.'/'.$post->slug;
+
                 break;
             case 9:
                 $item = Reply::findOrFail($report->identifier_id);
@@ -277,16 +281,16 @@ class ReportController extends Controller
                 switch ($comment->type_id) {
                     case 1:
                         $document = Document::findOrFail($comment->identifier_id);
-                        $itemUrl = '/admin/document/detail'.'/'.$document->id.'/'.Carbon::now()->year;
-                        $object =   
+                        $itemUrl = '/tai-lieu/'.$document->id.'/'.$document->slug;
+                        $object =
                         '<li><strong>Tên tài liệu</strong>: '.$document->name.'</li>'.
                         '<li><strong>Thể loại</strong>: '.$document->types->name.'</li>'.
                         '<li><strong>Tác giả</strong>: '.$document->author.'</li>'.
                         '<li><strong>Người thêm</strong>: '.$document->users->profile->displayName.' </li>';
                         break;
                     case 2:
-                        $book = Book::findOrFail($comment->identifier_id);        
-                        $itemUrl = '/admin/book/detail'.'/'.$book->id.'/'.Carbon::now()->year;
+                        $book = Book::findOrFail($comment->identifier_id);
+                        $itemUrl = '/sach/'.$book->id.'/'.$book->slug;
 
                         $object =
                         '<li><strong>Tên sách</strong>: '.$book->name.'</li>'.
@@ -295,19 +299,19 @@ class ReportController extends Controller
                         '<li><strong>Người thêm</strong>: '.$book->users->profile->displayName.' </li>';
                         break;
                     case 3:
-                        $post = ForumPosts::findOrFail($comment->identifier_id);  
-                        $itemUrl = '/admin/forum/post'.'/'.$post->id.'/detail';
+                        $post = ForumPosts::findOrFail($comment->identifier_id);
+                        $itemUrl = '/dien-dan/'.$post->forums->slug.'/'.$post->slug;
 
-                        $object =  
+                        $object =
                         '<li><strong>Diễn đàn</strong>: '.$post->forums->name.'</li>'.
                         '<li class="divider"></li>'.
                         '<li><strong>Chủ đề bài viết</strong>: '.$post->topic.'</li>'.
                         '<li><strong>Người thêm</strong>: '.$post->users->profile->displayName.' </li>';
-                        
+
                         break;
                     default:
                         $itemUrl = '';
-                }
+                    }
 
                 $createTime = new Carbon($item->created_at);
                 $createTime = $createTime->toDateTimeString();   
@@ -328,6 +332,45 @@ class ReportController extends Controller
                 '</ul>';
                 $title = 'Báo cáo về phản hồi của bình luận' .'('.$report->created_at.')';
                 break;          
+                
+            case 10:
+                $item = ratingBook::findOrFail($report->identifier_id);
+                $book = Book::findOrFail($item->bookID);
+
+                $createTime = new Carbon($item->created_at);
+                $createTime = $createTime->toDateTimeString();   
+
+                $updateTime = new Carbon($item->updated_at);
+                $updateTime = $updateTime->toDateTimeString();  
+                $content =
+                '<div class="d-flex flex-row">'.
+                    '<div class="col-3 me-3">'.
+                        '<img src="'.$book->url.'" alt="" style="width:400px;height:225px">'.
+                    '</div>'.
+                    '<div class="col-9">'.
+                        '<ul class="link-list">'.
+                        '<li><strong>Tên sách</strong>: '.$book->name.'</li>'.
+                        '<li><strong>Thể loại</strong>: '.$book->types->name.'</li>'.
+                        '<li><strong>Tác giả</strong>: '.$book->author.'</li>'.
+                        '<li><strong>Người thêm</strong>: '.$book->users->profile->displayName.' </li>'.
+                        '<li class="divider"></li>'.
+                        '<li><strong>Nội dung đánh giá</strong>: '.$item->content.'</li>'.
+                        '<li><strong>Số điểm đánh giá</strong>: '.$item->score.'</li>'.
+                        '<li><strong>Người thêm</strong>:'.$item->users->profile->displayName.' </li>'.
+                        '<li><strong>Ngày thêm</strong>: '. $createTime . '</li>'.
+                        '<li><strong>Lần cập nhật cuối</strong>: '. $updateTime . '</li>'.
+                        '</ul>'.
+                    '</div>'.
+                '</div>';     
+                
+                $title = 'Báo cáo về đánh giá của sách' .'('.$report->created_at.')';
+                $itemUrl = '/sach/'.$book->id.'/'.$book->slug;
+
+                
+               
+
+          
+                break;          
             default:
                 $item = null;
         }
@@ -339,7 +382,7 @@ class ReportController extends Controller
         $userContent =
         '<div class="d-flex flex-row">'.
             '<div class="col-3 me-3">'.
-                '<img src="'.$report->users->profile->url.'" alt="" style="width:400px;height:225px">'.
+                '<img src="'.$report->users->profile->url.'" alt="" style="width:128px;height:128px">'.
             '</div>'.
             '<div class="col-9">'.
                 '<ul class="link-list">'.

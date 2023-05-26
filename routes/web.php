@@ -127,6 +127,7 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
     Route::get("/wait-verification/update/changeStatus/verification",[DashboardController::class,'verification_item']);
     Route::get("/wait-verification/update/changeStatus/rejection",[DashboardController::class,'rejection_item']);
 
+    Route::get('/',[DashboardController::class,'index']);
     Route::get('/dashboard',[DashboardController::class,'index']);
     Route::get('/dashboard/get/LoginHistory',[DashboardController::class,'getLoginHistory']);
 
@@ -160,6 +161,8 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
 
     Route::get("/book/chapter/customDelete/{chapter_id}",[ChapterController::class,'customDelete']);
     Route::get("/book/chapter/create/{book_id}",[ChapterController::class,'create'])->where('book_id', '[0-9]+');
+    Route::get("/book/chapter/{chapter_id}/detail",[ChapterController::class,'detail']);
+
     Route::get("/chapter",[ChapterController::class,'index']);
     Route::get("/deleted/chapter",[ChapterController::class,'deletedItem']);
     Route::get("/deleted/chapter/filter/{fromDate}/{toDate}",[ChapterController::class,'getFilterValueDeleted']);
@@ -264,6 +267,7 @@ Route::group(['prefix' => 'quan-ly',  'middleware' => ['auth']], function()
 
     Route::get("/them-chuong/{chapter_id}",[ClientChapterController::class,'create'])->where('book_id', '[0-9]+');
     Route::get("/cap-nhat-chuong/{chapter_id}",[ClientChapterController::class,'edit']);
+    Route::get("/chi-tiet-chuong/{chapter_id}",[ClientChapterController::class,'detail']);
 
 
     Route::resource("/tai-lieu",ClientDocumentController::class,['except' => ['create','edit','destroy','show']]);

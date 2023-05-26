@@ -55,8 +55,8 @@
             <table class="datatable-init nowrap nk-tb-list nk-tb-ulist mt-2" data-auto-responsive="false" data-export-title="Export">
                 <thead>
                     <tr class="nk-tb-item nk-tb-head">
-                        <th class="nk-tb-col"><span class="sub-text">Ngày báo cáo</span></th>
                         <th class="nk-tb-col tb-col-md"><span class="sub-text">Báo cáo về</span></th>
+                        <th class="nk-tb-col"><span class="sub-text">Ngày báo cáo</span></th>
                         <th class="nk-tb-col tb-col-md"><span class="sub-text">Người báo cáo</span></th>
                         <th class="nk-tb-col tb-col-md"><span class="sub-text">Lý do</span></th>
 
@@ -67,113 +67,126 @@
                 <tbody>
                     @foreach ($reports as $report)
 
-                    <tr class="nk-tb-item" id ="row-{{ $report->id }}">
+                    
+                        <tr class="nk-tb-item" id ="row-{{ $report->id }}">
 
-                    
-                        <td class="nk-tb-col">
-                            <div class="user-card">                                           
-                                <div class="user-info">
-                                    <span class="tb-lead">{{ $report->created_at}}</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="nk-tb-col tb-col-md">
-                            @switch ($report->type_id)
-                                @case(1)
-                    
-                                    <a href="/admin/book/detail/{{$report->identifier_id}}/{{ \Carbon\Carbon::now()->year }}">
-                                        <span class="badge rounded-pill bg-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->name }}">
-                                          {{ Str::limit($report->identifier->name,30) }}
-                                        </span>
-                                    </a>
-                                    @break;
-                                @case(2)
-                                    chương của sách 
-                                    <a href="/admin/book/chapter/{{$report->identifier_id}}">
-                                        <span class="badge rounded-pill bg-outline-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->books->name }}">
-                                        {{ Str::limit($report->identifier->code,30) }}
-                                        </span>
-                                    </a>
-                                    @break;
-                                @case(3)
-                                    <a href="/admin/document/detail/{{$report->identifier_id}}/{{ \Carbon\Carbon::now()->year }}">
-                                        <span class="badge rounded-pill bg-outline-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->name }}">
-                                        {{ Str::limit($report->identifier->name,30) }}
-                                        </span>
-                                    </a>
-                    
-                                    @break;
-                                @case(4)
-                                    <a href="/admin/forum/post/{{$report->identifier_id}}/detail">
-                                        <span class="badge rounded-pill bg-outline-info" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->topic }}">
-                                        {{ Str::limit($report->identifier->topic,30) }}
-                                        </span>
-                                    </a>
-                    
-                                   
-                                    @break;
-                                @case(5)
-                                    <a href="/admin/user/{{$report->identifier_id}}">
-                                        <span class="badge rounded-pill bg-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->name }}">
-                                        {{ Str::limit($report->identifier->name,30) }}
-                                        </span>
-                                    </a>
+                            <td class="nk-tb-col tb-col-md">
+                                @switch ($report->type_id)
+                                    @case(1)
                         
-                                    @break;
-                                @case(6)
-
-                                    <span>
-                                        Bình luận sách 
-
-                                    </span>
-
-                                    @break;
-                                @case(7)
-                                    <span>
-                                        Bình luận tài liệu 
-
-                                    </span>
-
-                                 
-                                   
-                    
-                    
-                                    @break;   
-                                @case(8)
-
-                                    <span>
-                                        Bình luận về bài viết
-
-                                    </span>
-
-                                 
-                                    @break;
-                                @case(9)
-
-                                    <span>
-                                        Phản hồi của bình luận
-
-                                    </span>
-                                    @break;   
-                           
-                                @default:
-                                    <a href="#"></a>
+                                        <a href="/admin/book/detail/{{$report->identifier_id}}/{{ \Carbon\Carbon::now()->year }}">
+                                            <span class="badge rounded-pill bg-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->name }}">
+                                            {{ Str::limit($report->identifier->name,30) }}
+                                            </span>
+                                        </a>
+                                        @break;
+                                    @case(2)
+                                        chương của sách 
+                                        {{-- <a href="/admin/book/chapter/{{$report->identifier_id}}">
+                                            <span class="badge rounded-pill bg-outline-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->books->name }}">
+                                            {{ Str::limit($report->identifier->code,30) }}
+                                            </span>
+                                        </a> --}}
+                                        @break;
+                                    @case(3)
+                                        <a href="/admin/document/detail/{{$report->identifier_id}}/{{ \Carbon\Carbon::now()->year }}">
+                                            <span class="badge rounded-pill bg-outline-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->name }}">
+                                            {{ Str::limit($report->identifier->name,30) }}
+                                            </span>
+                                        </a>
+                        
+                                        @break;
+                                    @case(4)
+                                        <a href="/admin/forum/post/{{$report->identifier_id}}/detail">
+                                            <span class="badge rounded-pill bg-outline-info" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->topic }}">
+                                            {{ Str::limit($report->identifier->topic,30) }}
+                                            </span>
+                                        </a>
+                        
+                                    
+                                        @break;
+                                    @case(5)
+                                        <a href="/admin/user/{{$report->identifier_id}}">
+                                            <span class="badge rounded-pill bg-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->name }}">
+                                            {{ Str::limit($report->identifier->name,30) }}
+                                            </span>
+                                        </a>
                             
-                            @endswitch
-                        </td>
-                        <td class="nk-tb-col tb-col-md">
-                            <span>{{ $report->users->email  }}</span>
+                                        @break;
+                                    @case(6)
 
-                        </td>   
-                        <td class="nk-tb-col tb-col-md">
-                            <span class="text-danger">{{ $report->reasons->name  }}</span>
+                                        <span>
+                                            Bình luận sách 
 
-                        </td> 
-                                                                                                                                                                                                                                  
-                        <td class="nk-tb-col nk-tb-col-tools">
-                            <button class="btn btn-icon btn-lg ni ni-eye detail-btn" data-id="{{ $report->id }}"></button>
-                        </td>
-                    </tr><!-- .nk-tb-item  -->
+                                        </span>
+
+                                        @break;
+                                    @case(7)
+                                        <span>
+                                            Bình luận tài liệu 
+
+                                        </span>
+
+                                    
+                                    
+                        
+                        
+                                        @break;   
+                                    @case(8)
+
+                                        <span>
+                                            Bình luận về bài viết
+
+                                        </span>
+
+                                    
+                                        @break;
+                                    @case(9)
+
+                                        <span>
+                                            Phản hồi của bình luận
+
+                                        </span>
+                                        @break;   
+                            
+                                    @case(10)
+
+                                        <span>
+                                        Đánh giá của sách
+                                        {{-- <a href="/admin/book/detail/{{$report->identifier_id}}/{{ \Carbon\Carbon::now()->year }}">
+                                                <span class="badge rounded-pill bg-outline-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->name }}">
+                                                    {{ Str::limit($report->identifier->name,30) }}
+                                                </span>
+                                            </a> --}}
+                                        </span>
+                                    @break;   
+                                    @default:
+                                        <a href="#"></a>
+                                
+                                @endswitch
+                            </td>
+                            <td class="nk-tb-col">
+                                <div class="user-card">                                           
+                                    <div class="user-info">
+                                        <span class="tb-lead">{{ $report->created_at}}</span>
+                                    </div>
+                                </div>
+                            </td>
+                         
+                            <td class="nk-tb-col tb-col-md">
+                                <span>{{ $report->users->email  }}</span>
+
+                            </td>   
+                            <td class="nk-tb-col tb-col-md">
+                                <span class="text-danger">{{ $report->reasons->name  }}</span>
+
+                            </td> 
+                                                                                                                                                                                                                                    
+                            <td class="nk-tb-col nk-tb-col-tools">
+                                <button class="btn btn-icon btn-lg ni ni-eye detail-btn" data-id="{{ $report->id }}"></button>
+                            </td>
+                        </tr><!-- .nk-tb-item  -->
+                  
                     @endforeach
 
                 </tbody>
@@ -340,6 +353,7 @@ $(function(){
                 $('#modalTabs').modal('show');
 
 
+             
 
             })
             .fail(function(jqXHR, textStatus, errorThrown) {
@@ -404,5 +418,8 @@ $(function(){
             console.log(textStatus + ': ' + errorThrown);
             })
     })
+
+
+  
 </script>
 @endsection

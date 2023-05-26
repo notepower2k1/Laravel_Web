@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
+use App\Models\Comment;
 use Illuminate\Support\Str;
 
 use Illuminate\Http\Request;
@@ -10,7 +11,10 @@ use App\Models\DocumentType;
 use App\Models\downloadingHistory;
 use App\Models\Follow;
 use App\Models\Note;
+use App\Models\Notification;
 use App\Models\previewDocumentImages;
+use App\Models\Reply;
+use App\Models\report;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use ZipArchive;
@@ -343,7 +347,7 @@ class DocumentController extends Controller
                     'isCompleted' => $request->isCompleted,
                 ]);
 
-        Follow::where('type_id','=',1)->where('identifier_id','=',$request->id)->update([
+        Follow::where('type_id','=',1)->where('identifier_id','=',$request->id)->where('isDone','=',1)->update([
             'status' => 1
         ]);
         
@@ -373,6 +377,40 @@ class DocumentController extends Controller
         $document = Document::findOrFail($document_id);
         $document->deleted_at = Carbon::now()->toDateTimeString();
         $document ->save();
+
+        $comments = Comment::where('identifier_id','=',$document_id)->where('type_id','=','1')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString()
+        ]);
+
+        foreach($comments as $comment){
+            Reply::where('commentID','=',$comment->id)->update([
+                'deleted_at' => Carbon::now()->toDateTimeString()
+            ]);
+
+            report::where('identifier_id','=',$comment)->where('type_id','=','9')->update([
+                'deleted_at' => Carbon::now()->toDateTimeString()
+            ]);
+        }
+
+
+        Notification::where('identifier_id','=',$document_id)->where('type_id','=','2')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString()
+        ]);
+
+        Notification::where('identifier_id','=',$document_id)->where('type_id','=','5')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString()
+        ]);
+
+        report::where('identifier_id','=',$document_id)->where('type_id','=','3')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString()
+        ]);
+
+        report::where('identifier_id','=',$document_id)->where('type_id','=','7')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString()
+        ]);
+
+        $follows = Follow::where('identifier_id','=',$document_id)->where('type_id','=','1')->get();
+        $follows->delete();
     }   
 
 

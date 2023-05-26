@@ -141,7 +141,7 @@ class ProfileController extends Controller
         $documents = Document::where('userCreatedID','=',$user->id)->where('deleted_at','=',null)->where('isPublic','=',1)->get();
         $posts = ForumPosts::where('userCreatedID','=',$user->id)->where('deleted_at','=',null)->get();
 
-        $reportUser = report::where('identifier_id','=',$user_id)->where('type_id','=',5)->first();
+        $reportUser = report::where('identifier_id','=',$user_id)->where('type_id','=',5)->where('deleted_at','=',null)->first();
 
 
         return view('client.homepage.user_info')

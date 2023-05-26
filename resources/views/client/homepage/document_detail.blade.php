@@ -347,8 +347,11 @@
                                                                                                     
     
                                                                                                     <div class="timeComment">
-                                                                                                        <em class="icon ni ni-clock"></em>
-                                                                                                        <span class="text-muted">{{ $comment->time }}</span>
+                                                                                                        <dfn data-info="{{ $comment->created_at }}">
+
+                                                                                                            <em class="icon ni ni-clock"></em>
+                                                                                                            <span class="text-muted">{{ $comment->time }}</span>
+                                                                                                        </dfn>
                                                                                                     </div>
                                                                                                       
                                                                                                    
@@ -494,8 +497,11 @@
                                                                                                     
                                                                                                    
                                                                                                         <div class="timeComment">
-                                                                                                            <em class="icon ni ni-clock"></em>
-                                                                                                            <span class="text-muted">{{ $reply->time }}</span>
+                                                                                                            <dfn data-info="{{ $reply->created_at }}">
+
+                                                                                                                <em class="icon ni ni-clock"></em>
+                                                                                                                <span class="text-muted">{{ $reply->time }}</span>
+                                                                                                            </dfn>
                                                                                                         </div>
                                                                                                       
                                                                                                    

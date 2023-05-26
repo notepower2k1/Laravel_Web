@@ -247,15 +247,14 @@
 
                                                                                         @else
 
-                                                                                        <li style="background-color:rgb(215, 208, 208)">
-                                                                                            <a>
-                                                                                                <em class="icon ni ni-flag"></em>
-                                                                                                <span>Đã báo cáo</span>
-                                                                                            </a>
-                                                                                        </li>
-                                                                                        @endif
-                                                                                     
+                                                                                            <li style="background-color:rgb(215, 208, 208)">
+                                                                                                <a>
+                                                                                                    <em class="icon ni ni-flag"></em>
+                                                                                                    <span>Đã báo cáo</span>
+                                                                                                </a>
+                                                                                            </li>
                                                                                         
+                                                                                     
                                                                                         @endif
                                                                                     @else
                                                                                         <li>           
@@ -723,6 +722,8 @@
 
                     tinyMCE.remove("textarea#reply_textarea");
                     $("#reply-box").remove();
+                    $('.total-comment-span').text(res.totalComments + " ");
+
 
                 })
                 .fail(function(jqXHR, textStatus, errorThrown) {
@@ -914,6 +915,8 @@
                             }, 2500);
 
                             $("#comment-box").load(" #comment-box > *")
+
+                            $('.total-comment-span').text(res.totalComments + " ");
 
                         })
                         .fail(function(jqXHR, textStatus, errorThrown) {

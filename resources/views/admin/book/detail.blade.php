@@ -1,7 +1,7 @@
 @extends('admin/layouts.app')
 @section('pageTitle', 'Chi tiết sách điện tử')
 @section('content')
-<div class="container">
+<div class="container" >
 
     <ul class="breadcrumb breadcrumb-arrow">
         <li class="breadcrumb-item"><a href="/admin/book">Sách</a></li>
@@ -9,11 +9,21 @@
       </ul>
     <hr>    
 
-    <div class="d-flex justify-content-end mb-2">
-        <a href="#" class="btn btn-outline-danger delete-button" data-id="{{ $book->id }}" data-name="{{ $book->name }}">
-            <em class="icon ni ni-trash"></em><span>Xóa</span>
-        </a>
+
+    <div class="d-flex justify-content-end mb-2" id ="book-render-div">
+
+        @if($book->deleted_at == null)
+            <a href="#" class="btn btn-outline-danger delete-button" data-id="{{ $book->id }}" data-name="{{ $book->name }}">
+                <em class="icon ni ni-trash"></em><span>Xóa</span>
+            </a>
+        @else 
+            <button class="btn btn-outline-primary" id="verification_item_button" data-id="{{ $book->id }}" data-name="{{ $book->name }}">
+                <em class="icon ni ni-file-check-fill"></em>
+                <span>Khôi phục dữ liệu</span>
+            </button>
+        @endif
     </div>
+   
    
 
     <div class="nk-content-inner">
@@ -53,12 +63,7 @@
                                                 <div class="fs-16px fw-bold text-secondary" id="totalBookMarking">{{ $book->totalBookMarking }}</div>
                                             </li>
                                             
-                                            @if($book->file)
-                                            <li>
-                                                <div class="fs-14px text-muted">File</div>
-                                                <div class="fs-16px fw-bold text-secondary" id="totalBookMarking"><a href="{{ $book->bookUrl }}">File</a></div>
-                                            </li>
-                                            @endif
+                                        
                                         </ul>
                                     </div>
                                     
@@ -89,11 +94,22 @@
                                         <h6 class="title">Thể loại</h6>
                                         <ul class="d-flex flex-wrap ailgn-center g-2 pt-1">                                     
                                             <li class="ms-n1">
-                                                <a href="/the-loai/the-loai-sach/{{$book->types->slug}}" class="btn btn-primary">{{ $book->types->name }}</a>
+                                                <a href="#" class="btn btn-primary">{{ $book->types->name }}</a>
                                             </li>         
                                         </ul>
                                     </div><!-- .product-meta -->
-                                    
+
+                                    @if($book->file)
+                                    <div class="product-meta">
+                                        <h6 class="title">File đính kèm</h6>
+                                        <ul class="d-flex flex-wrap ailgn-center g-2 pt-1">                                     
+                                            <li class="ms-n1">
+                                                <a href="{{ $book->bookUrl }}" class="btn btn-primary">File</a>
+                                            </li>         
+                                        </ul>
+                                   
+                                    </div>
+                                    @endif
                                 </div><!-- .product-info -->
                                
                               
@@ -553,6 +569,7 @@
                     timer: 2500
                 });
 
+                $('#book-render-div').load(' #book-render-div > *')
             })
             .fail(function(jqXHR, textStatus, errorThrown) {
             // If fail
@@ -919,6 +936,47 @@
          
         }
       })
+    })
+
+
+    
+  $(document).on('click','#verification_item_button',function(){
+        const book_id = $(this).data('id');
+        var data = [];
+         data.push(book_id);
+
+        $.ajax({ 
+            type:"GET",
+            url:'/admin/deleted/book/recovery',
+            data: {'data':data}   
+            })
+            .done(function() {
+            // If successful
+        
+
+            Swal.fire({
+                icon: 'success',
+                title: `Khôi phục thành công!!!`,
+                showConfirmButton: false,
+                timer: 2500
+            });
+
+            $('#book-render-div').load(' #book-render-div > *')
+
+
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            Swal.fire({
+                        icon: 'error',
+                        title: `Đổi trạng thái không thành công`,
+                        showConfirmButton: false,
+                        timer: 2500
+                    });
+            })
+
+        
+
     })
 </script>
 @endsection
