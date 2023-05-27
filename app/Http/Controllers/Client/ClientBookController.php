@@ -353,10 +353,7 @@ class ClientBookController extends Controller
     }
     public function getMatrix(){
 
-        $month = Carbon::now()->month;
-
-
-        $bookRatings = ratingBook::whereMonth('created_at', $month)->get();
+        $bookRatings = ratingBook::all();
         $matrix = array();
 
         foreach($bookRatings as $book){
@@ -527,6 +524,10 @@ class ClientBookController extends Controller
             $book->save();
         }
        
+
+        report::where('identifier_id','=',$request->book_id)->where('type_id','=','10')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString()
+        ]);
 
 
         return response()->json([

@@ -124,26 +124,29 @@
                                                     <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
                                                     <div class="dropdown-menu dropdown-menu-end">
                                                         <ul class="link-list-opt no-bdr">
-                                                            <li><a href="/quan-ly/chi-tiet-sach/{{ $book->id }}">
-                                                            <em class="icon ni ni-eye"></em><span>Thông tin chi tiết</span>
-                                                            </a>
+                                                            <li>
+                                                                <a href="/quan-ly/chi-tiet-sach/{{ $book->id }}">
+                                                                    <em class="icon ni ni-eye"></em><span>Thông tin chi tiết</span>
+                                                                </a>
+                                                            </li>
+                                                           
+                                                            @if($book->status == -1)
+                                                            <li>
+                                                                <a href="/quan-ly/cap-nhat-sach/{{ $book->id }}">
+                                                                <em class="icon ni ni-edit"></em><span>Cập nhật</span>
+                                                                </a>
                                                             </li>
                                                             <li>
-                                                            @if($book->status == -1)
-                                                            <li><a href="/quan-ly/cap-nhat-sach/{{ $book->id }}">
-                                                                <em class="icon ni ni-edit"></em><span>Cập nhật</span>
-                                                            </a>
-                                                            </li>
-                                                            <li><a href="#" class="re-verified" data-id="{{ $book->id }}" data-name="{{ $book->name }}" data-option="2">
+                                                                <a href="#" class="re-verified" data-id="{{ $book->id }}" data-name="{{ $book->name }}" data-option="2">
                                                                 <em class="icon ni ni-regen"></em><span>Gửi xét duyệt lại</span>
-                                                              </a>
-                                                            </li>     
-                                                            <a href="#" class="delete-button" data-id="{{ $book->id }}" data-name="{{ $book->name }}" data-option="2">
-                                                                <em class="icon ni ni-trash"></em><span>Xóa</span>
-                                                              </a>
-                                                            </li>
+                                                                </a>
+                                                            </li>    
                                                             @endif
-
+                                                            <li>
+                                                                <a href="#" class="delete-button" data-id="{{ $book->id }}" data-name="{{ $book->name }}" data-option="2">
+                                                                    <em class="icon ni ni-trash"></em><span>Xóa</span>
+                                                                </a>
+                                                            </li>
                                                         </ul>
                                                     </div>
                                                 </div>
@@ -212,12 +215,13 @@
                                                             <em class="icon ni ni-regen"></em><span>Gửi xét duyệt lại</span>
                                                           </a>
                                                         </li>     
-                                                        <li><a href="#" class="delete-button" data-id="{{ $document->id }}" data-name="{{ $document->name }}" data-option="1">
-                                                            <em class="icon ni ni-trash"></em><span>Xóa</span>
-                                                          </a>
-                                                        </li>        
+                                                             
                                                         @endif                                    
-
+                                                        <li>
+                                                            <a href="#" class="delete-button" data-id="{{ $book->id }}" data-name="{{ $book->name }}" data-option="2">
+                                                                <em class="icon ni ni-trash"></em><span>Xóa</span>
+                                                            </a>
+                                                        </li>
                                                     </ul>
                                                 </div>
                                             </div>

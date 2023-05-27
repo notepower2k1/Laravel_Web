@@ -31,176 +31,46 @@ use PhpScience\TextRank\TextRankFacade;
 use OpenAI\Laravel\Facades\OpenAI;
 class PagesController extends Controller
 {
-    public function similarity_distance($matrix,$person1,$person2){
+   
+    public function getRecommendationByType(){      
+        $userID = Auth::user()->id;
 
-        $similar = array();
-        $sum = 0;
-        foreach($matrix[$person1] as $key=>$value){
+        $list = DB::select("SELECT reading_histories.bookID from reading_histories 
+        where bookID not in (SELECT DISTINCT(reading_histories.bookID) from reading_histories where reading_histories.userID = 1)
+        group by reading_histories.bookID
+        order by sum(reading_histories.total) desc
+        LIMIT 5");
 
-            if (array_key_exists($key,$matrix[$person2])){
-                $similar[$key] = 1;
-            }
 
+        $listUserNotReadBook = collect();
+        foreach ($list as $item){
+            $book = Book::where('id','=',$item->bookID)->first();
+            $listUserNotReadBook->push($book);
         }
 
-       
-        if($similar==0){
-            return 0;
-        }
+        // return $listUserNotReadBook;
 
-        foreach($matrix[$person1] as $key=>$value){
 
-            if (array_key_exists($key,$matrix[$person2])){
-               
-                $sum = $sum + pow($value - $matrix[$person2][$key],2);
+
+        $rankTypeBook = DB::select("SELECT books.type_id, 
+        SUM(`total`) as 'total' FROM reading_histories join books 
+        on reading_histories.bookID = books.id WHERE `userID` = $userID
+        GROUP BY `books`.`type_id` 
+        ORDER BY total desc
+        limit 2");
+
+        $listUserNotReadBookByTypeRank = collect();
+
+        foreach ($rankTypeBook as $rank){
+            $temp = $listUserNotReadBook->where('type_id',$rank->type_id);
+
+
+            if($temp->count() > 0 ){
+                $listUserNotReadBookByTypeRank->push($temp);
+
             }
         }
-
-        return 1 / (1+ sqrt($sum));
-    }
-
-    public function getBookSlug($id){
-        $book = Book::where('id',$id)->where('deleted_at',null)->first();
-
-        return $book->slug;
-
-    }
-
-    public function getMatrix2(){
-
-        $month = Carbon::now()->month;
-
-        $readingHistory = readingHistory::selectRaw('SUM(total) as total,bookID,userID')->whereMonth('created_at', $month)->groupBy(['bookID','userID'])->get();
-        $matrix = array();
-
-        foreach($readingHistory as $book){
-            $users = User::where('id','=',$book->userID)->get();
-
-            foreach($users as $user){
-                $matrix[$user->name][$this->getBookSlug($book->bookID)] = $book->total;
-            }
-
-        }    
-
-        return $matrix;
-    }
-
-    public function getRecommendation($matrix,$person){
-
-        $total = array();
-        $simsums = array();
-        $ranks = array();
-        foreach($matrix as $otherPerson=>$value){
-
-            if($otherPerson != $person){
-                $sim = $this->similarity_distance($matrix,$person,$otherPerson);
-
-                foreach($matrix[$otherPerson] as $key=>$value){
-                    if(!array_key_exists($key,$matrix[$person])){
-
-                        if(!array_key_exists($key,$total)){
-                            $total[$key]=0;
-
-                        }
-                        $total[$key]+=$matrix[$otherPerson][$key]*$sim;
-
-                        if(!array_key_exists($key,$simsums)){
-                            $simsums[$key]=0;
-                        }
-
-                        $simsums[$key]+=$sim;
-
-                    }
-                }
-            }
-        }
-
-        foreach($total as $key=>$value){
-            $ranks[$key] = $value/$simsums[$key];
-        }
-
-        array_multisort($ranks,SORT_DESC);  
-        return $ranks;
-    } 
-
-    public function getRecommendationByType(){
-
-            //Ranks by total reading
-            $matrix = $this->getMatrix2();
-
-            $list = $this->getRecommendation($matrix,Auth::user()->name);
-    
-    
-            $listUserNotReadBook = collect();
-            foreach ($list as $item=>$total){
-                $book = Book::where('slug','=',$item)->first();
-                $listUserNotReadBook->push($book);
-            }
-    
-            // return $listUserNotReadBook;
-    
-    
-            $userID = Auth::user()->id;
-    
-            $rankTypeBook = DB::select("SELECT books.type_id, 
-            SUM(`total`) as 'total' FROM reading_histories join books 
-            on reading_histories.bookID = books.id WHERE `userID` = $userID
-            GROUP BY `books`.`type_id` 
-            ORDER BY total desc
-            limit 2");
-    
-            $listUserNotReadBookByTypeRank = collect();
-    
-            foreach ($rankTypeBook as $rank){
-                $temp = $listUserNotReadBook->where('type_id',$rank->type_id);
-    
-    
-                if($temp->count() > 0 ){
-                    $listUserNotReadBookByTypeRank->push($temp);
-    
-                }
-            }
-            return $listUserNotReadBookByTypeRank->first();
-    
-            // $listbooks = Book::all()->pluck('id')->toArray();
-    
-            // $listUserReadBookID = readingHistory::where('userID',Auth::user()->id)->pluck('bookID')->toArray(); 
-    
-            // $listUserNotReadBookID = array_diff($listbooks, $listUserReadBookID);
-    
-            // $listUserNotReadBookID = array_values($listUserNotReadBookID);
-    
-            // $listUserNotReadBook = collect();
-    
-            // foreach ($listUserNotReadBookID as $bookID){
-            //     $book = Book::findOrFail($bookID);
-            //     $listUserNotReadBook->push($book);
-            // }
-        
-            // $userID = Auth::user()->id;
-    
-            // $rankTypeBook = DB::select("SELECT books.type_id, 
-            // SUM(`total`) as 'total' FROM reading_histories join books 
-            // on reading_histories.bookID = books.id WHERE `userID` = $userID
-            // GROUP BY `books`.`type_id` 
-            // ORDER BY total desc
-            // limit 2");
-    
-            // $listUserNotReadBookWithTypeRank = collect();
-    
-            // foreach ($rankTypeBook as $rank){
-            //     $temp = $listUserNotReadBook->where('type_id',$rank->type_id);
-    
-    
-            //     if($temp->count() > 0 ){
-            //         $listUserNotReadBookWithTypeRank->push($temp);
-    
-            //     }
-            // }
-    
-            // $listUserNotReadBookByTypeRank = $listUserNotReadBookWithTypeRank->SortByDesc('totalReading');
-    
-            // return $listUserNotReadBookByTypeRank;
+        return $listUserNotReadBookByTypeRank->first();
     }
 
    
@@ -549,44 +419,6 @@ class PagesController extends Controller
         ->with('documentsWithSameType',$documentsWithSameType);
 
     
-    }
-
- 
-     
-    public function summarizePage(){
-
-        return view('client.homepage.summarize_page');
-
-    }
-
-    public function summarizeText(Request $request){
-
-        $text = $request -> input('text');
-        $api = new TextRankFacade();
-
-        $analyzedKeyWords = $request -> analyzedKeyWords;
-        $expectedSentences = $request -> expectedSentences;
-
-        $summarizeType = 0;
-
-        $result = $api->summarizeTextFreely($text,$analyzedKeyWords,$expectedSentences,$summarizeType);
-
-        return response()->json([
-            'result' => $result,
-        ]);
-
-    }   
-
-    public function getKeywords(Request $request){
-        $text = $request -> input('text');
-
-
-        $api = new TextRankFacade();
-        $keywords = $api->getOnlyKeyWords($text); 
-
-        return response()->json([
-            'keywords' => $keywords
-        ]);
     }
 
 

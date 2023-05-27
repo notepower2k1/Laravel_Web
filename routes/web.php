@@ -49,6 +49,8 @@ Route::group(['middleware' => ['isVerified','isBanned']],function(){
 
 // Route::get("/tom-tat-tai-lieu",[PagesController::class,'summarizePage']);
 
+Route::get('/test',[ClientBookController::class,'test']);
+
 Route::get('/preview-item',[PagesController::class,'preview_item']);
 Route::get('/',[PagesController::class,'home_page']);
 

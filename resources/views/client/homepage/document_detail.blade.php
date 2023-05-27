@@ -256,7 +256,7 @@
                                                                                 <p class="card-text">{{ Str::limit($user_book->description,100) }}</p>
                                                                                 <div class="d-flex justify-content-center">
                                                                                     
-                                                                                    <a href="the-loai/sort_by=created_at/the-loai-sach/{{$user_book->types->slug}}" class="fs-13px"><span class="badge badge-dim bg-outline-danger">{{$user_book->types->name }}</span></a>
+                                                                                    <a href="/the-loai/sort_by=created_at/the-loai-sach/{{$user_book->types->slug}}" class="fs-13px"><span class="badge badge-dim bg-outline-danger">{{$user_book->types->name }}</span></a>
                                 
                                 
                                                                                 </div>
@@ -276,7 +276,7 @@
                                                                                     <p class="card-text">{{ Str::limit($user_document->description,100) }}</p>
                                                                                     <div class="d-flex justify-content-center">
                                                                                         
-                                                                                        <a href="the-loai/sort_by=created_at/the-loai-tai-lieu/{{$user_document->types->slug}}" class="fs-13px"><span class="badge badge-dim bg-outline-danger">{{$user_document->types->name }}</span></a>
+                                                                                        <a href="/the-loai/sort_by=created_at/the-loai-tai-lieu/{{$user_document->types->slug}}" class="fs-13px"><span class="badge badge-dim bg-outline-danger">{{$user_document->types->name }}</span></a>
                                     
                                     
                                                                                     </div>
