@@ -56,11 +56,12 @@
                                 <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false" data-export-title="Export">
                                     <thead>
                                         <tr class="nk-tb-item nk-tb-head">
+                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ngày đăng</span></th>
+
                                             <th class="nk-tb-col tb-col-mb"><span class="sub-text">Diễn đàn</span></th>        
 
                                             <th class="nk-tb-col"><span class="sub-text">Chủ đề</span></th>
                                             <th class="nk-tb-col tb-col-mb"><span class="sub-text">Người đăng</span></th>
-                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ngày đăng</span></th>
                                             <th class="nk-tb-col tb-col-lg"><span class="sub-text">Lần cập nhật cuối</span></th>        
                            
                                             <th class="nk-tb-col nk-tb-col-tools text-end">
@@ -71,9 +72,12 @@
                                       @foreach ($forum_posts as $forum_post)
 
                                         <tr class="nk-tb-item" id ="row-{{ $forum_post->id }}">
+                                          <td class="nk-tb-col tb-col-lg">
+                                            <span>{{ $forum_post->created_at }}</span>
 
+                                          </td>
                                           <td class="nk-tb-col tb-col-mb">
-                                            <span>{{ $forum_post->forums->name }}</span>
+                                            <a href="/admin/forum/post/{{  $forum_post->forums->id }}">{{ $forum_post->forums->name }}</a>
                                           </td>       
                                           <td class="nk-tb-col">
                                               <div class="user-card">                                           
@@ -85,10 +89,7 @@
                                           <td class="nk-tb-col tb-col-mb">
                                             <span>{{  $forum_post->users->name }}</span>
                                           </td>
-                                          <td class="nk-tb-col tb-col-lg">
-                                            <span>{{ $forum_post->created_at }}</span>
-
-                                          </td>
+                                        
                                           
                                           <td class="nk-tb-col tb-col-lg">
                                             <span>{{ $forum_post->updated_at }}</span>
@@ -123,7 +124,7 @@
 
                                                                   </li>
                                                                   <li><a href="/admin/forum/post/{{$forum_post->id}}/edit"><em class="icon ni ni-edit"></em><span>Cập nhật</span></a></li>
-                                                                  <li><a href="/admin/forum/post/{{$forum_post->id}}/detail"><em class="icon ni ni-eye"></em><span>Chi tiết</span></a></li>
+                                                                  <li><a href="/admin/forum/post/{{$forum_post->id}}/{{ \Carbon\Carbon::now()->year }}/detail"><em class="icon ni ni-eye"></em><span>Chi tiết</span></a></li>
 
 
                                                               </ul>
@@ -160,7 +161,7 @@
       "language": {
           "lengthMenu": "Hiển thị: _MENU_ đối tượng",
           "search": "Tìm kiếm _INPUT_",
-          'info':"",
+          'info':"_PAGE_ - _PAGES_ của _MAX_",
           "zeroRecords": "Không tìm thấy dữ liệu",
           "infoEmpty": "Không có dữ liệu hợp lệ",
           "infoFiltered": "(Lọc từ _MAX_ dữ liệu)",

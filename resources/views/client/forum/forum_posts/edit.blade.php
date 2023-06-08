@@ -63,9 +63,9 @@
         plugins: [
             "advlist", "anchor", "autolink", "charmap", "code", "fullscreen", 
             "help", "image", "insertdatetime", "link", "lists", "media", 
-            "preview", "searchreplace", "table", "visualblocks",
+            "preview", "searchreplace", "table", "visualblocks"," wordcount","emoticons",
         ],
-        toolbar: "undo redo |  bold italic underline strikethrough | link image | forecolor ",
+        toolbar: "undo redo |  bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | emoticons | wordcount",
         image_title: true,
         /* enable automatic uploads of images represented by blob or data URIs*/
         images_upload_url: '/upload',

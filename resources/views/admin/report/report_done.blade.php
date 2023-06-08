@@ -55,9 +55,12 @@
             <table class="datatable-init nowrap nk-tb-list nk-tb-ulist mt-2" data-auto-responsive="false" data-export-title="Export">
                 <thead>
                     <tr class="nk-tb-item nk-tb-head">
+                        <th class="nk-tb-col"><span class="sub-text">Báo cáo về</span></th>
+                        <th class="nk-tb-col tb-col-md"><span class="sub-text">Đối tượng</span></th>
                         <th class="nk-tb-col"><span class="sub-text">Ngày báo cáo</span></th>
-                        <th class="nk-tb-col tb-col-md"><span class="sub-text">Loại báo cáo</span></th>
                         <th class="nk-tb-col tb-col-md"><span class="sub-text">Người báo cáo</span></th>
+                        <th class="nk-tb-col tb-col-md"><span class="sub-text">Lý do</span></th>
+
                         <th class="nk-tb-col nk-tb-col-tools text-end">
                         </th>
                     </tr>
@@ -69,19 +72,147 @@
 
                     
                         <td class="nk-tb-col">
+                            @switch ($report->type_id)
+                                @case(1)
+                                    <span class="badge rounded-pill bg-outline-primary">
+                                        Sách
+                                    </span>
+                                    @break;
+                                @case(2)
+                                    <span class="badge rounded-pill bg-outline-secondary">
+                                        Chương của sách 
+                                    </span>
+                                    @break;
+                                @case(3)
+                                    <span class="badge rounded-pill bg-outline-warning">
+                                        Tài liệu
+                                    </span>
+                    
+                                    @break;
+                                @case(4)
+                                    <span class="badge rounded-pill bg-outline-info">
+                                        Bài viết
+                                    </span>
+                                    @break;
+                                @case(5)
+                                    <span class="badge rounded-pill bg-outline-danger">
+                                        Người dùng
+                                    </span>
+                                    @break;
+                                @case(6)
+                                    <span class="badge rounded-pill bg-outline-gray">
+                                        Bình luận
+                                    </span>
+
+                                    @break;
+                              
+                                @case(7)
+                                    <span class="badge rounded-pill bg-outline-light">
+                                        Phản hồi bình luận
+                                    </span>
+                                   
+                                    @break;   
+                        
+                                @case(8)
+
+                                    <span class="badge rounded-pill bg-outline-dark">
+                                        Đánh giá của sách                                 
+                                    </span>
+                                @break;   
+                                @default:
+                                    <span class="">
+                                        Lỗi
+                                    </span>
+                            
+                            @endswitch
+                        </td>
+                        <td class="nk-tb-col tb-col-md">
+                            @switch ($report->type_id)
+                                @case(1)
+                    
+                                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->name }}">
+                                    {{ Str::limit($report->identifier->name,30) }}
+                                    </span>
+
+                                    @break;
+                                @case(2)
+                                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->code }}">
+                                        {{ Str::limit($report->identifier->code,30) }}
+                                    </span>
+                                    @break;
+                                @case(3)
+                                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->name }}">
+                                        {{ Str::limit($report->identifier->name,30) }}
+                                    </span>
+                    
+                                    @break;
+                                @case(4)
+                                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->topic }}">
+                                    {{ Str::limit($report->identifier->topic,30) }}
+                                    </span>             
+                                    @break;
+                                @case(5)
+                                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->name }}">
+                                    {{ Str::limit($report->identifier->name,30) }}
+                                    </span>
+                                    @break;
+                                @case(6)
+
+                                    @if($report->identifier->type_id == 1)
+                                    <span>
+                                        Bình luận về tài liệu
+                                    </span>
+                                    @endif
+                                    
+                                    @if($report->identifier->type_id == 2)
+                                    <span>
+                                        Bình luận về sách
+                                    </span>
+                                    @endif
+
+                                    
+                                    @if($report->identifier->type_id == 3)
+                                    <span>
+                                        Bình luận về bài viết
+                                    </span>
+                                    @endif
+                                    @break;
+                              
+                                @case(7)
+
+                                    <span>
+                                        Phản hồi của bình luận
+
+                                    </span>
+                                    @break;   
+                        
+                                @case(8)
+
+                                    <span>
+                                        Đánh giá của sách
+                                    </span>
+                                @break;   
+                                @default:
+                                    <a href="#"></a>
+                            
+                            @endswitch
+                        </td>
+                        <td class="nk-tb-col">
                             <div class="user-card">                                           
                                 <div class="user-info">
                                     <span class="tb-lead">{{ $report->created_at}}</span>
                                 </div>
                             </div>
                         </td>
-                        <td class="nk-tb-col tb-col-md">
-                            <span>{{  $report->types->name }}</span>
-                        </td>
+                     
                         <td class="nk-tb-col tb-col-md">
                             <span>{{ $report->users->email  }}</span>
 
-                        </td>                                                                                                                                                                                                                                      
+                        </td>   
+                        <td class="nk-tb-col tb-col-md">
+                            <span class="text-danger">{{ $report->reasons->name  }}</span>
+
+                        </td>                                                                                                                                                                                                                            
                         <td class="nk-tb-col nk-tb-col-tools">
                             <button class="btn btn-icon btn-lg ni ni-eye detail-btn" data-id="{{ $report->id }}"></button>
                             <button class="d-none" id="show-modal-btn"  data-bs-toggle="modal" data-bs-target="#modalTabs"></button>
@@ -98,10 +229,10 @@
 @endsection
 @section('modal')
 <div class="modal fade" tabindex="-1" id="modalTabs" style="display: none;" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <a href="#" class="close" data-bs-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
-            <div class="modal-body modal-body-md">
+            <div class="modal-body modal-body-xl">
                 <h4 class="title">Chi tiết báo cáo</h4>
                 <ul class="nk-nav nav nav-tabs" role="tablist">
                     <li class="nav-item" role="presentation">
@@ -113,12 +244,14 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active show" id="tabItem1" role="tabpanel">
+                        <h5><strong>Lý do báo cáo: </strong><span id="report-reason"></span></h5>
+                        <h5><strong>Ghi chú: </strong><span id="report-description"></span></h5>
+                        <hr>
                         <h4 class="title" id="report-title">Báo cáo về sách</h4>
                         <hr class="shadow hr">
                         <div id="item-detail-ul">
                         </div>         
                         <hr class="shadow hr">
-                        <h5><strong>Lý do báo cáo: </strong><span id="report-reason"></span></h5>
                         <hr class="shadow hr">
                         <a href="#" class="btn btn-dim btn-danger" id="item-detail-url">Thông tin chi tiết</a>
                     </div>
@@ -151,7 +284,7 @@
         "language": {
             "lengthMenu": "Hiển thị: _MENU_ đối tượng",
             "search": "Tìm kiếm _INPUT_",
-            'info':"",
+            'info':"_PAGE_ - _PAGES_ của _MAX_",
             "zeroRecords": "Không tìm thấy dữ liệu",
             "infoEmpty": "Không có dữ liệu hợp lệ",
             "infoFiltered": "(Lọc từ _MAX_ dữ liệu)",
@@ -220,19 +353,20 @@
             renderArea.empty(); 
             renderArea2.empty(); 
 
+
             $('#report-title').text(`${res.title}`);
             $("#item-detail-url").attr("href", `${res.itemUrl}`);
 
-                  
+                
             
             $("#user-detail-url").attr("href", `${res.userUrl}`);
 
             renderArea.append(`${res.content}`);
             renderArea2.append(`${res.userContent}`);
 
-            $('#report-reason').text(`${res.reason}`)
-
-            $('#show-modal-btn').click();
+            $('#report-reason').text(`${res.reason}`);
+            $('#report-description').text(`${res.description}`);
+            $('#modalTabs').modal('show');
 
 
 

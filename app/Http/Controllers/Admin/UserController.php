@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\AdminMail;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -16,13 +17,16 @@ use App\Models\DocumentComment;
 use App\Models\DocumentCommentReply;
 use App\Models\Document;
 use App\Models\ForumPosts;
+use App\Models\loginHistory;
 use App\Models\Note;
 use App\Models\PostComment;
 use App\Models\PostCommentReply;
+use App\Models\readingHistory;
 use App\Models\Reply;
 use App\Models\ReplyLike;
 use App\Models\report;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -64,7 +68,7 @@ class UserController extends Controller
                     'deleted_at' => null
                 ]);
 
-        
+            
              
 
 
@@ -232,7 +236,17 @@ class UserController extends Controller
                     }
                 }
 
+                
+                $mailData = [
+                    'title' => 'Xin chào '. $user->profile->displayName . '!!!',
+                    'body' =>  'Tài khoản của bạn '. $user->name.' đã tạm thời bị khóa bởi quản trị viên vì nghi ngờ vi phạm chính sách của trang web.
+                    Bạn có thể liên hệ với quản trị viên qua mail này để giải đáp các thắc mắc của mình.',
+                    'content' => 'Xin cảm ơn!!!',
+                ];
+                
 
+                Mail::to($user->email)->send(new AdminMail($mailData));  
+                
 
                 break;
             default:
@@ -254,7 +268,11 @@ class UserController extends Controller
         $comments = Comment::where('userID','=',$id)->get();
         $notes = Note::where('type_id','=',3)->where('identifier_id','=',$id)->get();
 
+        $reading_histories = readingHistory::where('userID','=',$id)->get();
+        $login_histories = loginHistory::where('userID','=',$id)->get();
         return view('admin.user.detail')
+        ->with('reading_histories',$reading_histories)
+        ->with('login_histories',$login_histories)
         ->with('notes',$notes)
         ->with('books',$books)
         ->with('documents',$documents)
@@ -290,23 +308,27 @@ class UserController extends Controller
         $user->deleted_at = Carbon::now()->toDateTimeString();
         $user->save();
 
-        Book::where('userCreatedID','=',$user->id)->update([
+        Book::where('userCreatedID','=',$request->id)->update([
             'deleted_at' => null
         ]);
 
-        Document::where('userCreatedID','=',$user->id)->update([
+        Document::where('userCreatedID','=',$request->id)->update([
             'deleted_at' => null
         ]);
 
-        ForumPosts::where('userCreatedID','=',$user->id)->update([
+        ForumPosts::where('userCreatedID','=',$request->id)->update([
             'deleted_at' => null
         ]);
 
         
-        Comment::where('userID','=',$user->id)->update([
+        Comment::where('userID','=',$request->id)->update([
             'deleted_at' => null
         ]);
         
+        report::where('identifier_id','=',$request->id)->where('type_id','=','5')->update([
+            'status' => 0
+        ]);
+
         return response()->json([
             'message' => 'Xóa thành viên thành công'
         ]); 

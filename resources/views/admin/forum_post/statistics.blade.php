@@ -151,12 +151,12 @@
                     <div class="col-sm-6 col-lg-6 col-xxl-6">
                         <div class="gallery card card-bordered">
                             @if($post->firstImage)
-                            <a href="/admin/forum/post/{{ $post->id }}/detail">
+                            <a href="/admin/forum/post/{{ $post->id }}/{{ \Carbon\Carbon::now()->year }}/detail">
                                 <img class="w-100 rounded-top" src="{{ $post->firstImage }}" style="height:270px" alt="">
                             </a>
 
                             @else
-                            <a  href="/admin/forum/post/{{ $post->id }}/detail">
+                            <a  href="/admin/forum/post/{{ $post->id }}/{{ \Carbon\Carbon::now()->year }}/detail">
                                 <img class="w-100 rounded-top" src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/banner/post_no_Image.png" style="height:270px" alt="">
                             </a>
 

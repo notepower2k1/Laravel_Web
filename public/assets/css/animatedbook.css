@@ -1,11 +1,10 @@
 @import url(http://fonts.googleapis.com/css?family=Indie+Flower);
 
-.book{
-	::before , ::after {
-		content: "";
-	  }
-	  
+.ribbon::before , .ribbon::after {
+	content: "";
 }
+	  
+
 
 
 

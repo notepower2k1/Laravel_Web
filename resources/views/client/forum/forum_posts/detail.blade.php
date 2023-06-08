@@ -150,7 +150,7 @@
                                                                         @if($reportComment->where('identifier_id','=',$comment->id)->first())
                                                                             @if($reportComment->where('identifier_id','=',$comment->id)->first()->isEnabled)
                                                                                 <li>
-                                                                                    <a class="report-comment-btn" data-id={{ $comment->id }} data-type=8 data-user="{{ $comment->users->profile->displayName  }}" 
+                                                                                    <a class="report-comment-btn" data-id={{ $comment->id }} data-type=6 data-user="{{ $comment->users->profile->displayName  }}" 
                                                                                         data-bs-toggle="modal" data-bs-target="#reportFormComment"
                                                                                         href="#">
                                                                                         <em class="icon ni ni-flag"></em>
@@ -170,7 +170,7 @@
                                                                         @else
                                                                             <li>
 
-                                                                                <a class="report-comment-btn" data-id={{ $comment->id }} data-type=8 data-user="{{ $comment->users->profile->displayName  }}" 
+                                                                                <a class="report-comment-btn" data-id={{ $comment->id }} data-type=6 data-user="{{ $comment->users->profile->displayName  }}" 
                                                                                     data-bs-toggle="modal" data-bs-target="#reportFormComment"
                                                                                     href="#">
                                                                                     <em class="icon ni ni-flag"></em>
@@ -237,7 +237,7 @@
                                                                                     @if($reportReply->where('identifier_id','=',$reply->id)->first())
                                                                                         @if($reportReply->where('identifier_id','=',$reply->id)->first()->isEnabled)
                                                                                             <li>
-                                                                                                <a class="report-comment-btn" data-id={{ $reply->id }} data-type=9 data-user="{{ $reply->users->profile->displayName  }}" 
+                                                                                                <a class="report-comment-btn" data-id={{ $reply->id }} data-type=7 data-user="{{ $reply->users->profile->displayName  }}" 
                                                                                                     data-bs-toggle="modal" data-bs-target="#reportFormComment"
                                                                                                     href="#">
                                                                                                     <em class="icon ni ni-flag"></em>
@@ -259,7 +259,7 @@
                                                                                     @else
                                                                                         <li>           
 
-                                                                                            <a class="report-comment-btn" data-id={{ $reply->id }} data-type=9 data-user="{{ $reply->users->profile->displayName  }}" 
+                                                                                            <a class="report-comment-btn" data-id={{ $reply->id }} data-type=7 data-user="{{ $reply->users->profile->displayName  }}" 
                                                                                                 data-bs-toggle="modal" data-bs-target="#reportFormComment"
                                                                                                 href="#">
                                                                                                 <em class="icon ni ni-flag"></em>
@@ -469,7 +469,7 @@
             "help", "image", "insertdatetime", "link", "lists", "media", 
             "preview", "searchreplace", "table", "visualblocks","emoticons"
         ],
-        toolbar: "undo redo |  bold italic underline strikethrough | link image | forecolor | emoticons ",
+        toolbar: "undo redo |  bold italic underline strikethrough | link image | emoticons | wordcount",
         image_title: true,
         /* enable automatic uploads of images represented by blob or data URIs*/
         images_upload_url: '/upload',
@@ -644,9 +644,9 @@
                     plugins: [
                         "advlist", "anchor", "autolink", "charmap", "code", "fullscreen", 
                         "help", "image", "insertdatetime", "link", "lists", "media", 
-                        "preview", "searchreplace", "table", "visualblocks","emoticons"
+                        "preview", "searchreplace", "table", "visualblocks"," wordcount","emoticons",
                     ],
-                    toolbar: "undo redo |  bold italic underline strikethrough | link image | forecolor | emoticons",
+                    toolbar: "undo redo |  bold italic underline strikethrough | link image | emoticons | wordcount",
                     image_title: true,
                     /* enable automatic uploads of images represented by blob or data URIs*/
                     images_upload_url: '/upload',

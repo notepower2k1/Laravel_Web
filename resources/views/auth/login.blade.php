@@ -1,4 +1,5 @@
 @extends('auth/layouts.app')
+@section('pageTitle','Đăng nhập')
 
 @section('content')
     <div class="brand-logo pb-4 text-center">
@@ -33,7 +34,7 @@
 
             </div>
             @endif
-            <form method="POST" action="{{ route('login') }}">
+            <form method="POST" action="/login">
                 @csrf
                 <div class="form-group">
                     <div class="form-label-group">

@@ -11,9 +11,14 @@ class BookType extends Model
     protected $table = 'book_types';
     protected $primaryKey = 'id';
     public $incrementing = false;
+    public $timestamps = false;
+
 
     //return $this->hasMany(Comment::class, 'foreign_key', 'local_key');
     //return $this->belongsTo(User::class, 'foreign_key', 'owner_key');
+
+    protected $fillable = ['name','slug'];
+
 
     protected $appends = ['total'];
 

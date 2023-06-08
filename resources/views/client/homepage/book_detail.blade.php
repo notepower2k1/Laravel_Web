@@ -1,5 +1,7 @@
 @extends('client/homepage.layouts.app')
-@section('pageTitle', `${{$book->name}}`)
+@section('pageTitle')
+{{$book->name}}
+@endsection
 @section('additional-style')
 <link rel="stylesheet" href="{{ asset('assets/css/book3d.css') }}">
 <link href="{{ asset('js/pagination/pagination.css') }}" rel="stylesheet" type="text/css">
@@ -193,15 +195,12 @@
                                                     </li>
                                                     @if($book->file)
                                                     <li class="ms-n1">
-                                                        @if(Auth::check())
+                                                        
 
-                                                        <a href="#" id="read-pdf-btn" class="btn btn-lg btn-warning">
+                                                        <a href="/doc-sach-pdf/{{ $book->slug }}/pdf"  class="btn btn-lg btn-warning">
                                                             <em class="icon ni ni-arrow-right-circle"></em><span>PDF</span>
                                                         </a>
-                                                        @else
-                                                        <a href="/login" class="btn btn-lg btn-warning"><em class="icon ni ni-download"></em><span id="span-text">PDF</span></a>
-
-                                                        @endif
+                                                       
                                                     </li>
                                                     @endif
                                                 </ul>
@@ -675,7 +674,7 @@
 
                                                                                                     @if($reportReply->where('identifier_id','=',$reply->id)->first())
                                                                                                         @if($reportReply->where('identifier_id','=',$reply->id)->first()->isEnabled)
-                                                                                                            <span class="report-comment-btn" data-id={{ $reply->id }} data-type=9 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                                            <span class="report-comment-btn" data-id={{ $reply->id }} data-type=7 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
                                                                                                                 <em class="icon ni ni-flag fs-16px me-2 "></em>
                                                                                                             </span>
                                                                                                         @else
@@ -689,7 +688,7 @@
                                                                                                         @endif
                                                                                                     @else
 
-                                                                                                        <span class="report-comment-btn" data-id={{ $reply->id }} data-type=9 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                                        <span class="report-comment-btn" data-id={{ $reply->id }} data-type=7 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
                                                                                                             <em class="icon ni ni-flag fs-16px me-2 "></em>
                                                                                                         </span>
                                                                                                     @endif
@@ -826,7 +825,7 @@
 
                                                                                         <em class="icon ni ni-clock"></em>
                                                                                         <span class="text-muted">{{ $person->time }}</span>
-                                                                                    </dfn>                                                                                                <dfn data-info="{{ $reply->created_at }}">
+                                                                                    </dfn>
 
                                                                                 </div>
                                                                                   
@@ -1833,7 +1832,7 @@
             if (result.isConfirmed) {
                 const form = $('#reportFormRating');
 
-                const type_id = 10;
+                const type_id = 8;
                 const identifier_id = form.find('input[name="identifier_id"]').val();
                 const description = form.find('textarea[name="description"]').val();
                 var reason = form.find('select[name="reason"]').val();
@@ -2552,28 +2551,6 @@
     //     })
 
 
-        $('#read-pdf-btn').click(function(e) {
-            e.preventDefault();
-            const book_id = {!! $book_id !!};
-
-            $.ajax({
-            url:'/doc-sach-pdf/' + book_id,
-            type:"GET",
-            data:{
-        
-            }
-            })
-            .done(function(res) {
-                
-                window.location.href = res.url;
-            })
-
-            .fail(function(jqXHR, textStatus, errorThrown) {
-            // If fail
-            console.log(textStatus + ': ' + errorThrown);
-            })
-
-        })
 
 
     $('.preview-book-btn').on('click', function(e) {

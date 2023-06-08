@@ -25,17 +25,24 @@ class NoteController extends Controller
 
         switch ($option) {
             case 1:
-                $identifier = Book::where('deleted_at',null)->get(['id','name']);        
-
+                $identifier = Book::where('deleted_at',null)->where('status','=',0)->get(['id','name']);        
                 break;
             case 2:
-                $identifier = Document::where('deleted_at',null)->get(['id','name']);
-
+                $identifier = Document::where('deleted_at',null)->where('status','=',0)->get(['id','name']);
                 break;
             case 3:
-                $identifier = User::where('deleted_at',null)->get(['id','name']);  
+                $identifier = User::where('deleted_at',null)->where('email_verified_at','!=',null)->get(['id','name']);  
         
                 break;
+
+            case 4:
+                $identifier = Book::whereIn('status',['1','-2'])->get(['id','name']);        
+
+                break;
+            case 5:
+                $identifier = Document::whereIn('status',['1','-2'])->get(['id','name']);
+                break;
+
             default:
                 $identifier = collect();
         }
@@ -84,8 +91,13 @@ class NoteController extends Controller
 
         $itemList = array();
         foreach ($noteList as $note){
-            $item = '<li>'.$note->content.'</li>';
-
+            $item = 
+                '<div class="bq-note-text">'.
+                    '<p>'.$note->content.'</p>'.
+                '</div>'.
+                '<div class="bq-note-meta">'.
+                    '<span class="bq-note-added">Thời gian: <span class="date">'. Carbon::parse($note->created_at) .'</span></span>'.
+                '</div>';
             array_push($itemList,$item);
         }
 

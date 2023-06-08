@@ -26,6 +26,8 @@ class ClientFollowController extends Controller
         if($type == 1){
             $document = Document::findOrFail($request -> item_id);
             $document->totalDocumentMarking = $document->totalDocumentMarking + 1;
+            $document->timestamps = false;
+
             $document->save();
 
             $totalMarking = $document->totalDocumentMarking;
@@ -33,6 +35,8 @@ class ClientFollowController extends Controller
         if($type == 2){
             $book = Book::findOrFail($request -> item_id);
             $book->totalBookMarking = $book->totalBookMarking + 1;
+            $book->timestamps = false;
+
             $book->save();
 
             $totalMarking = $book->totalBookMarking;
@@ -51,12 +55,16 @@ class ClientFollowController extends Controller
         if($follow->type_id == 1){
             $document = Document::findOrFail($follow -> identifier_id);
             $document->totalDocumentMarking = $document->totalDocumentMarking - 1;
+            $document->timestamps = false;
+
             $document->save();
         }
 
         if($follow->type_id == 2){
             $book = Book::findOrFail($follow -> identifier_id);
             $book->totalBookMarking = $book->totalBookMarking - 1;
+            $book->timestamps = false;
+
             $book->save();
         }
 
@@ -68,5 +76,28 @@ class ClientFollowController extends Controller
         return response()->json([
             'success' => 'Bỏ theo dõi thành công'
         ]);
+    }
+
+    public function changeFollowIsDone(Request $request){
+
+        $follow = Follow::findOrFail($request->id);
+
+        $isDone = $follow->isDone;
+
+        if($isDone == 0){
+            $follow->isDone = 1;
+            $follow ->save();
+        }
+        else{
+            $follow->isDone = 0;
+            $follow ->save();
+        }
+   
+
+
+        return response()->json([
+            'success' => 'Đổi trạng thái thành công!!!',      
+        ]);
+      
     }
 }

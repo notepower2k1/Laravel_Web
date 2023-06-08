@@ -10,6 +10,7 @@ use App\Models\Book;
 use App\Models\bookMark;
 use App\Models\Follow;
 use App\Models\Notification;
+use App\Models\report;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -243,6 +244,11 @@ class ChapterController extends Controller
         $book ->save();
 
         $chapter ->save();
+
+
+        report::where('identifier_id','=',$chapter_id)->where('type_id','=','2')->update([
+            'status' => 0
+        ]);
     }   
 
         

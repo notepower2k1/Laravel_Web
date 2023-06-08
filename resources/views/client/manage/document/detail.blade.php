@@ -38,50 +38,87 @@
                         </div><!-- .col -->
                         <div class="col-lg-6 d-flex align-items-end">
                             <div class="product-info mb-5 me-xxl-5">
-                                    <h2 class="product-title">{{ $document->name }}                               
-                                    </h2>    
+                                    <h3 class="product-title">{{ $document->name }}                               
+                                    </h3>    
                                   
                                     
-                                <p class="product-title">Tác giả: {{ $document->author }}</p>                                                           
-                                <div class="product-meta">
-                                    <ul class="d-flex g-3 gx-5">                                          
-                                        <li>
-                                            <div class="fs-14px text-muted">Số trang</div>
-                                            <div class="fs-16px fw-bold text-secondary">{{ $document->numberOfPages }}</div>
-                                        </li>
-                                        <li>
-                                            <div class="fs-14px text-muted">Định dạng</div>
-                                            <div class="fs-16px fw-bold text-secondary">.{{ $document->extension }}</div>
-                                        </li>
-                                  
+                                    <div class="product-meta">
+                                        <ul class="d-flex g-3 gx-5">
+                                            <li>
+                                                <div class="fs-14px text-muted">Số trang</div>
+                                                <div class="fs-16px fw-bold text-secondary">{{ $document->numberOfPages }}</div>
+                                            </li>
+                                            <li>
+                                                <div class="fs-14px text-muted">Lượt tải</div>
+                                                <div class="fs-16px fw-bold text-secondary">{{ $document->totalDownloading }}</div>
+                                            </li>
+                                            <li>
+                                                <div class="fs-14px text-muted">Đánh dấu</div>
+                                                <div class="fs-16px fw-bold text-secondary" id="totalBookMarking">{{ $document->totalDocumentMarking }}</div>
+                                            </li>
+                                            <li>
+                                                <div class="fs-14px text-muted">Số bình luận</div>
+                                                <div class="fs-16px fw-bold text-secondary" id="totalBookMarking">{{ $document->totalComments }}</div>
+                                            </li>
                                         
-                                    </ul>
-                                </div>
-                                <div class="product-meta">
-                                    <h6 class="title">Ngôn ngữ: 
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="product-meta">
+                                        <span class="title">Tác giả:                                          
+                                        </span>
+                                        <span>{{ $document->author }}</span>                      
+
+                                    </div><!-- .product-meta -->
+  
+                                    <div class="product-meta">
+                                        <span class="title">Ngôn ngữ:                                
+                                        </span>
                                         @if ($document->language === 1)
                                         <span class="text-success fs-14px">Tiếng việt</span>
                                         @else
                                         <span class="text-info fs-14px">Tiếng anh</span>
 
                                         @endif 
-                                    </h6>
-                                  
-                                </div><!-- .product-meta -->
-                            
-                                <div class="product-meta">
-                                    <h6 class="title">Thể loại</h6>
-                                    <ul class="d-flex flex-wrap ailgn-center g-2 pt-1">                                     
-                                        <li class="ms-n1">
-                                            <a href="/the-loai/the-loai-tai-lieu/{{$document->types->slug}}" class="btn btn-primary">{{ $document->types->name }}</a>
-                                        </li>         
-                                    </ul>
-                                </div><!-- .product-meta -->
-                                <div class="product-meta">
+                                    </div><!-- .product-meta -->
+                                    <div class="product-meta">
+                                        <span class="title">Tình trạng:    
+                                        </span>
+                                        @if ($document->isCompleted === 1)
+                                        <span class="text-success fs-14px fw-bold">Đã hoàn thành</span>
+                                        @else
+                                        <span class="text-info fs-14px fw-bold">Chưa hoàn thành</span>
 
-                                    <h6 class="title">Flle đính kèm</h6>
-                                    <a href="{{ $document->documentUrl}}" class="btn btn-primary" download>File</a>
-                                </div><!-- .product-meta -->
+                                        @endif 
+                                    </div><!-- .product-meta -->
+                                    <div class="product-meta">
+                                        <span class="title">Thể loại:
+
+                                        </span>
+                                        <span class="text-warning fs-14px fw-bold">{{ $document->types->name }}</span>
+
+                                    </div><!-- .product-meta -->
+
+                                    <div class="product-meta">
+                                        <span class="title">File đính kèm: 
+                                        </span>
+                                        <a href="{{ $document->documentUrl }}">file.{{ $document->extension }}</a>       
+                                   
+                                    </div>
+
+                                    <div class="product-meta">
+                                        <span class="title">Ngày thêm: 
+                                        </span>
+                                        <span>{{ $document->created_at }}</span>                  
+                                    </div><!-- .product-meta -->
+
+                                    <div class="product-meta">
+                                        <span class="title">Lần cập nhật cuối: 
+
+                                        </span>
+                                        <span>{{ $document->updated_at }}</span>                       
+
+                                    </div><!-- .product-meta -->
                             </div><!-- .product-info -->
                             
                             
@@ -110,10 +147,4 @@
 @section('additional-scripts')
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-<script>
-
-    var value = document.getElementById('divhtmlContent').textContent;
-    document.getElementById('divhtmlContent').innerHTML =
-          marked.parse(value);
- </script>
 @endsection

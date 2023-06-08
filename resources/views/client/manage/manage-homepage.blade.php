@@ -1,4 +1,6 @@
 @extends('client/manage.layouts.app')
+@section('pageTitle', 'Trang quản lý')
+
 @section('content')
 
 <div class="nk-fmg-body">
@@ -35,10 +37,10 @@
             <div class="nk-block-head-xs">
                 <div class="nk-block-between g-2">
                     <div class="nk-block-head-content">
-                        <h6 class="nk-block-title title">Tài liệu đang duyệt</h6>
+                        <h6 class="nk-block-title title">Tài liệu điện tử đang duyệt</h6>
                     </div>
                     <div class="nk-block-head-content">
-                        <a href="#" class="link link-primary toggle-opt active" data-target="quick-access">
+                        <a href="#" class="link link-primary toggle-opt active" data-target="quick-access1">
                             <div class="inactive-text">
                                 <button class="btn btn-small btn-outline-primary">
                                     <em class="icon ni ni-eye"></em>
@@ -54,18 +56,18 @@
                     </div>
                 </div>
             </div><!-- .nk-block-head -->            
-            <div class="toggle-expand-content expanded" data-content="quick-access">
+            <div class="toggle-expand-content expanded" data-content="quick-access1">
                 <div class="card card-bordered card-preview">
                     <div class="card-inner">
                         <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false" data-export-title="Export">
                             <thead>
                                 <tr class="nk-tb-item nk-tb-head">                                 
                                     <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ảnh đại diện</span></th>
-                                    <th class="nk-tb-col tb-col-lg"><span class="sub-text">Tiêu đề</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text">Tiêu đề</span></th>
                                     <th class="nk-tb-col tb-col-lg"><span class="sub-text">Tác giả</span></th>
-                                    <th class="nk-tb-col tb-col-lg"><span class="sub-text">Danh mục</span></th>
-                                    <th class="nk-tb-col tb-col-mb"><span class="sub-text">Tình trạng</span></th>
-                                    <th class="nk-tb-col tb-col-md"><span class="sub-text">Ngày thêm</span></th>
+                                    <th class="nk-tb-col tb-col-lg"><span class="sub-text">Thể loại</span></th>
+                                    <th class="nk-tb-col tb-col-lg"><span class="sub-text">Tình trạng</span></th>
+                                    <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ngày thêm</span></th>
 
                                     {{-- <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ngày thêm</span></th> --}}
                                  
@@ -97,18 +99,11 @@
                                     
                                     <td class="nk-tb-col tb-col-lg status" >                                    
                                         @if ($book->status == 0)
-                                        <span class="text-primary">Đang duyệt</span>
+                                            <span class="badge badge-dim rounded-pill bg-outline-primary">Đang duyệt</span>
                                         @endif 
 
-                                        @if ($book->status == -1)
-                                            @if($notes->where('identifier_id','=',$book->id)->where('type_id','=',1)->count()>0)           
-                                                <a href="#" class="getReasonbtn" data-type = "1" data-identifier = {{ $book->id }} data-bs-toggle="tooltip" data-bs-placement="top" title="Xem lý do">
-                                                    <span class="badge badge-dim rounded-pill bg-outline-danger">Từ chối</span>
-                                                </a>                           
-                                            @else
-                                                <span class="badge badge-dim rounded-pill bg-outline-danger">Từ chối</span>
-                                            @endif
-
+                                        @if ($book->status == -1)                                     
+                                            <span class="badge badge-dim rounded-pill bg-outline-danger">Từ chối</span>
                                         @endif 
                                     </td>
                                       
@@ -129,7 +124,16 @@
                                                                     <em class="icon ni ni-eye"></em><span>Thông tin chi tiết</span>
                                                                 </a>
                                                             </li>
-                                                           
+                                                            
+                                                            <li>
+                                                                @if($notes->where('identifier_id','=',$book->id)->where('type_id','=',1)->count()>0)           
+                                                                    <a href="#" class="getReasonbtn" data-type = "1" data-identifier = {{ $book->id }}>
+                                                                        <em class="icon ni ni-clipboard"></em><span>Xem lý do</span>
+                                                                    </a>                                                                                
+                                                                @endif
+                                                            </li>
+                                                            <li class="divider"></li>
+
                                                             @if($book->status == -1)
                                                             <li>
                                                                 <a href="/quan-ly/cap-nhat-sach/{{ $book->id }}">
@@ -176,18 +180,10 @@
                                     </td>
                                     <td class="nk-tb-col tb-col-lg status" >                                    
                                         @if ($document->status == 0)
-                                        <span class="text-primary">Đang duyệt</span>
+                                        <span class="badge badge-dim rounded-pill bg-outline-primary">Đang duyệt</span>
                                         @endif 
-
-                                        @if ($document->status == -1)
-                                            @if($notes->where('identifier_id','=',$document->id)->where('type_id','=',2)->count()>0)           
-                                                <a href="#" class="getReasonbtn" data-type = "2" data-identifier = {{ $document->id }} data-bs-toggle="tooltip" data-bs-placement="top" title="Xem lý do">
-                                                    <span class="badge badge-dim rounded-pill bg-outline-danger">Từ chối</span>
-                                                </a>                           
-                                            @else
-                                                <span class="badge badge-dim rounded-pill bg-outline-danger">Từ chối</span>
-                                            @endif
-
+                                        @if ($document->status == -1)                                          
+                                            <span class="badge badge-dim rounded-pill bg-outline-danger">Từ chối</span>
                                         @endif 
                                     </td>
                                       
@@ -206,6 +202,15 @@
                                                         </a>
 
                                                         </li>
+
+                                                        <li>
+                                                            @if($notes->where('identifier_id','=',$document->id)->where('type_id','=',2)->count()>0)           
+                                                                <a href="#" class="getReasonbtn" data-type = "2" data-identifier = {{ $document->id }}>
+                                                                    <em class="icon ni ni-clipboard"></em><span class="badge badge-dim rounded-pill bg-outline-danger">Xem lý do</span>
+                                                                </a>                                                                                
+                                                            @endif
+                                                        </li>
+                                                        <li class="divider"></li>
                                                         @if($document->status == -1)
                                                         <li><a href="/quan-ly/cap-nhat-tai-lieu/{{ $document->id }}">
                                                             <em class="icon ni ni-edit"></em><span>Cập nhật</span>
@@ -218,9 +223,164 @@
                                                              
                                                         @endif                                    
                                                         <li>
-                                                            <a href="#" class="delete-button" data-id="{{ $book->id }}" data-name="{{ $book->name }}" data-option="2">
+                                                            <a href="#" class="delete-button" data-id="{{ $document->id }}" data-name="{{ $document->name }}" data-option="2">
                                                                 <em class="icon ni ni-trash"></em><span>Xóa</span>
                                                             </a>
+                                                        </li>
+                                                      
+                                                      
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </td>
+                                </tr><!-- .nk-tb-item  -->
+                            @endforeach
+                          
+                            
+                            </tbody>
+                        </table>
+                    </div>
+                </div><!-- .card-preview -->
+            </div>
+        </div>
+        <div class="nk-fmg-quick-list nk-block">  
+            <div class="nk-block-head-xs">
+                <div class="nk-block-between g-2">
+                    <div class="nk-block-head-content">
+                        <h6 class="nk-block-title title">Tài liệu điện tử bị khóa bởi quản trị viên</h6>
+                    </div>
+                    <div class="nk-block-head-content">
+                        <a href="#" class="link link-primary toggle-opt active" data-target="quick-access">
+                            <div class="inactive-text">
+                                <button class="btn btn-small btn-outline-primary">
+                                    <em class="icon ni ni-eye"></em>
+                                </button>
+                            </div>
+                            <div class="active-text">
+                                <button class="btn btn-small btn-outline-primary">
+                                <em class="icon ni ni-eye-off"></em>
+                                </button>
+
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div><!-- .nk-block-head -->            
+            <div class="toggle-expand-content expanded" data-content="quick-access">
+                <div class="card card-bordered card-preview">
+                    <div class="card-inner">
+                        <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false" data-export-title="Export">
+                            <thead>
+                                <tr class="nk-tb-item nk-tb-head">                                 
+                                    <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ảnh đại diện</span></th>
+                                    <th class="nk-tb-col"><span class="sub-text">Tiêu đề</span></th>
+                                    <th class="nk-tb-col tb-col-lg"><span class="sub-text">Tác giả</span></th>
+                                    <th class="nk-tb-col tb-col-lg"><span class="sub-text">Thể loại</span></th>
+                                    <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ngày thêm</span></th>
+
+                                    {{-- <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ngày thêm</span></th> --}}
+                                 
+
+                                    <th class="nk-tb-col nk-tb-col-tools text-end">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach ($lock_books as $book)
+                                <tr class="nk-tb-item" id ="row-book-{{ $book->id }}">                                                                      
+                                    <td class="nk-tb-col tb-col-lg">
+                                        <img class="image-fluid" src={{$book->url}} alt="..." style="width:100px" />
+                                    </td>
+                                    <td class="nk-tb-col">
+                                        <div class="user-card">                                           
+                                            <div class="user-info">
+                                                <span class="tb-lead">{{ Str::limit($book->name,30) }}<span class="dot dot-success d-md-none ms-1"></span></span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="nk-tb-col tb-col-lg">
+                                        <span>{{  $book->author }}</span>
+                                    </td>
+                                    <td class="nk-tb-col tb-col-lg">
+                                        <span>{{ $book->types->name }}</span>
+
+                                    </td>
+                                                           
+                                    <td class="nk-tb-col tb-col-lg">
+                                    <span>{{ $book->created_at }}</span>
+                                    </td>
+                                    <td class="nk-tb-col nk-tb-col-tools">
+                                        <ul class="nk-tb-actions gx-1">                                                
+                                            <li>
+                                                <div class="drodown">
+                                                    <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                                                    <div class="dropdown-menu dropdown-menu-end">
+                                                        <ul class="link-list-opt no-bdr">
+                                                            <li>
+                                                                <a href="/quan-ly/chi-tiet-sach/{{ $book->id }}">
+                                                                    <em class="icon ni ni-eye"></em><span>Thông tin chi tiết</span>
+                                                                </a>
+                                                            </li>
+                                                                                                          
+                                                            <li>
+                                                                @if($notes->where('identifier_id','=',$book->id)->where('type_id','=',4)->count()>0)           
+                                                                    <a href="#" class="getReasonbtn" data-type = "4" data-identifier = {{ $book->id }}>
+                                                                        <em class="icon ni ni-clipboard"></em><span>Xem lý do</span>
+                                                                    </a>                                                                                
+                                                                @endif
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr><!-- .nk-tb-item  -->
+                            @endforeach
+                            @foreach ($lock_documents as $document)
+                                <tr class="nk-tb-item" id ="row-document-{{ $document->id }}">                                                                    
+                                    <td class="nk-tb-col tb-col-lg">
+                                    <img class="image-fluid" src={{$document->url}} alt="..." style="width:100px" />
+                                    </td>
+                                    <td class="nk-tb-col">
+                                        <div class="user-card">                                           
+                                            <div class="user-info">
+                                                <span class="tb-lead">{{ Str::limit($document->name,30) }}<span class="dot dot-success d-md-none ms-1"></span></span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="nk-tb-col tb-col-lg">
+                                    <span>{{  $document->author }}</span>
+                                    </td>
+                                    <td class="nk-tb-col tb-col-lg">
+                                    <span>{{ $document->types->name }}</span>
+
+                                    </td>
+                                   
+                                      
+                                    <td class="nk-tb-col tb-col-lg">
+                                        <span>{{ $document->created_at }}</span>
+                                    </td>
+                                    <td class="nk-tb-col nk-tb-col-tools">
+                                    <ul class="nk-tb-actions gx-1">                                                
+                                        <li>
+                                            <div class="drodown">
+                                                <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <ul class="link-list-opt no-bdr">
+                                                        <li><a href="/quan-ly/chi-tiet-tai-lieu/{{ $document->id }}">
+                                                            <em class="icon ni ni-eye"></em><span>Thông tin chi tiết</span>
+                                                        </a>
+
+                                                        </li>                                                                               
+                                                        <li>
+                                                            @if($notes->where('identifier_id','=',$document->id)->where('type_id','=',5)->count()>0)           
+                                                                <a href="#" class="getReasonbtn" data-type = "5" data-identifier = {{ $document->id }}>
+                                                                    <em class="icon ni ni-clipboard"></em><span>Xem lý do</span>
+                                                                </a>                                                                                
+                                                            @endif
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -238,256 +398,7 @@
                 </div><!-- .card-preview -->
             </div>
         </div>
-        <div class="nk-fmg-listing nk-block-lg">
-             <div class="nk-block-head-xs">
-                <div class="nk-block-between g-2">
-                    <div class="nk-block-head-content">
-                        <h6 class="nk-block-title title">Thông tin tài liệu</h6>
-                    </div>
-                    <div class="nk-block-head-content">
-                        <ul class="nk-block-tools g-3 nav">
-                            <li><a data-bs-toggle="tab" href="#file-grid-view" class="nk-switch-icon active"><em class="icon ni ni-book"></em></a></li>
-                            <li><a class="nk-switch-icon"><em class="icon ni ni-swap"></em></a></li>
-                            <li><a data-bs-toggle="tab" href="#file-group-view" class="nk-switch-icon"><em class="icon ni ni-file-docs"></em></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="tab-content">
 
-                <div class="tab-pane active" id="file-grid-view">
-                    <div class="nk-fmg-body-head d-none d-lg-flex">
-                        {{-- <em class="icon ni ni-search"></em>
-                        <input type="text" class="form-control border-transparent form-focus-none" placeholder="Search files, folders"> --}}
-                        <div class="w-100">
-                            <div class="form-group">
-                                <label class="form-label" for="book-search-1">Tên sách</label>
-                                <div class="form-control-wrap ">
-                                    <select class="form-select book-search" id="book-search-1" name="book-search-1" data-placeholder="Chọn tên sách" required>
-                                        <option></option>
-                                        @foreach ($name_search as $item )
-                                        <option value="{{ $item->id }}">{{  $item->name }}</option>
-                                        @endforeach                                   
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="nk-fmg-body-content">
-                        <div class="nk-block-head nk-block-head-sm">
-                            <div class="nk-block-between position-relative">
-                              
-                                <div class="nk-block-head-content">
-                                    <ul class="nk-block-tools g-1">
-                                        <li class="d-lg-none">
-                                            <a href="#" class="btn btn-trigger btn-icon search-toggle toggle-search" data-target="search"><em class="icon ni ni-search"></em></a>
-                                        </li>                          
-                                    </ul>
-                                </div>
-                                <div class="search-wrap px-2 d-lg-none" data-search="search">
-                                    <div class="w-100">
-                                        <div class="form-group">
-                                            <label class="form-label" for="book-search-2">Tên sách</label>
-                                            <div class="form-control-wrap ">
-                                                <select class="form-select book-search" id="book-search-2" name="book-search-2" data-placeholder="Chọn tên sách" required>
-                                                    <option></option>
-
-                                                    @foreach ($name_search as $item )
-                                                    <option value="{{ $item->id }}">{{  $item->name }}</option>
-                                                    @endforeach    
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div><!-- .search-wrap -->
-                            </div>
-                        </div>
-                        <div class="container" id="book-render">
-                            @if($high_reading_book)
-
-                                <div class="nk-files nk-files-view-grid">                 
-                                    <div class="card card-bordered">
-                                        <div class="card-inner">
-                                            <div class="row">
-                                                <div class="col-lg-4">
-                                                    <div class="product-gallery" >    
-                                                        <img src="{{ $high_reading_book->url }}" class="w-100" alt="">                                     
-                                                </div>
-                                                </div><!-- .col -->
-                                                <div class="col-lg-6">
-                                                    <div class="product-info mb-5 me-xxl-5">
-                                                        <h2 class="product-title">{{ $high_reading_book->name }}                                                
-                                                        </h2>                                                         
-                                                        <p class="product-title">Tác giả: {{ $high_reading_book->author }}</p>                 
-                                                        <div class="product-meta">
-                                                            <h6 class="title">Ngôn ngữ: 
-                                                                @if ($high_reading_book->language === 1)
-                                                                <span class="text-success">Tiếng việt</span>
-                                                                @else
-                                                                <span class="text-info">Tiếng anh</span>
-                    
-                                                                @endif 
-                                                            </h6>
-                                                        
-                                                        </div><!-- .product-meta -->                            
-                                                         <div class="product-meta">
-                                                            <h6 class="title">Thể loại</h6>                                     
-                                                            <span class="text-success">{{ $high_reading_book->types->name }}</span>
-                                                        </div><!-- .product-meta -->  
-                                                        <div class="product-meta">
-                                                            <h6 class="title">Số chương</h6>                                     
-                                                            <span class="text-success">{{ $high_reading_book->numberOfChapter }}</span>
-                                                        </div><!-- .product-meta -->    
-                                                        <div class="product-meta">
-                                                            <h6 class="title">Đánh giá</h6>
-                                                            <span class="text-success">{{ $high_reading_book->ratingScore }}</span>
-                                                        </div><!-- .product-meta -->         
-                                                        <div class="product-meta">
-                                                            <h6 class="title">Lượt đọc</h6>
-                                                            <span class="text-success">{{ $high_reading_book->totalReading }}</span>
-                                                        </div><!-- .product-meta -->                        
-                                                        <div class="product-meta">
-                                                            <h6 class="title">Số bình luận</h6>
-                                                            <span class="text-success">{{ $high_reading_book->totalComments }}</span>
-                                                        </div><!-- .product-meta -->   
-                                                        <div class="product-meta">
-                                                            <h6 class="title">Lượt theo dõi</h6>
-                                                            <span class="text-success">{{ $high_reading_book->totalBookMarking }}</span>
-                                                        </div><!-- .product-meta -->   
-                                                    </div><!-- .product-info -->
-                                                
-                                                
-                                                </div><!-- .col -->
-                                            </div><!-- .row -->                                            
-                                        </div>
-                                    </div>
-                                </div><!-- .nk-files -->                        
-                            @endif
-                        </div>
-                    </div>
-
-                </div><!-- .tab-pane -->
-              
-
-                <div class="tab-pane" id="file-group-view">
-                    <div class="nk-fmg-body-head d-none d-lg-flex">
-                        {{-- <em class="icon ni ni-search"></em>
-                        <input type="text" class="form-control border-transparent form-focus-none" placeholder="Search files, folders"> --}}
-                        <div class="w-100">
-                            <div class="form-group">
-                                <label class="form-label" for="document-search-1">Tên tài liệu</label>
-                                <div class="form-control-wrap ">
-                                    <select class="form-select document-search" id="document-search-1" name="document-search-1" data-placeholder="Chọn tên tài liệu" required>
-                                        <option></option>
-
-                                        @foreach ($document_search as $item )
-                                        <option value="{{ $item->id }}">{{  $item->name }}</option>
-                                        @endforeach    
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="nk-fmg-body-content">
-                        <div class="nk-block-head nk-block-head-sm">
-                            <div class="nk-block-between position-relative">                           
-                                <div class="nk-block-head-content">
-                                    <ul class="nk-block-tools g-1">
-                                        <li class="d-lg-none">
-                                            <a href="#" class="btn btn-trigger btn-icon search-toggle toggle-search" data-target="search"><em class="icon ni ni-search"></em></a>
-                                        </li>                          
-                                    </ul>
-                                </div>
-                                <div class="search-wrap px-2 d-lg-none" data-search="search">
-                                    <div class="w-100">
-                                        <div class="form-group">
-                                            <label class="form-label" for="document-search-2">Tên tài liệu</label>
-                                            <div class="form-control-wrap ">
-                                                <select class="form-select document-search" id="document-search-2" name="document-search-2" data-placeholder="Chọn tên tài liệu" required>
-                                                    <option></option>
-
-                                                    @foreach ($document_search as $item )
-                                                    <option value="{{ $item->id }}">{{  $item->name }}</option>
-                                                    @endforeach    
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div><!-- .search-wrap -->
-                            </div>
-                        </div>
-                        <div class="container" id="document-render">
-                            @if($high_downloading_document)
-
-                            <div class="nk-files nk-files-view-group">
-                                <div class="card card-bordered">
-                                    <div class="card-inner">
-                                        <div class="row">
-                                            <div class="col-lg-4">
-                                                <div class="product-gallery" >    
-                                                    <img src="{{ $high_downloading_document->url }}" alt="">                                     
-                                            </div>
-                                            </div><!-- .col -->
-                                            <div class="col-lg-6 d-flex align-items-end">
-                                                <div class="product-info mb-5 me-xxl-5">
-                                                    <h2 class="product-title">{{ $high_downloading_document->name }}                                                
-                                                    </h2>                                                         
-                                                    <p class="product-title">Tác giả: {{ $high_downloading_document->author }}</p>                 
-                                                    <div class="product-meta">
-                                                        <h6 class="title">Ngôn ngữ: 
-                                                            @if ($high_downloading_document->language === 1)
-                                                            <span class="text-success">Tiếng việt</span>
-                                                            @else
-                                                            <span class="text-info">Tiếng anh</span>
-                
-                                                            @endif 
-                                                        </h6>
-                                                    
-                                                    </div><!-- .product-meta -->                            
-                                                    <div class="product-meta">
-                                                        <h6 class="title">Thể loại</h6>                                     
-                                                        <span class="text-success">{{ $high_downloading_document->types->name }}</span>
-                                                    </div><!-- .product-meta -->  
-                                                    <div class="product-meta">
-                                                        <h6 class="title">Số trang</h6>
-                                                        <span class="text-success">{{ $high_downloading_document->numberOfPages }}</span>
-                                                    </div><!-- .product-meta -->                                               
-                                                    <div class="product-meta">
-                                                        <h6 class="title">Lượt tải</h6>
-                                                        <span class="text-success">{{ $high_downloading_document->totalDownloading }}</span>
-                                                    </div><!-- .product-meta -->                        
-                                                    <div class="product-meta">
-                                                        <h6 class="title">Số bình luận</h6>
-                                                        <span class="text-success">{{ $high_downloading_document->totalComments }}</span>
-                                                    </div><!-- .product-meta -->   
-                                                    <div class="product-meta">
-                                                        <h6 class="title">File đỉnh kèm</h6>
-                                                        <a href="{{ $high_downloading_document->documentUrl }}">
-                                                            file.{{ $high_downloading_document->extension }}
-                                                        </a>
-                                                    </div><!-- .product-meta -->  
-                                                    <div class="product-meta">
-                                                        <h6 class="title">Lượt theo dõi</h6>
-                                                        <span class="text-success">{{ $high_downloading_document->totalDocumentMarking }}</span>
-                                                    </div><!-- .product-meta -->    
-                                                </div><!-- .product-info -->
-                                            
-                                            
-                                            </div><!-- .col -->
-                                        </div><!-- .row -->                                            
-                                    </div>
-                                </div>
-                            
-                            </div><!-- .nk-files -->
-                            @endif
-                        
-                        </div>
-                    </div>
-                </div><!-- .tab-pane -->
-                
-            </div>
-       
-    </div>
 </div>
 
 @endsection
@@ -503,8 +414,14 @@
                 </a>
             </div>
             <div class="modal-body">
-                <ul class="list list-checked">
-                </ul>
+                <div class="bq-note">
+                    <div class="bq-note-item" id="note-reason-render">
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light">
+                <span class="sub-text">Liên hệ với quản trị viên qua nguyenthach617@gmail.com để biết thêm chi tiết</span>
             </div>
         </div>
     </div>
@@ -520,26 +437,6 @@
 
     $(function(){
       
-        $('#book-search-1').select2({
-            placeholder:"Đổi sách",
-
-        });
-
-        $('#book-search-2').select2({
-            placeholder:"Đổi sách",
-
-        });
-
-        $('#document-search-1').select2({
-            placeholder:"Đổi tài liệu",
-
-        });
-
-        $('#document-search-2').select2({
-            placeholder:"Đổi tài liệu",
-        });
-
-
         $('#DataTables_Table_0 tbody').on('click','.delete-button',function(e){
             e.preventDefault();
             var item_id = $(this).data('id');
@@ -679,59 +576,9 @@
     })
     
 
-    $('.book-search').change(function() {
+  
 
-        const id = $(this).val();
-        var renderArea = $('#book-render');
-
-        $.ajax({
-            type:"GET",
-            url:'/quan-ly/xem-thong-tin-co-ban',
-            data : {
-                "option": 2,
-                'id': id,
-            },
-            })
-            .done(function(res) {
-            // If successful     
-              
-                renderArea.empty();
-                renderArea.append(res.res).hide().show('slow');            
-                
-                
-            })
-            .fail(function(jqXHR, textStatus, errorThrown) {
-            // If fail
-            console.log(textStatus + ': ' + errorThrown);
-         });
-    })
-
-    $('.document-search').change(function() {
-
-        const id = $(this).val();
-        var renderArea = $('#document-render');
-
-        $.ajax({
-            type:"GET",
-            url:'/quan-ly/xem-thong-tin-co-ban',
-            data : {
-                "option": 1,
-                'id': id,
-            },
-            })
-            .done(function(res) {
-            // If successful     
-            
-                renderArea.empty();
-                renderArea.append(res.res).hide().show('slow');            
-                
-                
-            })
-            .fail(function(jqXHR, textStatus, errorThrown) {
-            // If fail
-            console.log(textStatus + ': ' + errorThrown);
-        });
-    });
+  
 
     $('.getReasonbtn').on('click', function(e) {
         e.preventDefault();
@@ -751,7 +598,7 @@
 
                 const listItem = res.res;
             
-                $('#reasonModal').find('ul').empty().append(listItem);
+                $('#reasonModal').find('#note-reason-render').empty().append(listItem);
 
                 $('#reasonModal').modal('show');
                 

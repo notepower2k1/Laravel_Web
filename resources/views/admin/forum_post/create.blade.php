@@ -22,13 +22,13 @@
             @csrf
             <input type="hidden" name="forum_id" value={{ $forum_id }}>
 
-            <label>Chủ đề<sup>*</sup></label>
+            <label class="form-label">Chủ đề<sup>*</sup></label>
             <input type="text" required
             name="topic"
             class="form-control mb-4 col-6"> 
 
 
-            <label>Nội dung</label>
+            <label class="form-label">Nội dung</label>
             <textarea id="mytextarea" 
             required 
             name="content" 
@@ -47,94 +47,94 @@
 <script>
      $("button[type=submit]").click(function() {
 
-$(this).attr("disabled","disabled");
+        $(this).attr("disabled","disabled");
 
-    Swal.fire({
-    title: 'Đang thêm dữ liệu!',
-    text: 'Vui lòng đợi thêm dữ liệu.',
-    imageUrl: 'https://raw.githubusercontent.com/notepower2k1/MyImage/main/gif/codevember-day-6-bookshelf-loader.gif',
-    imageWidth: 400,
-    imageHeight: 200,
-    imageAlt: 'Custom image',
-    showConfirmButton: false
-});
-
-
-$(this).parent().submit();
-});
-  $(function () {
-        tinymce.init({
-        entity_encoding : "raw",
-        selector: '#mytextarea',
-        branding: false,
-        statusbar: false,
-        height: 800,
-        resize: false,
-        menubar: false,
-        plugins: [
-            "advlist", "anchor", "autolink", "charmap", "code", "fullscreen", 
-            "help", "image", "insertdatetime", "link", "lists", "media", 
-            "preview", "searchreplace", "table", "visualblocks",
-        ],
-        toolbar: "undo redo |  bold italic underline strikethrough | link image | forecolor ",
-        image_title: true,
-        /* enable automatic uploads of images represented by blob or data URIs*/
-        images_upload_url: '/upload',
-        automatic_uploads: false,
-        file_picker_types: 'image',
-        /* and here's our custom image picker*/
-        file_picker_callback: function (cb, value, meta) {
-            var input = document.createElement('input');
-            input.setAttribute('type', 'file');
-            input.setAttribute('accept', 'image/*');
-
-            input.onchange = function () {
-            var file = this.files[0]; 
-            var reader = new FileReader();
-            reader.onload = function () {
-                var id = 'blobid' + (new Date()).getTime();
-                var blobCache =  tinymce.activeEditor.editorUpload.blobCache;
-                var base64 = reader.result.split(',')[1];
-                var blobInfo = blobCache.create(id, file, base64);
-                blobCache.add(blobInfo);
-
-                /* call the callback and populate the Title field with the file name */
-                cb(blobInfo.blobUri(), { title: file.name });
-            };
-            reader.readAsDataURL(file);
-            };
-
-            input.click();
-        },
-        content_style: 'body { font-size: 16px; font-family: Roboto; }' 
+            Swal.fire({
+            title: 'Đang thêm dữ liệu!',
+            text: 'Vui lòng đợi thêm dữ liệu.',
+            imageUrl: 'https://raw.githubusercontent.com/notepower2k1/MyImage/main/gif/codevember-day-6-bookshelf-loader.gif',
+            imageWidth: 400,
+            imageHeight: 200,
+            imageAlt: 'Custom image',
+            showConfirmButton: false
         });
 
-    })
-    
 
-  
+        $(this).parent().submit();
+        });
+    $(function () {
+            tinymce.init({
+            entity_encoding : "raw",
+            selector: '#mytextarea',
+            branding: false,
+            statusbar: false,
+            height: 800,
+            resize: false,
+            menubar: false,
+            plugins: [
+                "advlist", "anchor", "autolink", "charmap", "code", "fullscreen", 
+                "help", "image", "insertdatetime", "link", "lists", "media", 
+                "preview", "searchreplace", "table", "visualblocks",
+            ],
+            toolbar: "undo redo |  bold italic underline strikethrough | link image | forecolor ",
+            image_title: true,
+            /* enable automatic uploads of images represented by blob or data URIs*/
+            images_upload_url: '/upload',
+            automatic_uploads: false,
+            file_picker_types: 'image',
+            /* and here's our custom image picker*/
+            file_picker_callback: function (cb, value, meta) {
+                var input = document.createElement('input');
+                input.setAttribute('type', 'file');
+                input.setAttribute('accept', 'image/*');
 
+                input.onchange = function () {
+                var file = this.files[0]; 
+                var reader = new FileReader();
+                reader.onload = function () {
+                    var id = 'blobid' + (new Date()).getTime();
+                    var blobCache =  tinymce.activeEditor.editorUpload.blobCache;
+                    var base64 = reader.result.split(',')[1];
+                    var blobInfo = blobCache.create(id, file, base64);
+                    blobCache.add(blobInfo);
 
-    $('#add-btn').click(function(){
-        var content = tinymce.activeEditor.getContent("myTextarea");
-        if(content){
+                    /* call the callback and populate the Title field with the file name */
+                    cb(blobInfo.blobUri(), { title: file.name });
+                };
+                reader.readAsDataURL(file);
+                };
 
-        tinymce.activeEditor.uploadImages().then((response)=>{
-        var update_content = tinymce.activeEditor.getContent("myTextarea");
-            $('#addForm').attr('action', "/admin/forum/post").submit();
+                input.click();
+            },
+            content_style: 'body { font-size: 16px; font-family: Roboto; }' 
+            });
 
         })
-            
-        }
-        else{
-        Swal.fire({
-                icon: 'error',
-                title: `Vui lòng điền nội dung`,
-                showConfirmButton: false,
-                timer: 2500
-            });    
-        }
-    })
+        
 
-</script>
+    
+
+
+        $('#add-btn').click(function(){
+            var content = tinymce.activeEditor.getContent("myTextarea");
+            if(content){
+
+            tinymce.activeEditor.uploadImages().then((response)=>{
+            var update_content = tinymce.activeEditor.getContent("myTextarea");
+                $('#addForm').attr('action', "/admin/forum/post").submit();
+
+            })
+                
+            }
+            else{
+            Swal.fire({
+                    icon: 'error',
+                    title: `Vui lòng điền nội dung`,
+                    showConfirmButton: false,
+                    timer: 2500
+                });    
+            }
+        })
+
+    </script>
 @endsection

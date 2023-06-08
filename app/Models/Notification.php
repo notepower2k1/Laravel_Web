@@ -29,47 +29,43 @@ class Notification extends Model
     }
     public function getIdentifierAttribute()
     {
-        $option = $this->type_id;
+        $type = $this->type_id;
         $identifier = '';
 
 
-        switch ($option) {
+        switch ($type) {
             case 1:
+                $item = Comment::findOrFail($this->identifier_id);
+                $identifier = $item;
+                break;
+            
+            case 2:
+                $item = Reply::findOrFail($this->identifier_id);
+                $identifier = $item;
+                break;
+            case 3:
+                $item = ForumPosts::findOrFail($this->identifier_id);
+                $identifier = $item;
+                break;
+            case 4:
+            case 6:
+            case 8:
+            case 10:
                 $item = Book::findOrFail($this->identifier_id);
                 $identifier = $item;
                 break;
-            case 2:
-                $item = Document::findOrFail($this->identifier_id);        
-                $identifier = $item;
-  
-                break;
-            case 3:
-                $item = ForumPosts::findOrFail($this->identifier_id);  
-                $identifier = $item;
-        
-                break;
-            case 4:
-                $item = Comment::findOrFail($this->identifier_id);
-                $book = Book::findOrFail($item->identifier_id);
-                $identifier = $book;
-       
-                break;
             case 5:
-                $item = Comment::findOrFail($this->identifier_id);
-                $document = Document::findOrFail($item->identifier_id);
-                $identifier = $document;
-         
+            case 7:
+            case 9:
+            case 11:
+                $item = Document::findOrFail($this->identifier_id);
+                $identifier = $item;
                 break;
-            case 6:
-                $item = Comment::findOrFail($this->identifier_id);
-                $post = ForumPosts::findOrFail($item->identifier_id);
-                $identifier = $post;
-         
-                break;
+          
             default:
                 $identifier = '';
-        }
-        
+            }
+      
         return $identifier;
 
     }

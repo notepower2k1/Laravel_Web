@@ -1,4 +1,5 @@
 @extends('auth/layouts.app')
+@section('pageTitle','Đăng ký')
 
 @section('content')
     <div class="nk-block nk-block-middle nk-auth-body wide-xs">
@@ -23,7 +24,7 @@
     
                 </div>
                 @endif
-                <form method="POST" action="{{ route('register') }}">
+                <form method="POST" action="/register">
                     @csrf
                     <div class="form-group">
                         <label class="form-label">Tên tài khoản</label>

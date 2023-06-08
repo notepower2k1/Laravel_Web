@@ -9,6 +9,7 @@ use App\Models\Document;
 
 use App\Models\ForumPosts;
 use App\Models\Reply;
+use App\Models\report;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -62,6 +63,8 @@ class CommentController extends Controller
                   $document->timestamps = false;
 
                   $document ->save();
+
+                
               }
               else{
                   $document = Document::findOrFail($comment->identifier_id);
@@ -71,7 +74,9 @@ class CommentController extends Controller
                   $document ->save();
               }
   
-         
+              report::where('identifier_id','=',$comment->identifier_id)->where('type_id','=','7')->update([
+                'status' => 0
+              ]);
               break;
           case 2:
               if($total){
@@ -89,7 +94,10 @@ class CommentController extends Controller
                   $book ->save();
               }
            
-  
+              
+              report::where('identifier_id','=',$comment->identifier_id)->where('type_id','=','6')->update([
+                'status' => 0
+              ]);
   
               break;
           case 3:
@@ -108,7 +116,10 @@ class CommentController extends Controller
                   $post->timestamps = false;
                   $post ->save();
               }
-           
+              
+              report::where('identifier_id','=',$comment->identifier_id)->where('type_id','=','8')->update([
+                'status' => 0
+              ]);
               break;
           default:
   
@@ -116,7 +127,7 @@ class CommentController extends Controller
         
   
      
-    
+      
 
     }
 
@@ -156,10 +167,13 @@ class CommentController extends Controller
 
     public function delete_user_reply($item_id){
       
-      $reply = Reply::findOrFail($item_id);
+        $reply = Reply::findOrFail($item_id);
         $reply->deleted_at = Carbon::now()->toDateTimeString();
         $reply ->save();
 
+        report::where('identifier_id','=',$item_id)->where('type_id','=','9')->update([
+          'status' => 0
+        ]);
 
         $comment = Comment::findOrFail($reply->commentID);
         $comment->totalReplies = $comment->totalReplies - 1;
@@ -172,6 +186,9 @@ class CommentController extends Controller
                 $document->totalComments = $document->totalComments - 1;
                 $document->timestamps = false;
                 $document ->save();
+
+
+
                 break;
             case 2:         
 

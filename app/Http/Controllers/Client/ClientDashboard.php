@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\Auth;
 class ClientDashboard extends Controller
 {
     public function index(){
-        $notes = Note::where('type_id','!=',3);
-        $waiting_books = Book::where('userCreatedID','=',Auth::user()->id)->where('deleted_at','=',null)->where('status','!=',1)->get();
-        $waiting_documents = Document::where('userCreatedID','=',Auth::user()->id)->where('deleted_at','=',null)->where('status','!=',1)->get();
+        $notes = Note::all();
+        $waiting_books = Book::where('userCreatedID','=',Auth::user()->id)->where('deleted_at','=',null)->whereIn('status',['0','-1'])->get();
+        $waiting_documents = Document::where('userCreatedID','=',Auth::user()->id)->where('deleted_at','=',null)->whereIn('status',['0','-1'])->get();
         
         $high_reading_book = Book::where('userCreatedID','=',Auth::user()->id)->where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('totalReading')->first();
         $high_downloading_document = Document::where('userCreatedID','=',Auth::user()->id)->where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('totalDownloading')->first();
@@ -22,8 +22,14 @@ class ClientDashboard extends Controller
         $name_search = Book::where('userCreatedID','=',Auth::user()->id)->where('deleted_at','=',null)->where('status','=',1)->get(['name','id']);
         $document_search = Document::where('userCreatedID','=',Auth::user()->id)->where('deleted_at','=',null)->where('status','=',1)->get(['name','id']);
 
+
+        $lock_books = Book::where('userCreatedID','=',Auth::user()->id)->where('deleted_at','=',null)->where('status','-2')->get();
+        $lock_documents = Document::where('userCreatedID','=',Auth::user()->id)->where('deleted_at','=',null)->where('status','-2')->get();
+
         return view('client.manage.manage-homepage')
         ->with('notes',$notes)
+        ->with('lock_books',$lock_books)
+        ->with('lock_documents',$lock_documents)
         ->with('high_reading_book',$high_reading_book)
         ->with('high_downloading_document',$high_downloading_document)
         ->with('name_search',$name_search)

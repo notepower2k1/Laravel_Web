@@ -34,7 +34,7 @@ class Book extends Model
         return $this->hasMany(Chapter::class,'book_id','id');
     }
 
-    protected $appends = ['url','bookUrl','time'];
+    protected $appends = ['url','bookUrl','time','timeUpdate'];
 
     public function getUrlAttribute()
     {
@@ -80,6 +80,16 @@ class Book extends Model
         Carbon::setLocale('vi'); 
 
         $dt = new Carbon($this->created_at);
+        $now = Carbon::now();
+
+        return $dt->diffForHumans($now);
+    }
+
+    public function getTimeUpdateAttribute()
+    {
+        Carbon::setLocale('vi'); 
+
+        $dt = new Carbon($this->updated_at);
         $now = Carbon::now();
 
         return $dt->diffForHumans($now);

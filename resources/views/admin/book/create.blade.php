@@ -19,47 +19,54 @@
 
             </div>
             @endif
-        <form action="{{ route('book.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="/admin/book" method="POST" enctype="multipart/form-data">
 
             @csrf
             
-            <label>Tên sách<sup>*</sup></label>
+            <label class="form-label">Tên sách<sup>*</sup></label>
             <input type="text" required
             name="name"
             class="form-control mb-4 col-6" value="{{ old('name') }}" autofocus>
 
-            <label>Thể loại<sup>*</sup></label>
+            <label class="form-label">Thể loại<sup>*</sup></label>
             <select required class="form-select mb-4 col-6" name="book_type_id" id="book_type_id">
                 @foreach ($types as $type)
                 <option value="{{ $type->id }}" >{{ $type->name }}</option>
                 @endforeach
             </select>
 
-            <label class="mt-4">Tác giả<sup>*</sup></label>
+            <label class="form-label mt-4">Tác giả<sup>*</sup></label>
             <input type="text" required
             name="author"
-            class="form-control mb-4 col-6" value="{{ old('author') }}"  autocomplete="author"
+            class="form-control mb-4 col-6" value="{{ old('author') }}"
             data-bs-toggle="tooltip" data-bs-placement="top" title="Nếu nhiều tác giả, mỗi tác giả cách nhau một dấu phẩy (,)">		 	
         
-            <div id="accordion-2" class="accordion">
-              <div class="accordion-item">
-                  <a href="#" class="accordion-head" data-bs-toggle="collapse" data-bs-target="#accordion-item-2-1">
-                      <h6 class="title">Sách dạng file .pdf</h6>
-                      <span class="accordion-icon"></span>
-                  </a>
-                  <div class="accordion-body collapse" id="accordion-item-2-1" data-bs-parent="#accordion-2">
-                      <div class="accordion-inner">
-                        <label>File đính kèm</label>
-                        <input type="file"
-                        name="file_book" id="file_book"
-                        class="form-control col-6 " accept=".pdf">
+        
+            <div class="col-lg-7">
+              <ul class="custom-control-group">
+                  <li>
+                      <div class="custom-control custom-checkbox custom-control-pro no-control">
+                          <input value="0" type="radio" class="custom-control-input" name="btnIconRadio" id="btnIconRadio1" checked>
+                          <label class="custom-control-label text-success" for="btnIconRadio1"><em class="icon ni ni-book"></em><span>Chương</span></label>
                       </div>
-                  </div>
-              </div>    
+                  </li>
+                  <li>
+                      <div class="custom-control custom-checkbox custom-control-pro no-control">
+                          <input value="1" type="radio" class="custom-control-input" name="btnIconRadio" id="btnIconRadio2">
+                          <label class="custom-control-label text-primary" for="btnIconRadio2"><em class="icon ni ni-file-pdf"></em><span>File PDF</span></label>
+                      </div>
+                  </li>
+              </ul>
+            </div>
+         
+            <div class="mt-2" id="book-content-type" style="display:none">
+                <label class="form-label">File đính kèm</label>
+                <input type="file"
+                name="file_book" id="file_book"
+                class="form-control col-6 " accept=".pdf">
             </div>
 
-         
-            <label class="mt-4">Ảnh bìa<sup>*</sup></label>
+            <label class="mt-4 form-label">Ảnh bìa<sup>*</sup></label>
             <div class="d-flex">
               
               <div class="me-2">
@@ -77,19 +84,19 @@
           </div>
      
 
-            <label>Ngôn ngữ<sup>*</sup></label>
+            <label class="form-label">Ngôn ngữ<sup>*</sup></label>
             <select required class="form-select mb-4 col-6" name="language"  data-search="Ngôn ngữ">                           
                 <option value="1" >Tiếng việt</option>
                 <option value="0" >Tiếng anh</option>
             </select> 
 
-            <label>Mô tả<sup>*</sup></label>
+            <label class="form-label">Mô tả<sup>*</sup></label>
             <textarea     
             name="description"
             class="form-control mb-4" required
             ></textarea>
             
-            <label>Tiến độ<sup>*</sup></label>
+            <label class="form-label">Tiến độ<sup>*</sup></label>
             <select required class="form-control col-6 mb-4" name="isCompleted"> 
             <option value=0>Chưa hoàn thành</option>
             <option value=1>Đã hoàn thành</option>
@@ -118,17 +125,17 @@
 
    $("button[type=submit]").click(function() {
 
-    $(this).attr("disabled","disabled");
+      $(this).attr("disabled","disabled");
 
-        Swal.fire({
-        title: 'Đang thêm dữ liệu!',
-        text: 'Vui lòng đợi thêm dữ liệu.',
-        imageUrl: 'https://raw.githubusercontent.com/notepower2k1/MyImage/main/gif/codevember-day-6-bookshelf-loader.gif',
-        imageWidth: 400,
-        imageHeight: 200,
-        imageAlt: 'Custom image',
-        showConfirmButton: false
-    });
+          Swal.fire({
+          title: 'Đang thêm dữ liệu!',
+          text: 'Vui lòng đợi thêm dữ liệu.',
+          imageUrl: 'https://raw.githubusercontent.com/notepower2k1/MyImage/main/gif/codevember-day-6-bookshelf-loader.gif',
+          imageWidth: 400,
+          imageHeight: 200,
+          imageAlt: 'Custom image',
+          showConfirmButton: false
+      });
 
 
     $(this).parent().submit();
@@ -241,6 +248,19 @@
         }
     })
     
+    $('input[type="radio"]').on('change', function() {
+
+      const option = $(this).val();
+
+      if(option == 0){
+        $('#book-content-type').hide('slow');
+        $('input[name="file_book"]').val('');
+      }
+      else{
+        $('#book-content-type').show('slow');
+
+      }
+    })
     bookFileHandler();
 </script>
 

@@ -16,10 +16,10 @@
 
 				</div>
 				@endif
-			<form action="{{ route('forum.store') }}" method="POST">
+			<form action="/admin/forum" method="POST">
 
                 @csrf
-		 		<label>Tên<sup>*</sup></label>
+		 		<label class="form-label">Tên<sup>*</sup></label>
 		 		<input type="text" required
                 name="name"
 		 		class="form-control mb-4 col-6">
@@ -27,7 +27,7 @@
 		
 
 				 
-		 		<label>Mô tả</label>
+		 		<label class="form-label">Mô tả</label>
 		 		<textarea 
                 cols="50" 
                 rows="20" 

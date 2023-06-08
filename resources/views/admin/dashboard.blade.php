@@ -316,7 +316,7 @@
                 </div><!-- .card -->
             </div>
            
-            <div class="col-xxl-3 col-md-12 col-lg-6">
+            <div class="col-xxl-6 col-md-12 col-lg-6">
                 <div class="card card-full overflow-hidden">
                     <div class="nk-ecwg nk-ecwg7 h-100">
                             
@@ -335,14 +335,14 @@
                 </div><!-- .card -->
             </div>
            
-            <div class="col-xxl-3 col-md-12 col-lg-6">
+            <div class="col-xxl-6 col-md-12 col-lg-6">
                 <div class="card card-full overflow-hidden">
                     <div class="nk-ecwg nk-ecwg7 h-100">
                             
                         <div class="d-flex flex-column justify-content-center align-items-center h-100">
                             <div class="card-title-group mb-4">
                                 <div class="card-title">
-                                    <h6 class="title">Biểu đồ tổng số lượng các đối tượng trong tuần</h6>
+                                    <h6 class="title">Biểu đồ tổng số lượng các tài nguyên trong tuần</h6>
                                 </div>
                             </div>
                             <div class="nk-ecwg7-ck ms-auto me-auto" style="width:300px;height:300px">

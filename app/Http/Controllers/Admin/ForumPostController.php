@@ -11,6 +11,7 @@ use App\Models\Forum;
 use App\Models\Notification;
 use App\Models\Reply;
 use App\Models\report;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -32,11 +33,93 @@ class ForumPostController extends Controller
        
     }
 
-    public function detail($post_id){
-        $forum_post = ForumPosts::findOrFail($post_id);
-        $comments = Comment::where('type_id','=',3)->where('identifier_id','=',$post_id)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
+    public function detail($post_id,$year=null){
+        DB::statement("SET SQL_MODE=''");
 
+        $forum_post = ForumPosts::findOrFail($post_id);
+
+
+        
+        $allYears = DB::select("SELECT distinct year(comments.created_at) as 'year'
+        from comments where comments.type_id = 3");
+
+        $comments = Comment::where('type_id','=',3)->where('identifier_id','=',$post_id)->whereYear('created_at', '=', $year)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
+
+                
+
+        $totalCommentsPerMonth =  DB::select("SELECT 
+            SUM(IF(month = 'Jan', total, 0)) AS 'Tháng 1', 
+            SUM(IF(month = 'Feb', total, 0)) AS 'Tháng 2', 
+            SUM(IF(month = 'Mar', total, 0)) AS 'Tháng 3', 
+            SUM(IF(month = 'Apr', total, 0)) AS 'Tháng 4', 
+            SUM(IF(month = 'May', total, 0)) AS 'Tháng 5', 
+            SUM(IF(month = 'Jun', total, 0)) AS 'Tháng 6', 
+            SUM(IF(month = 'Jul', total, 0)) AS 'Tháng 7', 
+            SUM(IF(month = 'Aug', total, 0)) AS 'Tháng 8', 
+            SUM(IF(month = 'Sep', total, 0)) AS 'Tháng 9', 
+            SUM(IF(month = 'Oct', total, 0)) AS 'Tháng 10', 
+            SUM(IF(month = 'Nov', total, 0)) AS 'Tháng 11', 
+            SUM(IF(month = 'Dec', total, 0)) AS 'Tháng 12' 
+            FROM ( 
+                SELECT COUNT(comments.id) as 'total' ,DATE_FORMAT(comments.created_at, '%b') AS month
+                FROM comments 
+                WHERE comments.type_id = 3 and comments.identifier_id = $post_id and YEAR(comments.created_at) = $year and comments.deleted_at is null
+                GROUP by DATE_FORMAT(comments.created_at, '%m-%Y')
+        ) as sub");
+
+
+        $totalRepliesPerMonth =  DB::select("SELECT 
+            SUM(IF(month = 'Jan', total, 0)) AS 'Tháng 1', 
+            SUM(IF(month = 'Feb', total, 0)) AS 'Tháng 2', 
+            SUM(IF(month = 'Mar', total, 0)) AS 'Tháng 3', 
+            SUM(IF(month = 'Apr', total, 0)) AS 'Tháng 4', 
+            SUM(IF(month = 'May', total, 0)) AS 'Tháng 5', 
+            SUM(IF(month = 'Jun', total, 0)) AS 'Tháng 6', 
+            SUM(IF(month = 'Jul', total, 0)) AS 'Tháng 7', 
+            SUM(IF(month = 'Aug', total, 0)) AS 'Tháng 8', 
+            SUM(IF(month = 'Sep', total, 0)) AS 'Tháng 9', 
+            SUM(IF(month = 'Oct', total, 0)) AS 'Tháng 10', 
+            SUM(IF(month = 'Nov', total, 0)) AS 'Tháng 11', 
+            SUM(IF(month = 'Dec', total, 0)) AS 'Tháng 12' 
+        FROM ( 
+            SELECT COUNT(replies.id) as 'total' ,DATE_FORMAT(replies.created_at, '%b') AS month
+            FROM replies 
+            WHERE YEAR(replies.created_at) = $year and replies.deleted_at is null and replies.commentID in (SELECT DISTINCT id from comments where comments.type_id = 3 and comments.identifier_id = $post_id)
+            GROUP by DATE_FORMAT(replies.created_at, '%m-%Y')
+        ) as sub");
+
+
+        $totalCommentsInYear = Comment::where('identifier_id','=',$post_id)->where('type_id','=',3)->whereYear('created_at', '=', $year)->count();
+
+        $totalRepliesInYear = DB::select("SELECT count(replies.id) as 'total'
+        from replies 
+        WHERE YEAR(replies.created_at) = $year and replies.deleted_at is null and replies.commentID in (select DISTINCT id from comments 
+        where comments.type_id = 3 and comments.identifier_id = $post_id)");
+
+
+        $totalCommentsPerDate = DB::select("SELECT  COUNT(comments.id) as 'total', DATE(comments.created_at) as 'date'
+        from comments 
+        WHERE comments.type_id = 3 and comments.identifier_id = $post_id and YEAR(comments.created_at) = $year and comments.deleted_at is null
+        GROUP by DATE(comments.created_at)");
+
+
+        $totalRepliesPerDate = DB::select("SELECT  COUNT(replies.id) as 'total', DATE(replies.created_at) as 'date'
+        from replies 
+        WHERE YEAR(replies.created_at) = $year and replies.deleted_at is null and replies.commentID in (SELECT DISTINCT id from comments where comments.type_id = 3 and comments.identifier_id = $post_id)
+        GROUP by DATE(replies.created_at)");
+
+        
         return view('admin.forum_post.detail')
+        ->with('allYears',$allYears)
+        ->with('statisticsYear',$year)
+        ->with('totalCommentsPerMonth',$totalCommentsPerMonth)
+        ->with('totalCommentsInYear',$totalCommentsInYear)
+        ->with('totalCommentsPerDate',$totalCommentsPerDate)
+
+        ->with('totalRepliesPerMonth',$totalRepliesPerMonth)
+        ->with('totalRepliesInYear',$totalRepliesInYear[0])
+        ->with('totalRepliesPerDate',$totalRepliesPerDate)
+
         ->with('comments',$comments)
         ->with('post',$forum_post);
 
@@ -99,19 +182,37 @@ class ForumPostController extends Controller
         
         
 
-        $post = ForumPosts::create([
+        $post_id = ForumPosts::insertGetId([
             'topic' => $request->topic,
             'content' => $request->content,
             'slug' => $slug,
             'userCreatedID' => 1,
             'forumID' => $request->forum_id,
-            'totalComments' =>0
+            'totalComments' =>0,
+            "created_at" =>  \Carbon\Carbon::now(), 
+            "updated_at" => \Carbon\Carbon::now(),
         ]);
-        $forum = Forum::findOrFail($post->forumID);
+
+        $forum = Forum::findOrFail($request->forum_id);
         $forum->numberOfPosts =$forum->numberOfPosts + 1;
         $forum ->save();
 
-        $post->save();
+
+        if($request->forum_id == 1){
+
+            $users = User::where('email_verified_at','!=',null)->where('id','!=',1)->get();
+            foreach($users as $user){
+                Notification::create([             
+                    'identifier_id'=>$post_id,
+                    'type_id'=> 3, 
+                    'senderID' => 1,
+                    'receiverID'=>$user->id,
+                    'status'=>1,
+                ]);
+            }
+           
+        }
+
         return redirect('admin/forum/post/'.$request->forum_id);
     }
 
@@ -214,40 +315,42 @@ class ForumPostController extends Controller
         $forum_post ->save();
 
         $forum = Forum::findOrFail($forum_post->forumID);
-        $forum->numberOfPosts =$forum->numberOfPosts + 1;
+        $forum->numberOfPosts =$forum->numberOfPosts - 1;
         $forum ->save();
 
+        $comments = Comment::where('identifier_id','=',$post_id)->where('type_id','=','3')->get();
 
-        $comments = Comment::where('identifier_id','=',$post_id)->where('type_id','=','3')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
-        ]);
-
-        
         foreach($comments as $comment){
-            Reply::where('commentID','=',$comment->id)->update([
-                'deleted_at' => Carbon::now()->toDateTimeString()
-            ]);
 
-            report::where('identifier_id','=',$comment)->where('type_id','=','9')->update([
+            $replies = Reply::where('commentID','=',$comment->id)->get();
+
+
+            foreach ($replies as $reply){
+
+                $temp = Reply::findOrFail($reply->id);
+                $temp->deleted_at = Carbon::now()->toDateTimeString();
+                $temp ->save();
+                
+                Notification::where('identifier_id','=',$reply->id)->where('type_id','=','2')->update([
+                    'deleted_at' => Carbon::now()->toDateTimeString()
+                ]);
+                
+                
+            }
+
+            Notification::where('identifier_id','=',$comment->id)->where('type_id','=','1')->update([
                 'deleted_at' => Carbon::now()->toDateTimeString()
             ]);
+    
         }
 
 
-        Notification::where('identifier_id','=',$post_id)->where('type_id','=','3')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
-        ]);
-
-        Notification::where('identifier_id','=',$post_id)->where('type_id','=','6')->update([
+        Comment::where('identifier_id','=',$post_id)->where('type_id','=','3')->update([
             'deleted_at' => Carbon::now()->toDateTimeString()
         ]);
 
         report::where('identifier_id','=',$post_id)->where('type_id','=','4')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
-        ]);
-
-        report::where('identifier_id','=',$post_id)->where('type_id','=','8')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
+            'status' => 0
         ]);
     }   
 

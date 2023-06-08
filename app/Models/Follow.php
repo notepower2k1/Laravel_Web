@@ -36,10 +36,10 @@ class Follow extends Model
 
         switch ($option) {
             case 1:
-                $identifier = Document::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->findOrFail($this->identifier_id);
+                $identifier = Document::where('isPublic','=',1)->where('deleted_at','=',null)->whereIn('status',['1','-2'])->findOrFail($this->identifier_id);
                 break;
             case 2:
-                $identifier = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->findOrFail($this->identifier_id);        
+                $identifier = Book::where('isPublic','=',1)->where('deleted_at','=',null)->whereIn('status',['1','-2'])->findOrFail($this->identifier_id);        
                 break;
             default:
                 $identifier = collect();

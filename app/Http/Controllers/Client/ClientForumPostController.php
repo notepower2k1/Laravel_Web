@@ -171,42 +171,33 @@ class ClientForumPostController extends Controller
         $forum_post->save();
 
 
-        $comments = Comment::where('identifier_id','=',$request->post_id)->where('type_id','=','3')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
-        ]);
+        $comments = Comment::where('identifier_id','=',$request->post_id)->where('type_id','=','3')->get();
 
-        
         foreach($comments as $comment){
-            Reply::where('commentID','=',$comment->id)->update([
-                'deleted_at' => Carbon::now()->toDateTimeString()
-            ]);
 
-            report::where('identifier_id','=',$comment)->where('type_id','=','9')->update([
+            $replies = Reply::where('commentID','=',$comment->id)->get();
+
+
+            foreach ($replies as $reply){
+
+                $temp = Reply::findOrFail($reply->id);
+                $temp->deleted_at = Carbon::now()->toDateTimeString();
+                $temp ->save();
+                
+                Notification::where('identifier_id','=',$reply->id)->where('type_id','=','2')->update([
+                    'deleted_at' => Carbon::now()->toDateTimeString()
+                ]);
+            }
+
+            Notification::where('identifier_id','=',$comment->id)->where('type_id','=','1')->update([
                 'deleted_at' => Carbon::now()->toDateTimeString()
             ]);
+    
         }
 
 
-        Notification::where('identifier_id','=',$request->post_id)->where('type_id','=','3')->update([
+        Comment::where('identifier_id','=',$request->post_id)->where('type_id','=','3')->update([
             'deleted_at' => Carbon::now()->toDateTimeString()
         ]);
-
-        Notification::where('identifier_id','=',$request->post_id)->where('type_id','=','6')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
-        ]);
-
-        report::where('identifier_id','=',$request->post_id)->where('type_id','=','4')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
-        ]);
-
-        report::where('identifier_id','=',$request->post_id)->where('type_id','=','8')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
-        ]);
-
-        return response()->json([
-            'message' => 'Xóa bài viết thành công'
-        ]); 
-
-        // dd($forum_post);
     }
 }

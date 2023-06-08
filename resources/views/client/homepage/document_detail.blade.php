@@ -1,5 +1,7 @@
 @extends('client/homepage.layouts.app')
-@section('pageTitle', `${{$document->name}}`)
+@section('pageTitle')
+{{$document->name}}
+@endsection
 @section('additional-style')
 <link rel="stylesheet" href="{{ asset('assets/css/book3d.css') }}">
 <link href="{{ asset('js/pagination/pagination.css') }}" rel="stylesheet" type="text/css">
@@ -450,7 +452,7 @@
     
                                                                                                             @if($reportComment->where('identifier_id','=',$comment->id)->first())
                                                                                                                 @if($reportComment->where('identifier_id','=',$comment->id)->first()->isEnabled)
-                                                                                                                    <span class="report-comment-btn me-2" data-id={{ $comment->id }} data-type=7 data-user="{{ $comment->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                                                    <span class="report-comment-btn me-2" data-id={{ $comment->id }} data-type=6 data-user="{{ $comment->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
                                                                                                                         <em class="icon ni ni-flag fs-16px"></em>
                                                                                                                     </span>
                                                                                                                 @else
@@ -463,7 +465,7 @@
                                                                                                                 
                                                                                                                 @endif
                                                                                                             @else
-                                                                                                                <span class="report-comment-btn me-2" data-id={{ $comment->id }} data-type=7 data-user="{{ $comment->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                                                <span class="report-comment-btn me-2" data-id={{ $comment->id }} data-type=6 data-user="{{ $comment->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
                                                                                                                     <em class="icon ni ni-flag fs-16px"></em>
                                                                                                                 </span>
                                                                                                             @endif
@@ -577,7 +579,7 @@
     
                                                                                                         @if($reportReply->where('identifier_id','=',$reply->id)->first())
                                                                                                             @if($reportReply->where('identifier_id','=',$reply->id)->first()->isEnabled)
-                                                                                                                <span class="report-comment-btn" data-id={{ $reply->id }} data-type=9 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                                                <span class="report-comment-btn" data-id={{ $reply->id }} data-type=7 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
                                                                                                                     <em class="icon ni ni-flag fs-16px me-2 "></em>
                                                                                                                 </span>
                                                                                                             @else
@@ -591,7 +593,7 @@
                                                                                                             @endif
                                                                                                         @else
     
-                                                                                                            <span class="report-comment-btn" data-id={{ $reply->id }} data-type=9 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
+                                                                                                            <span class="report-comment-btn" data-id={{ $reply->id }} data-type=7 data-user="{{ $reply->users->profile->displayName  }}" data-bs-toggle="modal" data-bs-target="#reportFormComment">
                                                                                                                 <em class="icon ni ni-flag fs-16px me-2 "></em>
                                                                                                             </span>
                                                                                                         @endif

@@ -35,7 +35,7 @@ class DocumentController extends Controller
     public function index()
     {
         
-        $documents = Document::where('deleted_at','=',null)->where('status','=',1)->get();
+        $documents = Document::where('deleted_at','=',null)->whereIn('status',['1','-2'])->get();
        
        return view('admin.document.index')->with('documents', $documents);
     }
@@ -53,7 +53,10 @@ class DocumentController extends Controller
         foreach($itemList as $item){
             $document = Document::findOrFail($item);
             $document->deleted_at = null;
+            $document->timestamps = false;
             $document ->save(); 
+
+        
         }
 
 
@@ -109,9 +112,8 @@ class DocumentController extends Controller
 
        
         $generatedImageName = $slug.$image->hashName();
-        
-   
         $generatedFileName = $slug.$document_file->hashName();
+
 
         $numberOfPages = 0;
 
@@ -150,48 +152,31 @@ class DocumentController extends Controller
 
         if($image){
             $firebase_storage_path = 'documentImage/';
-            $localfolder = public_path('firebase-temp-uploads') .'/';
-            if ($image->move($localfolder, $generatedImageName)) {
-            $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
-    
-            app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
-            unlink($localfolder . $generatedImageName);
-            }
+
+            $uploadedfileImage = file_get_contents($request->file('image'));
+
+            app('firebase.storage')->getBucket()->upload($uploadedfileImage, ['name' => $firebase_storage_path . $generatedImageName]);
+            
         }
       
         //upload document
         $firebase_storage_document_path = 'documentFile/';
-        $localfolder = public_path('firebase-temp-uploads') .'/';
-        if ($document_file->move($localfolder, $generatedFileName)) {
-        $uploadedfile = fopen($localfolder.$generatedFileName, 'r');
-
+        $uploadedfile = file_get_contents($request->file('file_document'));
         app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_document_path . $generatedFileName]);
-        unlink($localfolder . $generatedFileName);
-        }
+       
 
         //upload previewImage
 
         $firebase_storage_preview_path = 'documentPreviewImage/';
-
         foreach ($previewImagefiles as $previewImage){
-            $localfolder = public_path('firebase-temp-uploads') .'/';
-
-            
-            $generatedPreviewImageName =  $slug.$previewImage->hashName();
-           
-            
+            $generatedPreviewName =  $slug.$previewImage->hashName();          
             $image = previewDocumentImages::create([
-                'image' => $generatedPreviewImageName,
+                'image' => $generatedPreviewName,
                 'documentID' => $document_id
             ]);
-
-
-            if ($previewImage->move($localfolder, $generatedPreviewImageName)) {
-                $uploadedfile = fopen($localfolder.$generatedPreviewImageName, 'r');
-        
-                app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_preview_path . $generatedPreviewImageName]);
-                unlink($localfolder . $generatedPreviewImageName);
-            }
+            $uploadedfilePreview = file_get_contents($previewImage);
+            app('firebase.storage')->getBucket()->upload($uploadedfilePreview, ['name' => $firebase_storage_preview_path . $generatedPreviewName]);
+          
         }
       
 
@@ -207,7 +192,7 @@ class DocumentController extends Controller
     public function show($id,$year=null) //like "show details"
     {   
         DB::statement("SET SQL_MODE=''");
-        $notes = Note::where('type_id','=',2)->where('identifier_id','=',$id)->get();
+        $notes = Note::whereIn('type_id',['2','5'])->where('identifier_id','=',$id)->get();
 
         $allYears = DB::select("SELECT distinct year(documents.created_at) as 'year'
         from documents");
@@ -247,11 +232,90 @@ class DocumentController extends Controller
 
         $previewImages = previewDocumentImages::where('documentID','=',$id)->get();
 
+
+
+        $comments = Comment::where('type_id','=',1)->where('identifier_id','=',$id)->whereYear('created_at', '=', $year)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
+
+        
+
+        $totalCommentsPerMonth =  DB::select("SELECT 
+              SUM(IF(month = 'Jan', total, 0)) AS 'Tháng 1', 
+              SUM(IF(month = 'Feb', total, 0)) AS 'Tháng 2', 
+              SUM(IF(month = 'Mar', total, 0)) AS 'Tháng 3', 
+              SUM(IF(month = 'Apr', total, 0)) AS 'Tháng 4', 
+              SUM(IF(month = 'May', total, 0)) AS 'Tháng 5', 
+              SUM(IF(month = 'Jun', total, 0)) AS 'Tháng 6', 
+              SUM(IF(month = 'Jul', total, 0)) AS 'Tháng 7', 
+              SUM(IF(month = 'Aug', total, 0)) AS 'Tháng 8', 
+              SUM(IF(month = 'Sep', total, 0)) AS 'Tháng 9', 
+              SUM(IF(month = 'Oct', total, 0)) AS 'Tháng 10', 
+              SUM(IF(month = 'Nov', total, 0)) AS 'Tháng 11', 
+              SUM(IF(month = 'Dec', total, 0)) AS 'Tháng 12' 
+              FROM ( 
+                  SELECT COUNT(comments.id) as 'total' ,DATE_FORMAT(comments.created_at, '%b') AS month
+                  FROM comments 
+                  WHERE comments.type_id = 1 and comments.identifier_id = $id and YEAR(comments.created_at) = $year and comments.deleted_at is null
+                  GROUP by DATE_FORMAT(comments.created_at, '%m-%Y')
+        ) as sub");
+
+
+        $totalRepliesPerMonth =  DB::select("SELECT 
+        SUM(IF(month = 'Jan', total, 0)) AS 'Tháng 1', 
+        SUM(IF(month = 'Feb', total, 0)) AS 'Tháng 2', 
+        SUM(IF(month = 'Mar', total, 0)) AS 'Tháng 3', 
+        SUM(IF(month = 'Apr', total, 0)) AS 'Tháng 4', 
+        SUM(IF(month = 'May', total, 0)) AS 'Tháng 5', 
+        SUM(IF(month = 'Jun', total, 0)) AS 'Tháng 6', 
+        SUM(IF(month = 'Jul', total, 0)) AS 'Tháng 7', 
+        SUM(IF(month = 'Aug', total, 0)) AS 'Tháng 8', 
+        SUM(IF(month = 'Sep', total, 0)) AS 'Tháng 9', 
+        SUM(IF(month = 'Oct', total, 0)) AS 'Tháng 10', 
+        SUM(IF(month = 'Nov', total, 0)) AS 'Tháng 11', 
+        SUM(IF(month = 'Dec', total, 0)) AS 'Tháng 12' 
+        FROM ( 
+            SELECT COUNT(replies.id) as 'total' ,DATE_FORMAT(replies.created_at, '%b') AS month
+            FROM replies 
+            WHERE YEAR(replies.created_at) = $year and replies.deleted_at is null and replies.commentID in (SELECT DISTINCT id from comments where comments.type_id = 1 and comments.identifier_id = $id)
+            GROUP by DATE_FORMAT(replies.created_at, '%m-%Y')
+        ) as sub");
+
+
+        $totalCommentsInYear = Comment::where('identifier_id','=',$id)->where('type_id','=',1)->whereYear('created_at', '=', $year)->count();
+
+        $totalRepliesInYear = DB::select("SELECT count(replies.id) as 'total'
+        from replies 
+        WHERE YEAR(replies.created_at) = $year and replies.deleted_at is null and replies.commentID in (select DISTINCT id from comments 
+        where comments.type_id = 1 and comments.identifier_id = $id)");
+
+
+        $totalCommentsPerDate = DB::select("SELECT  COUNT(comments.id) as 'total', DATE(comments.created_at) as 'date'
+        from comments 
+        WHERE comments.type_id = 1 and comments.identifier_id = $id and YEAR(comments.created_at) = $year and comments.deleted_at is null
+        GROUP by DATE(comments.created_at)");
+        
+
+        $totalRepliesPerDate = DB::select("SELECT  COUNT(replies.id) as 'total', DATE(replies.created_at) as 'date'
+        from replies 
+        WHERE YEAR(replies.created_at) = $year and replies.deleted_at is null and replies.commentID in (SELECT DISTINCT id from comments where comments.type_id = 1 and comments.identifier_id = $id)
+        GROUP by DATE(replies.created_at)");
+        
+
         return view('admin.document.detail')
+        ->with('comments',$comments)
+
         ->with('notes',$notes)
         ->with('totalDownloadingInYear',$totalDownloadingInYear)
         ->with('totalDownloadingPerDate',$totalDownloadingPerDate)
         ->with('totalDownloadingPerMonth',$totalDownloadingPerMonth)
+
+        ->with('totalCommentsPerMonth',$totalCommentsPerMonth)
+        ->with('totalCommentsPerDate',$totalCommentsPerDate)
+        ->with('totalCommentsInYear',$totalCommentsInYear)
+
+        ->with('totalRepliesInYear',$totalRepliesInYear[0])
+        ->with('totalRepliesPerMonth',$totalRepliesPerMonth)
+        ->with('totalRepliesPerDate',$totalRepliesPerDate)
+
         ->with('allYears',$allYears)
         ->with('statisticsYear',$year)
         ->with('downloadHistory',$downloadHistory)
@@ -321,19 +385,17 @@ class DocumentController extends Controller
 
             $firebase_storage_path = 'documentImage/';
 
-            $localfolder = public_path('firebase-temp-uploads') .'/';
-            if ($image->move($localfolder, $generatedImageName)) {
-            $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
+            $uploadedfileImage = file_get_contents($request->file('image'));
 
-            app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
-            unlink($localfolder . $generatedImageName);
+      
+            app('firebase.storage')->getBucket()->upload($uploadedfileImage, ['name' => $firebase_storage_path . $generatedImageName]);
 
             //delete old image
 
             
             $OldimageDeleted = app('firebase.storage')->getBucket()->object($firebase_storage_path.$request->oldImage)->delete();
  
-            }
+            
         }
 
      
@@ -376,41 +438,50 @@ class DocumentController extends Controller
     public function customDelete($document_id){
         $document = Document::findOrFail($document_id);
         $document->deleted_at = Carbon::now()->toDateTimeString();
+        $document->totalComments = 0;
+        $document->totalDocumentMarking = 0;
         $document ->save();
 
-        $comments = Comment::where('identifier_id','=',$document_id)->where('type_id','=','1')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
-        ]);
+     
+
+        $comments = Comment::where('identifier_id','=',$document_id)->where('type_id','=','1')->get();
 
         foreach($comments as $comment){
-            Reply::where('commentID','=',$comment->id)->update([
-                'deleted_at' => Carbon::now()->toDateTimeString()
-            ]);
 
-            report::where('identifier_id','=',$comment)->where('type_id','=','9')->update([
+            $replies = Reply::where('commentID','=',$comment->id)->get();
+
+
+            foreach ($replies as $reply){
+
+                $temp = Reply::findOrFail($reply->id);
+                $temp->deleted_at = Carbon::now()->toDateTimeString();
+                $temp ->save();
+
+                Notification::where('identifier_id','=',$reply->id)->where('type_id','=','2')->update([
+                    'deleted_at' => Carbon::now()->toDateTimeString()
+                ]);
+
+            }
+
+            Notification::where('identifier_id','=',$comment->id)->where('type_id','=','1')->update([
                 'deleted_at' => Carbon::now()->toDateTimeString()
             ]);
+    
         }
 
-
-        Notification::where('identifier_id','=',$document_id)->where('type_id','=','2')->update([
+        Comment::where('identifier_id','=',$document_id)->where('type_id','=','1')->update([
             'deleted_at' => Carbon::now()->toDateTimeString()
         ]);
+        
+        $follows = Follow::where('identifier_id','=',$document_id)->where('type_id','=','1')->get();
 
-        Notification::where('identifier_id','=',$document_id)->where('type_id','=','5')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
-        ]);
+        foreach($follows as $follow){
+            $follow->delete();
+        }
 
         report::where('identifier_id','=',$document_id)->where('type_id','=','3')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
+            'status' => 0
         ]);
-
-        report::where('identifier_id','=',$document_id)->where('type_id','=','7')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
-        ]);
-
-        $follows = Follow::where('identifier_id','=',$document_id)->where('type_id','=','1')->get();
-        $follows->delete();
     }   
 
 
@@ -495,7 +566,10 @@ class DocumentController extends Controller
         WHERE YEAR(downloading_histories.created_at) = $year
         GROUP by DATE(downloading_histories.created_at)");
 
+        $totalDocuments = Document::where('deleted_at',null)->get()->count();
+
          return view('admin.document.statistics')
+            ->with('totalDocuments',$totalDocuments)
             ->with('allYears',$allYears)
             ->with('totalDocumentsInYear',$totalDocumentsInYear->count())
             ->with('totalDownloadingInYear',$totalDownloadingInYear)
@@ -546,5 +620,101 @@ class DocumentController extends Controller
         ->with('documents', $documents);
 
 
+    }
+
+    public function lockDocument($id){
+        $document = Document::findOrFail($id);
+        $status = $document->status;
+
+        if($status == -2){
+            $document->status = 1;
+            $comments = Comment::where('identifier_id','=',$id)->where('type_id','=','1')->get();
+    
+            foreach($comments as $comment){
+    
+                $replies = Reply::where('commentID','=',$comment->id)->get();
+    
+    
+                foreach ($replies as $reply){
+    
+                    $temp = Reply::findOrFail($reply->id);
+                    $temp->deleted_at = null;
+                    $temp ->save();
+    
+                    Notification::where('identifier_id','=',$reply->id)->where('type_id','=','2')->update([
+                        'deleted_at' => null
+                    ]);
+                }
+    
+                Notification::where('identifier_id','=',$comment->id)->where('type_id','=','1')->update([
+                    'deleted_at' => null
+                ]);
+
+             
+        
+            }
+
+            Comment::where('identifier_id','=',$id)->where('type_id','=','1')->update([
+                'deleted_at' => null
+            ]);
+
+            Notification::create([
+                'identifier_id'=>$id,
+                'type_id'=> 11, 
+                'senderID' => 1,
+                'receiverID'=>$document->users->id,
+                'status'=>1
+            ]);
+        }
+        else{
+            $document->status = -2;
+
+            $comments = Comment::where('identifier_id','=',$id)->where('type_id','=','1')->get();
+
+            foreach($comments as $comment){
+    
+                $replies = Reply::where('commentID','=',$comment->id)->get();
+    
+    
+                foreach ($replies as $reply){
+    
+                    $temp = Reply::findOrFail($reply->id);
+                    $temp->deleted_at = Carbon::now()->toDateTimeString();
+                    $temp ->save();
+    
+                    Notification::where('identifier_id','=',$reply->id)->where('type_id','=','2')->update([
+                        'deleted_at' => Carbon::now()->toDateTimeString()
+                    ]);
+              
+                }
+    
+                Notification::where('identifier_id','=',$comment->id)->where('type_id','=','1')->update([
+                    'deleted_at' => Carbon::now()->toDateTimeString()
+                ]);
+
+            }
+    
+            Comment::where('identifier_id','=',$id)->where('type_id','=','1')->update([
+                'deleted_at' => Carbon::now()->toDateTimeString()
+            ]);
+            
+            report::where('identifier_id','=',$id)->where('type_id','=','3')->update([
+                'status' => 0
+            ]);
+
+            Notification::create([
+                'identifier_id'=>$id,
+                'type_id'=> 9, 
+                'senderID' => 1,
+                'receiverID'=>$document->users->id,
+                'status'=>1
+            ]);
+        }
+
+        $document->save();
+
+        return response()->json([
+            'status' => $document->status,
+        ]);
     }
 }

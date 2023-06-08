@@ -13,7 +13,7 @@ use App\Models\Document;
 use App\Models\Notification;
 
 use App\Models\ForumPosts;
-
+use App\Models\report;
 
 class ClientCommentController extends Controller
 {
@@ -72,20 +72,22 @@ class ClientCommentController extends Controller
         $item_id = $request->item_id;
         $message = 'Bình luận thành công';
 
-        $comment = Comment::create([
+        $comment_id = Comment::insertGetId([
             'content' => $content,
             'identifier_id' =>$item_id,
             'type_id'=>$option,
             'userID'=>Auth::user()->id,
             'totalReplies'=> 0,
             'totalLikes' => 0,  
+            "created_at" =>  \Carbon\Carbon::now(), 
+            "updated_at" => \Carbon\Carbon::now(),
         ]);
 
         $totalComments = 0;
         switch ($option) {
             case 1:        
 
-                $document = Document::findOrFail($comment->identifier_id);
+                $document = Document::findOrFail($item_id);
                 $document->totalComments = $document->totalComments + 1;
                 $document->timestamps = false;
 
@@ -94,8 +96,8 @@ class ClientCommentController extends Controller
 
                 if($document->users->id != Auth::user()->id){
                     Notification::create([             
-                        'identifier_id'=>$comment->identifier_id,
-                        'type_id'=> 2, 
+                        'identifier_id'=>$comment_id,
+                        'type_id'=> 1, 
                         'senderID' => Auth::user()->id,
                         'receiverID'=>$document->users->id,
                         'status'=>1,
@@ -107,7 +109,7 @@ class ClientCommentController extends Controller
                 break;
             case 2:
 
-                $book = Book::findOrFail($comment->identifier_id);
+                $book = Book::findOrFail($item_id);
                 $book->totalComments = $book->totalComments + 1;
                 $book->timestamps = false;
 
@@ -115,7 +117,7 @@ class ClientCommentController extends Controller
 
                 if($book->users->id != Auth::user()->id){
                     Notification::create([
-                        'identifier_id'=>$comment->identifier_id,
+                        'identifier_id'=>$comment_id,
                         'type_id'=> 1, 
                         'senderID' => Auth::user()->id,
                         'receiverID'=>$book->users->id,
@@ -128,7 +130,7 @@ class ClientCommentController extends Controller
                 break;
             case 3:
 
-                $post = ForumPosts::findOrFail($comment->identifier_id);
+                $post = ForumPosts::findOrFail($item_id);
                 $post->totalComments = $post->totalComments + 1;
                 $post->timestamps = false;
 
@@ -136,8 +138,8 @@ class ClientCommentController extends Controller
 
                 if($post->users->id != Auth::user()->id){
                     Notification::create([
-                        'identifier_id'=>$comment->identifier_id,
-                        'type_id'=> 3, 
+                        'identifier_id'=>$comment_id,
+                        'type_id'=> 1, 
                         'senderID' => Auth::user()->id,
                         'receiverID'=>$post->users->id,
                         'status'=>1,
@@ -165,11 +167,13 @@ class ClientCommentController extends Controller
     ]);
 
 
-    $reply = Reply::create([
+    $reply_id = Reply::insertGetId([
         'content' => $request->content,
         'userID'=>Auth::user()->id,
         'commentID' => $request->comment_id,
-        'totalLikes' => 0
+        'totalLikes' => 0,
+        "created_at" =>  \Carbon\Carbon::now(), 
+        "updated_at" => \Carbon\Carbon::now(),
     ]);
 
     $comment = Comment::findOrFail($request->comment_id);
@@ -185,7 +189,7 @@ class ClientCommentController extends Controller
         switch ($option) {
             case 1:        
 
-                $document = Document::findOrFail($reply->comments->identifier_id);
+                $document = Document::findOrFail($comment->identifier_id);
                 $document->totalComments = $document->totalComments + 1;
                 $document->timestamps = false;
 
@@ -193,8 +197,8 @@ class ClientCommentController extends Controller
 
                 if($comment->users->id != Auth::user()->id){
                     Notification::create([
-                        'identifier_id'=>$comment->id,
-                        'type_id'=> 5, 
+                        'identifier_id'=>$reply_id,
+                        'type_id'=> 2, 
                         'senderID' => Auth::user()->id,
                         'receiverID'=>$comment->users->id,
                         'status'=>1
@@ -208,7 +212,7 @@ class ClientCommentController extends Controller
               
               
 
-                $book = Book::findOrFail($reply->comments->identifier_id);
+                $book = Book::findOrFail($comment->identifier_id);
                 $book->totalComments = $book->totalComments + 1;
                 $book->timestamps = false;
 
@@ -216,8 +220,8 @@ class ClientCommentController extends Controller
 
                 if($comment->users->id != Auth::user()->id){
                     Notification::create([
-                        'identifier_id'=>$comment->id,
-                        'type_id'=> 4, 
+                        'identifier_id'=>$reply_id,
+                        'type_id'=> 2, 
                         'senderID' => Auth::user()->id,
                         'receiverID'=>$comment->users->id,
                         'status'=>1
@@ -229,7 +233,7 @@ class ClientCommentController extends Controller
                 break;
             case 3:              
 
-                $post = ForumPosts::findOrFail($reply->comments->identifier_id);
+                $post = ForumPosts::findOrFail($comment->identifier_id);
                 $post->totalComments = $post->totalComments + 1;
                 $post->timestamps = false;
 
@@ -237,8 +241,8 @@ class ClientCommentController extends Controller
 
                 if($comment->users->id != Auth::user()->id){
                     Notification::create([
-                        'identifier_id'=>$comment->id,
-                        'type_id'=> 6, 
+                        'identifier_id'=>$reply_id,
+                        'type_id'=> 2, 
                         'senderID' => Auth::user()->id,
                         'receiverID'=>$comment->users->id,
                         'status'=>1
@@ -272,6 +276,8 @@ class ClientCommentController extends Controller
         'deleted_at' => Carbon::now()->toDateTimeString(),
     ]);
 
+
+
     $allRepliesOfComment = Reply::where('commentID','=',$comment->id)->get();
 
     $total = $allRepliesOfComment->count();
@@ -297,7 +303,9 @@ class ClientCommentController extends Controller
                 $document ->save();
             }
 
-                $totalComments = $document->totalComments;
+            $totalComments = $document->totalComments;
+
+         
             break;
         case 2:
             if($total){
@@ -318,6 +326,7 @@ class ClientCommentController extends Controller
 
             $totalComments = $book->totalComments;
 
+            
             break;
         case 3:
            
@@ -343,7 +352,9 @@ class ClientCommentController extends Controller
         default:
 
     }
-      
+        Notification::where('identifier_id','=',$item_id)->where('type_id','=','1')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString(),
+        ]);
         return response()->json(['totalComments' => $totalComments]);
    }
 
@@ -399,6 +410,10 @@ class ClientCommentController extends Controller
                     
         }
 
+        Notification::where('identifier_id','=',$item_id)->where('type_id','=','2')->update([
+            'deleted_at' => Carbon::now()->toDateTimeString(),
+        ]);
+
         return response()->json(['totalComments' => $totalComments]);
 
    }
@@ -449,18 +464,13 @@ class ClientCommentController extends Controller
     public function uploadCommentImage(Request $request){
 
         $generatedImageName = 'image-'.$request->file('file')->hashName();
-        //move to a folder
-
-        //upload image
-        $localfolder = public_path('firebase-temp-uploads') .'/';
         $firebase_storage_path = 'postImage/';
 
-        if ($request->file('file')->move($localfolder, $generatedImageName)) {
-            $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
-    
-            app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
-            unlink($localfolder . $generatedImageName);
-        }
+        $uploadedfile = file_get_contents($request->file('file'));
+   
+
+        app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
+
 
         $url = 'https://storage.googleapis.com/do-an-tot-nghiep-f897b.appspot.com/'.$firebase_storage_path.$generatedImageName;
 

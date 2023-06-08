@@ -1,5 +1,6 @@
 @extends('client/homepage.layouts.app')
-@section('content')
+@section('pageTitle', 'Kho tài liệu điện tử')
+
 @section('additional-style')
 <link rel="stylesheet" href="{{ asset('assets/css/book3d-nohover.css') }}">
 
@@ -63,7 +64,8 @@
 </style>
 @endsection
 
-   
+@section('content')
+
 <div class="container">
     <div id="carouselExFade" class="carousel slide carousel-fade" data-bs-ride="carousel">
         <div class="carousel-inner">
@@ -175,25 +177,27 @@
                             <td> <span class="text-muted">{{ $book->types->name }}</span></td>
                             <td> <a class="title-book " href="/sach/{{$book->id}}/{{$book->slug}}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $book->name }}">{{ Str::limit($book->name,30) }}</a></td>
                             <td>
-                                @foreach ($book->chapters as $chapter)
-                                    @if($loop->last)                                  
-                                        @if($chapter->name)
-                                        <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $chapter->code }}:{{ $chapter->name }}">{{$chapter->code}}: {{ Str::limit($chapter->name, 30) }}</span>
-                                        @else    
-                                        <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $chapter->code }}">{{$chapter->code}}</span>                                                 
-                                        @endif     
-                                    @endif
-                                @endforeach
+                                @if($book->file)
+                                    <span>PDF file</span>
+                                @else
+                                    @foreach ($book->chapters as $chapter)
+                                        @if($loop->last)                                  
+                                            @if($chapter->name)
+                                            <a class="text-muted" href="/doc-sach/{{ $chapter->books->slug }}/{{ $chapter->slug }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $chapter->code }}:{{ $chapter->name }}">{{$chapter->code}}: {{ Str::limit($chapter->name, 30) }}</a>
+                                            @else    
+                                            <a class="text-muted" href="/doc-sach/{{ $chapter->books->slug }}/{{ $chapter->slug }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $chapter->code }}">{{$chapter->code}}</a>                                                 
+                                            @endif     
+                                        @endif
+                                    @endforeach
+                                @endif
                             </td>
                             <td>
                                <a class="text-muted" href="/tac-gia/tac-gia-sach/{{ $book->author }}">{{ $book->author }}</a> 
                             </td>
                             <td>
-                                @foreach ($book->chapters as $chapter)
-                                    @if($loop->last)
-                                       <span class="text-muted">{{ $chapter->time }}</span> 
-                                    @endif
-                                @endforeach
+                                
+                                <span class="text-muted">{{ $book->timeUpdate }}</span> 
+                               
                             </td>
                         </tr>
                     @endforeach
@@ -460,7 +464,7 @@
                 <div class="col document-card d-flex justify-content-center">
                     <div class="card card-bordered product-card shadow ">
                         <div class="product-thumb shine">
-                            <a href="#" class="preview-book-btn" data-id ={{ $document->id }} data-option="2">
+                            <a href="/tai-lieu/{{$document->id}}/{{$document->slug}}" data-id ={{ $document->id }} data-option="2">
                                 <img class=" document-card-image" src="{{ $document->url }}" alt="" width="300px" height="350px">
                             </a>     
                             

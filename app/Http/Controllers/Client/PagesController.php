@@ -29,9 +29,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use PhpScience\TextRank\TextRankFacade;
 use OpenAI\Laravel\Facades\OpenAI;
+use Illuminate\Support\Facades\Response;
+
 class PagesController extends Controller
 {
-   
+
     public function getRecommendationByType(){      
         $userID = Auth::user()->id;
 
@@ -82,18 +84,14 @@ class PagesController extends Controller
 
    
         
-        $new_updated_books = Book::select([DB::RAW('DISTINCT(books.id)'),'books.*'])
-            ->where('books.isPublic', '1')
-            ->where('books.deleted_at','=',null)->where('books.status','=',1)
-            ->join('chapters', 'books.id', '=', 'chapters.book_id')
-            ->orderBy('chapters.created_at', 'desc')
-            ->get()->take(9);
+        $new_updated_books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('updated_at')->take(9);
+
 
         $high_reading_books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('totalReading')->take(9);
         
         $high_rating_books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('ratingScore')->take(9);
 
-        $completed_books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->where('isCompleted','=',1)->get()->take(6);
+        $completed_books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->where('isCompleted','=',1)->get()->sortByDesc('updated_at')->take(6);
 
 
         $random_books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->inRandomOrder()->get()->take(6);
@@ -470,9 +468,8 @@ class PagesController extends Controller
 
         }
         
-        $book->update([
-            'totalReading' => $book->totalReading + 1
-        ]);
+        $book->totalReading = $book->totalReading + 1;
+        $book->timestamps = false;
         $book->save();
 
         $chapter = Chapter::where('slug','=',$chapter_slug)->where('deleted_at','=',null)->firstOrFail();
@@ -521,9 +518,9 @@ class PagesController extends Controller
 
     }
 
-    public function read_book_pdf($book_id){
+    public function read_book_pdf($book_slug){
 
-        $book = Book::findOrFail($book_id);
+        $book = Book::where('slug','=',$book_slug)->where('deleted_at','=',null)->where('file','!=',null)->first();
         
         if(Auth::check()){
 
@@ -559,18 +556,18 @@ class PagesController extends Controller
                 ]);
             }
 
-
-
         }
         
-        $book->update([
-            'totalReading' => $book->totalReading + 1
-        ]);
+        $book->totalReading = $book->totalReading + 1;
+        $book->timestamps = false;
         $book->save();
 
-        $url = $book->bookUrl;
-
-        return response()->json(['url' => $url]);
+        $id = $book->id;
+        $title = $book->name;
+        return view('client.homepage.chapter_pdf_detail')->with([
+            'title' => $title,
+            'book_id' => $id 
+        ]);
     }
 
     public function post_navigation_page(){
@@ -1053,7 +1050,7 @@ class PagesController extends Controller
     }
     public function post_detail($forum_slug,$post_slug,$post_id){
 
-        $post = ForumPosts::where('id',$post_id)->where('deleted_at','=',null)->get();
+        $post = ForumPosts::where('id','=',$post_id)->where('deleted_at','=',null)->first();
         $post->totalViews = $post->totalViews + 1;
         $post->save();
 
@@ -1277,8 +1274,8 @@ class PagesController extends Controller
                    ' <div class="chat-bubble">'.
                       '  <div class="chat-msg">'.$code.'</div>'.     
                         '<ul class="chat-msg-more">'.
-                            '<li class="d-none d-sm-block"><a href="#" class="btn btn-icon btn-sm btn-trigger"><em class="icon ni ni-reply-fill"></em></a></li>'.                    
-                       ' </ul>  '.   
+                            '<li class="d-none d-sm-block"><a href="#" class="btn btn-icon btn-sm btn-trigger copybtn"><em class="icon ni ni-copy"></em></a></li>'.            
+                        ' </ul>  '.   
                   '  </div>'.
                 '</div>'.
              '<ul class="chat-meta">'.
@@ -1299,8 +1296,8 @@ class PagesController extends Controller
                    ' <div class="chat-bubble">'.
                       '  <div class="chat-msg">'.$content.'</div>'.     
                         '<ul class="chat-msg-more">'.
-                            '<li class="d-none d-sm-block"><a href="#" class="btn btn-icon btn-sm btn-trigger"><em class="icon ni ni-reply-fill"></em></a></li>'.                    
-                       ' </ul>  '.   
+                            '<li class="d-none d-sm-block"><a href="#" class="btn btn-icon btn-sm btn-trigger copybtn"><em class="icon ni ni-copy"></em></a></li>'.           
+                        ' </ul>  '.   
                   '  </div>'.
              '   </div>'.
                 '<ul class="chat-meta">'.

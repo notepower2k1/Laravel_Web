@@ -50,11 +50,17 @@ class User extends Authenticatable
 
         $login = loginHistory::where('userID','=',$this->id)->orderBy('created_at', 'desc')->first();
 
-        $dt = new Carbon($login->created_at);
-        $now = Carbon::now();
+        if($login){
+            $dt = new Carbon($login->created_at);
+     
+            $now = Carbon::now();
 
-        return $dt->diffForHumans($now);
-
+            return $dt->diffForHumans($now);
+        }
+      
+        else{
+            return 'Chưa đăng nhập';
+        }
     }
 
     public function profile() {

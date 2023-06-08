@@ -55,7 +55,8 @@
             <table class="datatable-init nowrap nk-tb-list nk-tb-ulist mt-2" data-auto-responsive="false" data-export-title="Export">
                 <thead>
                     <tr class="nk-tb-item nk-tb-head">
-                        <th class="nk-tb-col tb-col-md"><span class="sub-text">Báo cáo về</span></th>
+                        <th class="nk-tb-col"><span class="sub-text">Báo cáo về</span></th>
+                        <th class="nk-tb-col tb-col-md"><span class="sub-text">Đối tượng</span></th>
                         <th class="nk-tb-col"><span class="sub-text">Ngày báo cáo</span></th>
                         <th class="nk-tb-col tb-col-md"><span class="sub-text">Người báo cáo</span></th>
                         <th class="nk-tb-col tb-col-md"><span class="sub-text">Lý do</span></th>
@@ -69,79 +70,114 @@
 
                     
                         <tr class="nk-tb-item" id ="row-{{ $report->id }}">
+                            <td class="nk-tb-col">
+                                @switch ($report->type_id)
+                                    @case(1)
+                                        <span class="badge rounded-pill bg-outline-primary">
+                                            Sách
+                                        </span>
+                                        @break;
+                                    @case(2)
+                                        <span class="badge rounded-pill bg-outline-secondary">
+                                            Chương của sách 
+                                        </span>
+                                        @break;
+                                    @case(3)
+                                        <span class="badge rounded-pill bg-outline-warning">
+                                            Tài liệu
+                                        </span>
+                        
+                                        @break;
+                                    @case(4)
+                                        <span class="badge rounded-pill bg-outline-info">
+                                            Bài viết
+                                        </span>
+                                        @break;
+                                    @case(5)
+                                        <span class="badge rounded-pill bg-outline-danger">
+                                            Người dùng
+                                        </span>
+                                        @break;
+                                    @case(6)
+                                        <span class="badge rounded-pill bg-outline-gray">
+                                            Bình luận
+                                        </span>
 
+                                        @break;
+                                  
+                                    @case(7)
+                                        <span class="badge rounded-pill bg-outline-light">
+                                            Phản hồi bình luận
+                                        </span>
+                                       
+                                        @break;   
+                            
+                                    @case(8)
+
+                                        <span class="badge rounded-pill bg-outline-dark">
+                                            Đánh giá của sách                                 
+                                        </span>
+                                    @break;   
+                                    @default:
+                                        <span class="">
+                                            Lỗi
+                                        </span>
+                                
+                                @endswitch
+                            </td>
                             <td class="nk-tb-col tb-col-md">
                                 @switch ($report->type_id)
                                     @case(1)
                         
-                                        <a href="/admin/book/detail/{{$report->identifier_id}}/{{ \Carbon\Carbon::now()->year }}">
-                                            <span class="badge rounded-pill bg-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->name }}">
-                                            {{ Str::limit($report->identifier->name,30) }}
-                                            </span>
-                                        </a>
+                                        <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->name }}">
+                                        {{ Str::limit($report->identifier->name,30) }}
+                                        </span>
+
                                         @break;
                                     @case(2)
-                                        chương của sách 
-                                        {{-- <a href="/admin/book/chapter/{{$report->identifier_id}}">
-                                            <span class="badge rounded-pill bg-outline-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->books->name }}">
+                                        <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->code }}">
                                             {{ Str::limit($report->identifier->code,30) }}
-                                            </span>
-                                        </a> --}}
+                                        </span>
                                         @break;
                                     @case(3)
-                                        <a href="/admin/document/detail/{{$report->identifier_id}}/{{ \Carbon\Carbon::now()->year }}">
-                                            <span class="badge rounded-pill bg-outline-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->name }}">
+                                        <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->name }}">
                                             {{ Str::limit($report->identifier->name,30) }}
-                                            </span>
-                                        </a>
+                                        </span>
                         
                                         @break;
                                     @case(4)
-                                        <a href="/admin/forum/post/{{$report->identifier_id}}/detail">
-                                            <span class="badge rounded-pill bg-outline-info" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->topic }}">
-                                            {{ Str::limit($report->identifier->topic,30) }}
-                                            </span>
-                                        </a>
-                        
-                                    
+                                        <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->topic }}">
+                                        {{ Str::limit($report->identifier->topic,30) }}
+                                        </span>             
                                         @break;
                                     @case(5)
-                                        <a href="/admin/user/{{$report->identifier_id}}">
-                                            <span class="badge rounded-pill bg-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->name }}">
-                                            {{ Str::limit($report->identifier->name,30) }}
-                                            </span>
-                                        </a>
-                            
+                                        <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->name }}">
+                                        {{ Str::limit($report->identifier->name,30) }}
+                                        </span>
                                         @break;
                                     @case(6)
 
+                                        @if($report->identifier->type_id == 1)
                                         <span>
-                                            Bình luận sách 
-
+                                            Bình luận về tài liệu
                                         </span>
-
-                                        @break;
-                                    @case(7)
+                                        @endif
+                                        
+                                        @if($report->identifier->type_id == 2)
                                         <span>
-                                            Bình luận tài liệu 
-
+                                            Bình luận về sách
                                         </span>
+                                        @endif
 
-                                    
-                                    
-                        
-                        
-                                        @break;   
-                                    @case(8)
-
+                                        
+                                        @if($report->identifier->type_id == 3)
                                         <span>
                                             Bình luận về bài viết
-
                                         </span>
-
-                                    
+                                        @endif
                                         @break;
-                                    @case(9)
+                                  
+                                    @case(7)
 
                                         <span>
                                             Phản hồi của bình luận
@@ -149,15 +185,10 @@
                                         </span>
                                         @break;   
                             
-                                    @case(10)
+                                    @case(8)
 
                                         <span>
-                                        Đánh giá của sách
-                                        {{-- <a href="/admin/book/detail/{{$report->identifier_id}}/{{ \Carbon\Carbon::now()->year }}">
-                                                <span class="badge rounded-pill bg-outline-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $report->identifier->name }}">
-                                                    {{ Str::limit($report->identifier->name,30) }}
-                                                </span>
-                                            </a> --}}
+                                            Đánh giá của sách
                                         </span>
                                     @break;   
                                     @default:
@@ -197,11 +228,11 @@
 @endsection
 
 @section('modal')
-<div class="modal fade" tabindex="-1" id="modalTabs" style="display: none;" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+<div class="modal fade" id="modalTabs">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <a href="#" class="close" data-bs-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
-            <div class="modal-body modal-body-md">
+            <div class="modal-body modal-body-xl">
                 <h4 class="title">Chi tiết báo cáo</h4>
                 <ul class="nk-nav nav nav-tabs" role="tablist">
                     <li class="nav-item" role="presentation">
@@ -266,7 +297,7 @@ $(function(){
       "language": {
           "lengthMenu": "Hiển thị: _MENU_ đối tượng",
           "search": "Tìm kiếm _INPUT_",
-          'info':"",
+          'info':"_PAGE_ - _PAGES_ của _MAX_",
           "zeroRecords": "Không tìm thấy dữ liệu",
           "infoEmpty": "Không có dữ liệu hợp lệ",
           "infoFiltered": "(Lọc từ _MAX_ dữ liệu)",

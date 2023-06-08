@@ -40,7 +40,13 @@
                                     <a class="nav-link" data-bs-toggle="tab" href="#tabItem4" ><em class="icon ni ni-bell"></em><span>Bài viết</span></a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" data-bs-toggle="tab" href="#tabItem5" ><em class="icon ni ni-activity"></em><span>Hoạt động</span></a>
+                                    <a class="nav-link" data-bs-toggle="tab" href="#tabItem5" ><em class="icon ni ni-activity"></em><span>Lịch sử bình luận</span></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#tabItem6" ><em class="icon ni ni-activity"></em><span>Lịch sử đọc sách</span></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#tabItem7" ><em class="icon ni ni-activity"></em><span>Lịch sử đăng nhập</span></a>
                                 </li>
                                 <li class="nav-item nav-item-trigger d-xxl-none">
                                     <a href="#" class="toggle btn btn-icon btn-trigger" data-target="userAside"><em class="icon ni ni-user-list-fill"></em></a>
@@ -198,7 +204,10 @@
                                                         <span class="tb-status text-primary">Đang duyệt</span>
                                                         @endif 
                                                         @if ($book->status == -1)
-                                                        <span class="tb-status text-danger">Từ chối</span>
+                                                        <span class="tb-status text-warning">Từ chối</span>
+                                                        @endif 
+                                                        @if ($book->status == -2)
+                                                        <span class="tb-status text-danger">Bị khóa</span>
                                                         @endif 
                                                     </td>   
                                                     <td class="nk-tb-col tb-col-lg">
@@ -268,8 +277,11 @@
                                                         <span class="tb-status text-primary">Đang duyệt</span>
                                                         @endif 
                                                         @if ($document->status == -1)
-                                                        <span class="tb-status text-danger">Từ chối</span>
+                                                        <span class="tb-status text-warning">Từ chối</span>
                                                         @endif 
+                                                        @if ($document->status == -2)
+                                                        <span class="tb-status text-danger">Bị khóa</span>
+                                                        @endif
                                                     </td>   
                                                     <td class="nk-tb-col tb-col-lg">
                                                         @if ($document->isPublic === 1)
@@ -340,7 +352,6 @@
                                         </table>
                                     </div>
                                 </div>
-
                                 <div class="tab-pane" id="tabItem5">
                                     <div class="card-inner">
                                         <table class="datatable-init nowrap nk-tb-list nk-tb-ulist">
@@ -427,6 +438,69 @@
                                                             </li>
                                                         </ul>
                                                       </td>
+                                                </tr><!-- .nk-tb-item  -->
+                                              @endforeach
+                                    
+                                            </tbody>
+                                          </table>      
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="tabItem6">
+                                    <div class="card-inner">
+                                        <table class="datatable-init nowrap nk-tb-list nk-tb-ulist">
+                                            <thead>
+                                                <tr class="nk-tb-item nk-tb-head">
+                                                    <th class="nk-tb-col"><span class="sub-text">Thời gian</span></th>                                    
+                                                    <th class="nk-tb-col"><span class="sub-text">Sách</span></th>
+                                                    <th class="nk-tb-col"><span class="sub-text">Số lượt đọc</span></th>                                            
+                                                  </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                              @foreach ($reading_histories as $history)
+                                    
+                                                <tr class="nk-tb-item">
+                                    
+                                                    <td class="nk-tb-col">
+                                                      <span>{{  $history->created_at  }}</span>
+                                                    </td>                                              
+                                                    <td class="nk-tb-col">
+                                                 
+                                                        <a href="/admin/sach/detail/{{$history->books->id}}/{{ \Carbon\Carbon::now()->year }}">
+                                                            <span class="badge rounded-pill bg-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $comment->identifier->name }}">
+                                                                {{ Str::limit($history->books->name,50) }}
+                                                            </span>
+                                                        </a>
+                                                        
+                                                      
+                                    
+                                                    </td>
+                                                    <td class="nk-tb-col">
+                                                      <span>{{  $history->total  }}</span>
+                                                    </td>                     
+                                                </tr><!-- .nk-tb-item  -->
+                                              @endforeach
+                                    
+                                            </tbody>
+                                          </table>      
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="tabItem7">
+                                    <div class="card-inner">
+                                        <table class="datatable-init nowrap nk-tb-list nk-tb-ulist">
+                                            <thead>
+                                                <tr class="nk-tb-item nk-tb-head">
+                                                    <th class="nk-tb-col"><span class="sub-text">Thời gian</span></th>                                    
+                                                  </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                              @foreach ($login_histories as $history)
+                                    
+                                                <tr class="nk-tb-item">
+                                                    <td class="nk-tb-col">
+                                                      <span>{{ \Carbon\Carbon::parse($history->created_at)  }}</span>
+                                                    </td>                     
                                                 </tr><!-- .nk-tb-item  -->
                                               @endforeach
                                     

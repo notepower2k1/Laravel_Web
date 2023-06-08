@@ -24,7 +24,7 @@
              
             @csrf
             @method('PUT')
-             <label>Chương số <sup>*</sup></label>
+             <label class="form-label">Chương số <sup>*</sup></label>
              <input type="text" required
              name="code"
              class="form-control mb-4 col-6"
@@ -34,13 +34,13 @@
          
 
 
-             <label>Tên chương<sup></sup></label>
+             <label class="form-label">Tên chương<sup></sup></label>
              <input type="text"
              name="name"
              class="form-control mb-4 col-6"
              value="{{ $chapter-> name }}">
                                   
-             <label>Nội dung</label>
+             <label class="form-label">Nội dung</label>
              <textarea id="mytextarea" 
              required 
              name="content" 
@@ -105,7 +105,7 @@
             "help", "image", "insertdatetime", "link", "lists", "media", 
             "preview", "searchreplace", "table", "visualblocks", " wordcount",
         ],
-        toolbar: "undo redo |  bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | wordcount",
+        toolbar: "undo redo |  bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | wordcount",
         init_instance_callback: function (editor) {
             editor.on('Change', function (e) {
                 

@@ -21,7 +21,7 @@
 
                 @csrf
                 @method('PUT')
-                <label>Tên diễn đàn<sup>*</sup></label>
+                <label class="form-label">Tên diễn đàn<sup>*</sup></label>
                 <input type="text" required
                name="name"
                value="{{ $forum->name }}"
@@ -30,7 +30,7 @@
                 
          
 
-                <label>Mô tả</label>
+                <label class="form-label">Mô tả</label>
                 <textarea 
                cols="50" 
                rows="20" 

@@ -306,10 +306,8 @@ https://cdn.jsdelivr.net/npm/jquery-ui-slider@1.12.1/jquery-ui.min.css
                                         <div class="form-group">
                                             <label class="form-label" for="customFileLabel">Upload ảnh đại diện</label>
                                             <div class="form-control-wrap">
-                                                <div class="form-file">
-                                                    <input type="file" accept="image/*" class="form-file-input" id="avatarUpload" name="image" required>
-                                                    <label class="form-file-label" for="customFile">Chọn ảnh</label>
-
+                                                <div class="">
+                                                    <input type="file" accept="image/*" class="form-control" id="avatarUpload" name="image" required>
                                                 </div>
                                             </div>
                                         </div>

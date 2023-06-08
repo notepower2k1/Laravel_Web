@@ -118,6 +118,8 @@
                               class="form-check-input"
                               role="switch"
                               data-id="{{ $book->id }}"
+                              {{ ($book->file  || $book->numberOfChapter > 0 )  ?  "data-flag = true" : "data-flag = false" }} 
+
                               {{ $book->isPublic ? 'checked':'' }}   />
                             </div>
 
@@ -172,26 +174,47 @@
 <script>
   //custom datatable
   $(function(){
-    $('#DataTables_Table_0 tbody').on('change','.form-check-input',function(){
+    $('#DataTables_Table_0 tbody').on('change','.form-check-input',function(e){
       
-      var status = $(this).prop('checked') == true ? 1 : 0;
-      var book_id = $(this).data('id');
-
-      
-      $.ajax({
-        type:"GET",
-        url:'/quan-ly/sach/update/changeStatus',
-        data: {'isPublic':status,'id':book_id}   
+      var flag = $(this).data('flag');
+      if(flag){
+        var status = $(this).prop('checked') == true ? 1 : 0;
+        var book_id = $(this).data('id');
+ 
+        $.ajax({ 
+          type:"GET",
+          url:'/admin/book/update/changeStatus',
+          data: {'isPublic':status,'id':book_id}   
         })
         .done(function() {
         // If successful
-          console.log("Success");
+          Swal.fire({
+                      icon: 'success',
+                      title: `Đổi trạng thái thành công`,
+                      showConfirmButton: false,
+                      timer: 2500
+                  });
 
         })
         .fail(function(jqXHR, textStatus, errorThrown) {
         // If fail
-        console.log(textStatus + ': ' + errorThrown);
+          Swal.fire({
+                      icon: 'error',
+                      title: `Đổi trạng thái không thành công`,
+                      showConfirmButton: false,
+                      timer: 2500
+            });
         })
+      }
+      else{
+        e.target.checked = false        
+        Swal.fire({
+            icon: 'info',
+            title: `Sách phải có ít nhất 1 chương`,
+            showConfirmButton: false,
+            timer: 2500
+          });
+      }
   })
 
     $('#DataTables_Table_0 tbody').on('click','.delete-button',function(){

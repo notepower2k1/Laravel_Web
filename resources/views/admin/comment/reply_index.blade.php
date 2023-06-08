@@ -11,13 +11,10 @@
 </style>
 @endsection
 @section('content')
+
 <div class="nk-block nk-block-lg">
-    <nav>
-        <ul class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/admin/comment">Bình luận</a></li>
-            <li class="breadcrumb-item active">Phản hồi</li>
-        </ul>
-    </nav>
+    <div class="nk-block-head-sub"><a class="back-to" href="{{ url()->previous() }}"><em class="icon ni ni-arrow-left"></em><span>Quay lại</span></a></div>
+
     <div class="card card-bordered card-preview">
         <div class="card-inner">
            

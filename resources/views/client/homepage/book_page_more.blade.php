@@ -1,5 +1,5 @@
 @extends('client/homepage.layouts.app')
-@section('pageTitle', `${{$title}}`)
+@section('pageTitle', 'Danh sách')
 @section('additional-style')
 <link rel="stylesheet" href="{{ asset('assets/css/animatedbook.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/infohelper.css') }}">
@@ -43,7 +43,7 @@
             <li class="item-book">
                 <div class="d-sm-none d-md-block">
                     <div class="info mb-2 d-flex justify-content-start">
-                        <dfn data-info="{{ $book->types->name }}"><em class="icon ni ni-book text-success"></em></dfn>
+                        <dfn data-info="Đăng tải bởi {{ $book->users->name }}"><em class="icon ni ni-user text-success"></em></dfn>
                       
 
                         @if($book->language == 1)
@@ -56,43 +56,14 @@
                 <figure class='book'>    
                         <ul class='paperback_front'>
                             
-                            <li>
+                            <li>      
+                                <span class="ribbon">
+                                    <span class="fs-9px">
+                                        {{ $book->ratingScore }}
+                                    </span>
+                                    <em class="icon ni ni-star-fill"></em>
 
-                                @switch($option)
-                                    @case('danh-gia-cao')
-                                        <span class="ribbon">
-                                            <span class="fs-9px">
-                                                {{ $book->ratingScore }}
-                                                <em class="icon ni ni-star-fill"></em>
-                                            </span>
-                                        </span>
-
-                                        @break
-                                
-                                    @case('doc-nhieu')
-                                        <span class="ribbon">
-                                            <span class="fs-9px">
-                                                {{ $book->totalReading }}
-                                                <em class="icon ni ni-eye-fill"></em>
-                                            </span>
-                                  
-
-                                        </span>
-
-                                        @break
-
-                                    @case('moi-dang')
-                                        <span class="ribbon">{{ $book->time }}</span>
-
-                                        @break
-
-                                    @default
-                                    
-                                    @if(\Carbon\Carbon::parse($book->created_at)->isToday())
-                                        <span class="ribbon">Mới</span>
-                                    @endif
-                                @endswitch
-
+                                </span>
                                 <img src="{{ $book->url }}" alt="" width="100%" height="100%">
                             </li>
                             <li></li>
@@ -103,7 +74,7 @@
                             <li></li>
                             <li class="">
                                 <a class="atag_btn"
-                                href="/sach/{{$book->id}}/{{$book->slug}}">{{ Str::limit($book->description,250) }}</a>
+                                href="/sach/{{$book->id}}/{{$book->slug}}">{{ Str::limit($book->description,200) }}</a>
                             </li>
                             <li></li>
                             <li></li>
@@ -116,14 +87,34 @@
                             <li></li>
                         </ul>
                         <figcaption>
-                            <h4>{{ $book->name }}</h4>
+                            <h5><a style="text-decoration:none " class="text-gray" href="/sach/{{$book->id}}/{{$book->slug}}">{{ $book->name }}</a></h5>
                             @foreach(explode(",",$book->author) as $author)                                                                       
                                 <a class="text-info" href="/tac-gia/tac-gia-sach/{{ $author }}">{{ $author }}</a>
                                 @if($loop->index < count(explode(",",$book->author)) - 1)
                                     ,
                                 @endif
-                        @endforeach       
-                         
+                            @endforeach     
+
+                            <ul class="link-list-opt no-bdr">
+                                <li>
+                                    @if($book->file)
+                                        <span class="sub-text">PDF file</span>
+                                    @else
+                                        <span class="sub-text">Số chương {{ $book->numberOfChapter }}</span>
+                                    @endif
+                                
+                            
+                                </li>
+                                <li>
+                                    @if ($book->isCompleted === 1)
+                                        <span class="sub-text text-success">Đã hoàn thành</a></span>
+                                    @else
+                                        <span class="sub-text text-warning">Chưa hoàn thành</a></span>
+                                    @endif 
+                                </li>                         
+                            </ul>
+                            <a href="/the-loai/sort_by=created_at/the-loai-sach/{{$book->types->slug}}"><span class="badge badge-dim bg-outline-danger fs-13px">{{ $book->types->name }}</span>
+                            </a>
                         </figcaption>
                 </figure>
 

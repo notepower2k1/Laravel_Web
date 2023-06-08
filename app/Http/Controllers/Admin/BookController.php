@@ -34,7 +34,7 @@ class BookController extends Controller
 
     public function index()
     {
-       $books = Book::where('deleted_at','=',null)->where('status','=',1)->get();
+       $books = Book::where('deleted_at','=',null)->whereIn('status',['1','-2'])->get();
        return view('admin.book.index')->with('books', $books);
     }
 
@@ -52,6 +52,7 @@ class BookController extends Controller
         foreach($itemList as $item){
             $book = Book::findOrFail($item);
             $book->deleted_at = null;
+            $book->timestamps = false;
             $book ->save(); 
         }
 
@@ -100,7 +101,6 @@ class BookController extends Controller
             'isCompleted.required' => 'Sách phải có tình trạng'
         ]);
 
-        $localfolder = public_path('firebase-temp-uploads') .'/';
 
         $slug =  Str::slug($request->name).'-'. $this->TimeToText();
     
@@ -115,11 +115,10 @@ class BookController extends Controller
             $generatedFileName = $slug.$file_book->hashName();
             
             $firebase_storage_path_2 = 'bookFile/';
-            if ($file_book->move($localfolder, $generatedFileName)) {
-            $uploadedfile = fopen($localfolder.$generatedFileName, 'r');
-            app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path_2 . $generatedFileName]);
-            unlink($localfolder . $generatedFileName);
-            }
+            $uploadedfileBook = file_get_contents($request->file('file_book'));
+
+            app('firebase.storage')->getBucket()->upload($uploadedfileBook, ['name' => $firebase_storage_path_2 . $generatedFileName]);
+            
         }
    
         $book = Book::create([
@@ -144,12 +143,9 @@ class BookController extends Controller
 
 
         $firebase_storage_path = 'bookImage/';
-        if ($image->move($localfolder, $generatedImageName)) {
-        $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
-
-        app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
-        unlink($localfolder . $generatedImageName);
-        }
+        $uploadedfileImage = file_get_contents($request->file('image'));
+        app('firebase.storage')->getBucket()->upload($uploadedfileImage, ['name' => $firebase_storage_path . $generatedImageName]);
+        
 
      
 
@@ -167,7 +163,7 @@ class BookController extends Controller
     public function show($id,$year = null) //like "show details"
     {
         DB::statement("SET SQL_MODE=''");
-        $notes = Note::where('type_id','=',1)->where('identifier_id','=',$id)->get();
+        $notes = Note::whereIn('type_id',['1','4'])->where('identifier_id','=',$id)->get();
 
         $allYears = DB::select("SELECT distinct year(books.created_at) as 'year'
         from books");
@@ -179,58 +175,134 @@ class BookController extends Controller
         $rating_books = ratingBook::where('bookID','=',$id)->get();
 
      
-            $totalReadingPerMonth =  DB::select("SELECT 
-            SUM(IF(month = 'Jan', total, 0)) AS 'Tháng 1', 
-            SUM(IF(month = 'Feb', total, 0)) AS 'Tháng 2', 
-            SUM(IF(month = 'Mar', total, 0)) AS 'Tháng 3', 
-            SUM(IF(month = 'Apr', total, 0)) AS 'Tháng 4', 
-            SUM(IF(month = 'May', total, 0)) AS 'Tháng 5', 
-            SUM(IF(month = 'Jun', total, 0)) AS 'Tháng 6', 
-            SUM(IF(month = 'Jul', total, 0)) AS 'Tháng 7', 
-            SUM(IF(month = 'Aug', total, 0)) AS 'Tháng 8', 
-            SUM(IF(month = 'Sep', total, 0)) AS 'Tháng 9', 
-            SUM(IF(month = 'Oct', total, 0)) AS 'Tháng 10', 
-            SUM(IF(month = 'Nov', total, 0)) AS 'Tháng 11', 
-            SUM(IF(month = 'Dec', total, 0)) AS 'Tháng 12' 
-            FROM ( 
-                SELECT SUM(reading_histories.total) as 'total' , DATE_FORMAT(reading_histories.created_at, '%b') AS month
-                FROM reading_histories 
-                WHERE reading_histories.bookID = $id and YEAR(reading_histories.created_at) = $year
-                GROUP by reading_histories.bookID,DATE_FORMAT(reading_histories.created_at, '%m-%Y')
-            ) as sub");
-
-        
-            $totalReadingInYear = readingHistory::where('bookID','=',$id)->whereYear('created_at', '=', $year)->sum('total');
-
-
-            $totalReadingPerDate = DB::select("SELECT SUM(reading_histories.total) as 'total', DATE(reading_histories.created_at) as 'date'
-            from reading_histories 
+        $totalReadingPerMonth =  DB::select("SELECT 
+        SUM(IF(month = 'Jan', total, 0)) AS 'Tháng 1', 
+        SUM(IF(month = 'Feb', total, 0)) AS 'Tháng 2', 
+        SUM(IF(month = 'Mar', total, 0)) AS 'Tháng 3', 
+        SUM(IF(month = 'Apr', total, 0)) AS 'Tháng 4', 
+        SUM(IF(month = 'May', total, 0)) AS 'Tháng 5', 
+        SUM(IF(month = 'Jun', total, 0)) AS 'Tháng 6', 
+        SUM(IF(month = 'Jul', total, 0)) AS 'Tháng 7', 
+        SUM(IF(month = 'Aug', total, 0)) AS 'Tháng 8', 
+        SUM(IF(month = 'Sep', total, 0)) AS 'Tháng 9', 
+        SUM(IF(month = 'Oct', total, 0)) AS 'Tháng 10', 
+        SUM(IF(month = 'Nov', total, 0)) AS 'Tháng 11', 
+        SUM(IF(month = 'Dec', total, 0)) AS 'Tháng 12' 
+        FROM ( 
+            SELECT SUM(reading_histories.total) as 'total' , DATE_FORMAT(reading_histories.created_at, '%b') AS month
+            FROM reading_histories 
             WHERE reading_histories.bookID = $id and YEAR(reading_histories.created_at) = $year
-            GROUP by reading_histories.bookID,DATE(reading_histories.created_at)");
+            GROUP by DATE_FORMAT(reading_histories.created_at, '%m-%Y')
+        ) as sub");
 
-            $ratingScoreBase = DB::select("SELECT 
-            SUM(IF(base = 5, total, 0)) AS 'Mức điểm 5', 
-            SUM(IF(base = 4, total, 0)) AS 'Mức điểm 4', 
-            SUM(IF(base = 3, total, 0)) AS 'Mức điểm 3', 
-            SUM(IF(base = 2, total, 0)) AS 'Mức điểm 2', 
-            SUM(IF(base = 1, total, 0)) AS 'Mức điểm 1'
-            FROM(
-            SELECT  round(rating_books.score) as 'base' , count(rating_books.id) as
-            'total' FROM   rating_books
-            WHERE rating_books.bookID = $id 
-            GROUP BY base  
-            ORDER BY `base`) as sub");
+    
+        $totalReadingInYear = readingHistory::where('bookID','=',$id)->whereYear('created_at', '=', $year)->sum('total');
+
+
+        $totalReadingPerDate = DB::select("SELECT SUM(reading_histories.total) as 'total', DATE(reading_histories.created_at) as 'date'
+        from reading_histories 
+        WHERE reading_histories.bookID = $id and YEAR(reading_histories.created_at) = $year
+        GROUP by reading_histories.bookID,DATE(reading_histories.created_at)");
+
+        $ratingScoreBase = DB::select("SELECT 
+        SUM(IF(base = 5, total, 0)) AS 'Mức điểm 5', 
+        SUM(IF(base = 4, total, 0)) AS 'Mức điểm 4', 
+        SUM(IF(base = 3, total, 0)) AS 'Mức điểm 3', 
+        SUM(IF(base = 2, total, 0)) AS 'Mức điểm 2', 
+        SUM(IF(base = 1, total, 0)) AS 'Mức điểm 1'
+        FROM(
+        SELECT  round(rating_books.score) as 'base' , count(rating_books.id) as
+        'total' FROM   rating_books
+        WHERE rating_books.bookID = $id 
+        GROUP BY base  
+        ORDER BY `base`) as sub");
         
        
+        $comments = Comment::where('type_id','=',2)->where('identifier_id','=',$id)->whereYear('created_at', '=', $year)->where('deleted_at','=',null)->orderBy('created_at', 'desc')->get();
+
+        
+
+        $totalCommentsPerMonth =  DB::select("SELECT 
+              SUM(IF(month = 'Jan', total, 0)) AS 'Tháng 1', 
+              SUM(IF(month = 'Feb', total, 0)) AS 'Tháng 2', 
+              SUM(IF(month = 'Mar', total, 0)) AS 'Tháng 3', 
+              SUM(IF(month = 'Apr', total, 0)) AS 'Tháng 4', 
+              SUM(IF(month = 'May', total, 0)) AS 'Tháng 5', 
+              SUM(IF(month = 'Jun', total, 0)) AS 'Tháng 6', 
+              SUM(IF(month = 'Jul', total, 0)) AS 'Tháng 7', 
+              SUM(IF(month = 'Aug', total, 0)) AS 'Tháng 8', 
+              SUM(IF(month = 'Sep', total, 0)) AS 'Tháng 9', 
+              SUM(IF(month = 'Oct', total, 0)) AS 'Tháng 10', 
+              SUM(IF(month = 'Nov', total, 0)) AS 'Tháng 11', 
+              SUM(IF(month = 'Dec', total, 0)) AS 'Tháng 12' 
+              FROM ( 
+                  SELECT COUNT(comments.id) as 'total' ,DATE_FORMAT(comments.created_at, '%b') AS month
+                  FROM comments 
+                  WHERE comments.type_id = 2 and comments.identifier_id = $id and YEAR(comments.created_at) = $year and comments.deleted_at is null
+                  GROUP by DATE_FORMAT(comments.created_at, '%m-%Y')
+        ) as sub");
+
+
+        $totalRepliesPerMonth =  DB::select("SELECT 
+        SUM(IF(month = 'Jan', total, 0)) AS 'Tháng 1', 
+        SUM(IF(month = 'Feb', total, 0)) AS 'Tháng 2', 
+        SUM(IF(month = 'Mar', total, 0)) AS 'Tháng 3', 
+        SUM(IF(month = 'Apr', total, 0)) AS 'Tháng 4', 
+        SUM(IF(month = 'May', total, 0)) AS 'Tháng 5', 
+        SUM(IF(month = 'Jun', total, 0)) AS 'Tháng 6', 
+        SUM(IF(month = 'Jul', total, 0)) AS 'Tháng 7', 
+        SUM(IF(month = 'Aug', total, 0)) AS 'Tháng 8', 
+        SUM(IF(month = 'Sep', total, 0)) AS 'Tháng 9', 
+        SUM(IF(month = 'Oct', total, 0)) AS 'Tháng 10', 
+        SUM(IF(month = 'Nov', total, 0)) AS 'Tháng 11', 
+        SUM(IF(month = 'Dec', total, 0)) AS 'Tháng 12' 
+        FROM ( 
+            SELECT COUNT(replies.id) as 'total' ,DATE_FORMAT(replies.created_at, '%b') AS month
+            FROM replies 
+            WHERE YEAR(replies.created_at) = $year and replies.deleted_at is null and replies.commentID in (SELECT DISTINCT id from comments where comments.type_id = 2 and comments.identifier_id = $id)
+            GROUP by DATE_FORMAT(replies.created_at, '%m-%Y')
+        ) as sub");
+
+
+        $totalCommentsInYear = Comment::where('identifier_id','=',$id)->where('type_id','=',2)->whereYear('created_at', '=', $year)->count();
+
+        $totalRepliesInYear = DB::select("SELECT count(replies.id) as 'total'
+        from replies 
+        WHERE YEAR(replies.created_at) = $year and replies.deleted_at is null and replies.commentID in (select DISTINCT id from comments 
+        where comments.type_id = 2 and comments.identifier_id = $id)");
+
+
+        $totalCommentsPerDate = DB::select("SELECT  COUNT(comments.id) as 'total', DATE(comments.created_at) as 'date'
+        from comments 
+        WHERE comments.type_id = 2 and comments.identifier_id = $id and YEAR(comments.created_at) = $year and comments.deleted_at is null
+        GROUP by DATE(comments.created_at)");
+        
+
+        $totalRepliesPerDate = DB::select("SELECT  COUNT(replies.id) as 'total', DATE(replies.created_at) as 'date'
+        from replies 
+        WHERE YEAR(replies.created_at) = $year and replies.deleted_at is null and replies.commentID in (SELECT DISTINCT id from comments where comments.type_id = 2 and comments.identifier_id = $id)
+        GROUP by DATE(replies.created_at)");
+        
 
         return view('admin.book.detail')
         ->with('notes',$notes)
+        ->with('comments',$comments)
         ->with('ratingScoreBase',$ratingScoreBase)
         ->with('statisticsYear',$year)
         ->with('allYears',$allYears)
+
         ->with('totalReadingPerMonth',$totalReadingPerMonth)
         ->with('totalReadingPerDate',$totalReadingPerDate)
         ->with('totalReadingInYear',$totalReadingInYear)
+
+        ->with('totalCommentsPerMonth',$totalCommentsPerMonth)
+        ->with('totalCommentsPerDate',$totalCommentsPerDate)
+        ->with('totalCommentsInYear',$totalCommentsInYear)
+
+        ->with('totalRepliesInYear',$totalRepliesInYear[0])
+        ->with('totalRepliesPerMonth',$totalRepliesPerMonth)
+        ->with('totalRepliesPerDate',$totalRepliesPerDate)
+
         ->with('reading_history',$reading_history)
         ->with('rating_books',$rating_books)
         ->with('book',$book);
@@ -295,17 +367,14 @@ class BookController extends Controller
             //upload new image
             $generatedImageName = $slug.$image->hashName();
 
+            $firebase_storage_path = 'bookImage/';
+            $uploadedfileImage = file_get_contents($request->file('image'));
+            app('firebase.storage')->getBucket()->upload($uploadedfileImage, ['name' => $firebase_storage_path . $generatedImageName]);
 
-
-            $localfolder = public_path('firebase-temp-uploads') .'/';
-            if ($image->move($localfolder, $generatedImageName)) {
-            $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
-
-            app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
-            unlink($localfolder . $generatedImageName);
+         
               //delete old image
             $imageDeleted = app('firebase.storage')->getBucket()->object($firebase_storage_path.$request->oldImage)->delete();
-            }
+            
         }
         
         
@@ -345,47 +414,54 @@ class BookController extends Controller
     public function customDelete($book_id){
         $book = Book::findOrFail($book_id);
         $book->deleted_at = Carbon::now()->toDateTimeString();
+        $book->totalComments = 0;
+        $book->totalBookMarking = 0;
+        $book->ratingScore = 0;
         $book ->save();
 
 
-        $comments = Comment::where('identifier_id','=',$book_id)->where('type_id','=','2')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
-        ]);
+        $follows = Follow::where('identifier_id','=',$book_id)->where('type_id','=','2')->get();
 
-        
+        foreach($follows as $follow){
+            $follow->delete();
+        }
+
+        $comments = Comment::where('identifier_id','=',$book_id)->where('type_id','=','2')->get();
+
         foreach($comments as $comment){
-            Reply::where('commentID','=',$comment->id)->update([
-                'deleted_at' => Carbon::now()->toDateTimeString()
-            ]);
 
-            report::where('identifier_id','=',$comment)->where('type_id','=','9')->update([
+            $replies = Reply::where('commentID','=',$comment->id)->get();
+
+
+            foreach ($replies as $reply){
+
+                $temp = Reply::findOrFail($reply->id);
+                $temp->deleted_at = Carbon::now()->toDateTimeString();
+                $temp ->save();
+                
+                Notification::where('identifier_id','=',$reply->id)->where('type_id','=','2')->update([
+                    'deleted_at' => Carbon::now()->toDateTimeString()
+                ]);           
+            }
+
+            Notification::where('identifier_id','=',$comment->id)->where('type_id','=','1')->update([
                 'deleted_at' => Carbon::now()->toDateTimeString()
             ]);
         }
 
 
-        Notification::where('identifier_id','=',$book_id)->where('type_id','=','1')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
-        ]);
-
-        Notification::where('identifier_id','=',$book_id)->where('type_id','=','4')->update([
+        Comment::where('identifier_id','=',$book_id)->where('type_id','=','2')->update([
             'deleted_at' => Carbon::now()->toDateTimeString()
         ]);
 
         report::where('identifier_id','=',$book_id)->where('type_id','=','1')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
+            'status' => 0
         ]);
 
-        report::where('identifier_id','=',$book_id)->where('type_id','=','6')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
-        ]);
-
-        report::where('identifier_id','=',$book_id)->where('type_id','=','10')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
-        ]);
-
-        $follows = Follow::where('identifier_id','=',$book_id)->where('type_id','=','2')->get();
-        $follows->delete();
+        $ratings = ratingBook::where('bookID','=',$book_id)->get();
+        foreach($ratings as $rating){
+            $rating->delete();
+        }
     }   
 
     public function changeBookStatus(Request $request){
@@ -470,7 +546,9 @@ class BookController extends Controller
         GROUP by DATE(reading_histories.created_at)");
 
 
+        $totalBooks = Book::where('deleted_at',null)->get()->count();
          return view('admin.book.statistics')
+            ->with('totalBooks',$totalBooks)
             ->with('allYears',$allYears)
             ->with('totalBooksInYear',$totalBooksInYear->count())
             ->with('totalReadingInYear',$totalReadingInYear)
@@ -516,5 +594,107 @@ class BookController extends Controller
         ->with('fromDate',$start_date->format('m/d/Y'))
         ->with('toDate',$end_date->format('m/d/Y'))
         ->with('books', $books);
+    }
+
+    public function lockBook($id){
+        $book = Book::findOrFail($id);
+        $message = '';
+        $status = $book->status;
+
+        //unlock
+        if($status == -2){
+            $book->status = 1;
+
+            $comments = Comment::where('identifier_id','=',$id)->where('type_id','=','2')->get();
+
+            foreach($comments as $comment){
+    
+                $replies = Reply::where('commentID','=',$comment->id)->get();
+    
+    
+                foreach ($replies as $reply){
+    
+                    $temp = Reply::findOrFail($reply->id);
+                    $temp->deleted_at = null;
+                    $temp ->save();
+                    
+                    Notification::where('identifier_id','=',$reply->id)->where('type_id','=','2')->update([
+                        'deleted_at' => null
+                    ]);
+                }
+    
+                Notification::where('identifier_id','=',$comment->id)->where('type_id','=','1')->update([
+                    'deleted_at' => null
+                ]);
+                
+
+                
+            }
+    
+    
+            Comment::where('identifier_id','=',$id)->where('type_id','=','2')->update([
+                'deleted_at' => null
+            ]);
+          
+            Notification::create([
+                'identifier_id'=>$id,
+                'type_id'=> 10, 
+                'senderID' => 1,
+                'receiverID'=>$book->users->id,
+                'status'=>1
+            ]);
+        }
+        //lock
+        else{
+            $book->status = -2;
+
+      
+            $comments = Comment::where('identifier_id','=',$id)->where('type_id','=','2')->get();
+
+            foreach($comments as $comment){
+    
+                $replies = Reply::where('commentID','=',$comment->id)->get();
+    
+    
+                foreach ($replies as $reply){
+    
+                    $temp = Reply::findOrFail($reply->id);
+                    $temp->deleted_at = Carbon::now()->toDateTimeString();
+                    $temp ->save();
+                    
+                    Notification::where('identifier_id','=',$reply->id)->where('type_id','=','2')->update([
+                        'deleted_at' => Carbon::now()->toDateTimeString()
+                    ]); 
+                }
+    
+                Notification::where('identifier_id','=',$comment->id)->where('type_id','=','1')->update([
+                    'deleted_at' => Carbon::now()->toDateTimeString()
+                ]);          
+            }
+    
+    
+            Comment::where('identifier_id','=',$id)->where('type_id','=','2')->update([
+                'deleted_at' => Carbon::now()->toDateTimeString()
+            ]);
+
+            report::where('identifier_id','=',$id)->where('type_id','=','1')->update([
+                'status' => 0
+            ]);
+
+            Notification::create([
+                'identifier_id'=>$id,
+                'type_id'=> 8, 
+                'senderID' => 1,
+                'receiverID'=>$book->users->id,
+                'status'=>1
+            ]);
+        }
+
+        $book->save();
+
+        return response()->json([
+            'status' => $book->status,
+        ]);
+
     }
 }   

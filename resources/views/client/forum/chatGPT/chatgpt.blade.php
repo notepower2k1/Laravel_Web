@@ -112,7 +112,7 @@ pre {
                     <div class="nk-chat-head">
                         <ul class="nk-chat-head-info">
                             <li class="nk-chat-body-open">
-                                <a href="{{ url()->previous() }}" class="btn btn-icon btn-trigger nk-chat-hide ms-n1"><em class="icon ni ni-arrow-left"></em></a>
+                                <a href="/dien-dan" class="btn btn-icon btn-trigger nk-chat-hide ms-n1"><em class="icon ni ni-arrow-left"></em></a>
                             </li>
                             <li class="nk-chat-head-user">
                                 <div class="user-card">
@@ -485,7 +485,7 @@ pre {
 
     })
 
-    $('input').keyup(function(){
+    $('textarea').keyup(function(){
         var input_val = $(this).val();
         var inputRGEX = /^[a-zA-Z0-9]*$/;
         var inputResult = inputRGEX.test(input_val);

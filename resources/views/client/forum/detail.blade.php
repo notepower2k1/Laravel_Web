@@ -246,8 +246,8 @@
 @endsection 
 
 @section('modal')
-<div class="modal fade" id="modalForm" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-lg" role="document">
+<div class="modal fade" id="modalForm">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Thêm bài đăng</h5>
@@ -295,7 +295,7 @@
                  
                     
                 </form>
-                <div class="form-group">
+                <div class="form-group float-end mt-2">
                     <button id="add-btn" class="btn btn-lg btn-primary">Thêm bài viết</button>
                 </div>
             </div>
@@ -323,15 +323,15 @@
         selector: '#mytextarea',
         branding: false,
         statusbar: false,
-        height: 800,
+        height: 400,
         resize: false,
         menubar: false,
         plugins: [
             "advlist", "anchor", "autolink", "charmap", "code", "fullscreen", 
             "help", "image", "insertdatetime", "link", "lists", "media", 
-            "preview", "searchreplace", "table", "visualblocks",
+            "preview", "searchreplace", "table", "visualblocks"," wordcount","emoticons",
         ],
-        toolbar: "undo redo |  bold italic underline strikethrough | link image | forecolor ",
+        toolbar: "undo redo |  bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | emoticons | wordcount",
         image_title: true,
         /* enable automatic uploads of images represented by blob or data URIs*/
         images_upload_url: '/upload',

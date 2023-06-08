@@ -210,48 +210,9 @@ class ForumController extends Controller
         GROUP by  DATE(forum_posts.created_at)");
         
 
-        $totalCommentsPerMonth = DB::select("SELECT 
-        SUM(IF(month = 'Jan', total, 0)) AS 'Tháng 1', 
-        SUM(IF(month = 'Feb', total, 0)) AS 'Tháng 2', 
-        SUM(IF(month = 'Mar', total, 0)) AS 'Tháng 3', 
-        SUM(IF(month = 'Apr', total, 0)) AS 'Tháng 4', 
-        SUM(IF(month = 'May', total, 0)) AS 'Tháng 5', 
-        SUM(IF(month = 'Jun', total, 0)) AS 'Tháng 6', 
-        SUM(IF(month = 'Jul', total, 0)) AS 'Tháng 7', 
-        SUM(IF(month = 'Aug', total, 0)) AS 'Tháng 8', 
-        SUM(IF(month = 'Sep', total, 0)) AS 'Tháng 9', 
-        SUM(IF(month = 'Oct', total, 0)) AS 'Tháng 10', 
-        SUM(IF(month = 'Nov', total, 0)) AS 'Tháng 11', 
-        SUM(IF(month = 'Dec', total, 0)) AS 'Tháng 12' 
-        FROM ( 
-            SELECT DATE_FORMAT(forum_posts.created_at, '%b') AS month, 
-            SUM(forum_posts.totalComments) as total FROM forum_posts 
-            WHERE Year(forum_posts.created_at) = $year and forum_posts.deleted_at is null and forum_posts.forumID = $forum_id
-            GROUP BY DATE_FORMAT(forum_posts.created_at, '%m-%Y')
-        ) as sub");
-
-        $totalViewsPerMonth = DB::select("SELECT 
-        SUM(IF(month = 'Jan', total, 0)) AS 'Tháng 1', 
-        SUM(IF(month = 'Feb', total, 0)) AS 'Tháng 2', 
-        SUM(IF(month = 'Mar', total, 0)) AS 'Tháng 3', 
-        SUM(IF(month = 'Apr', total, 0)) AS 'Tháng 4', 
-        SUM(IF(month = 'May', total, 0)) AS 'Tháng 5', 
-        SUM(IF(month = 'Jun', total, 0)) AS 'Tháng 6', 
-        SUM(IF(month = 'Jul', total, 0)) AS 'Tháng 7', 
-        SUM(IF(month = 'Aug', total, 0)) AS 'Tháng 8', 
-        SUM(IF(month = 'Sep', total, 0)) AS 'Tháng 9', 
-        SUM(IF(month = 'Oct', total, 0)) AS 'Tháng 10', 
-        SUM(IF(month = 'Nov', total, 0)) AS 'Tháng 11', 
-        SUM(IF(month = 'Dec', total, 0)) AS 'Tháng 12' 
-        FROM ( 
-            SELECT DATE_FORMAT(forum_posts.created_at, '%b') AS month, 
-            SUM(forum_posts.totalViews) as total FROM forum_posts 
-            WHERE Year(forum_posts.created_at) = $year and forum_posts.deleted_at is null and forum_posts.forumID = $forum_id
-            GROUP BY DATE_FORMAT(forum_posts.created_at, '%m-%Y')
-        ) as sub");
+   
          return view('admin.forum.statistics')
-            ->with('totalCommentsPerMonth',$totalCommentsPerMonth)
-            ->with('totalViewsPerMonth',$totalViewsPerMonth)
+    
             ->with('totalPosts',$totalPosts)
             ->with('all_forum',$all_forum)
             ->with('forum_name',$forum->name)

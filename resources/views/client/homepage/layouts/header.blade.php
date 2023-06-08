@@ -248,87 +248,149 @@
                             <div class="nk-notification">
                                 @foreach ($comment_notifications as  $comment_notification)
                                     <div class="nk-notification-item comment-notifications dropdown-inner" data-id="{{ $comment_notification->id }}" style="cursor: pointer;">
-                                        <div class="nk-notification-icon">
-                                            @switch($comment_notification->type_id)
-                                            @case(1)
-                                            <em class="icon icon-circle bg-success-dim ni ni-book"></em>
-                                            @break
-        
-                                            @case(2)
-                                            <em class="icon icon-circle bg-secondary-dim ni ni-file-docs"></em>
-                                            @break
-
-                                            @case(3)
-                                            <em class="icon icon-circle bg-info-dim ni ni-list-fill"></em>
-                                            @break
-
-                                            @case(4)
-                                            <em class="icon icon-circle bg-success-dim ni ni-reply"></em>
-                                            @break
-
-                                            @case(5)
-                                            <em class="icon icon-circle bg-secondary-dim ni ni-reply"></em>
-                                            @break
-
-                                            @case(5)
-                                            <em class="icon icon-circle bg-info-dim ni ni-reply"></em>
-                                            @break
-                                        @default
-                                            Lỗi thông báo
-                                        @endswitch
+                                        <div class="nk-notification-icon">      
+                                            @if($comment_notification->type_id == 1)
+                                                <em class="icon icon-circle bg-success-dim ni ni-comments"></em>        
+                                            @endif                   
+                                            @if($comment_notification->type_id == 2)
+                                                <em class="icon icon-circle bg-primary-dim ni ni-reply-all"></em>                           
+                                            @endif
+                                            @if($comment_notification->type_id == 3)
+                                                <em class="icon icon-circle bg-warning-dim ni ni-policy-fill"></em>                           
+                                            @endif
+                                            @if($comment_notification->type_id == 4 || $comment_notification->type_id == 5)
+                                            <em class="icon icon-circle bg-danger-dim ni ni-na"></em>                           
+                                            @endif
+                                            @if($comment_notification->type_id == 6 || $comment_notification->type_id == 7)
+                                            <em class="icon icon-circle bg-success-dim ni ni-check"></em>                           
+                                            @endif
+                                            @if($comment_notification->type_id == 8 || $comment_notification->type_id == 9)
+                                            <em class="icon icon-circle bg-danger-dim ni ni-lock"></em>                           
+                                            @endif
+                                            @if($comment_notification->type_id == 10 || $comment_notification->type_id == 11)
+                                            <em class="icon icon-circle bg-success-dim ni ni-unlock"></em>                           
+                                            @endif
                                         </div>
                                         <div class="nk-notification-content">
                                             <div class="nk-notification-text">
-                                                <strong>{{ $comment_notification->senders->profile->displayName }}</strong>
-                                                @switch($comment_notification->type_id)
-                                                    @case(1)
-                                                    vừa bình luận về sách
+                                                @if($comment_notification->type_id == 1)
+                                                    <strong>{{ $comment_notification->senders->profile->displayName }}</strong>
+
+                                                    vừa bình luận về
+                                                    @switch($comment_notification->identifier->type_id)
+                                                        @case(1)
+                                                            tài liệu
+                                                            <strong>
+                                                                {{ $comment_notification->identifier->identifier->name }}
+                                                            </strong>
+                                                            @break
+                                                        @case(2)                                                   
+                                                            sách
+                                                            <strong>
+                                                                {{ $comment_notification->identifier->identifier->name }}
+                                                            </strong>
+                                                            @break
+
+                                                        @case(3)
+                                                            bài viết
+                                                            <strong>
+                                                                {{ $comment_notification->identifier->identifier->topic }}
+                                                            </strong>
+                                                            @break
+                                                        @default 
+                                                            Lỗi thông báo
+                                                    @endswitch
+                                                    của bạn
+                                                @endif
+                                                @if($comment_notification->type_id == 2)
+                                                    <strong>{{ $comment_notification->senders->profile->displayName }}</strong>
+
+                                                    vừa phản hồi bình luận của bạn về
+                                                    @switch($comment_notification->identifier->comments->type_id)
+                                                        @case(1)
+                                                            tài liệu
+                                                            <strong>
+                                                                {{ $comment_notification->identifier->comments->identifier->name }}
+                                                            </strong>
+                                                            @break
+                                                        @case(2)                                                   
+                                                            sách
+                                                            <strong>
+                                                                {{ $comment_notification->identifier->comments->identifier->name }}
+                                                            </strong>
+                                                            @break
+
+                                                        @case(3)
+                                                            bài viết
+                                                            <strong>
+                                                                {{ $comment_notification->identifier->comments->identifier->topic }}
+                                                            </strong>
+                                                            @break
+                                                        @default   
+                                                            Lỗi thông báo
+                                                    @endswitch                                      
+                                                @endif
+                                                @if($comment_notification->type_id == 3)
+                                                    Quản trị viên vừa đăng thông báo mới 
                                                     <strong>
-                                                        {{ $comment_notification->identifier->name }}
+                                                        {{ $comment_notification->identifier->topic}}
+                                                    </strong>
+                                                @endif
+                                                @if($comment_notification->type_id == 4)
+                                                    Quản trị viên vừa từ chối sách duyệt sách
+                                                    <strong>
+                                                        {{ $comment_notification->identifier->name}}
                                                     </strong>
                                                     của bạn
-                                                    @break
-                
-                                                    @case(2)
-                                                    vừa bình luận về tài liệu
+                                                @endif
+                                                @if($comment_notification->type_id == 5)
+                                                    Quản trị viên vừa từ chối duyệt tài liệu
                                                     <strong>
-                                                        {{ $comment_notification->identifier->name }}
+                                                        {{ $comment_notification->identifier->name}}
+                                                    </strong>
+                                                @endif
+                                                @if($comment_notification->type_id == 6)
+                                                    Quản trị viên vừa duyệt sách
+                                                    <strong>
+                                                        {{ $comment_notification->identifier->name}}
+                                                    </strong>
+                                                @endif
+                                                @if($comment_notification->type_id == 7)
+                                                    Quản trị viên vừa duyệt tài liệu
+                                                    <strong>
+                                                        {{ $comment_notification->identifier->name}}
                                                     </strong>
                                                     của bạn
 
-                                                    @break
-
-                                                    @case(3)
-                                                    vừa bình luận về bài viết
+                                                @endif
+                                                @if($comment_notification->type_id == 8)
+                                                    Quản trị viên vừa khóa sách
                                                     <strong>
-                                                    {{ $comment_notification->identifier->topic }}
+                                                        {{ $comment_notification->identifier->name}}
                                                     </strong>
                                                     của bạn
-                                                    @break
-
-                                                    @case(4)
-                                                    vừa trả lời bình luận của bạn trong sách
+                                                @endif
+                                                @if($comment_notification->type_id == 9)
+                                                    Quản trị viên vừa khóa tài liệu
                                                     <strong>
-                                                    {{ $comment_notification->identifier->name }}
+                                                        {{ $comment_notification->identifier->name}}
                                                     </strong>
-                                                    @break
-
-                                                    @case(5)
-                                                    vừa trả lời bình luận của bạn tài liệu
+                                                    của bạn
+                                                @endif
+                                                @if($comment_notification->type_id == 10)
+                                                    Quản trị viên vừa mở khóa sách
                                                     <strong>
-                                                    {{ $comment_notification->identifier->name }}
+                                                        {{ $comment_notification->identifier->name}}
                                                     </strong>
-                                                    @break
-
-                                                    @case(5)
-                                                    vừa trả lời bình luận của bạn trong bài viết
+                                                    của bạn
+                                                @endif
+                                                @if($comment_notification->type_id == 11)
+                                                    Quản trị viên vừa mở khóa tài liệu
                                                     <strong>
-                                                    {{ $comment_notification->identifier->topic }}
+                                                        {{ $comment_notification->identifier->name}}
                                                     </strong>
-                                                    @break
-                                                @default
-                                                    Lỗi thông báo
-                                                @endswitch
+                                                    của bạn
+                                                @endif
                                             </div>  
                                             <div class="nk-notification-time">
                                                 {{ $comment_notification->time }}
@@ -386,13 +448,13 @@
                         <div class="dropdown-inner">
                             <ul class="link-list">
                                 <li>
-                                <a href="{{ route('logout') }}"
+                                <a href="/logout"
                                     onclick="event.preventDefault();
                                                     document.getElementById('logout-form').submit();">
                                     <em class="icon ni ni-signout"></em><span>Đăng xuất</span>
                                 </a>
 
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                <form id="logout-form" action="/logout" method="POST" class="d-none">
                                     @csrf
                                 </form>
                                 

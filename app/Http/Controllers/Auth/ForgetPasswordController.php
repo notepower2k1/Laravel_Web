@@ -51,9 +51,9 @@ class ForgetPasswordController extends Controller
     
                 $mailData = [
                     'title' => 'Xin chào '. $request->UserName . '!!!',
-                    'body' =>   $new_password,
-                    'content' => 'Vui lòng không tiếc lộ cho ai khác mật khẩu của bạn, 
-                    Bạn nên đổi mật khẩu mới sau khi nhận được mail này.'
+                    'body' =>   'Vui lòng không tiếc lộ cho ai khác mật khẩu của bạn, 
+                    Bạn nên đổi mật khẩu mới sau khi nhận được mail này. Đây là mật khẩu của bạn',
+                    'content' => $new_password
                 ];    
                 Mail::to($user->email)->send(new NewPasswordMail($mailData)); 
                 

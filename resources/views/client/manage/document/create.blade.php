@@ -40,15 +40,15 @@
             
                         </div>
                         @endif
-                        <form action="{{ route('tai-lieu.store') }}" method="POST" enctype="multipart/form-data">
+                        <form action="/quan-ly/tai-lieu" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <label>Tiêu đề<sup>*</sup></label>
+                        <label  class="form-label">Tiêu đề<sup>*</sup></label>
                         <input type="text" required
                         name="name"
                         class="form-control mb-4 col-6" value="{{ old('name') }}" >
                        
             
-                        <label>Tác giả<sup>*</sup></label>
+                        <label  class="form-label">Tác giả<sup>*</sup></label>
                         <input type="text" required
                         name="author"
                         class="form-control mb-4 col-6" value="{{ old('author') }}"
@@ -57,7 +57,7 @@
                      
             
             
-                        <label>Thể loại<sup>*</sup></label>
+                        <label  class="form-label">Thể loại<sup>*</sup></label>
                         <select required class="form-control mb-4 col-6" name="document_type_id" id="document_type_id">
                             @foreach ($types as $type)
                             <option value="{{ $type->id }}" >{{ $type->name }}</option>
@@ -65,12 +65,12 @@
                         </select>	 	
                     
                       
-                        <label class="mt-4">File đính kèm<sup>*</sup></label>
+                        <label class="mt-4 form-label">File đính kèm<sup>*</sup></label>
                         <input type="file" required
                         name="file_document" id="pdf"
                         class="form-control col-6" accept=".pdf">
             
-                        <label class="mt-4">Ảnh bìa<sup>*</sup></label>
+                        <label class="mt-4 form-label">Ảnh bìa<sup>*</sup></label>
                         <div class="d-flex">
                           
                           <div class="me-2">
@@ -93,13 +93,13 @@
                         <div id="renderArea" style="display: none">
             
                         </div>
-                        <label>Ngôn ngữ<sup>*</sup></label>
+                        <label  class="form-label">Ngôn ngữ<sup>*</sup></label>
                         <select required class="form-control mb-4 col-6" name="language">                           
                             <option value="1" >Tiếng việt</option>
                             <option value="0" >Tiếng anh</option>
                         </select>     
             
-                        <label>Mô tả</label>
+                        <label class="form-label">Mô tả</label>
                         <textarea     
                         name="description"
                         class="form-control mb-4"
@@ -113,7 +113,7 @@
                         class="form-control mb-4 col-6" accept=".pdf"> --}}
             
             
-                        <label>Tiến độ<sup>*</sup></label>
+                        <label class="form-label">Tiến độ<sup>*</sup></label>
                         <select required class="form-control mb-4 col-6" name="isCompleted"> 
                         <option value=0>Chưa hoàn thành</option>
                         <option value=1>Đã hoàn thành</option>

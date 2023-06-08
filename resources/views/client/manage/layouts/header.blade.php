@@ -1,20 +1,15 @@
 
   <div class="container-fluid">
+    
       <div class="nk-header-wrap">
-         
-          <div class="nk-header-brand d-xl-none">
-              <a href="/" class="logo-link">
-                <img class="logo-light logo-img" src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png" alt="logo">
-                <img class="logo-dark logo-img" src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png" alt="logo-dark">
-          </div><!-- .nk-header-brand -->
-          <div class="nk-header-news d-none d-xl-block">
-              <div class="nk-news-list">
+            <div class="nk-header-brand d-none d-xl-block">
                 <a href="/" class="logo-link">
                     <img class="logo-light logo-img" src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png" alt="logo">
                     <img class="logo-dark logo-img" src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo.png" alt="logo-dark">
                 </a>
-              </div>
-          </div><!-- .nk-header-news -->
+            </div><!-- .nk-header-brand -->
+           
+        
           <div class="nk-header-tools">
               <ul class="nk-quick-nav">
                   
@@ -56,13 +51,13 @@
 
 
                                   <li>
-                                    <a href="{{ route('logout') }}"
+                                    <a href="/logout"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                                         <em class="icon ni ni-signout"></em><span>Đăng xuất</span>
                                     </a>
 
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    <form id="logout-form" action="/logout" method="POST" class="d-none">
                                         @csrf
                                     </form>
                                  

@@ -42,7 +42,7 @@
         
                         @csrf
                         @method('PUT')
-                        <label>Tiêu đề<sup>*</sup></label>
+                        <label  class="form-label">Tiêu đề<sup>*</sup></label>
                         <input type="text" required
                         name="name"
                         value="{{ $document->name }}"
@@ -51,14 +51,14 @@
         
                     
         
-                        <label class="mt-4">Tác giả<sup>*</sup></label>
+                        <label class="form-label">Tác giả<sup>*</sup></label>
                         <input type="text" required
                         name="author"
                         value="{{ $document->author }}"
                         class="form-control mb-4 col-6">
           
         
-                        <label>Thể loại<sup>*</sup></label>
+                        <label  class="form-label">Thể loại<sup>*</sup></label>
                         <select required class="form-control mb-4 col-6" name="document_type_id" id="document_type_id">
                             @foreach ($types as $type)
                             <option value="{{ $type->id }}" {{ $document->type_id == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
@@ -66,7 +66,7 @@
                         </select>	 	
                     
                     
-                        <label class="mt-4">Ảnh bìa<sup>*</sup></label>
+                        <label class="mt-4 form-label">Ảnh bìa<sup>*</sup></label>
 
                         <div class="mb-2" style="display:none">
                             <canvas id="the-canvas" style="border:1px solid black;width:200px;height:300px" ></canvas>
@@ -86,7 +86,7 @@
         
                          
         
-                        <label>Mô tả</label>
+                        <label  class="form-label">Mô tả</label>
                         <textarea     
                         name="description"
                         class="form-control mb-4"
@@ -94,7 +94,7 @@
         
                    
                         
-                        <label>Tiến độ<sup>*</sup></label>
+                        <label  class="form-label">Tiến độ<sup>*</sup></label>
                         <select required class="form-control mb-4 col-6"  name="isCompleted"> 
                         <option value=0 {{ $document->isCompleted == 0 ? 'selected' : '' }} >Chưa hoàn thành</option>
                         <option value=1 {{ $document->isCompleted == 1 ? 'selected' : '' }} >Đã hoàn thành</option>

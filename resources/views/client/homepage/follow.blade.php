@@ -49,79 +49,147 @@
                             </thead>
                             <tbody>
                                 @foreach ($follow_notDone as $follow)
-                                <tr id ="row-{{ $follow->id }}">
-                                    <td class="nk-tb-col">
-                
-                                        <div class="user-card">
-                                            <div class="avatar bg-primary">
-                
-                                                @if($follow->type_id ==1)
-                                                <a href="/tai-lieu/{{$follow->identifier->id}}/{{$follow->identifier->slug}}">
-                                                    <img class="image-fluid" src={{ $follow->identifier->url }} alt="..." style="width:100px" />
-                                                </a>
-                                                @endif
-                                                @if($follow->type_id ==2)
-                                                <a href="/sach/{{$follow->identifier->id}}/{{$follow->identifier->slug}}">
-                                                    <img class="image-fluid" src={{ $follow->identifier->url }} alt="..." style="width:100px" />
-                                                </a>
-                                                @endif
+                                    @if($follow->identifier->status == 1)
+                                    <tr id ="row-{{ $follow->id }}">
+                                        <td class="nk-tb-col">
+                    
+                                            <div class="user-card">
+                                                <div class="avatar bg-primary">
+                    
+                                                    @if($follow->type_id ==1)
+                                                    <a href="/tai-lieu/{{$follow->identifier->id}}/{{$follow->identifier->slug}}">
+                                                        <img class="image-fluid" src={{ $follow->identifier->url }} alt="..." style="width:100px" />
+                                                    </a>
+                                                    @endif
+                                                    @if($follow->type_id ==2)
+                                                    <a href="/sach/{{$follow->identifier->id}}/{{$follow->identifier->slug}}">
+                                                        <img class="image-fluid" src={{ $follow->identifier->url }} alt="..." style="width:100px" />
+                                                    </a>
+                                                    @endif
+                                                </div>
+                                                <div class="ms-2">
+                                                    <span class="tb-lead text-">{{ Str::limit($follow->identifier->name,50) }}<span class="dot dot-success d-md-none ms-1"></span></span>
+                                                </div>
                                             </div>
-                                            <div class="ms-2">
-                                                <span class="tb-lead text-">{{ Str::limit($follow->identifier->name,50) }}<span class="dot dot-success d-md-none ms-1"></span></span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="nk-tb-col tb-col-mb">
-                                        @if($follow->type_id == 1)
-            
-                                            <span>{{ $follow->identifier->numberOfPages }} trang</span>
-            
-                                        @endif
+                                        </td>
+                                        <td class="nk-tb-col tb-col-mb">
+                                            @if($follow->type_id == 1)
                 
-                                        @if($follow->type_id == 2)
-                                            @if ($follow->identifier->file == null)
-                                                <span>{{ $follow->identifier->numberOfChapter }} chương</span>
-                                            @else
-                                                <span>PDF</span>
+                                                <span>{{ $follow->identifier->numberOfPages }} trang</span>
+                
                                             @endif
-                                        @endif
-                                    </td>
-                                    <td class="nk-tb-col tb-col-mb">
-                
-                                        @if($follow->type_id == 1)
-                                        <span class="badge badge-dot bg-primary">{{ $follow->time }}</span>
-                                        @endif
-                
-                                        @if($follow->type_id == 2)
-                                        <span class="badge badge-dot bg-success">{{ $follow->time }}</span>
-                                        @endif
-                
-                                   
-                                    </td>
+                    
+                                            @if($follow->type_id == 2)
+                                                @if ($follow->identifier->file == null)
+                                                    <span>{{ $follow->identifier->numberOfChapter }} chương</span>
+                                                @else
+                                                    <span>PDF</span>
+                                                @endif
+                                            @endif
+                                        </td>
+                                        <td class="nk-tb-col tb-col-mb">
+                    
+                                            @if($follow->type_id == 1)
+                                            <span class="badge badge-dot bg-primary">{{ $follow->time }}</span>
+                                            @endif
+                    
+                                            @if($follow->type_id == 2)
+                                            <span class="badge badge-dot bg-success">{{ $follow->time }}</span>
+                                            @endif
+                    
                                     
-                                    <td class="nk-tb-col nk-tb-col-tools text-end">
-                                        <ul class="nk-tb-actions gx-1">                             
-                                          
-                                            <li class="me-2">
-                
-                                                <button class="btn btn-info me-sm-n1 check-book-mark" data-id="{{ $follow->id }}" data-name="{{ $follow->identifier->name }}">
-                                                    <em class="icon ni ni-check-thick"></em>
-                                                </button>
-                                               
-                                            </li>
-                                            <li>
-                                                <button class="btn btn-danger me-sm-n1 remove-book-mark" data-id="{{ $follow->id }}" data-name="{{ $follow->identifier->name }}">
-                                                    <em class="icon ni ni-cross"></em></button>
-                                            </li>
-                                                      
-                                                    
-                                            
-                                        </ul>
+                                        </td>
                                         
-                                    </td>
-                                </tr>
-                                @endforeach
+                                        <td class="nk-tb-col nk-tb-col-tools text-end">
+                                            <ul class="nk-tb-actions gx-1">                             
+                                            
+                                                <li class="me-2">
+                    
+                                                    <button class="btn btn-info me-sm-n1 check-book-mark" data-id="{{ $follow->id }}" data-name="{{ $follow->identifier->name }}">
+                                                        <em class="icon ni ni-check-thick"></em>
+                                                    </button>
+                                                
+                                                </li>
+                                                <li>
+                                                    <button class="btn btn-danger me-sm-n1 remove-book-mark" data-id="{{ $follow->id }}" data-name="{{ $follow->identifier->name }}">
+                                                        <em class="icon ni ni-cross"></em></button>
+                                                </li>
+                                                        
+                                                        
+                                                
+                                            </ul>
+                                            
+                                        </td>
+                                    </tr>
+                                    @else
+                                    <tr id ="row-{{ $follow->id }}" style="background-color:rgba(220,20,60,0.1)">
+                                        <td class="nk-tb-col">
+                    
+                                            <div class="user-card">
+                                                <div class="avatar bg-primary">
+                    
+                                                    @if($follow->type_id ==1)
+                                                    <a href="#">
+                                                        <img class="image-fluid" src={{ $follow->identifier->url }} alt="..." style="width:100px" />
+                                                    </a>
+                                                    @endif
+                                                    @if($follow->type_id ==2)
+                                                    <a href="#">
+                                                        <img class="image-fluid" src={{ $follow->identifier->url }} alt="..." style="width:100px" />
+                                                    </a>
+                                                    @endif
+                                                </div>
+                                                <div class="ms-2">
+                                                    <span class="tb-lead text-">{{ Str::limit($follow->identifier->name,50) }}<span class="dot dot-success d-md-none ms-1"></span></span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="nk-tb-col tb-col-mb">
+                                            @if($follow->type_id == 1)
                 
+                                                <span>{{ $follow->identifier->numberOfPages }} trang</span>
+                
+                                            @endif
+                    
+                                            @if($follow->type_id == 2)
+                                                @if ($follow->identifier->file == null)
+                                                    <span>{{ $follow->identifier->numberOfChapter }} chương</span>
+                                                @else
+                                                    <span>PDF</span>
+                                                @endif
+                                            @endif
+                                        </td>
+                                        <td class="nk-tb-col tb-col-mb">
+                    
+                                            <span class="badge badge-dot bg-danger">Đã bị khóa</span>
+                                            
+                    
+                                    
+                                        </td>
+                                        
+                                        <td class="nk-tb-col nk-tb-col-tools text-end">
+                                            <ul class="nk-tb-actions gx-1">                             
+                                            
+                                                <li class="me-2">
+                    
+                                                    <button class="btn btn-info me-sm-n1 check-book-mark" data-id="{{ $follow->id }}" data-name="{{ $follow->identifier->name }}">
+                                                        <em class="icon ni ni-check-thick"></em>
+                                                    </button>
+                                                
+                                                </li>
+                                                <li>
+                                                    <button class="btn btn-danger me-sm-n1 remove-book-mark" data-id="{{ $follow->id }}" data-name="{{ $follow->identifier->name }}">
+                                                        <em class="icon ni ni-cross"></em></button>
+                                                </li>
+                                                        
+                                                        
+                                                
+                                            </ul>
+                                            
+                                        </td>
+                                    </tr>
+                                    @endif
+                                @endforeach
                 
                             </tbody>
                         </table>
@@ -140,78 +208,149 @@
                             </thead>
                             <tbody>
                                 @foreach ($follow_isDone as $follow)
-                                <tr id ="row-{{ $follow->id }}">
-                                    <td class="nk-tb-col">
-                
-                                        <div class="user-card">
-                                            <div class="avatar bg-primary">
-                
-                                                @if($follow->type_id ==1)
-                                                <a href="/tai-lieu/{{$follow->identifier->id}}/{{$follow->identifier->slug}}">
-                                                    <img class="image-fluid" src={{ $follow->identifier->url }} alt="..." style="width:100px" />
-                                                </a>
-                                                @endif
-                                                @if($follow->type_id ==2)
-                                                <a href="/sach/{{$follow->identifier->id}}/{{$follow->identifier->slug}}">
-                                                    <img class="image-fluid" src={{ $follow->identifier->url }} alt="..." style="width:100px" />
-                                                </a>
-                                                @endif
+                                    @if($follow->identifier->status == 1)
+
+                                    <tr id ="row-{{ $follow->id }}">
+                                        <td class="nk-tb-col">
+                    
+                                            <div class="user-card">
+                                                <div class="avatar bg-primary">
+                    
+                                                    @if($follow->type_id ==1)
+                                                    <a href="/tai-lieu/{{$follow->identifier->id}}/{{$follow->identifier->slug}}">
+                                                        <img class="image-fluid" src={{ $follow->identifier->url }} alt="..." style="width:100px" />
+                                                    </a>
+                                                    @endif
+                                                    @if($follow->type_id ==2)
+                                                    <a href="/sach/{{$follow->identifier->id}}/{{$follow->identifier->slug}}">
+                                                        <img class="image-fluid" src={{ $follow->identifier->url }} alt="..." style="width:100px" />
+                                                    </a>
+                                                    @endif
+                                                </div>
+                                                <div class="ms-2">
+                                                    <span class="tb-lead text-">{{ Str::limit($follow->identifier->name,50) }}<span class="dot dot-success d-md-none ms-1"></span></span>
+                                                </div>
                                             </div>
-                                            <div class="ms-2">
-                                                <span class="tb-lead text-">{{ Str::limit($follow->identifier->name,50) }}<span class="dot dot-success d-md-none ms-1"></span></span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="nk-tb-col tb-col-mb">
-                                        @if($follow->type_id == 1)
-            
-                                            <span>{{ $follow->identifier->numberOfPages }} trang</span>
-            
-                                        @endif
+                                        </td>
+                                        <td class="nk-tb-col tb-col-mb">
+                                            @if($follow->type_id == 1)
                 
-                                        @if($follow->type_id == 2)
-                                            @if ($follow->identifier->file == null)
-                                                <span>{{ $follow->identifier->numberOfChapter }} chương</span>
-                                            @else
-                                                <span>PDF</span>
+                                                <span>{{ $follow->identifier->numberOfPages }} trang</span>
+                
                                             @endif
-                                        @endif
-                                    </td>
-                                    <td class="nk-tb-col tb-col-mb">
-                
-                                        @if($follow->type_id == 1)
-                                        <span class="badge badge-dot bg-primary">{{ $follow->time }}</span>
-                                        @endif
-                
-                                        @if($follow->type_id == 2)
-                                        <span class="badge badge-dot bg-success">{{ $follow->time }}</span>
-                                        @endif
-                
-                                   
-                                    </td>
+                    
+                                            @if($follow->type_id == 2)
+                                                @if ($follow->identifier->file == null)
+                                                    <span>{{ $follow->identifier->numberOfChapter }} chương</span>
+                                                @else
+                                                    <span>PDF</span>
+                                                @endif
+                                            @endif
+                                        </td>
+                                        <td class="nk-tb-col tb-col-mb">
+                    
+                                            @if($follow->type_id == 1)
+                                            <span class="badge badge-dot bg-primary">{{ $follow->time }}</span>
+                                            @endif
+                    
+                                            @if($follow->type_id == 2)
+                                            <span class="badge badge-dot bg-success">{{ $follow->time }}</span>
+                                            @endif
+                    
                                     
-                                    <td class="nk-tb-col nk-tb-col-tools text-end">
-                                        <ul class="nk-tb-actions gx-1">                             
-                                          
-                                            <li class="me-2">
-                
-                                                <button class="btn btn-warning me-sm-n1 check-book-mark" data-id="{{ $follow->id }}" data-name="{{ $follow->identifier->name }}">
-                                                    <em class="icon ni ni-done"></em>
-                                                </button>
-                                                
-                                               
-                                            </li>
-                                            <li>
-                                                <button class="btn btn-danger me-sm-n1 remove-book-mark" data-id="{{ $follow->id }}" data-name="{{ $follow->identifier->name }}">
-                                                    <em class="icon ni ni-cross"></em></button>
-                                            </li>
-                                                      
-                                                    
-                                            
-                                        </ul>
+                                        </td>
                                         
-                                    </td>
-                                </tr>
+                                        <td class="nk-tb-col nk-tb-col-tools text-end">
+                                            <ul class="nk-tb-actions gx-1">                             
+                                            
+                                                <li class="me-2">
+                    
+                                                    <button class="btn btn-warning me-sm-n1 check-book-mark" data-id="{{ $follow->id }}" data-name="{{ $follow->identifier->name }}">
+                                                        <em class="icon ni ni-done"></em>
+                                                    </button>
+                                                    
+                                                
+                                                </li>
+                                                <li>
+                                                    <button class="btn btn-danger me-sm-n1 remove-book-mark" data-id="{{ $follow->id }}" data-name="{{ $follow->identifier->name }}">
+                                                        <em class="icon ni ni-cross"></em></button>
+                                                </li>
+                                                        
+                                                        
+                                                
+                                            </ul>
+                                            
+                                        </td>
+                                    </tr>
+                                    @else
+                                    <tr id ="row-{{ $follow->id }}"  style="background-color:rgba(220,20,60,0.1)">
+                                        <td class="nk-tb-col">
+                    
+                                            <div class="user-card">
+                                                <div class="avatar bg-primary">
+                    
+                                                    @if($follow->type_id ==1)
+                                                    <a href="#">
+                                                        <img class="image-fluid" src={{ $follow->identifier->url }} alt="..." style="width:100px" />
+                                                    </a>
+                                                    @endif
+                                                    @if($follow->type_id ==2)
+                                                    <a href="#">
+                                                        <img class="image-fluid" src={{ $follow->identifier->url }} alt="..." style="width:100px" />
+                                                    </a>
+                                                    @endif
+                                                </div>
+                                                <div class="ms-2">
+                                                    <span class="tb-lead text-">{{ Str::limit($follow->identifier->name,50) }}<span class="dot dot-success d-md-none ms-1"></span></span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="nk-tb-col tb-col-mb">
+                                            @if($follow->type_id == 1)
+                
+                                                <span>{{ $follow->identifier->numberOfPages }} trang</span>
+                
+                                            @endif
+                    
+                                            @if($follow->type_id == 2)
+                                                @if ($follow->identifier->file == null)
+                                                    <span>{{ $follow->identifier->numberOfChapter }} chương</span>
+                                                @else
+                                                    <span>PDF</span>
+                                                @endif
+                                            @endif
+                                        </td>
+                                        <td class="nk-tb-col tb-col-mb">
+                    
+                                            <span class="badge badge-dot bg-danger">Đã bị khóa</span>
+                                            
+                    
+                                    
+                                        </td>
+                                        
+                                        
+                                        <td class="nk-tb-col nk-tb-col-tools text-end">
+                                            <ul class="nk-tb-actions gx-1">                             
+                                            
+                                                <li class="me-2">
+                    
+                                                    <button class="btn btn-info me-sm-n1 check-book-mark" data-id="{{ $follow->id }}" data-name="{{ $follow->identifier->name }}">
+                                                        <em class="icon ni ni-check-thick"></em>
+                                                    </button>
+                                                
+                                                </li>
+                                                <li>
+                                                    <button class="btn btn-danger me-sm-n1 remove-book-mark" data-id="{{ $follow->id }}" data-name="{{ $follow->identifier->name }}">
+                                                        <em class="icon ni ni-cross"></em></button>
+                                                </li>
+                                                        
+                                                        
+                                                
+                                            </ul>
+                                            
+                                        </td>
+                                    </tr>
+                                    @endif
                                 @endforeach
                 
                 

@@ -126,7 +126,7 @@
 
                                                                   </li>
                                                                   <li><a href="/admin/forum/post/{{$forum_post->id}}/edit"><em class="icon ni ni-edit"></em><span>Cập nhật</span></a></li>
-                                                                  <li><a href="/admin/forum/post/{{$forum_post->id}}/detail"><em class="icon ni ni-eye"></em><span>Chi tiết</span></a></li>
+                                                                  <li><a href="/admin/forum/post/{{$forum_post->id}}/{{ \Carbon\Carbon::now()->year }}/detail"><em class="icon ni ni-eye"></em><span>Chi tiết</span></a></li>
 
                                                               </ul>
                                                           </div>
@@ -163,7 +163,7 @@
       "language": {
           "lengthMenu": "Hiển thị: _MENU_ đối tượng",
           "search": "Tìm kiếm _INPUT_",
-          'info':"",
+          'info':"_PAGE_ - _PAGES_ của _MAX_",
           "zeroRecords": "Không tìm thấy dữ liệu",
           "infoEmpty": "Không có dữ liệu hợp lệ",
           "infoFiltered": "(Lọc từ _MAX_ dữ liệu)",

@@ -87,7 +87,6 @@ class ClientBookController extends Controller
 
 
         $slug =  Str::slug($request->name).'-'. $this->TimeToText();
-        $localfolder = public_path('firebase-temp-uploads') .'/';
 
         $image = $request->file('image'); //image file from frontend
 
@@ -98,13 +97,12 @@ class ClientBookController extends Controller
 
         if($file_book){
             $generatedFileName = $slug.$file_book->hashName();
-    
+            
             $firebase_storage_path_2 = 'bookFile/';
-            if ($file_book->move($localfolder, $generatedFileName)) {
-            $uploadedfile = fopen($localfolder.$generatedFileName, 'r');
-            app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path_2 . $generatedFileName]);
-            unlink($localfolder . $generatedFileName);
-            }
+            $uploadedfileBook = file_get_contents($request->file('file_book'));
+
+            app('firebase.storage')->getBucket()->upload($uploadedfileBook, ['name' => $firebase_storage_path_2 . $generatedFileName]);
+            
         }
    
 
@@ -130,13 +128,8 @@ class ClientBookController extends Controller
         ]);
         
         $firebase_storage_path = 'bookImage/';
-
-        if ($image->move($localfolder, $generatedImageName)) {
-        $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
-
-        app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
-        unlink($localfolder . $generatedImageName);
-        }
+        $uploadedfileImage = file_get_contents($request->file('image'));
+        app('firebase.storage')->getBucket()->upload($uploadedfileImage, ['name' => $firebase_storage_path . $generatedImageName]);
 
     
 
@@ -154,7 +147,7 @@ class ClientBookController extends Controller
      */
     public function show($id) //like "show details"
     {
-        $book = Book::findOrFail($id);
+        $book = Book::where('id','=',$id)->where('deleted_at','=',null)->firstOrFail();
 
         return view('client.manage.book.detail')
         ->with('book',$book);
@@ -169,7 +162,7 @@ class ClientBookController extends Controller
      */
     public function edit($id)
     {
-        $book = Book::findOrFail($id);
+        $book = Book::where('id','=',$id)->where('deleted_at','=',null)->whereIn('status',['-1','1'])->firstOrFail();
         $types = BookType::all();
 
 
@@ -217,20 +210,16 @@ class ClientBookController extends Controller
             $generatedImageName = $slug.$image->hashName();
 
 
+
             $firebase_storage_path = 'bookImage/';
-
-            $localfolder = public_path('firebase-temp-uploads') .'/';
-            if ($image->move($localfolder, $generatedImageName)) {
-            $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
-
-            app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
-            unlink($localfolder . $generatedImageName);
+            $uploadedfileImage = file_get_contents($request->file('image'));
+            app('firebase.storage')->getBucket()->upload($uploadedfileImage, ['name' => $firebase_storage_path . $generatedImageName]);
 
             //delete old image
 
             $imageDeleted = app('firebase.storage')->getBucket()->object($firebase_storage_path.$request->oldImage)->delete();
 
-            }
+            
         }
         $book = Book::findOrFail($id)
                 ->update([
@@ -267,47 +256,57 @@ class ClientBookController extends Controller
     public function customDelete($book_id){
         $book = Book::findOrFail($book_id);
         $book->deleted_at = Carbon::now()->toDateTimeString();
+        $book->totalComments = 0;
+        $book->totalBookMarking = 0;
+        $book->ratingScore = 0;
         $book ->save();
 
-        $comments = Comment::where('identifier_id','=',$book_id)->where('type_id','=','2')->update([
+        Comment::where('identifier_id','=',$book_id)->where('type_id','=','2')->update([
             'deleted_at' => Carbon::now()->toDateTimeString()
         ]);
 
-        
+        $comments = Comment::where('identifier_id','=',$book_id)->where('type_id','=','2')->get();
+
      
         foreach($comments as $comment){
-            Reply::where('commentID','=',$comment->id)->update([
-                'deleted_at' => Carbon::now()->toDateTimeString()
-            ]);
 
-            report::where('identifier_id','=',$comment)->where('type_id','=','9')->update([
+            $replies = Reply::where('commentID','=',$comment->id)->get();
+
+
+            foreach ($replies as $reply){
+
+                $temp = Reply::findOrFail($reply->id);
+                $temp->deleted_at = Carbon::now()->toDateTimeString();
+                $temp ->save();
+
+                
+                Notification::where('identifier_id','=',$reply->id)->where('type_id','=','2')->update([
+                    'deleted_at' => Carbon::now()->toDateTimeString()
+                ]);
+            }
+
+            Notification::where('identifier_id','=',$comment->id)->where('type_id','=','1')->update([
                 'deleted_at' => Carbon::now()->toDateTimeString()
             ]);
+    
         }
 
 
-        Notification::where('identifier_id','=',$book_id)->where('type_id','=','1')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
-        ]);
 
-        Notification::where('identifier_id','=',$book_id)->where('type_id','=','4')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
-        ]);
+      
 
-        report::where('identifier_id','=',$book_id)->where('type_id','=','1')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
-        ]);
-
-        report::where('identifier_id','=',$book_id)->where('type_id','=','6')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
-        ]);
-
-        report::where('identifier_id','=',$book_id)->where('type_id','=','10')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
-        ]);
+     
 
         $follows = Follow::where('identifier_id','=',$book_id)->where('type_id','=','2')->get();
-        $follows->delete();
+
+        foreach($follows as $follow){
+            $follow->delete();
+        }
+
+        $ratings = ratingBook::where('bookID','=',$book_id)->get();
+        foreach($ratings as $rating){
+            $rating->delete();
+        }
     }   
     public function changeBookStatus(Request $request){
         $book = Book::findOrFail($request->id);
@@ -537,26 +536,5 @@ class ClientBookController extends Controller
         ]);
     }
 
-    public function changeFollowIsDone(Request $request){
-
-        $follow = Follow::findOrFail($request->id);
-
-        $isDone = $follow->isDone;
-
-        if($isDone == 0){
-            $follow->isDone = 1;
-            $follow ->save();
-        }
-        else{
-            $follow->isDone = 0;
-            $follow ->save();
-        }
-   
-
-
-        return response()->json([
-            'success' => 'Đổi trạng thái thành công!!!',      
-        ]);
-      
-    }
+ 
 }

@@ -66,34 +66,30 @@ class report extends Model
                 break;
             case 6:
                 $item = Comment::findOrFail($this->identifier_id);
-                $book = Book::findOrFail($item->identifier_id);
-                $notify = 'bình luận của '.$item->users->name.' về sách '.$book->name;
 
+                if($item->type_id == 1){
+                    $document = Document::findOrFail($item->identifier_id);
+                    $notify = 'bình luận của '.$item->users->name.' về tài liệu '.$document->name;
+                }
+                else if($item->type_id == 2){
+                    $book = Book::findOrFail($item->identifier_id);
+                    $notify = 'bình luận của '.$item->users->name.' về sách '.$book->name;
+
+                }
+                else if ($item->type_id == 3){
+                    $post = ForumPosts::findOrFail($item->identifier_id);
+                    $notify = 'bình luận của '.$item->users->name.' về bài viết '.$post->topic;
+                }
                 break;
+      
             case 7:
-                $item = Comment::findOrFail($this->identifier_id);
-                $document = Document::findOrFail($item->identifier_id);
-
-                $notify = 'bình luận của '.$item->users->name.' về tài liệu '.$document->name;
-
-                break;
-        
-            case 8:
-                $item = Comment::findOrFail($this->identifier_id);
-                $post = ForumPosts::findOrFail($item->identifier_id);
-
-                $notify = 'bình luận của '.$item->users->name.' về bài viết '.$post->topic;
-
-               
-                break;
-            case 9:
                 $item = Reply::findOrFail($this->identifier_id);
                 $comment = Comment::findOrFail($item->commentID);
                 $notify = 'phản hồi bình luận của '.$item->users->name.' về bình luận của '.$comment->users->name;
 
                 break;
 
-            case 10:
+            case 8:
                 $item = ratingBook::findOrFail($this->identifier_id);
                 $notify = 'Đánh giá của '.$item->users->name.' về sách '.$item->books->name;
 
@@ -136,31 +132,26 @@ class report extends Model
 
                 break;
             case 6:
-                $temp = Comment::findOrFail($this->identifier_id);
-                $item = Book::findOrFail($temp->identifier_id);
+                $item = Comment::findOrFail($this->identifier_id);
 
+                // if($temp->type_id == 1){
+                //     $item = Book::findOrFail($temp->identifier_id);
+                // }
+                // else if($temp->type_id == 2){
+                //     $item = Document::findOrFail($temp->identifier_id);
+
+                // }
+                // else if ($temp->type_id == 3){
+                //     $item = ForumPosts::findOrFail($temp->identifier_id);
+                // }
                 break;
             case 7:
-                $temp = Comment::findOrFail($this->identifier_id);
-                $item = Document::findOrFail($temp->commentID);
-
-
-                break;   
-            case 8:
-                $temp = Comment::findOrFail($this->identifier_id);
-                $item = ForumPosts::findOrFail($temp->identifier_id);
-
-
-                break;
-            case 9:
-                $temp = Reply::findOrFail($this->identifier_id);
-                $item = Comment::findOrFail($temp->commentID);
+                $item = Reply::findOrFail($this->identifier_id);
 
                 break;   
           
-            case 10:
-                $temp = ratingBook::findOrFail($this->identifier_id);
-                $item = Book::findOrFail($temp->bookID);
+            case 8:
+                $item = ratingBook::findOrFail($this->identifier_id);
 
                 break;   
             default:
@@ -175,7 +166,7 @@ class report extends Model
 
         $report = report::where('identifier_id','=',$this->identifier_id)->where('type_id',$this->type_id)->get();
         $flag = true;
-        if($report->count() >= 5){
+        if($report->count() >= 3){
             $flag = false;
         }
         return $flag;

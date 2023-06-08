@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Book;
 use App\Models\Document;
 use App\Models\ForumPosts;
+use App\Models\Notification;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -35,12 +36,29 @@ class DashboardController extends Controller
                 $book = Book::findOrFail($item['id']);
                 $book->status = 1;
                 $book ->save();
+
+
+                Notification::create([
+                    'identifier_id'=>$item['id'],
+                    'type_id'=> 6, 
+                    'senderID' => 1,
+                    'receiverID'=>$book->users->id,
+                    'status'=>1
+                ]);
             }
 
             else if($item['option'] == "2"){
                 $document = Document::findOrFail($item['id']);
                 $document->status = 1;
                 $document ->save();
+
+                Notification::create([
+                    'identifier_id'=>$item['id'],
+                    'type_id'=> 7, 
+                    'senderID' => 1,
+                    'receiverID'=>$document->users->id,
+                    'status'=>1
+                ]);
             }
         }
 
@@ -52,15 +70,33 @@ class DashboardController extends Controller
         //0 - document && 1 - Book
         foreach($itemList as $item){
 
-            if($item['option'] == "0"){
-                $document = Document::findOrFail($item['id']);
-                $document->status = -1;
-                $document ->save();
-            }
-            else if($item['option'] == "1"){
+            if($item['option'] == "1"){
                 $book = Book::findOrFail($item['id']);
                 $book->status = -1;
                 $book ->save();
+
+                Notification::create([
+                    'identifier_id'=>$item['id'],
+                    'type_id'=> 4, 
+                    'senderID' => 1,
+                    'receiverID'=>$book->users->id,
+                    'status'=>1
+                ]);
+            }
+
+            else if($item['option'] == "2"){
+                $document = Document::findOrFail($item['id']);
+                $document->status = -1;
+                $document ->save();
+
+
+                Notification::create([
+                    'identifier_id'=>$item['id'],
+                    'type_id'=> 5, 
+                    'senderID' => 1,
+                    'receiverID'=>$document->users->id,
+                    'status'=>1
+                ]);
             }
         }
     }
@@ -203,10 +239,12 @@ class DashboardController extends Controller
         ) as sub");
 
 
-        $total_books = Book::where('deleted_at','=',null)->whereBetween('created_at', [$weekStartDate,$weekEndDate])->get();
-        $total_documents = Document::where('deleted_at','=',null)->whereBetween('created_at', [$weekStartDate,$weekEndDate])->get();
-        $total_posts = ForumPosts::where('deleted_at','=',null)->whereBetween('created_at', [$weekStartDate,$weekEndDate])->get();
-        $total_users = User::where('deleted_at','=',null)->whereBetween('email_verified_at', [$weekStartDate,$weekEndDate])->get();
+
+
+        $total_books = Book::where('deleted_at','=',null)->where('status','=',1)->whereDate('created_at','<=', $weekEndDate)->whereDate('created_at','>=', $weekStartDate)->get();
+        $total_documents = Document::where('deleted_at','=',null)->where('status','=',1)->whereDate('created_at','<=', $weekEndDate)->whereDate('created_at','>=', $weekStartDate)->get();
+        $total_posts = ForumPosts::where('deleted_at','=',null)->whereDate('created_at','<=', $weekEndDate)->whereDate('created_at','>=', $weekStartDate)->get();
+        $total_users = User::where('deleted_at','=',null)->whereDate('email_verified_at','<=', $weekEndDate)->whereDate('email_verified_at','>=', $weekStartDate)->get();
 
 
         $high_reading_book = Book::where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('totalReading')->first();
@@ -232,11 +270,9 @@ class DashboardController extends Controller
         ->with('today_document',$today_document)
         ->with('high_reading_book',$high_reading_book)
         ->with('high_downloading_document',$high_downloading_document)
-
         
         ;
             
-
 
 
     }

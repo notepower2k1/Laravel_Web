@@ -1,5 +1,7 @@
 @extends('admin/layouts.app')
 @section('pageTitle', 'Danh sách người dùng')
+@section('additional-style')
+
 <style>
     .sorting_disabled:after{
       content: none !important;
@@ -8,141 +10,146 @@
       content: none !important;
       }
   </style>
+@endsection
 @section('content')
-                    <div class="nk-block nk-block-lg">             
-                        <div class="card card-bordered card-preview">
-                            <div class="card-inner">
-                                <div class="filter-box">
-                                    <div class="form-group">
-                                        <label class="form-label">
-                                          <em class="icon ni ni-calendar-alt"></em>
-                                          <span>Lọc theo ngày</span>
-                                        </label>
-                                        <div class="form-control-wrap">
-                                            <div class="input-daterange date-picker-range input-group">  
-                                                @if(isset($fromDate))                                                                  
-                                                <input type="text" class="form-control" name="from-date" value="{{ $fromDate }}"/>
-                                                @else
-                                                <input type="text" class="form-control" name="from-date"/>
-                                                @endif
-                                                <div class="input-group-addon">
-                                                  <em class="icon ni ni-arrow-long-right"></em>
-                                                </div>       
-                                                @if(isset($toDate))             
-                                                <input type="text" class="form-control" name="to-date" value="{{ $toDate }}"/>
-                                                @else
-                                                <input type="text" class="form-control" name="to-date"/>
-                                                @endif
+    <div class="nk-block nk-block-lg">      
+        <div class="">
+            <div class="card card-bordered card-preview">
+                <div class="card-inner">
+                    <div class="filter-box">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <em class="icon ni ni-calendar-alt"></em>
+                                <span>Lọc theo ngày</span>
+                            </label>
+                            <div class="form-control-wrap">
+                                <div class="input-daterange date-picker-range input-group">  
+                                    @if(isset($fromDate))                                                                  
+                                    <input type="text" class="form-control" name="from-date" value="{{ $fromDate }}"/>
+                                    @else
+                                    <input type="text" class="form-control" name="from-date"/>
+                                    @endif
+                                    <div class="input-group-addon">
+                                        <em class="icon ni ni-arrow-long-right"></em>
+                                    </div>       
+                                    @if(isset($toDate))             
+                                    <input type="text" class="form-control" name="to-date" value="{{ $toDate }}"/>
+                                    @else
+                                    <input type="text" class="form-control" name="to-date"/>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                        <div class="button-box">
+                            <button class="btn btn-dim btn-warning" id="filter-btn">
+                                <em class="icon ni ni-filter"></em>
+                                <span>Lọc</span>̣</button>
+                            
+                                @if(isset($fromDate))
+                                <a class="btn btn-dim btn-info" href="/admin/user/">
+                                <em class="icon ni ni-reload"></em>
+                                <span>Reset</span></a>
+                                @else
+                                <button class="btn btn-dim btn-info" disabled>
+                                <em class="icon ni ni-reload"></em>
+                                <span>Reset</span></a>
+                                @endif
+    
+                        </div>
+                        </div>
+                        <hr>
+                    <table class="datatable-init nowrap nk-tb-list nk-tb-ulist mt-2" data-auto-responsive="false" data-export-title="Export">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head">
+                                <th class="nk-tb-col"><span class="sub-text">Người dùng</span></th>
+    
+                                <th class="nk-tb-col tb-col-md"><span class="sub-text">Xác thực</span></th>
+                                <th class="nk-tb-col tb-col-md"><span class="sub-text">Lần đăng nhập cuối</span></th>   
+                                <th class="nk-tb-col tb-col-md"><span class="sub-text">Tình trạng</span></th>                     
+                                <th class="nk-tb-col nk-tb-col-tools text-end">
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($users as $user)
+    
+                            <tr class="nk-tb-item" id ="row-{{ $user->id }}">
+    
+                                <td class="nk-tb-col">
+                                    <a href="#">
+                                        <div class="user-card">
+                                            <div class="user-avatar bg-primary">
+                                                <img src="{{ $user->profile->url }}" alt="">
+                                            </div>
+                                            <div class="user-info">
+                                                <span class="tb-lead">{{ $user->name }} <span class="dot dot-success d-md-none ms-1"></span></span>
+                                                <span>{{ $user->email }}</span>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="button-box">
-                                        <button class="btn btn-dim btn-warning" id="filter-btn">
-                                          <em class="icon ni ni-filter"></em>
-                                          <span>Lọc</span>̣</button>
-                                        
-                                          @if(isset($fromDate))
-                                          <a class="btn btn-dim btn-info" href="/admin/user/">
-                                            <em class="icon ni ni-reload"></em>
-                                            <span>Reset</span></a>
-                                          @else
-                                          <button class="btn btn-dim btn-info" disabled>
-                                            <em class="icon ni ni-reload"></em>
-                                          <span>Reset</span></a>
-                                          @endif
-  
-                                    </div>
-                                  </div>
-                                  <hr>
-                                <table class="datatable-init nowrap nk-tb-list nk-tb-ulist mt-2" data-auto-responsive="false" data-export-title="Export">
-                                    <thead>
-                                        <tr class="nk-tb-item nk-tb-head">
-                                            <th class="nk-tb-col"><span class="sub-text">Người dùng</span></th>
-
-                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">Xác thực</span></th>
-                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">Lần đăng nhập cuối</span></th>   
-                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">Tình trạng</span></th>                     
-                                            <th class="nk-tb-col nk-tb-col-tools text-end">
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                      @foreach ($users as $user)
-
-                                        <tr class="nk-tb-item" id ="row-{{ $user->id }}">
-
-                                            <td class="nk-tb-col">
-                                                <a href="#">
-                                                    <div class="user-card">
-                                                        <div class="user-avatar bg-primary">
-                                                            <img src="{{ $user->profile->url }}" alt="">
-                                                        </div>
-                                                        <div class="user-info">
-                                                            <span class="tb-lead">{{ $user->name }} <span class="dot dot-success d-md-none ms-1"></span></span>
-                                                            <span>{{ $user->email }}</span>
-                                                        </div>
-                                                    </div>
-                                                </a>                                            
-                                            </td>
-                                            <td class="nk-tb-col tb-col-md">
-                                                <ul class="list-status">
-                                                    @if($user->email_verified_at)
-                                                    <li><em class="icon text-success ni ni-check-circle"></em> <span>Email</span></li>
-                                                    @else
-                                                    <li><em class="icon text-danger ni ni-alarm"></em> <span>Email</span></li>
-                                                    @endif
-                                                </ul>
-                                            </td>
-                                            <td class="nk-tb-col tb-col-md">
-                                                <span>{{ $user->lastLogin }}</span>                                            
-                                            </td>   
-                                            <td class="nk-tb-col tb-col-md" id ="status-{{ $user->id }}">
-                                                @if($user->status == 1)
-                                                <span class="tb-status text-success">Hoạt động</span>      
-                                                @else
-                                                <span class="tb-status text-danger">Đình chỉ</span>      
-                                                @endif                          
-                                            </td>                                                   
-                                            <td class="nk-tb-col nk-tb-col-tools">
-                                              <ul class="nk-tb-actions gx-1">                                            
-                                                  <li class="nk-tb-action-hidden">
-                                                      <button class="btn btn-trigger btn-icon btn-email" data-email={{ $user->email }}  data-name="{{ $user->name }}" >
-                                                          <em class="icon ni ni-mail-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="Gửi email"></em>
-                                                      </button>
-                                                  </li>
-                                                  <li class="nk-tb-action-hidden">
-                                                      <button class="btn btn-trigger btn-icon btn-suspend" data-id={{ $user->id }} data-value={{ $user->status }}>
-                                                          <em class="icon ni ni-user-cross-fill"  data-bs-toggle="tooltip" data-bs-placement="top" title="Đình chỉ"></em>
-                                                      </button>
-                                                  </li>
-                                                  <li>
-                                                      <div class="drodown">
-                                                          <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                                          <div class="dropdown-menu dropdown-menu-end">
-                                                              <ul class="link-list-opt no-bdr">
-                                                                  <li><a href="#" class="delete-button" data-id={{ $user->id }}>
-                                                                    <em class="icon ni ni-trash"></em><span>Xóa người dùng</span>
-                                                                  </a>
-
-                                                                  </li>
-                                                                <li><a href="#" data-id={{ $user->id }} class="recovery-password-a-tag"><em class="icon ni ni-edit"></em><span>Đổi mật khẩu</span></a>
-                                                                <li><a href="/admin/user/{{ $user->id }}"><em class="icon ni ni-eye"></em><span>Chi tiết</span></a>
-
-                                                            
-                                                              </ul>
-                                                          </div>
-                                                      </div>
-                                                  </li>
-                                              </ul>
-                                          </td>
-                                        </tr><!-- .nk-tb-item  -->
-                                      @endforeach
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div><!-- .card-preview -->
-                    </div> <!-- nk-block -->
+                                    </a>                                            
+                                </td>
+                                <td class="nk-tb-col tb-col-md">
+                                    <ul class="list-status">
+                                        @if($user->email_verified_at)
+                                        <li><em class="icon text-success ni ni-check-circle"></em> <span>Email</span></li>
+                                        @else
+                                        <li><em class="icon text-danger ni ni-alarm"></em> <span>Email</span></li>
+                                        @endif
+                                    </ul>
+                                </td>
+                                <td class="nk-tb-col tb-col-md">
+                                    <span>{{ $user->lastLogin }}</span>                                            
+                                </td>   
+                                <td class="nk-tb-col tb-col-md" id ="status-{{ $user->id }}">
+                                    @if($user->status == 1)
+                                    <span class="tb-status text-success">Hoạt động</span>      
+                                    @else
+                                    <span class="tb-status text-danger">Đình chỉ</span>      
+                                    @endif                          
+                                </td>                                                   
+                                <td class="nk-tb-col nk-tb-col-tools">
+                                    <ul class="nk-tb-actions gx-1">                                            
+                                        <li class="nk-tb-action-hidden">
+                                            <a href="#" class="btn btn-trigger btn-icon btn-email" data-email={{ $user->email }}  data-name="{{ $user->name }}" >
+                                                <em class="icon ni ni-mail-fill"></em>
+                                            </a>
+                                            
+                                        </li>
+                                        <li class="nk-tb-action-hidden">
+                                            <a href="#" class="btn btn-trigger btn-icon btn-suspend" data-id={{ $user->id }} data-value={{ $user->status }}>
+                                                <em class="icon ni ni-user-cross-fill"></em>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <div class="drodown">
+                                                <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <ul class="link-list-opt no-bdr">
+                                                        <li><a href="#" class="delete-button" data-id={{ $user->id }}>
+                                                        <em class="icon ni ni-trash"></em><span>Xóa người dùng</span>
+                                                        </a>
+    
+                                                        </li>
+                                                    <li><a href="#" data-id={{ $user->id }} class="recovery-password-a-tag"><em class="icon ni ni-edit"></em><span>Đổi mật khẩu</span></a>
+                                                    <li><a href="/admin/user/{{ $user->id }}"><em class="icon ni ni-eye"></em><span>Chi tiết</span></a>
+    
+                                                
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr><!-- .nk-tb-item  -->
+                            @endforeach
+    
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- .card-preview -->
+        </div>       
+        
+    </div> <!-- nk-block -->
                 <!-- .components-preview -->
    
 @endsection
@@ -214,7 +221,7 @@
     "language": {
         "lengthMenu": "Hiển thị: _MENU_ đối tượng",
         "search": "Tìm kiếm _INPUT_",
-        'info':"",
+        'info':"_PAGE_ - _PAGES_ của _MAX_",
         "zeroRecords": "Không tìm thấy dữ liệu",
         "infoEmpty": "Không có dữ liệu hợp lệ",
         "infoFiltered": "(Lọc từ _MAX_ dữ liệu)",
@@ -276,6 +283,7 @@
 
         var message = (status == 0) ? 'Bạn có chắc muốn mở khóa tài khoản của người dùng này?' : 'Bạn có chắc muốn khóa tài khoản của người dùng này?'
         
+        
         Swal.fire({
         title: `${message}`,
         icon: 'warning',
@@ -286,17 +294,28 @@
         cancelButtonText: 'Không'
         }).then((result) => {
         if (result.isConfirmed) {
+
+            Swal.fire({
+                title: 'Đang xử lý',
+                text: 'Vui lòng đợi xử lý xong!',
+                imageUrl: 'https://raw.githubusercontent.com/notepower2k1/MyImage/main/gif/codevember-day-6-bookshelf-loader.gif',
+                imageWidth: 400,
+                imageHeight: 200,
+                imageAlt: 'Custom image',
+                showConfirmButton: false
+            })
+
             $.ajax({
-            type:"GET",
-            url:'/admin/user/update/changeStatus',
-            data : {
-              "id": user_id,
-              "status": status,
-            },
+                type:"GET",
+                url:'/admin/user/update/changeStatus',
+                data : {
+                "id": user_id,
+                "status": status,
+                },
             })
             .done(function(res) {
             // If successful
-              Swal.fire({
+                Swal.fire({
                     icon: 'success',
                     title: `${res.message}`,
                     showConfirmButton: false,

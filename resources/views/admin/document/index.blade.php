@@ -1,7 +1,15 @@
 @extends('admin/layouts.app')
 @section('pageTitle', 'Danh sách tài liệu')
 @section('additional-style')
-
+<style>
+  #swal2-content em{
+    font-size:60px;
+  }
+  #swal2-content .icon-circle{
+    width: 80px;
+    height: 80px;
+  }
+</style>
 @endsection
 @section('content')
                     <div class="nk-block nk-block-lg">
@@ -63,12 +71,13 @@
                                             <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ảnh đại diện</span></th>
 
                                             <th class="nk-tb-col"><span class="sub-text">Tiêu đề</span></th>
-                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Người đăng</span></th>
+                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Tác giả</span></th>
                                             <th class="nk-tb-col tb-col-lg"><span class="sub-text">Danh mục</span></th>
                                             {{-- <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ngày thêm</span></th> --}}
                                             <th class="nk-tb-col tb-col-mb"><span class="sub-text">Tiến độ</span></th>
                                             <th class="nk-tb-col tb-col-md"><span class="sub-text">Ngôn ngữ</span></th>
                                             <th class="nk-tb-col tb-col-md"><span class="sub-text">Tình trạng</span></th>
+                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Người đăng</span></th>
 
                                             <th class="nk-tb-col nk-tb-col-tools text-end">
                                             </th>
@@ -77,7 +86,7 @@
                                     <tbody>
                                       @foreach ($documents as $document)
 
-                                        <tr class="nk-tb-item" id ="row-{{ $document->id }}">
+                                        <tr class="nk-tb-item" id ="row-{{ $document->id }}" style="{{ $document->status == -2 ? 'background-color:rgba(220,20,60,0.1)':'' }}">
 
                                             <td class="nk-tb-col tb-col-lg">
                                               <img class="image-fluid" src={{$document->url}} alt="..." style="width:100px" />
@@ -85,12 +94,12 @@
                                             <td class="nk-tb-col">
                                                 <div class="user-card">                                           
                                                     <div class="user-info">
-                                                        <span class="tb-lead"  data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $document->name }}">{{ Str::limit($document->name,30) }}<span class="dot dot-success d-md-none ms-1"></span></span>
+                                                        <span class="tb-lead" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $document->name }}">{{ Str::limit($document->name,30) }}<span class="dot dot-success d-md-none ms-1"></span></span>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td class="nk-tb-col tb-col-lg">
-                                              <span>{{  $document->users->name  }}</span>
+                                              <span class="" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $document->author }}">{{  Str::limit($document->author,30) }}</span>
                                             </td>
                                             <td class="nk-tb-col tb-col-lg">
                                               <span>{{ $document->types->name }}</span>
@@ -121,10 +130,18 @@
                                               class="form-check-input"
                                               role="switch"
                                               data-id="{{ $document->id }}"
+                                              {{ $document->users->id == 1 ?'':'disabled' }}
+
                                               {{ $document->isPublic ? 'checked':'' }}   />
                                               </div>
                                             </td>
                                       
+                                            <td class="nk-tb-col tb-col-lg">
+                                              <span>{{ $document->users->name }}</span>
+
+                                            </td>
+                                           
+
                                             <td class="nk-tb-col nk-tb-col-tools">
                                               <ul class="nk-tb-actions gx-1">
                                                   {{-- <li class="nk-tb-action-hidden">
@@ -151,9 +168,26 @@
                                                                     <em class="icon ni ni-trash"></em><span>Xóa</span>
                                                                   </a>
                                                                   </li>
+                                                                  @if($document->users->id != 1)
+                                                                    @if($document->status == -2)
+                                                                      <li>
+                                                                        <a href="#" class="lock-button" data-id="{{ $document->id }}" data-name="{{ $document->name }}" data-status ="{{ $document->status }}">
+                                                                          <em class="icon ni ni-unlock"></em><span>Mở khóa tài liệu</span>
+                                                                        </a>
+                                                                      </li>
+                                                                    @else
+                                                                      <li>
+                                                                        <a href="#" class="lock-button" data-id="{{ $document->id }}" data-name="{{ $document->name }}"  data-status ="{{ $document->status }}">
+                                                                          <em class="icon ni ni-lock"></em><span>Khóa tài liệu</span>
+                                                                        </a>
+                                                                      </li>
+                                                                    @endif
+                                                                  @endif
                                                                   <li><a href="/admin/document/detail/{{$document->id}}/{{ \Carbon\Carbon::now()->year }}"><em class="icon ni ni-eye"></em><span>Chi tiết</span></a></li>                                                            
-                                                                  <li><a href="/admin/document/{{$document->id}}/edit"><em class="icon ni ni-edit"></em><span>Cập nhật</span></a></li>
-                                                              
+                                                                  @if($document->users->id == 1)
+
+                                                                    <li><a href="/admin/document/{{$document->id}}/edit"><em class="icon ni ni-edit"></em><span>Cập nhật</span></a></li>
+                                                                  @endif
                                                               </ul>
                                                           </div>
                                                       </div>
@@ -188,7 +222,7 @@
       columnDefs: [
          
           {
-              targets: [0,6],
+              targets: [0,8],
               orderable: false     
           }
       ],
@@ -196,7 +230,7 @@
       "language": {
           "lengthMenu": "Hiển thị: _MENU_ đối tượng",
           "search": "Tìm kiếm _INPUT_",
-          'info':"",
+          'info':"_PAGE_ - _PAGES_ của _MAX_",
           "zeroRecords": "Không tìm thấy dữ liệu",
           "infoEmpty": "Không có dữ liệu hợp lệ",
           "infoFiltered": "(Lọc từ _MAX_ dữ liệu)",
@@ -309,6 +343,15 @@
                 });
 
                 $("#row-" + document_id).fadeOut();
+
+                $("#note-type").select2().select2('val',[`5`]);
+
+                setTimeout(() => {
+
+                    $('#note-object').select2().select2('val',[`${document_id}`]);
+                    $('#modalNote').modal('show');
+                  }, 2500);
+
               })
               .fail(function(jqXHR, textStatus, errorThrown) {
               // If fail
@@ -321,6 +364,87 @@
    
 
   })
+  $('#DataTables_Table_0 tbody').on('click','.lock-button',function(e){
+      e.preventDefault();
+
+      var document_id = $(this).data('id');
+      var name = $(this).data('name');
+      var status = $(this).data('status');
+
+      var _this = $(this);
+      
+      var token = $("meta[name='csrf-token']").attr("content");
+
+      Swal.fire({
+          title: status === -2 ? "Bạn muốn mở khóa tài liệu " + name : "Bạn muốn khóa tài liệu " + name,
+          html:status === -2 ?  '<em class="icon icon-circle bg-success-dim ni ni-unlock"></em>':  '<em class="icon icon-circle bg-warning-dim ni ni-lock"></em>',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Đồng ý',
+          cancelButtonText: 'Không'
+          }).then((result) => {
+          if (result.isConfirmed) {
+              $.ajax({
+              type:"GET",
+              url:'/admin/document/lock/' + document_id,
+              data : {
+              },
+              })
+              .done(function(res) {
+              // If successful
+
+                if(res.status == 1){
+                  Swal.fire({
+                      icon: 'success',
+                      title: `Mở khóa thành công`,
+                      showConfirmButton: false,
+                      timer: 2500
+                  });
+
+                  $("#row-" + document_id).css('background-color','');
+                  _this.data('status','1');
+                  _this.empty();
+                  _this.append('<em class="icon ni ni-lock"></em><span>Khóa tài liệu</span>');
+
+
+                }
+                else{
+                  Swal.fire({
+                      icon: 'success',
+                      title: `Khóa thành thành công`,
+                      showConfirmButton: false,
+                      timer: 2500
+                  });
+
+                  $("#row-" + document_id).css('background-color','rgba(220,20,60,0.1)');
+                  _this.data('status','-2');
+                  _this.empty();
+                  _this.append('<em class="icon ni ni-unlock"></em><span>Mở khóa tài liệu</span>');
+
+
+                  $("#note-type").select2().select2('val',[`5`]);
+
+                  setTimeout(() => {
+
+                      $('#note-object').select2().select2('val',[`${document_id}`]);
+                      $('#modalNote').modal('show');
+                    }, 2500);
+                }
+
+
+
+           
+
+              })
+              .fail(function(jqXHR, textStatus, errorThrown) {
+              // If fail
+              console.log(textStatus + ': ' + errorThrown);
+              })
+          
+          }
+        })
+      })
 });
 
     function customFormatDate(date){

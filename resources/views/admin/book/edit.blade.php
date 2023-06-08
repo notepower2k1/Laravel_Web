@@ -20,7 +20,7 @@
 
                 @csrf
                 @method('PUT')
-                <label>Tên truyện<sup>*</sup></label>
+                <label class="form-label">Tên truyện<sup>*</sup></label>
                 <input type="text" required
                name="name" 
                value="{{ $book->name }}"
@@ -29,21 +29,21 @@
            
 
                
-                <label>Thể loại<sup>*</sup></label>
+                <label class="form-label">Thể loại<sup>*</sup></label>
                 <select required class="form-control col-6"  name="book_type_id" id="book_type_id">
                    @foreach ($types as $type)
                     <option value="{{ $type->id }}" {{ $book->type_id == $type->id ? 'selected' : '' }} >{{ $type->name }}</option>
                     @endforeach
                 </select>
 
-                <label class="mt-4">Tác giả<sup>*</sup></label>
+                <label class="form-label mt-4">Tác giả<sup>*</sup></label>
                 <input type="text" required
                 name="author"
                 value="{{ $book -> author }}"
 
                 class="form-control mb-4 col-6">	 			 	
             
-                <label class="">Ảnh bìa<sup>*</sup></label>
+                <label class="form-label">Ảnh bìa<sup>*</sup></label>
 
                 <div class="mb-2" style="display:none">
                     <canvas id="the-canvas" style="border:1px solid black;width:200px;height:300px" ></canvas>
@@ -59,14 +59,14 @@
                        
                 <input name="oldImage" type="hidden" value="{{ $book -> image }}">
 
-                <label>Mô tả</label>
+                <label class="form-label">Mô tả</label>
                 <textarea 
                 name="description"
                 class="form-control mb-4"
                 >{{ $book -> description }}</textarea>
 
 
-                <label>Tiến độ<sup>*</sup></label>
+                <label class="form-label">Tiến độ<sup>*</sup></label>
                 <select required class="form-control mb-4 col-6"  name="isCompleted"> 
                 <option value=0 {{ $book->isCompleted == 0 ? 'selected' : '' }} >Chưa hoàn thành</option>
                 <option value=1 {{ $book->isCompleted == 1 ? 'selected' : '' }} >Đã hoàn thành</option>

@@ -19,10 +19,11 @@ class MailController extends Controller
     {
         $mailData = [
             'title' => 'Email xác thực',
-            'body' => 'This is for testing email using smtp.'
+            'body' => 'This is for testing email using smtp.',
+            'content'=> 'Test email'
         ];
          
-        Mail::to('nguyenthach617@gmail.com')->send(new VerifyMail($mailData));
+        Mail::to('nvthach.c4nvt@gmail.com')->send(new VerifyMail($mailData));
            
         dd("Email is sent successfully.");
     }
@@ -36,7 +37,7 @@ class MailController extends Controller
         $identifier = Auth::user()->email;
 
         
-        $otp = Otp::setValidity(2)  // otp validity time in mins
+        $otp = Otp::setValidity(5)  // otp validity time in mins
         ->setLength(6)  // Lenght of the generated otp
         ->setMaximumOtpsAllowed(10) // Number of times allowed to regenerate otps
         ->setOnlyDigits(true)  // generated otp contains mixed characters ex:ad2312
@@ -46,8 +47,8 @@ class MailController extends Controller
 
         $mailData = [
             'title' => 'Xin chào '. Auth::user()->name . '!!!',
-            'body' =>  'Mã OTP của bạn là: '.$otp->token,
-            'content' => 'Mã OTP của bạn có hiệu lực trong 2p, bạn có thể nhận lại email này, tài khoản của bạn sẽ bị tạm thời bị vô hiệu hóa nếu bạn xác thực sai quá nhiều lần.'
+            'body' =>  'Mã OTP của bạn có hiệu lực trong 5p, bạn có thể nhận lại email này, tài khoản của bạn sẽ tạm thời bị phạt đợi 5p nếu bạn xác thực sai quá 5 lần. Mã OTP của bạn là: ',
+            'content' => $otp->token,
         ];
          
         Mail::to($identifier)->send(new VerifyMail($mailData));  

@@ -14,18 +14,41 @@
 
 <div class="nk-block">
     <div class="container">
-        <div class="card card-bordered h-100">
-            <div class="card-inner">
-                <div class="card-title-group">
-                    <div class="card-title card-title-sm">
-                    <h6 class="title">Thống kê số lượng theo thể loại</h6>
-                    </div>
-                </div>
-                <div class="mt-5 d-flex">
-                    <canvas id="doughnutChart"></canvas>    
+        <div class="row g-gs">
+            <div class="col-8">
+                <div class="card card-bordered h-100">
+                    <div class="card-inner">
+                        <div class="card-title-group">
+                            <div class="card-title card-title-sm">
+                            <h6 class="title">Thống kê số lượng theo thể loại</h6>
+                            </div>
+                        </div>
+                        <div class="mt-5 d-flex">
+                            <canvas id="doughnutChart"></canvas>    
+                        </div>
+                    </div>      
                 </div>
             </div>
+               
+            <div class="col-4">
+                <div class="card card-bordered card-preview">
+                    <div class="card-inner">
+                        <div class="card-title-group">
+                            <div class="card-title card-title-sm">
+                            <h6 class="title">Tổng số tài liệu:</h6>
+                            </div>
+                        </div>
+                        <div class="nk-knob text-center">
+                            <input type="text" class="knob" value="{{ $totalDocuments }}" data-fgColor="#816bff" data-bgColor="#d9e5f7" data-thickness=".07" data-width="240" data-height="240" data-max="100">
+                        </div>
+                        <div class="card-title-group d-flex justify-content-center mt-3">
+                            <h4 class="title">{{ $totalDocuments }}/100</h4>
+                        </div>
+                    </div>
+                </div><!-- .card-preview -->
+            </div>
         </div>
+     
         <ul class="nav nav-tabs nav-tabs-s2">
             <li class="nav-item">
                 <a class="nav-link active" data-bs-toggle="tab" href="#tabItem1">Thống kê số lượt đăng tài liệu</a>

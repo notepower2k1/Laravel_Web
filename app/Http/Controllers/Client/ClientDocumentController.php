@@ -131,48 +131,33 @@ class ClientDocumentController extends Controller
         ]);
         //upload image
 
+      
         if($image){
             $firebase_storage_path = 'documentImage/';
-            $localfolder = public_path('firebase-temp-uploads') .'/';
-            if ($image->move($localfolder, $generatedImageName)) {
-            $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
-    
-            app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
-            unlink($localfolder . $generatedImageName);
-            }
+
+            $uploadedfileImage = file_get_contents($request->file('image'));
+
+      
+            app('firebase.storage')->getBucket()->upload($uploadedfileImage, ['name' => $firebase_storage_path . $generatedImageName]);
+            
         }
       
         //upload document
         $firebase_storage_document_path = 'documentFile/';
-        $localfolder = public_path('firebase-temp-uploads') .'/';
-        if ($document_file->move($localfolder, $generatedFileName)) {
-        $uploadedfile = fopen($localfolder.$generatedFileName, 'r');
-
+        $uploadedfile = file_get_contents($request->file('file_document'));
         app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_document_path . $generatedFileName]);
-        unlink($localfolder . $generatedFileName);
-        }
+
 
         $firebase_storage_preview_path = 'documentPreviewImage/';
-
         foreach ($previewImagefiles as $previewImage){
-            $localfolder = public_path('firebase-temp-uploads') .'/';
-
-            
-            $generatedPreviewImageName =  $slug.$previewImage->hashName();
-           
-            
+            $generatedPreviewName =  $slug.$previewImage->hashName();          
             $image = previewDocumentImages::create([
-                'image' => $generatedPreviewImageName,
+                'image' => $generatedPreviewName,
                 'documentID' => $document_id
             ]);
-
-
-            if ($previewImage->move($localfolder, $generatedPreviewImageName)) {
-                $uploadedfile = fopen($localfolder.$generatedPreviewImageName, 'r');
-        
-                app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_preview_path . $generatedPreviewImageName]);
-                unlink($localfolder . $generatedPreviewImageName);
-            }
+            $uploadedfilePreview = file_get_contents($previewImage);
+            app('firebase.storage')->getBucket()->upload($uploadedfilePreview, ['name' => $firebase_storage_preview_path . $generatedPreviewName]);
+          
         }
 
         return redirect('/quan-ly');
@@ -187,7 +172,7 @@ class ClientDocumentController extends Controller
      */
     public function show($id) //like "show details"
     {
-        $document = Document::findOrFail($id);
+        $document = Document::where('id','=',$id)->where('deleted_at','=',null)->firstOrFail();
 
         return view('client.manage.document.detail')
         ->with('document',$document);
@@ -202,7 +187,7 @@ class ClientDocumentController extends Controller
      */
     public function edit($id)
     {
-        $document = Document::findOrFail($id);
+        $document = Document::where('id','=',$id)->where('deleted_at','=',null)->whereIn('status',['-1','1'])->firstOrFail();
         $types = DocumentType::all();
 
 
@@ -254,19 +239,15 @@ class ClientDocumentController extends Controller
 
             $firebase_storage_path = 'documentImage/';
 
-            $localfolder = public_path('firebase-temp-uploads') .'/';
-            if ($image->move($localfolder, $generatedImageName)) {
-            $uploadedfile = fopen($localfolder.$generatedImageName, 'r');
+            $uploadedfileImage = file_get_contents($request->file('image'));
 
-            app('firebase.storage')->getBucket()->upload($uploadedfile, ['name' => $firebase_storage_path . $generatedImageName]);
-            unlink($localfolder . $generatedImageName);
-
-            //delete old image
+      
+            app('firebase.storage')->getBucket()->upload($uploadedfileImage, ['name' => $firebase_storage_path . $generatedImageName]);
 
           
             $OldimageDeleted = app('firebase.storage')->getBucket()->object($firebase_storage_path.$request->oldImage)->delete();
           
-            }
+            
         }
 
     
@@ -309,42 +290,45 @@ class ClientDocumentController extends Controller
     public function customDelete($document_id){
         $document = Document::findOrFail($document_id);
         $document->deleted_at = Carbon::now()->toDateTimeString();
+        $document->totalComments = 0;
+        $document->totalDocumentMarking = 0;
         $document ->save();
 
-        $comments = Comment::where('identifier_id','=',$document_id)->where('type_id','=','1')->update([
+        Comment::where('identifier_id','=',$document_id)->where('type_id','=','1')->update([
             'deleted_at' => Carbon::now()->toDateTimeString()
         ]);
 
+        $comments = Comment::where('identifier_id','=',$document_id)->where('type_id','=','1')->get();
         
         foreach($comments as $comment){
-            Reply::where('commentID','=',$comment->id)->update([
-                'deleted_at' => Carbon::now()->toDateTimeString()
-            ]);
 
-            report::where('identifier_id','=',$comment)->where('type_id','=','9')->update([
+            $replies = Reply::where('commentID','=',$comment->id)->get();
+
+
+            foreach ($replies as $reply){
+
+                $temp = Reply::findOrFail($reply->id);
+                $temp->deleted_at = Carbon::now()->toDateTimeString();
+                $temp ->save();
+
+                Notification::where('identifier_id','=',$reply->id)->where('type_id','=','2')->update([
+                    'deleted_at' => Carbon::now()->toDateTimeString()
+                ]);
+            }
+
+            Notification::where('identifier_id','=',$comment->id)->where('type_id','=','1')->update([
                 'deleted_at' => Carbon::now()->toDateTimeString()
             ]);
+    
         }
 
 
-        Notification::where('identifier_id','=',$document_id)->where('type_id','=','2')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
-        ]);
-
-        Notification::where('identifier_id','=',$document_id)->where('type_id','=','5')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
-        ]);
-
-        report::where('identifier_id','=',$document_id)->where('type_id','=','3')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
-        ]);
-
-        report::where('identifier_id','=',$document_id)->where('type_id','=','7')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString()
-        ]);
-
+   
         $follows = Follow::where('identifier_id','=',$document_id)->where('type_id','=','1')->get();
-        $follows->delete();
+
+        foreach($follows as $follow){
+            $follow->delete();
+        }
     }   
 
     public function changeDocumentStatus(Request $request){

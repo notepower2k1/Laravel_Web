@@ -16,20 +16,41 @@
     <div class="container">
         <div class="card card-bordered h-100">
             <div class="card-inner">
-                <div class="col-12" id="statistics-1">
-                    <div class="card card-bordered h-100">
-                        <div class="card-inner">
-                            <div class="card-title-group">
-                                <div class="card-title card-title-sm">
-                                <h6 class="title">Thống kê số lượng theo thể loại</h6>
+                <div class="row g-gs">
+                    <div class="col-8" id="statistics-1">
+                        <div class="card card-bordered h-100">
+                            <div class="card-inner">
+                                <div class="card-title-group">
+                                    <div class="card-title card-title-sm">
+                                    <h6 class="title">Thống kê số lượng theo thể loại</h6>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="mt-5 d-flex">
-                                <canvas id="doughnutChart"></canvas>    
+                                <div class="mt-5 d-flex">
+                                    <canvas id="doughnutChart"></canvas>    
+                                </div>
                             </div>
                         </div>
                     </div>
+    
+                    <div class="col-4">
+                        <div class="card card-bordered card-preview">
+                            <div class="card-inner">
+                                <div class="card-title-group">
+                                    <div class="card-title card-title-sm">
+                                    <h6 class="title">Tổng số sách:</h6>
+                                    </div>
+                                </div>
+                                <div class="nk-knob text-center">
+                                    <input type="text" class="knob" value="{{ $totalBooks }}" data-fgColor="#816bff" data-bgColor="#d9e5f7" data-thickness=".07" data-width="240" data-height="240" data-max="100">
+                                </div>
+                                <div class="card-title-group d-flex justify-content-center mt-3">
+                                    <h4 class="title">{{ $totalBooks }}/100</h4>
+                                </div>
+                            </div>
+                        </div><!-- .card-preview -->
+                    </div>
                 </div>
+              
             </div>
         </div>
         <ul class="nav nav-tabs nav-tabs-s2">
@@ -878,7 +899,7 @@
         var yearSelected = {!! $statisticsYear !!};
 
         var result = {!! json_encode($totalReadingPerMonth) !!};
-        let title = [`Tổng số lượt đọc từng tháng trong năm ${yearSelected}`];
+        let title = [`Tổng lượt đọc từng tháng trong năm ${yearSelected}`];
 
         let header = ['Tháng','Số lượng']    
 
@@ -896,7 +917,7 @@
         downloadBlob(csv, `tong-so-luot-doc-theo-thang-nam-${yearSelected}.csv`);
 
         var result2 = {!! json_encode($totalReadingPerDate) !!};
-        let title2 = [`Tổng số sách theo ngày trong năm ${yearSelected}`];
+        let title2 = [`Tổng lượt đọc theo ngày trong năm ${yearSelected}`];
 
         let header2 = ['Ngày','Số lượng']    
 

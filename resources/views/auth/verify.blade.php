@@ -1,4 +1,6 @@
 @extends('auth/layouts.app')
+@section('pageTitle','Xác thực tài khoản')
+
 @section('additional-styles')
 <style>    
     .inputs input{
@@ -62,6 +64,14 @@
     <div class="nk-block nk-block-middle nk-auth-body wide-xs">
         
         <div class="card card-bordered">
+                @if(Session::has('fail'))
+                <div class="alert alert-danger" role="alert">
+                    {{ Session::get('fail') }}
+                    @php
+                        Session::forget('fail');
+                    @endphp
+                </div>
+                @endif
                 <div class="card-inner card-inner-lg">
 
                     <div class="card p-2 text-center"> 
@@ -97,13 +107,13 @@
                         </form>
 
                     </div> 
-                    <div class="card-2">
+                    <div class="card-2" id="render-countdown">
                         <div class="content d-flex justify-content-center align-items-center"> 
                             <span>Chưa nhận được OTP code</span> 
                             @if($expires>0)
-                            <a href="#" class="text-decoration-none ms-1" id="send-otp" data-value="{{ $expires }}" onclick="return false;"></a>    
+                            <a type="button" class="text-decoration-none ms-1 text-muted" id="send-otp-off" data-value="{{ $expires }}" disabled></a>    
                             @else                 
-                            <a href="#" class="text-decoration-none ms-1 " id="send-otp" >gửi mã OTP</a>
+                            <a href="#" class="text-decoration-none ms-1 " id="send-otp" >Gửi mã OTP</a>
                             @endif
                         </div> 
 
@@ -117,7 +127,7 @@
                     <div class="card-2">
                         <div class="content d-flex justify-content-center align-items-center"> 
                             <span>Bạn chưa muốn xác thực 
-                                <a href="{{ route('logout') }}"
+                                <a href="/logout"
                                 onclick="event.preventDefault();
                                             document.getElementById('logout-form').submit();">
                                 <span> Đăng xuất</span>
@@ -125,7 +135,7 @@
                             </span> 
                           
 
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                            <form id="logout-form" action="/logout" method="POST" class="d-none">
                                 @csrf
                             </form>
                         </div> 
@@ -182,39 +192,42 @@ $(document).ready(function() {
                     } 
     OTPInput();
 
-    var timeleft = $('#send-otp').data('value');
+    var timeleft = $('#send-otp-off').data('value');
 
-    var seconds = timeleft , $seconds = document.querySelector('#send-otp');
+    var seconds = timeleft , $seconds = document.querySelector('#send-otp-off');
 
-    (function countdown() {
+    if(timeleft){
+        (function countdown() {
         $seconds.textContent = 'Thử lại sau: '+ seconds + 's';
         if(seconds --> 0) {
             setTimeout(countdown, 1000)
-            $('#send-otp').attr('disabled','disabled');
-
         }
         else{
             $seconds.textContent = 'Gửi mã OTP';
             setTimeout(()=>{
-                $('#send-otp').removeAttr('disabled');
+                $('#render-countdown').load(' #render-countdown >* ');
             }, 1000);
         }
     })();
+    }
+ 
 
 })
 
 
 
 
- $('#send-otp').on("click", function(e){
+ $(document).on("click",'#send-otp', function(e){
     
 
     $('#loading').show('slow');
-    $('#send-otp').addClass('disabled');
+    $('#send-otp').addClass('text-muted');
+    $('#render-countdown').hide('slow');
 
+    
     $.ajax({
-    type:"GET",
-    url:'/send-email'
+        type:"GET",
+        url:'/send-email'
     })
     .done(function() {
         $('#loading').hide();
@@ -223,22 +236,28 @@ $(document).ready(function() {
             icon: 'success',
             title: 'Gửi mã OTP thành công!!!',
             html:
-                'Bạn có <b>10</b> lần thử,' +
-                'và mã OTP có thời hạn <b>2</b> phút!',
+                'Bạn có <b>5</b> lần thử, bạn sẽ bị phạt 5p nếu sai quá 5 lần ' +
+                'và mã OTP có thời hạn <b>5</b> phút!', 
             showCloseButton: true,
         });
         
-        myFunction();
+        $('#render-countdown').show('slow');
 
+        
+        $('#render-countdown').load(' #render-countdown >* ',function(){
+            myFunction();
+        });
     })
     .fail(function(jqXHR, textStatus, errorThrown) {
     // If fail
-    console.log(textStatus + ': ' + errorThrown);
+        $('#render-countdown').show('slow');
     });
 
     setTimeout(()=>{
-                $('#send-otp').removeClass('disabled');
-    }, 120000);
+         $('#send-otp').removeClass('text-muted');
+    }, 300000);
+
+
 })
 
 $('#myForm').submit(function(e){
@@ -311,7 +330,7 @@ $('#myForm').submit(function(e){
 
   function myFunction() {
 
-    var seconds = 120, $seconds = document.querySelector('#send-otp');
+    var seconds = 300, $seconds = document.querySelector('#send-otp-off');
 
     
     (function countdown() {
@@ -321,6 +340,9 @@ $('#myForm').submit(function(e){
         }
         else{
             $seconds.textContent = 'Gửi mã OTP';
+            setTimeout(()=>{
+                $('#render-countdown').load(' #render-countdown >* ');
+            }, 1000);
         }
     })();
     }

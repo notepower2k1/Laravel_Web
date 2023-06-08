@@ -190,25 +190,29 @@
                                            
 
                                                 <div id="file_book_input">
-                                                    <div id="accordion-2" class="accordion" >
-                                                        <div class="accordion-item" style="background-color:white">
-                                                            <a href="#" class="accordion-head" data-bs-toggle="collapse" data-bs-target="#accordion-item-2-1">
-                                                                <h6 class="title">Sách dạng file .pdf</h6>
-                                                                <span class="accordion-icon"></span>
-                                                            </a>
-                                                            <div class="accordion-body collapse" id="accordion-item-2-1" data-bs-parent="#accordion-2">
-                                                                <div class="accordion-inner">
-                                                                        <div class="form-group">
-                                                                            <label class="form-label" for="file_book">File đính kèm</label>
-                    
-                                                                            <input type="file"
-                                                                            name="file_book" id="file_book"
-                                                                            class="form-control col-6 mb-4 " accept=".pdf">
-                                                                        </div>
+                                                    <div class="col-lg-7">
+                                                        <ul class="custom-control-group">
+                                                            <li>
+                                                                <div class="custom-control custom-checkbox custom-control-pro no-control">
+                                                                    <input value="0" type="radio" class="custom-control-input" name="btnIconRadio" id="btnIconRadio1" checked>
+                                                                    <label class="custom-control-label text-success" for="btnIconRadio1"><em class="icon ni ni-book"></em><span>Chương</span></label>
                                                                 </div>
-                                                            </div>
-                                                        </div>    
-                                                      </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="custom-control custom-checkbox custom-control-pro no-control">
+                                                                    <input value="1" type="radio" class="custom-control-input" name="btnIconRadio" id="btnIconRadio2">
+                                                                    <label class="custom-control-label text-primary" for="btnIconRadio2"><em class="icon ni ni-file-pdf"></em><span>File PDF</span></label>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                   
+                                                    <div class="mt-2" id="book-content-type" style="display:none">
+                                                        <label>File đính kèm</label>
+                                                        <input type="file"
+                                                        name="file_book" id="file_book"
+                                                        class="form-control col-6 " accept=".pdf">
+                                                    </div>
                                                 </div>
                                             
 
@@ -231,8 +235,8 @@
                                                     <canvas id="the-canvas" style="border:1px solid black;width:200px;height:300px" ></canvas>
                                                 </div>
 
-                                                <label for="imageFileInput">Chọn ảnh bìa</label>
-                                                <input type="file" id="imageFileInput" name="image" accept="image/*" required >
+                                                <label class="form-label">Chọn ảnh bìa</label>
+                                                <input type="file" class="form-control"  id="imageFileInput" name="image" accept="image/*" required >
 
                                                 <div>
                                                     <input type="file"  style="display: none" class="form-control" name="previewImages[]" id="previewImageInput" multiple />
@@ -1384,5 +1388,18 @@
       
     };
 
+
+    $('#file_book_input').on('change','input[type="radio"]', function() {
+
+    const option = $(this).val();
+
+        if(option == 0){
+            $('#file_book_input').find('#book-content-type').hide('slow');
+            $('input[name="file_book"]').val('');
+        }
+        else{
+            $('#file_book_input').find('#book-content-type').show('slow');
+        }
+    });
 </script>
 @endsection

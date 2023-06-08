@@ -179,7 +179,7 @@
       "language": {
           "lengthMenu": "Hiển thị: _MENU_ đối tượng",
           "search": "Tìm kiếm _INPUT_",
-          'info':"",
+          'info':"_PAGE_ - _PAGES_ của _MAX_",
           "zeroRecords": "Không tìm thấy dữ liệu",
           "infoEmpty": "Không có dữ liệu hợp lệ",
           "infoFiltered": "(Lọc từ _MAX_ dữ liệu)",

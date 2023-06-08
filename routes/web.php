@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\BookCategoryController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -16,6 +17,7 @@ use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\CommentController;
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DocumentCategoryController;
 use App\Http\Controllers\Admin\NoteController;
 use App\Http\Controllers\Client\ProfileController;
 use App\Http\Controllers\Client\PagesController;
@@ -49,7 +51,8 @@ Route::group(['middleware' => ['isVerified','isBanned']],function(){
 
 // Route::get("/tom-tat-tai-lieu",[PagesController::class,'summarizePage']);
 
-Route::get('/test',[ClientBookController::class,'test']);
+Route::get('/test',[PagesController::class,'test']);
+
 
 Route::get('/preview-item',[PagesController::class,'preview_item']);
 Route::get('/',[PagesController::class,'home_page']);
@@ -77,7 +80,7 @@ Route::get("/tai-tai-lieu",[PagesController::class,'download_document']);
 
  
 Route::get("/doc-sach/{book_slug}/{chapter_slug}",[PagesController::class,'read_book']);
-Route::get("/doc-sach-pdf/{book_id}",[PagesController::class,'read_book_pdf']);
+Route::get("/doc-sach-pdf/{book_slug}/pdf",[PagesController::class,'read_book_pdf']);
 
 Route::get("/sach-noi/{book_slug}/{chapter_slug}",[PagesController::class,'listening_book']);
 
@@ -116,7 +119,7 @@ Route::post('/upload', [ClientCommentController::class,'uploadCommentImage']);
 
 Route::get("/notification-update",[NotificationController::class,'changeStatus']);
 Route::get("/notification-all-update",[NotificationController::class,'changeAllStatus']);
-Route::get("/following-isDone-update",[ClientBookController::class,'changeFollowIsDone']);
+Route::get("/following-isDone-update",[ClientFollowController::class,'changeFollowIsDone']);
 Route::get("/following-status-update",[NotificationController::class,'changeFollowStatus']);
 Route::get("/following-status-all-update",[NotificationController::class,'changeAllFollowStatus']);
 
@@ -144,16 +147,14 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
     //All the routes that belongs to the group goes here
     Route::resource("/book",BookController::class,['except' => ['destroy','show']]);
     Route::get("/book/detail/{id}/{year?}",[BookController::class,'show']);
-
     Route::get("/statistics/book/{year?}",[BookController::class,'statistics_book_page']);
     Route::get("/deleted/book",[BookController::class,'deletedItem']);
     Route::get("/deleted/book/filter/{fromDate}/{toDate}",[BookController::class,'getFilterValueDeleted']);
-
     Route::get("/deleted/book/recovery",[BookController::class,'recoveryItem']);
-
     Route::get("/book/customDelete/{book_id}",[BookController::class,'customDelete']);
     Route::get("/book/update/changeStatus",[BookController::class,'changeBookStatus']);
     Route::get("/book/filter/{fromDate}/{toDate}",[BookController::class,'getFilterValue']);
+    Route::get("/book/lock/{book_id}",[BookController::class,'lockBook']);
 
     
     Route::resource("/book/chapter",ChapterController::class, ['except' => ['create', 'index','destroy']]);
@@ -171,6 +172,10 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
 
     Route::get("/deleted/chapter/recovery",[ChapterController::class,'recoveryItem']);
     Route::get("/chapter/filter/{fromDate}/{toDate}",[ChapterController::class,'getFilterValue']);
+
+    Route::resource("/categoryBook",BookCategoryController::class,['except' => ['show','edit']]);
+    Route::resource("/categoryDocument",DocumentCategoryController::class,['except' => ['show','edit']]);
+
 
     Route::resource("/forum",ForumController::class,['except' => ['destroy']]);
     Route::get("/forum/customDelete/{forum_id}",[ForumController::class,'customDelete']);
@@ -192,9 +197,10 @@ Route::group(['prefix' => 'admin',  'middleware' => ['auth','isAdmin']], functio
 
     Route::get("/document/update/changeStatus",[DocumentController::class,'changeDocumentStatus']);
     Route::get("/document/filter/{fromDate}/{toDate}",[DocumentController::class,'getFilterValue']);
+    Route::get("/document/lock/{document_id}",[DocumentController::class,'lockDocument']);
 
     Route::resource("/forum/post",ForumPostController::class,['except' => ['create', 'index','destroy']]);
-    Route::get("/forum/post/{post_id}/detail",[ForumPostController::class,'detail']);
+    Route::get("/forum/post/{post_id}/{year?}/detail",[ForumPostController::class,'detail']);
     Route::get("/forum/post/{forum_id}/filter/{fromDate}/{toDate}",[ForumPostController::class,'getFilterValueShow']);
 
     Route::get("/deleted/post",[ForumPostController::class,'deletedItem']);

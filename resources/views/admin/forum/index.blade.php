@@ -18,9 +18,8 @@
                                 <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false" data-export-title="Export">
                                     <thead>
                                         <tr class="nk-tb-item nk-tb-head">
-
-                                            <th class="nk-tb-col"><span class="sub-text">Tên diễn đàn</span></th>
                                             <th class="nk-tb-col tb-col-md"><span class="sub-text">Ngày tạo</span></th>
+                                            <th class="nk-tb-col"><span class="sub-text">Tên diễn đàn</span></th>
                                             <th class="nk-tb-col tb-col-md"><span class="sub-text">Lần cập nhật cuối</span></th>
                                             {{-- <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ngày thêm</span></th> --}}
                                             <th class="nk-tb-col tb-col-lg"><span class="sub-text">Mô tả</span></th>
@@ -37,15 +36,16 @@
                                         <tr class="nk-tb-item" id ="row-{{ $forum->id }}">
 
                                         
-                                            <td class="nk-tb-col">
-                                                <div class="user-card">                                           
-                                                    <div class="user-info">
-                                                        <span class="tb-lead">{{ $forum->name }}<span class="dot dot-success d-md-none ms-1"></span></span>
-                                                    </div>
-                                                </div>
-                                            </td>
+                                          
                                             <td class="nk-tb-col tb-col-lg">
                                               <span>{{  $forum->created_at }}</span>
+                                            </td>
+                                            <td class="nk-tb-col">
+                                              <div class="user-card">                                           
+                                                  <div class="user-info">
+                                                      <span class="tb-lead">{{ $forum->name }}<span class="dot dot-success d-md-none ms-1"></span></span>
+                                                  </div>
+                                              </div>
                                             </td>
                                             <td class="nk-tb-col tb-col-lg">
                                               <span>{{ $forum->updated_at }}</span>
@@ -131,7 +131,7 @@
       "language": {
           "lengthMenu": "Hiển thị: _MENU_ đối tượng",
           "search": "Tìm kiếm _INPUT_",
-          'info':"",
+          'info':"_PAGE_ - _PAGES_ của _MAX_",
           "zeroRecords": "Không tìm thấy dữ liệu",
           "infoEmpty": "Không có dữ liệu hợp lệ",
           "infoFiltered": "(Lọc từ _MAX_ dữ liệu)",

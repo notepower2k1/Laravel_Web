@@ -134,12 +134,12 @@
                                                         <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
                                                         <div class="dropdown-menu dropdown-menu-end">
                                                             <ul class="link-list-opt no-bdr">
-                                                                <li><a href="/admin/document/{{ $document->id }}">
+                                                                <li><a href="/admin/document/detail/{{ $document->id }}/{{ \Carbon\Carbon::now()->year }}">
                                                                   <em class="icon ni ni-eye"></em><span>Thông tin chi tiết</span>
                                                                 </a>
 
                                                                 </li>
-                                                                <li><a href="/thanh-vien/{{ $document->users->id }}"><em class="icon ni ni-user"></em><span>Thông tin người đăng</span></a></li>
+                                                                <li><a href="/admin/user/{{ $document->users->id }}"><em class="icon ni ni-user"></em><span>Thông tin người đăng</span></a></li>
                                                                
 
                                                             </ul>

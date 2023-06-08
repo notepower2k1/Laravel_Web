@@ -12,6 +12,9 @@ class DocumentType extends Model
     protected $primaryKey = 'id';
     public $incrementing = false;
 
+    protected $fillable = ['name','slug'];
+
+    
     protected $appends = ['total'];
 
     public function getTotalAttribute()

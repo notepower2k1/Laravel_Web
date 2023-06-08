@@ -49,11 +49,12 @@
             <table class="datatable-init nowrap nk-tb-list nk-tb-ulist mt-2" data-auto-responsive="false" data-export-title="Export">
                 <thead>
                     <tr class="nk-tb-item nk-tb-head">
+                        <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ngày thêm</span></th>
+
                         <th class="nk-tb-col"><span class="sub-text">Sách</span></th>
                         <th class="nk-tb-col tb-col-mb"><span class="sub-text">Chương số</span></th>
                         <th class="nk-tb-col tb-col-mb"><span class="sub-text">Chương tên</span></th>
                         <th class="nk-tb-col tb-col-md"><span class="sub-text">Lần cập nhật cuối</span></th>
-                        <th class="nk-tb-col tb-col-lg"><span class="sub-text">Ngày thêm</span></th>
                         <th class="nk-tb-col nk-tb-col-tools text-end">
                         </th>
                     </tr>
@@ -62,9 +63,13 @@
                 @foreach ($chapters as $chapter)
 
                     <tr class="nk-tb-item" id ="row-{{ $chapter->id }}">
+
+                        <td class="nk-tb-col tb-col-lg">
+                            <span>{{ $chapter->created_at }}</span>
+                        </td>
                         
                         <td class="nk-tb-col">
-                         <a href="/admin/book/detail/{{$chapter->books->id}}/{{ \Carbon\Carbon::now()->year }}">  <span>{{  $chapter->books->name   }}</span></a> 
+                         <a href="/admin/book/chapter/{{ $chapter->books->id }}">  <span>{{  $chapter->books->name   }}</span></a> 
                         </td>
                         <td class="nk-tb-col tb-col-mb">
                             <div class="user-card">                                             
@@ -81,9 +86,7 @@
 
                         </td>
                         
-                        <td class="nk-tb-col tb-col-lg">
-                            <span>{{ $chapter->created_at }}</span>
-                        </td>
+                    
                         
                         <td class="nk-tb-col nk-tb-col-tools">
                             <ul class="nk-tb-actions gx-1">
@@ -150,7 +153,7 @@ $(function(){
       "language": {
           "lengthMenu": "Hiển thị: _MENU_ đối tượng",
           "search": "Tìm kiếm _INPUT_",
-          'info':"",
+          'info':"_PAGE_ - _PAGES_ của _MAX_",
           "zeroRecords": "Không tìm thấy dữ liệu",
           "infoEmpty": "Không có dữ liệu hợp lệ",
           "infoFiltered": "(Lọc từ _MAX_ dữ liệu)",
