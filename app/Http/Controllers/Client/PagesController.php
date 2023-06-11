@@ -33,6 +33,7 @@ use Illuminate\Support\Facades\Response;
 
 class PagesController extends Controller
 {
+    
 
     public function getRecommendationByType(){      
         $userID = Auth::user()->id;

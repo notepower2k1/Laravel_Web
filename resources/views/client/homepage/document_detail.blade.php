@@ -442,7 +442,7 @@
                                                                                                 @endif
                                                                                                
                                                                                                 @if(Auth::check())
-                                                                                                    <span class="create-reply-btn me-2" data-id={{ $comment->id }}>
+                                                                                                    <span class="create-reply-btn me-2" data-id={{ $comment->id }}  data-commentowner = "{{ $comment->users->profile->displayName }}">
                                                                                                         <em class="icon ni ni-reply fs-16px "></em>
                                                                                                     </span>
                                                                                                     
@@ -848,7 +848,7 @@
                 </a>
             </div>
             <div class="modal-body">
-                <div class="nk-chat-editor border rounded-pill flex-grow-1 bg-light">
+                <div class="nk-chat-editor border flex-grow-1 bg-light">
                     <div class="nk-chat-editor-form">
                         <div class="form-control-wrap">
                             <textarea class="form-control form-control-simple no-resize bg-light textarea" id="editCommentArea" placeholder="Viết bình luận của bạn...">
@@ -879,6 +879,22 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="reply-modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <em class="icon ni ni-cross"></em>
+                </a>
+            </div>
+            <div class="modal-body text-left">
+            
+                
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @endsection
@@ -893,7 +909,71 @@
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
     });
-    
+    var pusher = new Pusher('{{env('PUSHER_APP_KEY')}}', {
+            cluster: 'ap1',
+            encrypted: true
+    });
+
+    const document_id = {!! $document_id !!};
+
+    var commentChannel  = pusher.subscribe(`comment_1_${document_id}`);
+
+    if(commentChannel){
+        commentChannel.bind('send-comment', function(data) {
+            if (document_id == data['itemID'] && data['typeID'] == 1){                 
+                
+                switch(data['eventType']) {
+                    case "add-comment":
+                        $("#comment-box").load(" #comment-box > *",function(){
+                            $('.replies-item').css('display', 'none');
+
+                        });
+                        break;
+
+                    case "edit-comment":
+                        $("#comment-content-"+ data['id']).load(` #comment-content-${data['id']} > *`)
+                        break;
+                    case "delete-comment":
+                        $("#comment-" + data['id']).fadeOut();
+                        $("#comment-" + data['id']).remove();
+
+                        break;
+                    case "add-reply":
+                        $("#comment-box").load(" #comment-box > *",function(){
+                            $('.replies-item').css('display', 'none');
+
+                        });
+                        break;
+                    case "edit-reply":
+                        $("#reply-content-"+ data['id']).load(` #reply-content-${data['id']} > *`)
+                        break;
+                    case "delete-reply":
+
+                        var totalRepliesLeft = $("#reply-"+ data['id']).parent().find(".replies-item").length;
+
+                        totalRepliesLeft = totalRepliesLeft - 1;
+
+                        if(totalRepliesLeft > 0){
+                            $("#reply-" + data['id']).parent().first().find('.open-relies-btn').text(`Xem ${totalRepliesLeft} phản hồi`)
+                        }
+                        else{
+                            $("#reply-" + data['id']).parent().first().find('.open-relies-btn').remove();
+                        }
+
+                        $("#reply-" + data['id']).fadeOut();
+                        $("#reply-" + data['id']).remove();
+                       
+                        break;
+                    default:
+                        // code block
+                }
+                
+
+            }
+        });
+    }
+
+
     $(function () {
 
         commentRender();
@@ -1156,7 +1236,10 @@
                                 form.modal('hide');
                             }, 2500);
 
-                            $("#comment-box").load(" #comment-box > *");
+                            $("#comment-box").load(" #comment-box > *",function(){
+                                $('.replies-item').css('display', 'none');
+
+                            });
 
                         })
 
@@ -1232,7 +1315,8 @@
               
                 $('#main-comment-box').find("#comment_area").val('');
                 $('#main-comment-box').find('.emojionearea-editor').text('');
-                $("#comment-box").load(" #comment-box > *");
+            
+
                 $('.total-comment-span').text(res.totalComments + " ");
                 
             })
@@ -1272,8 +1356,9 @@
                             timer: 2500
                     });
 
-                    $("#comment-" + comment_id).fadeOut();
-                    $("#comment-box").load(" #comment-box > *");
+                  
+              
+
                     $('.total-comment-span').text(res.totalComments + " ");
 
                     })
@@ -1306,7 +1391,7 @@
                     data : {
                     },
                     })
-                    .done(function() {
+                    .done(function(res) {
                     // If successful
                     Swal.fire({
                             icon: 'success',
@@ -1315,8 +1400,7 @@
                             timer: 2500
                     });
 
-                    $("#reply-" + reply_id).fadeOut();
-                    $("#comment-box").load(" #comment-box > *");
+                
                     $('.total-comment-span').text(res.totalComments + " ");
 
                    
@@ -1334,32 +1418,29 @@
     $(document).on('click','.create-reply-btn',function(){
 
         var comment_id = $(this).data('id');
-        var avatar = $('#comment_avatar img').attr('src')
 
 
-        if($("#reply-box").length){
-
-            $("#reply-box").remove();
-        }
-        else{
-              
-            var htmlrender = 
-                `<div class="ms-5 nk-chat-editor border bg-light w-75" id="reply-box">
-                        <div class="nk-chat-editor-form">
-                            <div class="form-control-wrap">
-                                <textarea class="form-control form-control-simple no-resize bg-light" id="reply_area" placeholder="Viết phản hồi của bạn..."></textarea>
-                            </div>
-                        </div>
-                        <ul class="nk-chat-editor-tools g-2">              
-                            <li>
-                                <button class="btn btn-round btn-warning btn-icon" id="reply-btn" data-id=${comment_id}><em class="icon ni ni-send-alt"></em></button>
-                            </li>
-                        </ul>
-                </div>`;
+        var comment_id = $(this).data('id');
+        var commentOwner = $(this).data('commentowner');
+        $('#reply-modal').find('.modal-body').empty();
+      
+        var htmlrender = 
+        `<div class="nk-chat-editor border bg-light w-100" id="reply-box">
+                <div class="nk-chat-editor-form">
+                    <div class="form-control-wrap">
+                        <textarea class="form-control form-control-simple no-resize bg-light" id="reply_area" placeholder="Viết phản hồi của bạn..."></textarea>
+                    </div>
+                </div>
+                <ul class="nk-chat-editor-tools g-2">              
+                    <li>
+                        <button class="btn btn-round btn-warning btn-icon" id="reply-btn" data-id=${comment_id}><em class="icon ni ni-send-alt"></em></button>
+                    </li>
+                </ul>
+        </div>`;
        
-
-        $('#comment-'+comment_id).append(htmlrender);
-
+        $('#reply-modal').find('.modal-body').append(htmlrender);
+        // $('#comment-'+comment_id)
+        $('#reply-modal').find('.modal-title').text(`Phản hồi bình luận của ${commentOwner}`)
         $('#reply-btn').attr('disabled', true);
 
         $('#reply_area').emojioneArea({
@@ -1373,7 +1454,8 @@
             }
 	    });
 
-        }
+        $('#reply-modal').modal('show');
+
         
     })
 
@@ -1401,7 +1483,8 @@
                         timer: 2500
                     });      
 
-                $("#comment-box").load(" #comment-box > *");
+                $('#reply-modal').modal('hide');
+
                 $('.total-comment-span').text(res.totalComments + " ");
 
             })
@@ -1511,9 +1594,6 @@
             pickerPosition: "bottom",
             filtersPosition: "bottom",
             tones: false,
-            autocomplete: false,
-            inline: true,
-            hidePickerOnBlur: false,
             events: {
                 keyup: function (editor, event) {
                     $('#editCommentArea').val(this.getText());
@@ -1559,7 +1639,6 @@
 
             
 
-                $('#comment-content-' + item_id).find('p').text(content);
 
                 setTimeout(function() {
                     $('#editCommentForm').modal('hide');
@@ -1589,7 +1668,6 @@
                         timer: 2500
                     });      
 
-                $('#reply-content-' + item_id).find('p').text(content);
 
                 setTimeout(function() {
                     $('#editCommentForm').modal('hide');

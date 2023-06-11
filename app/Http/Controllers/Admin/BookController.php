@@ -19,7 +19,7 @@ use App\Models\report;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-
+use Pusher\Pusher;
 
 class BookController extends Controller
 {
@@ -597,6 +597,18 @@ class BookController extends Controller
     }
 
     public function lockBook($id){
+        $options = array(
+            'cluster' => 'ap1',
+            'encrypted' => true
+        );
+
+        $pusher = new Pusher(
+            env('PUSHER_APP_KEY'),
+            env('PUSHER_APP_SECRET'),
+            env('PUSHER_APP_ID'),
+            $options
+        );
+
         $book = Book::findOrFail($id);
         $message = '';
         $status = $book->status;
@@ -643,6 +655,10 @@ class BookController extends Controller
                 'receiverID'=>$book->users->id,
                 'status'=>1
             ]);
+
+            $receiverID = $book->users->id;
+            
+            $pusher->trigger('private_notify_'.$receiverID, 'send-notify', $receiverID);
         }
         //lock
         else{
@@ -688,6 +704,11 @@ class BookController extends Controller
                 'receiverID'=>$book->users->id,
                 'status'=>1
             ]);
+
+            
+            $receiverID = $book->users->id;
+            
+            $pusher->trigger('private_notify_'.$receiverID, 'send-notify', $receiverID);
         }
 
         $book->save();

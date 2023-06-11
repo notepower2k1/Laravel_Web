@@ -12,7 +12,6 @@ class Comment extends Model
     protected $table = 'comments';
     protected $primaryKey = 'id';
     public  $timestamps = true;
-    public $incrementing = false;
 
     protected $fillable = ['content','identifier_id','type_id','userID','totalReplies','totalLikes'];
 

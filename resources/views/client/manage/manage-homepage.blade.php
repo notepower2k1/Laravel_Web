@@ -206,7 +206,7 @@
                                                         <li>
                                                             @if($notes->where('identifier_id','=',$document->id)->where('type_id','=',2)->count()>0)           
                                                                 <a href="#" class="getReasonbtn" data-type = "2" data-identifier = {{ $document->id }}>
-                                                                    <em class="icon ni ni-clipboard"></em><span class="badge badge-dim rounded-pill bg-outline-danger">Xem lý do</span>
+                                                                    <em class="icon ni ni-clipboard"></em><span>Xem lý do</span>
                                                                 </a>                                                                                
                                                             @endif
                                                         </li>

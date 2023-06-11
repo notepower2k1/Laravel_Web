@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Client;
 
+use App\Events\Notify;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,6 +15,7 @@ use App\Models\Notification;
 
 use App\Models\ForumPosts;
 use App\Models\report;
+use Pusher\Pusher;
 
 class ClientCommentController extends Controller
 {
@@ -63,11 +65,23 @@ class ClientCommentController extends Controller
 
     public function user_comment(Request $request){
 
+        $options = array(
+            'cluster' => 'ap1',
+            'encrypted' => true
+        );
+
+        $pusher = new Pusher(
+            env('PUSHER_APP_KEY'),
+            env('PUSHER_APP_SECRET'),
+            env('PUSHER_APP_ID'),
+            $options
+        );
+
         $request->validate([
             'content' => 'required'
         ]);
 
-        $option = $request->option;
+        $type_id = $request->option;
         $content = $request->content;
         $item_id = $request->item_id;
         $message = 'Bình luận thành công';
@@ -75,7 +89,7 @@ class ClientCommentController extends Controller
         $comment_id = Comment::insertGetId([
             'content' => $content,
             'identifier_id' =>$item_id,
-            'type_id'=>$option,
+            'type_id'=>$type_id,
             'userID'=>Auth::user()->id,
             'totalReplies'=> 0,
             'totalLikes' => 0,  
@@ -84,7 +98,7 @@ class ClientCommentController extends Controller
         ]);
 
         $totalComments = 0;
-        switch ($option) {
+        switch ($type_id) {
             case 1:        
 
                 $document = Document::findOrFail($item_id);
@@ -95,17 +109,23 @@ class ClientCommentController extends Controller
 
 
                 if($document->users->id != Auth::user()->id){
-                    Notification::create([             
+
+                   Notification::create([             
                         'identifier_id'=>$comment_id,
                         'type_id'=> 1, 
                         'senderID' => Auth::user()->id,
                         'receiverID'=>$document->users->id,
                         'status'=>1,
                     ]);
+
+                    //notify
+                    $receiverID = $document->users->id;
+                    $pusher->trigger('private_notify_'.$receiverID, 'send-notify', $receiverID);
+
                 }
               
-                $totalComments = $document->totalComments;
 
+                $totalComments = $document->totalComments;
                 break;
             case 2:
 
@@ -123,6 +143,12 @@ class ClientCommentController extends Controller
                         'receiverID'=>$book->users->id,
                         'status'=>1,
                     ]);
+
+
+
+                    $receiverID = $book->users->id;
+            
+                    $pusher->trigger('private_notify_'.$receiverID, 'send-notify', $receiverID);
                 }
               
                 $totalComments = $book->totalComments;
@@ -137,6 +163,7 @@ class ClientCommentController extends Controller
                 $post ->save();
 
                 if($post->users->id != Auth::user()->id){
+
                     Notification::create([
                         'identifier_id'=>$comment_id,
                         'type_id'=> 1, 
@@ -144,6 +171,12 @@ class ClientCommentController extends Controller
                         'receiverID'=>$post->users->id,
                         'status'=>1,
                     ]);
+
+                    
+
+                    $receiverID = $post->users->id;
+            
+                    $pusher->trigger('private_notify_'.$receiverID, 'send-notify', $receiverID);
                 }
 
                 $totalComments = $post->totalComments;
@@ -153,15 +186,33 @@ class ClientCommentController extends Controller
                 $message = 'Bình luận không thành công';
             
         }
+        
+        //comment_trigger
+        $data['eventType'] = "add-comment";
+        $data['id'] = strval($comment_id);
+        $data['typeID'] = strval($type_id);
+        $data['itemID'] = strval($item_id);
+        $pusher->trigger('comment_'.$type_id."_".$item_id, 'send-comment',$data);
+
 
         return response()->json([
             'success' => $message,
-            'totalComments' => $totalComments
+            'totalComments' =>$totalComments
         ]);
    }
 
    public function user_reply(Request $request){
+    $options = array(
+        'cluster' => 'ap1',
+        'encrypted' => true
+    );
 
+    $pusher = new Pusher(
+        env('PUSHER_APP_KEY'),
+        env('PUSHER_APP_SECRET'),
+        env('PUSHER_APP_ID'),
+        $options
+    );
     $request->validate([
         'content' => 'required', 
     ]);
@@ -181,12 +232,12 @@ class ClientCommentController extends Controller
     $comment ->save();
 
 
-    $option = $comment->type_id;
+    $type_id = $comment->type_id;
 
     $totalComments = 0;
 
     $message = 'Phản hồi thành công';
-        switch ($option) {
+        switch ($type_id) {
             case 1:        
 
                 $document = Document::findOrFail($comment->identifier_id);
@@ -203,6 +254,10 @@ class ClientCommentController extends Controller
                         'receiverID'=>$comment->users->id,
                         'status'=>1
                     ]);
+
+                    $receiverID = $comment->users->id;
+            
+                    $pusher->trigger('private_notify_'.$receiverID, 'send-notify', $receiverID);
                 }
 
                 $totalComments = $document->totalComments;
@@ -226,6 +281,10 @@ class ClientCommentController extends Controller
                         'receiverID'=>$comment->users->id,
                         'status'=>1
                     ]);
+
+                    $receiverID = $comment->users->id;
+            
+                    $pusher->trigger('private_notify_'.$receiverID, 'send-notify', $receiverID);
                 }
 
                 $totalComments = $book->totalComments;
@@ -247,6 +306,10 @@ class ClientCommentController extends Controller
                         'receiverID'=>$comment->users->id,
                         'status'=>1
                     ]);
+
+                    $receiverID = $comment->users->id;
+            
+                    $pusher->trigger('private_notify_'.$receiverID, 'send-notify', $receiverID);
                 }
                 $totalComments = $post->totalComments;
 
@@ -256,6 +319,12 @@ class ClientCommentController extends Controller
             
         }
    
+    $item_id = $comment->identifier_id;
+    $data['eventType'] = "add-reply";
+    $data['id'] = strval($reply_id);
+    $data['typeID'] = strval($type_id);
+    $data['itemID'] = strval($item_id);
+    $pusher->trigger('comment_'.$type_id."_".$item_id, 'send-comment',$data);
 
     
     return response()->json([
@@ -266,6 +335,17 @@ class ClientCommentController extends Controller
 
 
    public function delete_user_comment($item_id){
+    $options = array(
+        'cluster' => 'ap1',
+        'encrypted' => true
+    );
+
+    $pusher = new Pusher(
+        env('PUSHER_APP_KEY'),
+        env('PUSHER_APP_SECRET'),
+        env('PUSHER_APP_ID'),
+        $options
+    );
 
     $comment = Comment::findOrFail($item_id);
     $comment->deleted_at = Carbon::now()->toDateTimeString();
@@ -285,8 +365,8 @@ class ClientCommentController extends Controller
     $totalComments = 0;
 
 
-    $option = $comment->type_id;
-    switch ($option) {
+    $type_id = $comment->type_id;
+    switch ($type_id) {
         case 1:
             if($total){
                 $document = Document::findOrFail($comment->identifier_id);
@@ -352,14 +432,34 @@ class ClientCommentController extends Controller
         default:
 
     }
-        Notification::where('identifier_id','=',$item_id)->where('type_id','=','1')->update([
-            'deleted_at' => Carbon::now()->toDateTimeString(),
-        ]);
-        return response()->json(['totalComments' => $totalComments]);
+    Notification::where('identifier_id','=',$item_id)->where('type_id','=','1')->update([
+        'deleted_at' => Carbon::now()->toDateTimeString(),
+    ]);
+
+    $identifier_id = $comment->identifier_id;
+    $data['eventType'] = "delete-comment";
+    $data['id'] = strval($item_id);
+    $data['typeID'] = strval($type_id);
+    $data['itemID'] = strval($identifier_id);
+    $pusher->trigger('comment_'.$type_id."_".$identifier_id, 'send-comment',$data);
+    
+    return response()->json(['totalComments' => $totalComments]);
    }
 
    public function delete_reply_comment($item_id){
 
+        $options = array(
+            'cluster' => 'ap1',
+            'encrypted' => true
+        );
+
+        $pusher = new Pusher(
+            env('PUSHER_APP_KEY'),
+            env('PUSHER_APP_SECRET'),
+            env('PUSHER_APP_ID'),
+            $options
+        );
+        
         $reply = Reply::findOrFail($item_id);
         $reply->deleted_at = Carbon::now()->toDateTimeString();
         $reply ->save();
@@ -369,11 +469,11 @@ class ClientCommentController extends Controller
         $comment->totalReplies = $comment->totalReplies - 1;
         $comment ->save();
 
-        $option = $comment->type_id;
+        $type_id = $comment->type_id;
 
         $totalComments = 0;
 
-        switch ($option) {
+        switch ($type_id) {
             case 1:
                 $document = Document::findOrFail($reply->comments->identifier_id);
                 $document->totalComments = $document->totalComments - 1;
@@ -414,11 +514,30 @@ class ClientCommentController extends Controller
             'deleted_at' => Carbon::now()->toDateTimeString(),
         ]);
 
+        $identifier_id = $comment->identifier_id;
+        $data['eventType'] = "delete-reply";
+        $data['id'] = strval($item_id);
+        $data['typeID'] = strval($type_id);
+        $data['itemID'] = strval($identifier_id);
+        $pusher->trigger('comment_'.$type_id."_".$identifier_id, 'send-comment',$data);
+
         return response()->json(['totalComments' => $totalComments]);
 
    }
 
    public function edit_user_comment(Request $request,$item_id){
+
+        $options = array(
+            'cluster' => 'ap1',
+            'encrypted' => true
+        );
+
+        $pusher = new Pusher(
+            env('PUSHER_APP_KEY'),
+            env('PUSHER_APP_SECRET'),
+            env('PUSHER_APP_ID'),
+            $options
+        );
 
         $request->validate([
             'content' => 'required', 
@@ -431,12 +550,34 @@ class ClientCommentController extends Controller
                 'content' => $request->content,
         ]);
 
+        $comment = Comment::findOrFail($item_id);
+
+        $identifier_id = $comment->identifier_id;
+        $type_id = $comment->type_id;
+        $data['eventType'] = "edit-comment";
+        $data['id'] = strval($item_id);
+        $data['typeID'] = strval($type_id);
+        $data['itemID'] = strval($identifier_id);
+        $pusher->trigger('comment_'.$type_id."_".$identifier_id, 'send-comment',$data);
+
         return response()->json([
             'success' => $message,
         ]);
    }
 
    public function edit_user_reply(Request $request,$item_id){
+        $options = array(
+            'cluster' => 'ap1',
+            'encrypted' => true
+        );
+
+        $pusher = new Pusher(
+            env('PUSHER_APP_KEY'),
+            env('PUSHER_APP_SECRET'),
+            env('PUSHER_APP_ID'),
+            $options
+        );
+
         $request->validate([
             'content' => 'required', 
         ]);
@@ -447,7 +588,18 @@ class ClientCommentController extends Controller
         ]);
 
         $message = 'Cập nhật phản hồi thành công';
-        
+
+
+        $reply = Reply::findOrFail($item_id);
+
+        $identifier_id = $reply->comments->identifier_id;
+        $type_id = $reply->comments->type_id;
+        $data['eventType'] = "edit-reply";
+        $data['id'] = strval($item_id);
+        $data['typeID'] = strval($type_id);
+        $data['itemID'] = strval($identifier_id);
+        $pusher->trigger('comment_'.$type_id."_".$identifier_id, 'send-comment',$data);
+
 
         return response()->json([
             'success' => $message,

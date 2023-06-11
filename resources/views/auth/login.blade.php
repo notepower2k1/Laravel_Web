@@ -77,7 +77,17 @@
             </form>
             <div class="form-note-s2 text-center pt-4"> Chưa có tài khoản? <a href="/register">Đăng ký ngay</a>
             </div>
-          
+            <div class="text-center pt-4 pb-3">
+                <h6 class="overline-title overline-title-sap"><span>Hoặc</span></h6>
+            </div>
+            
+            <ul class="nav justify-center gx-8">
+                <a class="btn btn-outline-primary" href="/auth/google">
+                    <em class="icon ni ni-google"></em>                   
+                    <span>Đăng nhập bằng Google
+                    </span>
+                </a>
+            </ul>
         </div>
     </div>
 @endsection

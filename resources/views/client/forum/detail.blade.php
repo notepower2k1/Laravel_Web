@@ -323,20 +323,28 @@
         selector: '#mytextarea',
         branding: false,
         statusbar: false,
-        height: 400,
+        min_height: 400,
         resize: false,
         menubar: false,
         plugins: [
             "advlist", "anchor", "autolink", "charmap", "code", "fullscreen", 
             "help", "image", "insertdatetime", "link", "lists", "media", 
             "preview", "searchreplace", "table", "visualblocks"," wordcount","emoticons",
+            "wordcount", 'charmap',"directionality","quickbars","autoresize","table"
         ],
-        toolbar: "undo redo |  bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | emoticons | wordcount",
+        toolbar: "undo redo |  blockquote bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | emoticons charmap |  preview searchreplace wordcount | table | ltr rtl",
+        table_toolbar: 'tableprops tabledelete | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol',
+        quickbars_selection_toolbar: 'bold italic underline strikethrough',
+        quickbars_insert_toolbar: false,
+        toolbar_mode: 'sliding',
         image_title: true,
-        /* enable automatic uploads of images represented by blob or data URIs*/
         images_upload_url: '/upload',
         automatic_uploads: false,
         file_picker_types: 'image',
+        paste_block_drop: true,
+        block_unsupported_drop: true,
+        image_uploadtab: false,
+        image_description: false,
         /* and here's our custom image picker*/
         file_picker_callback: function (cb, value, meta) {
             var input = document.createElement('input');
@@ -345,18 +353,25 @@
 
             input.onchange = function () {
             var file = this.files[0]; 
-            var reader = new FileReader();
-            reader.onload = function () {
-                var id = 'blobid' + (new Date()).getTime();
-                var blobCache =  tinymce.activeEditor.editorUpload.blobCache;
-                var base64 = reader.result.split(',')[1];
-                var blobInfo = blobCache.create(id, file, base64);
-                blobCache.add(blobInfo);
+            if(this.files[0].size > 2000000) {
+                alert("Kích thước ảnh phải nhỏ hơn 2MB");
+                $(this).val('');
+            }
+            else{
+                var reader = new FileReader();
+                reader.onload = function () {
+                    var id = 'blobid' + (new Date()).getTime();
+                    var blobCache =  tinymce.activeEditor.editorUpload.blobCache;
+                    var base64 = reader.result.split(',')[1];
+                    var blobInfo = blobCache.create(id, file, base64);
+                    blobCache.add(blobInfo);
 
-                /* call the callback and populate the Title field with the file name */
-                cb(blobInfo.blobUri(), { title: file.name });
-            };
-            reader.readAsDataURL(file);
+                    /* call the callback and populate the Title field with the file name */
+                    cb(blobInfo.blobUri(), { title: file.name });
+                };
+                reader.readAsDataURL(file);
+            }
+        
             };
 
             input.click();

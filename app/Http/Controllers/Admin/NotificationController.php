@@ -55,8 +55,8 @@ class NotificationController extends Controller
     
     public function changeStatus(Request $request){
         $notification = Notification::findOrFail($request->id);
-        // $notification->status = 0;
-        // $notification ->save();
+        $notification->status = 0;
+        $notification ->save();
         
         $type = $notification->type_id;
 

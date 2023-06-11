@@ -80,10 +80,13 @@ class AppServiceProvider extends ServiceProvider
 
                 if(Auth::check()){   
                     $follow_notifications = Follow::where('userID','=',Auth::user()->id)->where('isDone','=',0)->where('status','=',1)->orderBy('updated_at','desc')->get();
-                    $comment_notifications = Notification::where('receiverID','=',Auth::user()->id)->where('deleted_at','=',null)->where('status','=',1)->orderBy('created_at','desc')->get();
+                    $comment_notifications = Notification::where('receiverID','=',Auth::user()->id)->where('deleted_at','=',null)->orderBy('created_at','desc')->get();
+
+                    $comment_notifications_show  = Notification::where('receiverID','=',Auth::user()->id)->where('deleted_at','=',null)->where('status','=',1)->orderBy('created_at','desc')->get();
 
                     $view
                     ->with('follow_notifications',$follow_notifications)
+                    ->with('comment_notifications_show',$comment_notifications_show)
                     ->with('comment_notifications',$comment_notifications);
 
                 }

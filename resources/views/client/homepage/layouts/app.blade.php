@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('pageTitle')</title>
+    <meta name="auth-check" content="{{ (Auth::check()) ? Auth::user()->id : '-1' }}">
+
 
     <link rel = "icon" href ="https://raw.githubusercontent.com/notepower2k1/MyImage/main/logo/logo_title.png" type = "image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
@@ -94,24 +96,45 @@
     @yield('modal')
     
     @include('client/homepage.layouts.search_navbar')
-
     <script src=" {{ asset('assets/js/bundle.js?ver=3.1.2') }}"></script>
     <script src="{{ asset('assets/js/scripts.js?ver=3.1.2') }}"></script>
     {{-- <script src="{{ asset('assets/js/charts/gd-default.js?ver=3.1.2') }}"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://js.pusher.com/4.3/pusher.min.js"></script>
 
-    
     @yield('additional-scripts')
 
     <script>
-        
+        var pusher = new Pusher('{{env('PUSHER_APP_KEY')}}', {
+            cluster: 'ap1',
+            encrypted: true
+        });
+        var authcheck = $('meta[name="auth-check"]').attr('content');
+
+          // Subscribe to the channel we specified in our Laravel Event
+        var notifyChannel  = pusher.subscribe('private_notify_'+authcheck.toString());
+
+        // Bind a function to a Event (the full Laravel class)
+        if(notifyChannel){
+            notifyChannel.bind('send-notify', function(receiverID) {
+                const currentUser = authcheck.toString();
+                    if(receiverID == currentUser){
+                        console.log("trigger");
+
+                        $("#comment_notifications_box").load(" #comment_notifications_box > *");
+                }             
+            });
+        }
+      
+
         $(window).on("load",function(){
             $(".loader-wrapper").fadeOut("slow");
             $("body").removeClass("preload");
         });
    
-        $(document).on('click','#mark_all_bookMark_notifications',function(){
-    
+
+        $('#bookMark_notifications_box').on('click','#mark_all_bookMark_notifications',function(){
+
             $.ajax({
                 url:'/following-status-all-update',
                 type:"GET",
@@ -136,8 +159,7 @@
             });    
         })
 
-        $('.bookMark-notifications').click(function(){
-
+        $('#bookMark_notifications_box').on('click','.bookMark-notifications',function(){
             var id = $(this).data('id');
 
             $.ajax({
@@ -155,11 +177,14 @@
             // If fail
             console.log(textStatus + ': ' + errorThrown);
             });    
-        })
+        });
+
+        
 
 
-        $(document).on('click','#mark_all_comment_notifications',function(){
-    
+
+        $('#comment_notifications_box').on('click','#mark_all_comment_notifications',function(){
+
             $.ajax({
                 url:'/notification-all-update',
                 type:"GET",
@@ -184,7 +209,7 @@
             });    
         })
 
-        $('.comment-notifications').click(function(){
+        $('#comment_notifications_box').on('click','.comment-notifications',function(){
 
             var id = $(this).data('id');
 
@@ -205,6 +230,28 @@
             });    
         })
 
+
+        $('.comment-notifications').on('click',function(){
+
+            var id = $(this).data('id');
+
+            $.ajax({
+                url:'/notification-update',
+                type:"GET",
+                data:{          
+                    'id':id
+                }
+            })
+            .done(function(res) {
+                
+                window.location.href = res.url;
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            console.log(textStatus + ': ' + errorThrown);
+            });    
+            })
+      
        
 
        

@@ -87,7 +87,7 @@
     <div class="card card-bordered"  style=" background: hsla(48, 100%, 96%, 1)">
         <div class="card-inner">        
             <div class="d-flex justify-content-between">
-                <h5><span class="total-comment-span">{{ $post->totalComments }} </span>bình luận</h5>
+                <h5><span id="total-comment-span">{{ $post->totalComments }} </span>bình luận</h5>
                 <div class="dropdown">
                     <a class="btn btn-icon btn-outline-secondary dropdown-toggle" href="#" data-bs-toggle="dropdown">
                         <em class="icon ni ni-sort-line"></em>    
@@ -112,7 +112,7 @@
 
                                 @if(Auth::check())
 
-                                <button class="btn btn-icon btn-success create-reply-btn" data-id={{ $comment->id }}>
+                                <button class="btn btn-icon btn-success create-reply-btn" data-id={{ $comment->id }} data-commentowner = "{{ $comment->users->profile->displayName }}">
                                     <em class="icon ni ni-reply m-auto">
                                     </em>
                                 </button>
@@ -145,6 +145,12 @@
                                                                         <em class="icon ni ni-cross"></em>      
                                                                         <span>Xóa bình luận</span>
                                                                         </a>
+                                                                    </li>
+                                                                    <li> 
+                                                                        <a href="#" class="edit-comment-btn" data-id="{{ $comment->id }}" data-option="1">
+                                                                            <em class="icon ni ni-edit fs-16px"></em>
+                                                                            <span>Chỉnh sửa bình luận</span>
+                                                                        </a>                                                                  
                                                                     </li>
                                                                     @if(Auth::user()->id != $comment->users->id)
                                                                         @if($reportComment->where('identifier_id','=',$comment->id)->first())
@@ -189,15 +195,13 @@
                                             @endif
                                         </div>		
                                     
-                                        <div class="content">
+                                        <div class="content" id ="comment-content-{{ $comment->id }}">
                                             {!! clean($comment->content) !!}
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <div id="create-reply-box-{{$comment->id}}">
-
-                                </div>
+                               
                                 @if($comment->totalReplies > 0)
                                     <div class="mt-2">
                                         <p class="open-relies-btn fw-bold" data-id="{{ $comment->id }}">Xem {{ $comment->totalReplies }} phản hồi</p>
@@ -206,14 +210,14 @@
                                 @foreach ($comment->replies as $reply)
                                     @if(is_null($reply->deleted_at))
                                     <div class="media mt-4 replies-item replies-item-{{ $reply->commentID }}" id="reply-{{$reply->id}}">
-                                        <a class="pr-3" href="#"><img class="rounded-circle" alt="Bootstrap Media Another Preview" src="{{ $reply->users->profile->url }}" width="70px" /></a>
+                                        <a class="pr-3" href="#"><img class="rounded-circle" alt="..." src="{{ $reply->users->profile->url }}" width="70px" /></a>
                                         
                                         <div class="media-body">
                                             <div class="card card-bordered">
                                                 <div class="p-1">
                                                     <div class="row">
                                                         <div class="col-8 d-flex flex-column justify-content-start">
-                                                            <a href="/thanh-vien/{{ $reply->users->id }}"class="d-block font-weight-bold name">{{ $reply->users->profile->displayName }}</a>
+                                                            <a href="/thanh-vien/{{ $reply->users->id }}"class="d-block font-weight-bold name text-dark">{{ $reply->users->profile->displayName }}</a>
                                                             <span class="date text-black-50">{{ $reply->created_at }}</span>
                                                         </div>
                                                         @if(Auth::check())
@@ -222,15 +226,23 @@
                                                             <div class="col-4">                                   
                                                                 <div class="d-flex flex-row-reverse">    
                                                                     <div class="dropdown">
-                                                                        <a class="dropdown-toggle" href="#" type="button" data-bs-toggle="dropdown">
+                                                                        <a class="dropdown-toggle text-dark" href="#" type="button" data-bs-toggle="dropdown">
                                                                             <em class="icon ni ni-more-v"></em>
                                                                         </a>
                                                                         <div class="dropdown-menu">
                                                                         <ul class="link-list-opt">
                                                                             <li><a href="#" class="delete-reply-btn" data-id={{ $reply->id }} >
                                                                                 <em class="icon ni ni-cross"></em>      
-                                                                                <span>Xóa bình luận</span>
+                                                                                <span>Xóa phản hồi</span>
                                                                                 </a>
+                                                                            </li>
+                                                                            <li> 
+                                                                                <a href="#" class="edit-comment-btn" data-id="{{ $reply->id }}" data-option="2">
+                                                                                    <em class="icon ni ni-edit fs-16px"></em>
+                                                                                    <span>Chỉnh sửa phản hồi</span>
+                                                                                </a>
+
+                                                                                
                                                                             </li>
                                                                             @if(Auth::user()->id != $comment->users->id)
 
@@ -281,7 +293,7 @@
                                                         @endif
                                                     </div>
         
-                                                        <div class="content">
+                                                        <div class="content"  id ="reply-content-{{ $reply->id }}">
                                                             {!! clean($reply->content) !!}
                                                         </div>
                                                     </div>
@@ -305,13 +317,13 @@
             </div>
 
             @if (Auth::check())
-            <div class="create-comment-box shadow p-3">
+            <div class="create-comment-box shadow">
                 <textarea id="mytextarea" 
                     required 
                     name="content" 
                     class="form-control">
                 </textarea>
-                <div class="mt-2 d-flex flex-row-reverse">
+                <div class="d-flex flex-row-reverse p-2">
                     <button class="btn btn-primary" id="comment-btn" type="button">
                         <em class="icon ni ni-comments"></em>
                         <span>Bình luận</span>
@@ -343,9 +355,9 @@
                   <input type="hidden" class="form-control" id="identifier_id" name="identifier_id" value={{ $post->id }}>
 
                   <div class="form-group">
-                      <label class="form-label" for="book-name">Tên thành viên</label>
+                      <label class="form-label" for="post-name">Tên thành viên</label>
                       <div class="form-control-wrap">
-                          <input type="text" class="form-control" id="book-name" required="" value='{{ $post->topic }}' readonly>
+                          <input type="text" class="form-control" id="post-name" required="" value='{{ $post->topic }}' readonly>
                       </div>
                   </div>
 
@@ -432,9 +444,44 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="editCommentForm" >
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chỉnh sửa bình luận</h5>
+                <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <em class="icon ni ni-cross"></em>
+                </a>
+            </div>
+            <div class="modal-body">
+               
+            </div>
+           
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="reply-modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <em class="icon ni ni-cross"></em>
+                </a>
+            </div>
+            <div class="modal-body text-left">
+            
+                
+            </div>
+        </div>
+    </div>
+</div>
 @endif
 @endsection
 @section('additional-scripts')
+<script src="https://js.pusher.com/4.3/pusher.min.js"></script>
 
 <script>
 
@@ -443,6 +490,70 @@
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
     });
+
+    var pusher = new Pusher('{{env('PUSHER_APP_KEY')}}', {
+            cluster: 'ap1',
+            encrypted: true
+    });
+
+    const post_id = {!! $post->id !!};
+    //live time comment
+    var commentChannel  = pusher.subscribe(`comment_3_${post_id}`);
+
+    // Bind a function to a Event (the full Laravel class)
+    if(commentChannel){
+        commentChannel.bind('send-comment', function(data) {
+            if (post_id == data['itemID'] && data['typeID'] == 3){                 
+                switch(data['eventType']) {
+                    case "add-comment":
+                        $("#comment-box").load(" #comment-box > *",function(){
+                            $('.replies-item').css('display', 'none');
+
+                        });
+                        break;    
+                    case "edit-comment":
+                        $("#comment-content-"+ data['id']).load(` #comment-content-${data['id']} > *`)
+                        break;         
+                    case "delete-comment":
+                        $("#comment-" + data['id']).fadeOut();
+                        $("#comment-" + data['id']).remove();
+
+                        break;
+                    case "add-reply":
+                        $("#comment-box").load(" #comment-box > *",function(){
+                            $('.replies-item').css('display', 'none');
+
+                        });
+                        break;  
+                    case "edit-reply":
+                        $("#reply-content-"+ data['id']).load(` #reply-content-${data['id']} > *`)
+                        break;      
+                    case "delete-reply":
+
+                        var totalRepliesLeft = $("#reply-"+ data['id']).parent().find(".replies-item").length;
+
+                        totalRepliesLeft = totalRepliesLeft - 1;
+
+                        if(totalRepliesLeft > 0){
+                            $("#reply-" + data['id']).parent().find('.open-relies-btn').text(`Xem ${totalRepliesLeft} phản hồi`)
+                        }
+                        else{
+                            $("#reply-" + data['id']).parent().find('.open-relies-btn').remove();
+                        }
+
+                        $("#reply-" + data['id']).fadeOut();
+                        $("#reply-" + data['id']).remove();
+                       
+                        break;
+                    default:
+                        // code block
+                }
+                
+
+            }
+        });
+    }
+
 
     $(window).bind('beforeunload', function(e){
 
@@ -461,20 +572,29 @@
         selector: '#mytextarea',
         branding: false,
         statusbar: false,
-        height: 300,
+        min_height: 400,
         resize: false,
         menubar: false,
         plugins: [
-            "advlist", "anchor", "autolink", "charmap", "code", "fullscreen", 
-            "help", "image", "insertdatetime", "link", "lists", "media", 
-            "preview", "searchreplace", "table", "visualblocks","emoticons"
-        ],
-        toolbar: "undo redo |  bold italic underline strikethrough | link image | emoticons | wordcount",
+                    "advlist", "anchor", "autolink", "charmap", "code", "fullscreen", 
+                    "help", "image", "insertdatetime", "link", "lists", "media", 
+                    "preview", "searchreplace", "table", "visualblocks"," wordcount","emoticons","wordcount", 'charmap',"directionality","quickbars","autoresize","table"
+                ],
+        toolbar: "undo redo |  blockquote bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | emoticons charmap |  preview searchreplace wordcount | table | ltr rtl",
+        table_toolbar: 'tableprops tabledelete | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol',
+        quickbars_selection_toolbar: 'bold italic underline strikethrough',
+        quickbars_insert_toolbar: false,
+        toolbar_mode: 'sliding',
         image_title: true,
         /* enable automatic uploads of images represented by blob or data URIs*/
         images_upload_url: '/upload',
         automatic_uploads: false,
         file_picker_types: 'image',
+        paste_block_drop: true,
+        block_unsupported_drop: true,
+        image_uploadtab: false,
+        image_description: false,
+
         /* and here's our custom image picker*/
         file_picker_callback: function (cb, value, meta) {
             var input = document.createElement('input');
@@ -483,19 +603,26 @@
 
             input.onchange = function () {
             var file = this.files[0]; 
-            var reader = new FileReader();
-            reader.onload = function () {
-                var id = 'blobid' + (new Date()).getTime();
-                var blobCache =  tinymce.activeEditor.editorUpload.blobCache;
-                var base64 = reader.result.split(',')[1];
-                var blobInfo = blobCache.create(id, file, base64);
-                blobCache.add(blobInfo);
+            if(this.files[0].size > 2000000) {
+                alert("Kích thước ảnh phải nhỏ hơn 2MB");
+                $(this).val('');
+            }
+            else{
+                var reader = new FileReader();
+                reader.onload = function () {
+                    var id = 'blobid' + (new Date()).getTime();
+                    var blobCache =  tinymce.activeEditor.editorUpload.blobCache;
+                    var base64 = reader.result.split(',')[1];
+                    var blobInfo = blobCache.create(id, file, base64);
+                    blobCache.add(blobInfo);
 
-                /* call the callback and populate the Title field with the file name */
-                cb(blobInfo.blobUri(), { title: file.name });
-            };
-            reader.readAsDataURL(file);
-            };
+                    /* call the callback and populate the Title field with the file name */
+                    cb(blobInfo.blobUri(), { title: file.name });
+                };
+                reader.readAsDataURL(file);
+                };
+            }
+          
 
             input.click();
         },
@@ -542,7 +669,9 @@
                             });      
                         tinymce.activeEditor.setContent("");
 
-                        $("#comment-box").load(" #comment-box > *");
+                    
+                        $('#total-comment-span').text(res.totalComments + " ");
+
                     })
                     .fail(function(jqXHR, textStatus, errorThrown) {
                     // If fail
@@ -596,8 +725,7 @@
                             timer: 2500
                     });
 
-                    $("#comment-" + comment_id).fadeOut();
-                    $("#comment-box").load(" #comment-box > *");
+                 
                     })
                     .fail(function(jqXHR, textStatus, errorThrown) {
                     // If fail
@@ -612,81 +740,97 @@
     $(document).on('click','.create-reply-btn',function(){
 
             var comment_id = $(this).data('id');
+            var commentOwner = $(this).data('commentowner');
 
-        
-            if($("#reply-box").length){
-                tinyMCE.remove("textarea#reply_textarea");
-                $("#reply-box").remove();
-            }
-            else{
-
-                var htmlrender = '<div class="create-reply-box shadow p-3" id="reply-box">'+
-                        '<textarea id="reply_textarea" required name="content" class="form-control"></textarea>'+
-                       ' <div class="mt-2 d-flex flex-row-reverse">'+
-                        `<button class="btn btn-primary" id="reply-btn" type="button" data-id=${comment_id}>  `+
-                                '<em class="icon ni ni-comments"></em>' +
-                                '<span>Phản hồi</span>'+
-                           ' </button>' +
-                       ' </div>' +
-                 ' </div>';
+            tinyMCE.remove("textarea#reply_textarea");
+            $('#reply-modal').find('.modal-body').empty();
 
 
-                $('#create-reply-box-'+comment_id).append(htmlrender);
+            var htmlrender = '<div class="create-reply-box" id="reply-box">'+
+                    '<textarea id="reply_textarea" required name="content" class="form-control"></textarea>'+
+                    '<div class="mt-2 d-flex flex-row-reverse">'+
+                    `<button class="btn btn-primary" id="reply-btn" type="button" data-id=${comment_id}>  `+
+                            '<em class="icon ni ni-comments"></em>' +
+                            '<span>Phản hồi</span>'+
+                        ' </button>' +
+                    ' </div>' +
+                ' </div>';
 
-                tinyMcePromise= tinymce.init({
-                    selector: "#reply_textarea",
-                    entity_encoding : "raw",
-                    branding: false,
-                    statusbar: false,
-                    height: 300,
-                    resize: false,
-                    menubar: false,
-                    plugins: [
-                        "advlist", "anchor", "autolink", "charmap", "code", "fullscreen", 
-                        "help", "image", "insertdatetime", "link", "lists", "media", 
-                        "preview", "searchreplace", "table", "visualblocks"," wordcount","emoticons",
-                    ],
-                    toolbar: "undo redo |  bold italic underline strikethrough | link image | emoticons | wordcount",
-                    image_title: true,
-                    /* enable automatic uploads of images represented by blob or data URIs*/
-                    images_upload_url: '/upload',
-                    automatic_uploads: false,
-                    file_picker_types: 'image',
-                    /* and here's our custom image picker*/
-                    file_picker_callback: function (cb, value, meta) {
-                        var input = document.createElement('input');
-                        input.setAttribute('type', 'file');
-                        input.setAttribute('accept', 'image/*');
+            $('#reply-modal').find('.modal-body').append(htmlrender);
+            $('#reply-modal').find('.modal-title').text(`Phản hồi bình luận của ${commentOwner}`)
 
-                        input.onchange = function () {
+            // $('#create-reply-box-'+comment_id).append(htmlrender);
+
+            tinyMcePromise= tinymce.init({
+                selector: "#reply_textarea",
+                entity_encoding : "raw",
+                branding: false,
+                statusbar: false,
+                min_height: 400,
+                resize: false,
+                menubar: false,
+                plugins: [
+                    "advlist", "anchor", "autolink", "charmap", "code", "fullscreen", 
+                    "help", "image", "insertdatetime", "link", "lists", "media", 
+                    "preview", "searchreplace", "table", "visualblocks"," wordcount","emoticons","wordcount", 'charmap',"directionality","quickbars","autoresize","table"
+                ],
+                toolbar: "undo redo |  blockquote bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | emoticons charmap |  preview searchreplace wordcount | table | ltr rtl",
+                table_toolbar: 'tableprops tabledelete | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol',
+                quickbars_selection_toolbar: 'bold italic underline strikethrough',
+                quickbars_insert_toolbar: false,
+                toolbar_mode: 'sliding',
+                image_title: true,
+                /* enable automatic uploads of images represented by blob or data URIs*/
+                images_upload_url: '/upload',
+                automatic_uploads: false,
+                file_picker_types: 'image',
+                paste_block_drop: true,
+                block_unsupported_drop: true,
+                image_uploadtab: false,
+                image_description: false,
+
+                /* and here's our custom image picker*/
+                file_picker_callback: function (cb, value, meta) {
+                    var input = document.createElement('input');
+                    input.setAttribute('type', 'file');
+                    input.setAttribute('accept', 'image/*');
+
+                    input.onchange = function () {
                         var file = this.files[0]; 
-                        var reader = new FileReader();
-                        reader.onload = function () {
-                            var id = 'blobid' + (new Date()).getTime();
-                            var blobCache =  tinymce.activeEditor.editorUpload.blobCache;
-                            var base64 = reader.result.split(',')[1];
-                            var blobInfo = blobCache.create(id, file, base64);
-                            blobCache.add(blobInfo);
+                        if(this.files[0].size > 2000000) {
+                            alert("Kích thước ảnh phải nhỏ hơn 2MB");
+                            $(this).val('');
+                        }
+                        else{
+                            var reader = new FileReader();
+                            reader.onload = function () {
+                                var id = 'blobid' + (new Date()).getTime();
+                                var blobCache =  tinymce.activeEditor.editorUpload.blobCache;
+                                var base64 = reader.result.split(',')[1];
+                                var blobInfo = blobCache.create(id, file, base64);
+                                blobCache.add(blobInfo);
 
-                            /* call the callback and populate the Title field with the file name */
-                            cb(blobInfo.blobUri(), { title: file.name });
-                        };
-                        reader.readAsDataURL(file);
-                        };
+                                /* call the callback and populate the Title field with the file name */
+                                cb(blobInfo.blobUri(), { title: file.name });
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                      
+                    };
 
-                        input.click();
-                        },
-                        content_style: 'body { font-size: 16px; font-family: Roboto; }' 
-                    });
-              
-
-                
-                    tinyMcePromise.then(function(editors){
-                    editors[0].focus();
+                    input.click();
+                    },
+                    content_style: 'body { font-size: 16px; font-family: Roboto; }' 
                 });
+            
 
-            }
+            
+                tinyMcePromise.then(function(editors){
+                editors[0].focus();
+            });
 
+            
+            $('#reply-modal').modal('show');
     })
 
     $(document).on('click','#reply-btn',function(){
@@ -698,9 +842,6 @@
         if(content){
             tinymce.activeEditor.uploadImages().then((response)=>{
             var update_content = tinymce.activeEditor.getContent("reply_textarea");
-            
-
-            
                 $.ajax({
                     url:'/phan-hoi',
                     type:"POST",
@@ -718,11 +859,9 @@
                             timer: 2500
                         });      
 
-                    $("#comment-box").load(" #comment-box > *");
-
-                    tinyMCE.remove("textarea#reply_textarea");
-                    $("#reply-box").remove();
-                    $('.total-comment-span').text(res.totalComments + " ");
+                  
+                    $('#reply-modal').modal('hide');
+                    $('#total-comment-span').text(res.totalComments + " ");
 
 
                 })
@@ -774,9 +913,7 @@
                             timer: 2500
                     });
 
-                    $("#reply-" + reply_id).fadeOut();
-                    $("#comment-box").load(" #comment-box > *")
-                   
+                 
                     })
                     .fail(function(jqXHR, textStatus, errorThrown) {
                     // If fail
@@ -914,9 +1051,12 @@
                                 form.modal('hide');
                             }, 2500);
 
-                            $("#comment-box").load(" #comment-box > *")
+                            $("#comment-box").load(" #comment-box > *",function(){
+                                $('.replies-item').css('display', 'none');
 
-                            $('.total-comment-span').text(res.totalComments + " ");
+                            });
+
+                            $('#total-comment-span').text(res.totalComments + " ");
 
                         })
                         .fail(function(jqXHR, textStatus, errorThrown) {
@@ -934,6 +1074,198 @@
         })
     });
 
+    $(document).on('click','.edit-comment-btn',function(e) {
+        e.preventDefault();
+
+        tinyMCE.remove("textarea#editCommentArea");
+        $("#editCommentForm").find('.modal-body').empty();
+
+        const item_id = $(this).data('id');
+        const option = $(this).data('option');
+
+        var htmlrender = '<div class="edit-comment-box" id="edit-box">'+
+                    '<textarea id="editCommentArea" required name="content" class="form-control"></textarea>'+
+                    '<div class="mt-2 d-flex flex-row-reverse">'+
+                    `<button class="btn btn-primary" id="edit-btn" type="button" data-id=${item_id} data-option=${option}> `+
+                            '<em class="icon ni ni-comments"></em>' +
+                            '<span>Chỉnh sửa</span>'+
+                        ' </button>' +
+                    ' </div>' +
+        ' </div>';
+        $("#editCommentForm").find('.modal-body').append(htmlrender);
+
+        tinymce.init({
+        entity_encoding : "raw",
+        selector: '#editCommentArea',
+        branding: false,
+        statusbar: false,
+        min_height: 400,
+        resize: false,
+        menubar: false,
+        plugins: [
+                    "advlist", "anchor", "autolink", "charmap", "code", "fullscreen", 
+                    "help", "image", "insertdatetime", "link", "lists", "media", 
+                    "preview", "searchreplace", "table", "visualblocks"," wordcount","emoticons","wordcount", 'charmap',"directionality","quickbars","autoresize","table"
+                ],
+        toolbar: "undo redo |  blockquote bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | emoticons charmap |  preview searchreplace wordcount | table | ltr rtl",
+        table_toolbar: 'tableprops tabledelete | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol',
+        quickbars_selection_toolbar: 'bold italic underline strikethrough',
+        quickbars_insert_toolbar: false,
+        toolbar_mode: 'sliding',
+        image_title: true,
+        /* enable automatic uploads of images represented by blob or data URIs*/
+        images_upload_url: '/upload',
+        automatic_uploads: false,
+        file_picker_types: 'image',
+        paste_block_drop: true,
+        block_unsupported_drop: true,
+        image_uploadtab: false,
+        image_description: false,
+        /* and here's our custom image picker*/
+        file_picker_callback: function (cb, value, meta) {
+            var input = document.createElement('input');
+            input.setAttribute('type', 'file');
+            input.setAttribute('accept', 'image/*');
+
+            input.onchange = function () {
+            var file = this.files[0]; 
+            if(this.files[0].size > 2000000) {
+                alert("Kích thước ảnh phải nhỏ hơn 2MB");
+                $(this).val('');
+            }
+            else{
+                var reader = new FileReader();
+                reader.onload = function () {
+                    var id = 'blobid' + (new Date()).getTime();
+                    var blobCache =  tinymce.activeEditor.editorUpload.blobCache;
+                    var base64 = reader.result.split(',')[1];
+                    var blobInfo = blobCache.create(id, file, base64);
+                    blobCache.add(blobInfo);
+
+                    /* call the callback and populate the Title field with the file name */
+                    cb(blobInfo.blobUri(), { title: file.name });
+                };
+                reader.readAsDataURL(file);
+                };
+            }
+          
+
+            input.click();
+        },
+        content_style: 'body { font-size: 16px; font-family: Roboto; }' 
+        });
+
+        if(option == 1){
+            const text = $('#comment-content-' + item_id).html();
+
+            console.log(`${text}`);
+            // tinymce.get("editCommentArea").setContent(`<p>Hello</p>`);
+            $("#editCommentArea").val(text);
+
+        }
+        if(option == 2){
+            const text = $('#reply-content-' + item_id).html();
+            console.log(`${text}`);
+
+            // tinymce.get("editCommentArea").setContent(`${text}`);
+            $("#editCommentArea").val(text);
+
+        }
+     
+        
+        
+        setTimeout(function() {
+            $('#editCommentForm').modal('show');
+        },500);
+    })
+
+    $(document).on('click','#edit-btn',function(e){
+        e.preventDefault();
+        const item_id = $(this).data('id');
+        const option = $(this).data('option');
+
+        var content = tinymce.activeEditor.getContent("editCommentArea");              
+        if(content){
+            if(option == 1){
+                tinymce.activeEditor.uploadImages().then((response)=>{
+                var update_content = tinymce.activeEditor.getContent("editCommentArea");
+                    $.ajax({
+                        url:'/cap-nhat-binh-luan/'+item_id,
+                        type:"PUT",
+                        data:{
+                            'content': content,
+                        }
+                    })
+                    .done(function(res) {
+
+                        Swal.fire({
+                                icon: 'success',
+                                title: `${res.success}`,
+                                showConfirmButton: false,
+                                timer: 2500
+                            });      
+
+                    
+                        setTimeout(function() {
+                            $('#editCommentForm').modal('hide');
+                        },2600);
+                
+
+
+                    })
+                    .fail(function(jqXHR, textStatus, errorThrown) {
+                    // If fail
+                    console.log(textStatus + ': ' + errorThrown);
+                });
+                })
+            }
+
+            if(option == 2){
+                tinymce.activeEditor.uploadImages().then((response)=>{
+                var update_content = tinymce.activeEditor.getContent("editCommentArea");
+                    $.ajax({
+                        url:'/cap-nhat-phan-hoi/'+item_id,
+                        type:"PUT",
+                        data:{
+                            'content': content,
+                        }
+                    })
+                    .done(function(res) {
+
+                        Swal.fire({
+                                icon: 'success',
+                                title: `${res.success}`,
+                                showConfirmButton: false,
+                                timer: 2500
+                            });      
+
+                    
+                        setTimeout(function() {
+                            $('#editCommentForm').modal('hide');
+                        },2600);
+                
+
+
+                    })
+                    .fail(function(jqXHR, textStatus, errorThrown) {
+                    // If fail
+                    console.log(textStatus + ': ' + errorThrown);
+                });
+                })
+            }
+           
+        }
+        else{
+            Swal.fire({
+                        icon: 'error',
+                        title: `Vui lòng điền nội dung`,
+                        showConfirmButton: false,
+                        timer: 2500
+                    });    
+        }
+
+      
+    })
 
     $(document).on('click','#sort-comment-new',function(e){
 

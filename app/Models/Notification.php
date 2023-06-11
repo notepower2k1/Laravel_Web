@@ -12,7 +12,6 @@ class Notification extends Model
     protected $table = 'notifications';
     protected $primaryKey = 'id';
     public  $timestamps = true;
-    public $incrementing = false;
 
     protected $fillable = ['identifier_id','type_id', 'senderID','receiverID','status'];
 

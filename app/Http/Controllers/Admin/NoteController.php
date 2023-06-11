@@ -25,10 +25,10 @@ class NoteController extends Controller
 
         switch ($option) {
             case 1:
-                $identifier = Book::where('deleted_at',null)->where('status','=',0)->get(['id','name']);        
+                $identifier = Book::where('deleted_at',null)->get(['id','name']);        
                 break;
             case 2:
-                $identifier = Document::where('deleted_at',null)->where('status','=',0)->get(['id','name']);
+                $identifier = Document::where('deleted_at',null)->get(['id','name']);
                 break;
             case 3:
                 $identifier = User::where('deleted_at',null)->where('email_verified_at','!=',null)->get(['id','name']);  
@@ -36,11 +36,11 @@ class NoteController extends Controller
                 break;
 
             case 4:
-                $identifier = Book::whereIn('status',['1','-2'])->get(['id','name']);        
+                $identifier = Book::where('deleted_at',null)->get(['id','name']);        
 
                 break;
             case 5:
-                $identifier = Document::whereIn('status',['1','-2'])->get(['id','name']);
+                $identifier = Document::where('deleted_at',null)->get(['id','name']);
                 break;
 
             default:

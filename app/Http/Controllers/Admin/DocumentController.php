@@ -20,7 +20,7 @@ use Carbon\Carbon;
 use ZipArchive;
 use SimpleXMLElement;
 use Illuminate\Support\Facades\DB;
-
+use Pusher\Pusher;
 
 class DocumentController extends Controller
 {
@@ -623,40 +623,24 @@ class DocumentController extends Controller
     }
 
     public function lockDocument($id){
+        $options = array(
+            'cluster' => 'ap1',
+            'encrypted' => true
+        );
+
+        $pusher = new Pusher(
+            env('PUSHER_APP_KEY'),
+            env('PUSHER_APP_SECRET'),
+            env('PUSHER_APP_ID'),
+            $options
+        );
+
         $document = Document::findOrFail($id);
         $status = $document->status;
 
         if($status == -2){
             $document->status = 1;
-            $comments = Comment::where('identifier_id','=',$id)->where('type_id','=','1')->get();
-    
-            foreach($comments as $comment){
-    
-                $replies = Reply::where('commentID','=',$comment->id)->get();
-    
-    
-                foreach ($replies as $reply){
-    
-                    $temp = Reply::findOrFail($reply->id);
-                    $temp->deleted_at = null;
-                    $temp ->save();
-    
-                    Notification::where('identifier_id','=',$reply->id)->where('type_id','=','2')->update([
-                        'deleted_at' => null
-                    ]);
-                }
-    
-                Notification::where('identifier_id','=',$comment->id)->where('type_id','=','1')->update([
-                    'deleted_at' => null
-                ]);
-
-             
         
-            }
-
-            Comment::where('identifier_id','=',$id)->where('type_id','=','1')->update([
-                'deleted_at' => null
-            ]);
 
             Notification::create([
                 'identifier_id'=>$id,
@@ -665,6 +649,11 @@ class DocumentController extends Controller
                 'receiverID'=>$document->users->id,
                 'status'=>1
             ]);
+
+
+            $receiverID = $document->users->id;
+            
+            $pusher->trigger('private_notify_'.$receiverID, 'send-notify', $receiverID);
         }
         else{
             $document->status = -2;
@@ -709,6 +698,10 @@ class DocumentController extends Controller
                 'receiverID'=>$document->users->id,
                 'status'=>1
             ]);
+
+            $receiverID = $document->users->id;
+            
+            $pusher->trigger('private_notify_'.$receiverID, 'send-notify', $receiverID);
         }
 
         $document->save();

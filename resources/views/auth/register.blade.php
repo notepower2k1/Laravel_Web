@@ -15,7 +15,7 @@
                     <div class="nk-block-head-content">
                         <h4 class="nk-block-title">Đăng ký</h4>              
                     </div>
-                </div>
+                </div>   
                 @if($errors->any())
                 <div class="alert alert-warning">
                     @foreach ($errors->all() as $error)
@@ -103,7 +103,16 @@
                 </form>
                 <div class="form-note-s2 text-center pt-4"> Bạn đã có tài khoản? <a href="/login"><strong>Đăng nhập ngay</strong></a>
                 </div>
-               
+                <div class="text-center pt-4 pb-3">
+                    <h6 class="overline-title overline-title-sap"><span>Hoặc</span></h6>
+                </div>
+                <ul class="nav justify-center gx-8">
+                    <a class="btn btn-outline-primary" href="/auth/google">
+                        <em class="icon ni ni-google"></em>                   
+                        <span>Đăng nhập bằng Google
+                        </span>
+                    </a>
+                </ul>
             </div>
         </div>
     </div>

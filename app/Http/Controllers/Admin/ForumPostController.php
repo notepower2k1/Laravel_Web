@@ -14,6 +14,7 @@ use App\Models\report;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Pusher\Pusher;
 
 class ForumPostController extends Controller
 {
@@ -163,6 +164,17 @@ class ForumPostController extends Controller
      */
     public function store(Request $request)
     {
+        $options = array(
+            'cluster' => 'ap1',
+            'encrypted' => true
+        );
+    
+        $pusher = new Pusher(
+            env('PUSHER_APP_KEY'),
+            env('PUSHER_APP_SECRET'),
+            env('PUSHER_APP_ID'),
+            $options
+        );
 
         $slug =  Str::slug($request->topic).'-'. $this->TimeToText();
 
@@ -209,6 +221,10 @@ class ForumPostController extends Controller
                     'receiverID'=>$user->id,
                     'status'=>1,
                 ]);
+
+                $receiverID = $user->id;
+            
+                $pusher->trigger('private_notify_'.$receiverID, 'send-notify', $receiverID);
             }
            
         }

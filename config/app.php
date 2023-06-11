@@ -193,10 +193,9 @@ return [
          */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
+        App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        Barryvdh\DomPDF\ServiceProvider::class,
 
     ],
 
@@ -215,7 +214,6 @@ return [
         // 'ExampleClass' => App\Example\ExampleClass::class,
         'Purifier' => Mews\Purifier\Facades\Purifier::class,
         'NoCaptcha' => Anhskohbo\NoCaptcha\Facades\NoCaptcha::class,
-        'PDF' => Barryvdh\DomPDF\Facade::class,
 
 
     ])->toArray(),

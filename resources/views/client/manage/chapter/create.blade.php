@@ -119,16 +119,19 @@ $(this).parent().submit();
         },
         branding: false,
         statusbar: false,
-        height: 1000,
+        min_height: 600,
         resize: false,
-         menubar: false,
+        menubar: false,
         plugins: [
-            "advlist", "anchor", "autolink", "charmap", "code", "fullscreen", 
-            "help", "image", "insertdatetime", "link", "lists", "media", 
-            "preview", "searchreplace", "table", "visualblocks", " wordcount",
-        ],
-        toolbar: "undo redo |  bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | wordcount",
-      
+                "advlist", "anchor", "autolink", "charmap", "code", "fullscreen", 
+                "help", "image", "insertdatetime", "link", "lists", "media", 
+                "preview", "searchreplace", "table", "visualblocks"," wordcount","emoticons","wordcount", 'charmap',"directionality","quickbars","autoresize","table"
+            ],
+        toolbar: "undo redo |  blockquote bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link emoticons charmap |  preview searchreplace wordcount | table | ltr rtl",
+        table_toolbar: 'tableprops tabledelete | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol',
+        quickbars_selection_toolbar: 'bold italic underline strikethrough',
+        quickbars_insert_toolbar: false,
+        toolbar_mode: 'sliding',
         init_instance_callback: function (editor) {
             editor.on('Change', function (e) {
                 

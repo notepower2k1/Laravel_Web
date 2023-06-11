@@ -9,6 +9,7 @@ use App\Models\ForumPosts;
 use App\Models\Notification;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Pusher\Pusher;
 
 use Illuminate\Http\Request;
 
@@ -25,6 +26,18 @@ class DashboardController extends Controller
     }
 
     public function verification_item(Request $request){
+
+        $options = array(
+            'cluster' => 'ap1',
+            'encrypted' => true
+        );
+
+        $pusher = new Pusher(
+            env('PUSHER_APP_KEY'),
+            env('PUSHER_APP_SECRET'),
+            env('PUSHER_APP_ID'),
+            $options
+        );
 
         $itemList = $request->data;
 
@@ -45,6 +58,10 @@ class DashboardController extends Controller
                     'receiverID'=>$book->users->id,
                     'status'=>1
                 ]);
+
+                $receiverID = $book->users->id;
+            
+                $pusher->trigger('private_notify_'.$receiverID, 'send-notify', $receiverID);
             }
 
             else if($item['option'] == "2"){
@@ -59,12 +76,27 @@ class DashboardController extends Controller
                     'receiverID'=>$document->users->id,
                     'status'=>1
                 ]);
+
+                $receiverID = $document->users->id;
+            
+                $pusher->trigger('private_notify_'.$receiverID, 'send-notify', $receiverID);
             }
         }
 
 
     }
     public function rejection_item(Request $request){
+        $options = array(
+            'cluster' => 'ap1',
+            'encrypted' => true
+        );
+
+        $pusher = new Pusher(
+            env('PUSHER_APP_KEY'),
+            env('PUSHER_APP_SECRET'),
+            env('PUSHER_APP_ID'),
+            $options
+        );
         $itemList = $request->data;
 
         //0 - document && 1 - Book
@@ -82,6 +114,10 @@ class DashboardController extends Controller
                     'receiverID'=>$book->users->id,
                     'status'=>1
                 ]);
+
+                $receiverID = $book->users->id;
+            
+                $pusher->trigger('private_notify_'.$receiverID, 'send-notify', $receiverID);
             }
 
             else if($item['option'] == "2"){
@@ -97,6 +133,10 @@ class DashboardController extends Controller
                     'receiverID'=>$document->users->id,
                     'status'=>1
                 ]);
+
+                $receiverID = $document->users->id;
+            
+                $pusher->trigger('private_notify_'.$receiverID, 'send-notify', $receiverID);
             }
         }
     }

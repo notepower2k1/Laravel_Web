@@ -30,8 +30,10 @@ use App\Http\Controllers\Client\ClientForumPostController;
 use App\Http\Controllers\Client\ClientCommentController;
 
 use App\Http\Controllers\Auth\ForgetPasswordController;
+use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\Client\ClientFollowController;
 use App\Http\Controllers\Client\LikeController;
+use App\Http\Controllers\Firebase\CommentFirebaseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,14 +46,11 @@ use App\Http\Controllers\Client\LikeController;
 |
 */
 Route::group(['middleware' => ['isVerified','isBanned']],function(){
-    
 
-// Route::get('/summarizeText',[PagesController::class,'summarizeText']);
-// Route::get('/getKeywords',[PagesController::class,'getKeywords']);
 
-// Route::get("/tom-tat-tai-lieu",[PagesController::class,'summarizePage']);
 
-Route::get('/test',[PagesController::class,'test']);
+Route::get('/auth/google',[GoogleAuthController::class,'redirect'])->name('google-auth');
+Route::get('/auth/google/call-back',[GoogleAuthController::class,'caLLBackGoogle']);
 
 
 Route::get('/preview-item',[PagesController::class,'preview_item']);
