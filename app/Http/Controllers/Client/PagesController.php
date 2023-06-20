@@ -85,7 +85,7 @@ class PagesController extends Controller
 
    
         
-        $new_updated_books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('updated_at')->take(9);
+        $new_updated_books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->whereColumn('created_at','!=','updated_at')->get()->sortByDesc('updated_at')->take(9);
 
 
         $high_reading_books = Book::where('isPublic','=',1)->where('deleted_at','=',null)->where('status','=',1)->get()->sortByDesc('totalReading')->take(9);
@@ -519,6 +519,17 @@ class PagesController extends Controller
 
     }
 
+    public function reading_continue($chapter_id){
+        $chapter = Chapter::where('id','=',$chapter_id)->where('deleted_at','=',null)->first();
+
+        $book_slug = $chapter->books->slug;
+        $chapter_slug = $chapter->slug;
+
+        $url = '/doc-sach'.'/'.$book_slug.'/'.$chapter_slug;
+
+
+        return response()->json(['url'=>$url]);
+    }
     public function read_book_pdf($book_slug){
 
         $book = Book::where('slug','=',$book_slug)->where('deleted_at','=',null)->where('file','!=',null)->first();
@@ -655,7 +666,7 @@ class PagesController extends Controller
                     '<div class="card">'.
                         ' <div class="d-flex">'.
                             ' <div class="me-2 shine">'.
-                                '<img class="card-img-top border" src="'.$item->url.'" alt="" style="width:200px;height:150px">'.
+                                '<img class="card-img-top border" src="'.$item->url.'" alt="" style="width:180px;height:150px">'.
                             '</div>'.
                             ' <div class="d-flex flex-column">   '    .                          
                                 ' <a class="title-book" href="'.$href.'">' .Str::limit($item->name,40).'</a>'.
@@ -687,7 +698,7 @@ class PagesController extends Controller
                     '<div class="card">'.
                         ' <div class="d-flex">'.
                             ' <div class="me-2 shine border">'.
-                                '<img class="card-img-top" src="'.$item->url.'" alt="" style="width:200px;height:150px">'.
+                                '<img class="card-img-top" src="'.$item->url.'" alt="" style="width:180px;height:150px">'.
                             '</div>'.
                             ' <div class="d-flex flex-column">   '    .                          
                                 ' <a class="title-book" href="'.$href.'">' .Str::limit($item->name,40).'</a>'.

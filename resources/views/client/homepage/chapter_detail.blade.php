@@ -8,6 +8,12 @@
 
 <style>
 
+@media (min-width: 1200px){
+.container-xl, .container-lg, .container-md, .container-sm, .container {
+    max-width: 1300px;
+}
+}
+
 .btn2top .sticky-btn {
   position: fixed;
   bottom: 36px;
@@ -1400,6 +1406,8 @@
 <script src="{{ asset('assets/js/example-sweetalert.js?ver=3.1.2') }}" aria-hidden="true"></script>
 <script src="{{ asset('assets/js/emojionearea.min.js') }}" aria-hidden="true"></script>
 <script src="{{ asset('js/pagination/pagination.min.js') }}" ></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.4/moment-with-locales.js"></script>
+
 <script>
 
 $.ajaxSetup({
@@ -1492,7 +1500,7 @@ $.ajaxSetup({
 
    
       const current_book_id = {!! $chapter->books->id !!}
-      var chapter_id =  {!! $chapter->id !!}
+      var current_chapter_id =  {!! $chapter->id !!}
 
       var readingLog = window.localStorage.getItem('readingLog');
 
@@ -1501,46 +1509,71 @@ $.ajaxSetup({
 
       //update cookie
       if(log){             
-          objIndex = log.findIndex((obj => obj.book_id == current_book_id));
+          objIndex = log.findIndex((obj => obj.book_id === current_book_id));
           //book exist
+
           if(objIndex > -1){
-              var currentChapterList = log[objIndex].chapter_id;
-              if(currentChapterList.includes(chapter_id)){
+            
+                const now = moment().format('llll');
+                var chapterList = log[objIndex].chapterList;
 
-              }
-              else{
-                  const updateChapterList = [...currentChapterList,chapter_id]
-                  log[objIndex].chapter_id = updateChapterList;
 
-                  window.localStorage.setItem('readingLog',JSON.stringify(log));
-              }
-              
+
+                var chapterIndex = chapterList.findIndex(e => e.chapter_id === current_chapter_id);
+
+                if(chapterIndex > -1){
+                    chapterList[chapterIndex].time = now;
+                    window.localStorage.setItem('readingLog',JSON.stringify(log));
+                }
+                else{
+                    const logObject = {
+                        "chapter_id":current_chapter_id,
+                        "time":now
+                    }
+
+                    const updateChapterList = [...chapterList,logObject]
+                    log[objIndex].chapterList = updateChapterList;
+
+                    window.localStorage.setItem('readingLog',JSON.stringify(log));
+                }    
           }
           //book not exist
           else{
-              var chapter_list = [];
-              chapter_list.push(chapter_id);
 
-              var reading_object = {
-              'book_id' : current_book_id,
-              'chapter_id' : chapter_list        
-              };       
-              const updateLog = [...log,reading_object]
-              window.localStorage.setItem('readingLog',JSON.stringify(updateLog));
+            const time = moment().format('llll');
+            const logObject = {
+                "chapter_id":current_chapter_id,
+                "time":time
+            }
+            var chapterList = [];
+            chapterList.push(logObject)
 
+            var reading_object = {
+                'book_id' : current_book_id,
+                'chapterList' : chapterList        
+            };            
+       
+            const updateLog = [...log,reading_object]
+            window.localStorage.setItem('readingLog',JSON.stringify(updateLog));
           }        
       }
       //create new cookie
       else{
-          var chapter_list = [];
-          chapter_list.push(chapter_id);
-          var reading_object = {
-          'book_id' : current_book_id,
-          'chapter_id' : chapter_list        
-          };            
-          var reading_log = [];
-          reading_log.push(reading_object);
-          window.localStorage.setItem('readingLog',JSON.stringify(reading_log));
+
+        const time = moment().format('llll');
+        const logObject = {
+            "chapter_id":current_chapter_id,
+            "time":time
+        }
+        var chapterList = [];
+        chapterList.push(logObject)
+        var reading_object = {
+        'book_id' : current_book_id,
+        'chapterList' : chapterList        
+        };            
+        var reading_log = [];
+        reading_log.push(reading_object);
+        window.localStorage.setItem('readingLog',JSON.stringify(reading_log));
 
       }
 

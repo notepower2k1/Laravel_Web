@@ -147,7 +147,7 @@ class ClientBookController extends Controller
      */
     public function show($id) //like "show details"
     {
-        $book = Book::where('id','=',$id)->where('deleted_at','=',null)->firstOrFail();
+        $book = Book::where('userCreatedID','=',Auth::user()->id)->where('deleted_at','=',null)->findOrFail($id);
 
         return view('client.manage.book.detail')
         ->with('book',$book);
@@ -162,7 +162,7 @@ class ClientBookController extends Controller
      */
     public function edit($id)
     {
-        $book = Book::where('id','=',$id)->where('deleted_at','=',null)->whereIn('status',['-1','1'])->firstOrFail();
+        $book = Book::where('userCreatedID','=',Auth::user()->id)->where('id','=',$id)->where('deleted_at','=',null)->whereIn('status',['-1','1'])->firstOrFail();
         $types = BookType::all();
 
 
@@ -254,7 +254,7 @@ class ClientBookController extends Controller
     // }
 
     public function customDelete($book_id){
-        $book = Book::findOrFail($book_id);
+        $book = Book::where('userCreatedID','=',Auth::user()->id)->findOrFail($book_id);
         $book->deleted_at = Carbon::now()->toDateTimeString();
         $book->totalComments = 0;
         $book->totalBookMarking = 0;

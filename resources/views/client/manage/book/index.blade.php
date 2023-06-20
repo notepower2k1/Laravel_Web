@@ -142,7 +142,7 @@
                                                 <li>
                                                   <a href="/quan-ly/chi-tiet-sach/{{$book->id}}"><em class="icon ni ni-maximize-alt"></em><span>Chi tiết</span></a>
                                                 </li>
-                                                @if($book->numberOfChapter > 0)
+                                                @if($book->file == null)
 
                                                 <li class="divider"></li>
                                                 <li><a href="/quan-ly/chuong/{{$book->id}}"><em class="icon ni ni-eye"></em><span>Xem chương</span></a></li>

@@ -172,7 +172,7 @@ class ClientDocumentController extends Controller
      */
     public function show($id) //like "show details"
     {
-        $document = Document::where('id','=',$id)->where('deleted_at','=',null)->firstOrFail();
+        $document = Document::where('userCreatedID','=',Auth::user()->id)->where('id','=',$id)->where('deleted_at','=',null)->firstOrFail();
 
         return view('client.manage.document.detail')
         ->with('document',$document);
@@ -187,7 +187,7 @@ class ClientDocumentController extends Controller
      */
     public function edit($id)
     {
-        $document = Document::where('id','=',$id)->where('deleted_at','=',null)->whereIn('status',['-1','1'])->firstOrFail();
+        $document = Document::where('userCreatedID','=',Auth::user()->id)->where('id','=',$id)->where('deleted_at','=',null)->whereIn('status',['-1','1'])->firstOrFail();
         $types = DocumentType::all();
 
 
@@ -288,7 +288,7 @@ class ClientDocumentController extends Controller
     // }
 
     public function customDelete($document_id){
-        $document = Document::findOrFail($document_id);
+        $document = Document::where('userCreatedID','=',Auth::user()->id)->findOrFail($document_id);
         $document->deleted_at = Carbon::now()->toDateTimeString();
         $document->totalComments = 0;
         $document->totalDocumentMarking = 0;

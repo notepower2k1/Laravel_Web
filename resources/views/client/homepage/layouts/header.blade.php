@@ -164,7 +164,7 @@
                             Tóm tắt</span>
                     </a>
                 </li>--}}
-                <li class="nk-menu-item {{ Request::is('/dien-dan') ? 'active' : '' }}">
+                <li class="nk-menu-item {{ Request::is('/dien-dan') ? 'active' : '' }} d-md-none d-lg-none d-xl-inline-flex">
                     <a href="/dien-dan" class="nk-menu-link">
                         <em class="icon ni ni-question"></em>
 

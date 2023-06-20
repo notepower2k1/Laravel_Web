@@ -176,7 +176,7 @@
                                                     <li class="ms-n1">
                                                        
                                                       
-                                                        <a href="/doc-sach/{{$book->slug}}/{{ $chapters->first()->slug }}" class="btn btn-lg btn-warning">
+                                                        <a href="/doc-sach/{{$book->slug}}/{{ $chapters->first()->slug }}" class="btn btn-lg btn-warning" id="read-chapter-btn">
                                                             <em class="icon ni ni-arrow-right-circle"></em><span>Đọc ngay</span>
                                                         </a>
                                                       
@@ -715,7 +715,14 @@
                                                             {{-- <div class="col-md-12 d-flex justify-content-end mt-4">                          
                                                                 {{ $comments->links('vendor.pagination.custom',['elements' => $comments]) }}
                                                             </div> --}}
-
+                                                            <div id="new-comment-loading" style="display:none">
+                                                                <div class="d-flex justify-content-center">
+                                                                    <div class="spinner-border" role="status">
+                                                                      <span class="visually-hidden">Loading...</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            
                                                             @if ($comments->count() > 0)
 
                                                             <div class="data-container"></div>
@@ -950,12 +957,10 @@
                                         <div class="nk-block">
                                             <div class="slider-init" data-slick='{"slidesToShow": 4, "slidesToScroll": 2, "infinite":false, "responsive":[ {"breakpoint": 992,"settings":{"slidesToShow": 2}}, {"breakpoint": 768,"settings":{"slidesToShow": 1}} ]}'>
                                                 @foreach ($booksWithSameType as $book)
-                                                    <div class="col high_rating_books" >
+                                                    <div class="col" >
                                                         <div class="card card-bordered product-card shadow">
                                                             <div class="product-thumb shine">
-                                                                <a href="/sach/{{$book->id}}/{{$book->slug}}">
-                                                                    <img class="card-img-top" src="{{ $book->url }}" alt="" width="300px" height="350px">
-                                                                </a>
+                                                                <img class="card-img-top" src="{{ $book->url }}" alt="" width="300px" height="350px">
                                                             
                                                                 <ul class="product-badges">
                                                                     <li><span class="badge bg-success">{{ $book->ratingScore }}/5</span></li>
@@ -1246,7 +1251,7 @@
 <script src="{{ asset('js/pagination/pagination.min.js') }}" ></script>
 
 <script>
-    
+
 
     $.ajaxSetup({
     headers: {
@@ -1265,12 +1270,20 @@
 
     if(commentChannel){
         commentChannel.bind('send-comment', function(data) {
-            if (book_id == data['itemID'] && data['typeID'] == 2){                 
-                
+            if (book_id == data['itemID'] && data['typeID'] == 2){       
+                const oldComment = $('.total-comment-span').first().text();
+
                 switch(data['eventType']) {
                     case "add-comment":
+                        $('#new-comment-loading').show();          
+
+                        $('.total-comment-span').text(parseInt(oldComment) + 1 + " ");
+
                         $("#comment-box").load(" #comment-box > *",function(){
+                            commentRender();
                             $('.replies-item').css('display', 'none');
+
+                            $('#new-comment-loading').hide();        
 
                         });
                         break;
@@ -1279,13 +1292,33 @@
                         $("#comment-content-"+ data['id']).load(` #comment-content-${data['id']} > *`)
                         break;
                     case "delete-comment":
+
+
+                        var totalRepliesLeft = $("#comment-" + data['id']).find(".replies-item").length;
+
+                        if(totalRepliesLeft){
+                            $('.total-comment-span').text(parseInt(oldComment) - parseInt(totalRepliesLeft) -1 + " ");
+
+                        }
+                        else{
+                            $('.total-comment-span').text(parseInt(oldComment) - 1 + " ");
+
+                        }
+
                         $("#comment-" + data['id']).fadeOut();
                         $("#comment-" + data['id']).remove();
 
+                        
                         break;
                     case "add-reply":
+                        $('#new-comment-loading').show();          
+
+                        $('.total-comment-span').text(parseInt(oldComment) + 1 + " ");
+
                         $("#comment-box").load(" #comment-box > *",function(){
+                            commentRender();
                             $('.replies-item').css('display', 'none');
+                            $('#new-comment-loading').hide();        
 
                         });
                         break;
@@ -1296,6 +1329,8 @@
 
                         var totalRepliesLeft = $("#reply-"+ data['id']).parent().find(".replies-item").length;
 
+                        $('.total-comment-span').text(parseInt(oldComment) -1 + " ");
+
                         totalRepliesLeft = totalRepliesLeft - 1;
 
                         if(totalRepliesLeft > 0){
@@ -1304,6 +1339,9 @@
                         else{
                             $("#reply-" + data['id']).parent().first().find('.open-relies-btn').remove();
                         }
+
+                 
+
 
                         $("#reply-" + data['id']).fadeOut();
                         $("#reply-" + data['id']).remove();
@@ -1338,7 +1376,7 @@
 
     $('.replies-item').css('display', 'none');
 
-    var chapter = {!! $book->numberOfChapter  !!}
+    var chapter = $('#chapter_list').children().length;
 
     if(chapter > 0){
 
@@ -1351,15 +1389,39 @@
         objIndex = log.findIndex((obj => obj.book_id == current_book_id));
 
         if(objIndex >= 0){
-            log[objIndex].chapter_id.forEach(element => {
-            var buttonChapters = $('#tabItem6').find('#chapter_list').find(`a[data-id='${element}']`);
-            
-            buttonChapters.each(function (i,item) {
-                $(item).css("color", "#dbd7d3");
-            })
+            log[objIndex].chapterList.forEach(element => {
+
+                var buttonChapters = $('#chapter_list').find(`a[data-id='${element.chapter_id}']`);
+                
+                buttonChapters.each(function (i,item) {
+                    $(item).css("color", "#dbd7d3");
+                })
 
 
             });
+
+
+            var lasted_reading = log[objIndex].chapterList.reduce((a, b) => {
+                return new Date(a.time) > new Date(b.time) ? a : b;
+            });
+
+            const lasted_chapter = lasted_reading.chapter_id;
+            $.ajax({
+                url:'/continue-reading/'+lasted_chapter,
+                type:"GET",
+                data:{
+                  
+                }
+            })
+            .done(function(res) {  
+                const url = res.url;
+                $('#read-chapter-btn').attr("href", `${url}`);
+                
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+            // If fail
+            console.log(textStatus + ': ' + errorThrown);
+            })
         }
         
         }
@@ -1682,7 +1744,7 @@
 
                 // });
 
-                $('.total-comment-span').text(res.totalComments + " ");
+                // $('.total-comment-span').text(res.totalComments + " ");
    
 
             })
@@ -2044,7 +2106,7 @@
                             timer: 2500
                     });
                        
-                    $('.total-comment-span').text(res.totalComments + " ");
+                    // $('.total-comment-span').text(res.totalComments + " ");
 
                     })
                     .fail(function(jqXHR, textStatus, errorThrown) {
@@ -2087,7 +2149,7 @@
                             timer: 2500
                     });
                 
-                    $('.total-comment-span').text(res.totalComments + " ");
+                    // $('.total-comment-span').text(res.totalComments + " ");
 
                    
                     })
@@ -2170,7 +2232,7 @@
           
                 $('#reply-modal').modal('hide');
 
-                $('.total-comment-span').text(res.totalComments + " ");
+                // $('.total-comment-span').text(res.totalComments + " ");
 
             })
             .fail(function(jqXHR, textStatus, errorThrown) {

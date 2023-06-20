@@ -4,6 +4,12 @@
 <link href="{{ asset('js/pagination/pagination.css') }}" rel="stylesheet" type="text/css">
 
 <style>
+    @media (min-width: 1200px){
+        .container-xl, .container-lg, .container-md, .container-sm, .container {
+            max-width: 1300px;
+        }
+    }
+
     .preview-item{
         padding:0.5rem;
     }
@@ -168,7 +174,7 @@
                                                 <div class="card">
                                                     <div class="d-flex">  
                                                         <div class="flex-grow-1 me-2 shine">
-                                                            <img class="card-img-top" src="{{ $book->url }}" alt="" style="width:160px;height:120px">    
+                                                            <img class="card-img-top" src="{{ $book->url }}" alt="" style="width:120px;height:120px">    
                                                         </div>
                                                         <div class="d-flex flex-column">                                 
                                                             <a class="title-book" href="/sach/{{$book->id}}/{{$book->slug}}">{{ Str::limit($book->name,40) }}</a>
@@ -206,7 +212,7 @@
                                             <div class="card">
                                                 <div class="d-flex">  
                                                     <div class="flex-grow-1 me-2 shine">
-                                                        <img class="card-img-top border" src="{{ $document->url }}" alt="" style="width:160px;height:120px">    
+                                                        <img class="card-img-top border" src="{{ $document->url }}" alt="" style="width:120px;height:120px">    
                                                     </div>
                                                     <div class="d-flex flex-column">                                 
                                                         <a class="title-book" href="/tai-lieu/{{$document->id}}/{{$document->slug}}">{{ Str::limit($document->name,40) }}</a>

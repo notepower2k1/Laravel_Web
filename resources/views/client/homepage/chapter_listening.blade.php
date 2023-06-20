@@ -2,7 +2,11 @@
 
 @section('additional-style')
 <style>
-
+    @media (min-width: 1200px){
+    .container-xl, .container-lg, .container-md, .container-sm, .container {
+        max-width: 1300px;
+    }
+  }
   .btn2top .sticky-btn {
     position: fixed;
     bottom: 36px;
@@ -30,6 +34,7 @@
     cursor: pointer;
   }
   
+  
   @media screen and (max-width: 768px) {
     .btn2top .sticky-btn {
       right: 21px;
@@ -39,6 +44,29 @@
   
   }
   
+  .btn2test{
+    position: fixed;
+    top: 120px;
+    right: 60px;
+    transition: all 0.9s ease;
+    padding: 5px;
+  }
+
+  
+  .btn2test button:nth-child(odd){
+      margin:10px 0 10px 0;
+  }
+  
+  
+  @media screen and (max-width: 768px) {
+    .btn2test {
+      right: 21px;
+      /* top: 21px; */
+  
+    }  
+  
+  }
+
   
   
   .btn2contact .sticky-btn {
@@ -64,6 +92,8 @@
   }
   
   
+
+
   @media screen and (max-width: 768px) {
     .btn2contact .sticky-btn {
       bottom: 21px;
@@ -262,6 +292,23 @@
         <img src="https://raw.githubusercontent.com/notepower2k1/MyImage/main/svg/config.png">
       </a>
     </div>
+
+    <div class="btn2test btn btn-lg btn-secondary">
+      <div class="d-flex flex-column">
+        <button class="flex-fill btn btn-icon btn-lg btn-outline-success" id="play-button">
+            <em class="icon ni ni-play m-auto"></em>
+        </button>
+        <button class="flex-fill btn btn-icon btn-lg btn-outline-danger" id="pause-button">
+            <em class="icon ni ni-pause m-auto"></em>
+        </button>
+        <button class="flex-fill btn btn-icon btn-lg btn-outline-warning" id="stop-button">
+            <em class="icon ni ni-stop m-auto"></em>
+        </button>
+      </div>
+    </div>
+
+
+
   </div>
 
   <div class="nk-add-product toggle-slide toggle-slide-right toggle-screen-any" data-content="addProduct" data-toggle-screen="any" data-toggle-overlay="true" data-toggle-body="true" data-simplebar="init"><div class="simplebar-wrapper" style="margin: -24px;"><div class="simplebar-height-auto-observer-wrapper"><div class="simplebar-height-auto-observer"></div></div><div class="simplebar-mask"><div class="simplebar-offset" style="right: 0px; bottom: 0px;"><div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content" style="height: 100%; overflow: hidden scroll;"><div class="simplebar-content" style="padding: 24px;">
@@ -300,7 +347,7 @@
                       </div>
                   </div>
               </div>
-              <div class="col-12">
+              {{-- <div class="col-12">
                   <div class="form-group">
                       <label class="form-label" for="regular-price">Tương tác</label>
                       <div class="d-flex">
@@ -315,7 +362,7 @@
                         </button>
                       </div>
                   </div>
-              </div>
+              </div> --}}
               <div class="col-12">
                   <div class="form-group">
                       <label class="form-label" for="sale-price">
@@ -429,6 +476,7 @@
 @endsection
 @endsection
 @section('additional-scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.4/moment-with-locales.js"></script>
 
     <script>
         $.ajaxSetup({
@@ -477,12 +525,12 @@
 
               if( $this.scrollTop() > ($('#text').height() - 300) ) { 
                 $('.sticky-btn').hide();
-
+                $('.btn2test').hide();
 
               }
               else{
                 $('.sticky-btn').show();
-
+                $('.btn2test').show();
               } 
             });
 
@@ -521,58 +569,83 @@
                
             }
 
-            const current_book_id = {!! $chapter->books->id !!}
-            var chapter_id =  {!! $chapter->id !!}
+          const current_book_id = {!! $chapter->books->id !!}
+          var current_chapter_id =  {!! $chapter->id !!}
 
-            var readingLog = window.localStorage.getItem('readingLog');
+          var readingLog = window.localStorage.getItem('readingLog');
 
-            var log = JSON.parse(readingLog);
+          var log = JSON.parse(readingLog);
 
 
           //update cookie
           if(log){             
-              objIndex = log.findIndex((obj => obj.book_id == current_book_id));
-              //book exist
-              if(objIndex > -1){
-                  var currentChapterList = log[objIndex].chapter_id;
-                  if(currentChapterList.includes(chapter_id)){
+          objIndex = log.findIndex((obj => obj.book_id === current_book_id));
+          //book exist
 
-                  }
-                  else{
-                      const updateChapterList = [...currentChapterList,chapter_id]
-                      log[objIndex].chapter_id = updateChapterList;
+          if(objIndex > -1){
+            
+                const now = moment().format('llll');
+                var chapterList = log[objIndex].chapterList;
 
-                      window.localStorage.setItem('readingLog',JSON.stringify(log));
-                  }
-                  
-              }
-              //book not exist
-              else{
-                  var chapter_list = [];
-                  chapter_list.push(chapter_id);
 
-                  var reading_object = {
-                  'book_id' : current_book_id,
-                  'chapter_id' : chapter_list        
-                  };       
-                  const updateLog = [...log,reading_object]
-                  window.localStorage.setItem('readingLog',JSON.stringify(updateLog));
 
-              }        
+                var chapterIndex = chapterList.findIndex(e => e.chapter_id === current_chapter_id);
+
+                if(chapterIndex > -1){
+                    chapterList[chapterIndex].time = now;
+                    window.localStorage.setItem('readingLog',JSON.stringify(log));
+                }
+                else{
+                    const logObject = {
+                        "chapter_id":current_chapter_id,
+                        "time":now
+                    }
+
+                    const updateChapterList = [...chapterList,logObject]
+                    log[objIndex].chapterList = updateChapterList;
+
+                    window.localStorage.setItem('readingLog',JSON.stringify(log));
+                }    
           }
-          //create new cookie
+          //book not exist
           else{
-              var chapter_list = [];
-              chapter_list.push(chapter_id);
-              var reading_object = {
-              'book_id' : current_book_id,
-              'chapter_id' : chapter_list        
-              };            
-              var reading_log = [];
-              reading_log.push(reading_object);
-              window.localStorage.setItem('readingLog',JSON.stringify(reading_log));
 
-          }
+            const time = moment().format('llll');
+            const logObject = {
+                "chapter_id":current_chapter_id,
+                "time":time
+            }
+            var chapterList = [];
+            chapterList.push(logObject)
+
+            var reading_object = {
+                'book_id' : current_book_id,
+                'chapterList' : chapterList        
+            };            
+       
+            const updateLog = [...log,reading_object]
+            window.localStorage.setItem('readingLog',JSON.stringify(updateLog));
+          }        
+      }
+      //create new cookie
+      else{
+
+        const time = moment().format('llll');
+        const logObject = {
+            "chapter_id":current_chapter_id,
+            "time":time
+        }
+        var chapterList = [];
+        chapterList.push(logObject)
+        var reading_object = {
+        'book_id' : current_book_id,
+        'chapterList' : chapterList        
+        };            
+        var reading_log = [];
+        reading_log.push(reading_object);
+        window.localStorage.setItem('readingLog',JSON.stringify(reading_log));
+
+      }
 
         })
 

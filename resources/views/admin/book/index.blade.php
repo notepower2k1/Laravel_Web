@@ -473,7 +473,7 @@
           }
         })
       })
-  });
+    });
   
   function customFormatDate(date){
     const month = date.slice(0,2);

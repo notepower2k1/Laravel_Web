@@ -11,6 +11,8 @@ use App\Models\Follow;
 use App\Models\Notification;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ClientChapterController extends Controller
 {
@@ -112,7 +114,9 @@ class ClientChapterController extends Controller
      */
     public function show($id) //like "show details"
     {
-        $chapters = Chapter::where('book_id','=',$id)->where('deleted_at','=',null)->get();
+        $chapters = DB::table('chapters')->join('books','books.id','=','chapters.id')
+        ->selectRaw('chapters.*')
+        ->where('chapters.book_id','=',$id)->where('books.userCreatedID','=',Auth::user()->id)->get();
 
         return view('client.manage.chapter.show')
         ->with('chapters',$chapters)
@@ -123,10 +127,17 @@ class ClientChapterController extends Controller
 
     public function detail($id){
         
-        $chapter = Chapter::findOrFail($id);
+        $chapter = DB::table('chapters')->join('books','books.id','=','chapters.id')
+        ->selectRaw('chapters.*')
+        ->where('chapters.id','=',$id)->where('books.userCreatedID','=',Auth::user()->id)->first();
 
-        return view('client.manage.chapter.detail')
-        ->with('chapter',$chapter);
+        if($chapter){
+            return view('client.manage.chapter.detail')
+            ->with('chapter',$chapter);
+        }
+        else{
+            return view('errors.404');
+        }
     }
 
     /**
@@ -137,9 +148,18 @@ class ClientChapterController extends Controller
      */
     public function edit($chuong_id)
     {
-        
-        $chapter=Chapter::findOrFail($chuong_id);
-        return view('client.manage.chapter.edit')->with('chapter',$chapter);
+        $chapter = DB::table('chapters')->join('books','books.id','=','chapters.id')
+        ->selectRaw('chapters.*')
+        ->where('chapters.id','=',$chuong_id)->where('books.userCreatedID','=',Auth::user()->id)->first();
+        // $chapter= Chapter::findOrFail($chuong_id);
+
+
+        if($chapter){
+            return view('client.manage.chapter.edit')->with('chapter',$chapter);
+        }
+        else{
+            return view('errors.404');
+        }
     }
 
     /**
@@ -170,15 +190,18 @@ class ClientChapterController extends Controller
         }
         $name = '';
 
+        $slug = '';
+
         if($request->name == null){
             $name = '';
+            $slug =  Str::slug($request->code);
         }
         else{
             $name = $request->name;
+            $slug =  Str::slug($name);
         }
        
 
-        $slug =  Str::slug($request->name);
 
         $chapter = Chapter::findOrFail($id)
         ->update([
@@ -219,14 +242,22 @@ class ClientChapterController extends Controller
 
 
     public function customDelete($chapter_id){
-        $chapter = Chapter::findOrFail($chapter_id);
-        $chapter->deleted_at = Carbon::now()->toDateTimeString();
+        $chapter = DB::table('chapters')->join('books','books.id','=','chapters.id')
+        ->selectRaw('chapters.*')
+        ->where('chapters.id','=',$chapter_id)->where('books.userCreatedID','=',Auth::user()->id)->first();
+        if($chapter){
+            $chapter->deleted_at = Carbon::now()->toDateTimeString();
 
-        $book = Book::findOrFail($chapter->book_id);
-        $book->numberOfChapter = $book->numberOfChapter -1;
-        $book ->save();
-
-        $chapter ->save();
+            $book = Book::findOrFail($chapter->book_id);
+            $book->numberOfChapter = $book->numberOfChapter -1;
+            $book ->save();
+    
+            $chapter ->save();
+        }
+        else{
+            return view('errors.404');
+        }
+      
     }   
         
 }

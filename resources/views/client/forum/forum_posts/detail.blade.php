@@ -2,6 +2,7 @@
 @section('pageTitle', `${{$post->topic}}`)
 @section('additional-style')
 <link rel="stylesheet" href="{{ asset('assets/css/infohelper.css') }}">
+<link href="{{ asset('js/pagination/pagination.css') }}" rel="stylesheet" type="text/css">
 
 <style>
    
@@ -103,7 +104,7 @@
             </div>
             <div class="mb-5 bg-white rounded" id="comment-box" style="overflow-y:scroll; overflow-x:hidden; max-height:1000px;">
                 <div class="row">
-                    <div class="col-md-12" id="comment_list">
+                    <div class="col-md-12" id ="comment-render-div">
                         @foreach ($comments as $comment)
 
                         <div class="media mt-4" id="comment-{{ $comment->id }}">
@@ -312,6 +313,21 @@
                         
                       
                     </div>
+
+                    <div id="new-comment-loading" style="display:none">
+                        <div class="d-flex justify-content-center">
+                            <div class="spinner-border" role="status">
+                              <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    @if ($comments->count() > 0)
+    
+                    <div class="data-container"></div>
+                    <div class="col-md-12 d-flex justify-content-end mt-4">                          
+                        <div id="pagination"></div>
+                    </div>
+                    @endif
                 </div>
 
             </div>
@@ -482,6 +498,7 @@
 @endsection
 @section('additional-scripts')
 <script src="https://js.pusher.com/4.3/pusher.min.js"></script>
+<script src="{{ asset('js/pagination/pagination.min.js') }}" ></script>
 
 <script>
 
@@ -503,11 +520,21 @@
     // Bind a function to a Event (the full Laravel class)
     if(commentChannel){
         commentChannel.bind('send-comment', function(data) {
-            if (post_id == data['itemID'] && data['typeID'] == 3){                 
+            if (post_id == data['itemID'] && data['typeID'] == 3){       
+                const oldComment = $('#total-comment-span').text();
+          
                 switch(data['eventType']) {
                     case "add-comment":
+
+                        $('#new-comment-loading').show();          
+
+                        $('#total-comment-span').text(parseInt(oldComment) + 1 + " ");
+
+
                         $("#comment-box").load(" #comment-box > *",function(){
+                            commentRender();
                             $('.replies-item').css('display', 'none');
+                            $('#new-comment-loading').hide();          
 
                         });
                         break;    
@@ -515,13 +542,31 @@
                         $("#comment-content-"+ data['id']).load(` #comment-content-${data['id']} > *`)
                         break;         
                     case "delete-comment":
+
+
+                        var totalRepliesLeft = $("#comment-" + data['id']).find(".replies-item").length;
+
+                        if(totalRepliesLeft){
+                            $('#total-comment-span').text(parseInt(oldComment) - parseInt(totalRepliesLeft) -1);
+
+                        }
+                        else{
+                            $('#total-comment-span').text(parseInt(oldComment) - 1);
+
+                        }
+
                         $("#comment-" + data['id']).fadeOut();
                         $("#comment-" + data['id']).remove();
 
                         break;
                     case "add-reply":
+                        $('#new-comment-loading').show();          
+
+                        $('#total-comment-span').text(parseInt(oldComment) + 1 + " ");
                         $("#comment-box").load(" #comment-box > *",function(){
+                            commentRender();
                             $('.replies-item').css('display', 'none');
+                            $('#new-comment-loading').hide();          
 
                         });
                         break;  
@@ -529,6 +574,9 @@
                         $("#reply-content-"+ data['id']).load(` #reply-content-${data['id']} > *`)
                         break;      
                     case "delete-reply":
+
+
+                        $('#total-comment-span').text(parseInt(oldComment) - 1 + " ");
 
                         var totalRepliesLeft = $("#reply-"+ data['id']).parent().find(".replies-item").length;
 
@@ -554,6 +602,44 @@
         });
     }
 
+    
+    function commentRender(){
+        const container = $('#pagination');
+
+
+        if (!container.length) return;
+            var sources = function () {
+            var result = [];
+
+            $('#comment-render-div').children().each(function(item){
+
+
+                result.push($(this).get(0).outerHTML);
+
+            })
+        return result;
+        }();
+
+        var options = {
+            dataSource: sources,
+            callback: function (response, pagination) {
+                var dataHtml = '<div id ="comment_list" >';
+
+                $.each(response, function (index, item) {
+                    dataHtml += item;
+                });
+
+                dataHtml += '</div>';
+
+                container.parent().prev().html(dataHtml);
+                $('#comment-render-div').remove();
+            }
+        };
+
+
+  
+        container.pagination(options);
+    }
 
     $(window).bind('beforeunload', function(e){
 
@@ -565,6 +651,7 @@
     });
 
     $(function () {
+        commentRender();
         $('.replies-item').css('display', 'none');
 
         tinymce.init({
@@ -670,7 +757,7 @@
                         tinymce.activeEditor.setContent("");
 
                     
-                        $('#total-comment-span').text(res.totalComments + " ");
+                        // $('#total-comment-span').text(res.totalComments + " ");
 
                     })
                     .fail(function(jqXHR, textStatus, errorThrown) {
@@ -861,7 +948,7 @@
 
                   
                     $('#reply-modal').modal('hide');
-                    $('#total-comment-span').text(res.totalComments + " ");
+                    // $('#total-comment-span').text(res.totalComments + " ");
 
 
                 })
@@ -1056,7 +1143,7 @@
 
                             });
 
-                            $('#total-comment-span').text(res.totalComments + " ");
+                            // $('#total-comment-span').text(res.totalComments + " ");
 
                         })
                         .fail(function(jqXHR, textStatus, errorThrown) {

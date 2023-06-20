@@ -467,7 +467,7 @@
                                                     <td class="nk-tb-col">
                                                  
                                                         <a href="/admin/sach/detail/{{$history->books->id}}/{{ \Carbon\Carbon::now()->year }}">
-                                                            <span class="badge rounded-pill bg-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $comment->identifier->name }}">
+                                                            <span class="badge rounded-pill bg-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $history->books->name }}">
                                                                 {{ Str::limit($history->books->name,50) }}
                                                             </span>
                                                         </a>

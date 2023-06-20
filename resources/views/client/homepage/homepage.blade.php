@@ -5,17 +5,17 @@
 <link rel="stylesheet" href="{{ asset('assets/css/book3d-nohover.css') }}">
 
 <style>
-    
+    @media (min-width: 1200px){
+        .container-xl, .container-lg, .container-md, .container-sm, .container {
+            max-width: 1300px;
+        }
+    }
     .high_reading_books{
         margin-top: 80px;
         
     }
     .high_rating_books:hover{
         cursor: pointer;
-    }
-    .new_books:hover{
-        cursor: pointer;
-
     }
 
     .title-book{
@@ -122,12 +122,12 @@
             <div class="nk-block">
                 <div class="slider-init" data-slick='{"slidesToShow": 4, "slidesToScroll": 2, "infinite":false, "responsive":[ {"breakpoint": 992,"settings":{"slidesToShow": 2}}, {"breakpoint": 768,"settings":{"slidesToShow": 1}} ]}'>
                     @foreach ($new_books as $book)
-                        <div class="col high_rating_books" >
+                        <div class="col">
                             <div class="card card-bordered product-card shadow">
                                 <div class="product-thumb shine">
-                                    <a href="/sach/{{$book->id}}/{{$book->slug}}">
-                                        <img class="card-img-top border" src="{{ $book->url }}" alt="" width="300px" height="350px">
-                                    </a>
+                                  
+                                    <img class="card-img-top border" src="{{ $book->url }}" alt="" width="300px" height="350px">
+                                   
                                 
                                     <ul class="product-badges">
                                         <li><span class="badge bg-success">{{ $book->ratingScore }}/5</span></li>
@@ -464,9 +464,7 @@
                 <div class="col document-card d-flex justify-content-center">
                     <div class="card card-bordered product-card shadow ">
                         <div class="product-thumb shine">
-                            <a href="/tai-lieu/{{$document->id}}/{{$document->slug}}" data-id ={{ $document->id }} data-option="2">
-                                <img class=" document-card-image" src="{{ $document->url }}" alt="" width="300px" height="350px">
-                            </a>     
+                            <img class="document-card-image" src="{{ $document->url }}" alt="" width="300px" height="350px">
                             
                             <ul class="product-actions d-flex h-100 align-items-center" >
                                 <li >
@@ -490,7 +488,7 @@
         <div class="nk-block-head nk-block-head-sm">
             <div class="nk-block-between">
                 <div class="nk-block-head-content">
-                    <h4 class="nk-block-title">Mới cập nhật</h4>
+                    <h4 class="nk-block-title">Mới đăng</h4>
                 </div><!-- .nk-block-head-content -->
             </div><!-- .nk-block-between -->
         </div><!-- .nk-block-head -->
@@ -555,14 +553,11 @@
                     <div class="nk-block">
                         <div class="slider-init" data-slick='{"slidesToShow": 4, "slidesToScroll": 2, "infinite":false, "responsive":[ {"breakpoint": 992,"settings":{"slidesToShow": 2}}, {"breakpoint": 768,"settings":{"slidesToShow": 1}} ]}'>
                             @foreach ($high_downloading_documents as $document)
-
-
-                                <div class="col high_rating_books" >
+                                <div class="col" >
                                     <div class="card card-bordered product-card shadow">
                                         <div class="product-thumb shine">
-                                            <a href="/tai-lieu/{{$document->id}}/{{$document->slug}}">
-                                                <img class="card-img-top border" src="{{ $document->url }}" alt="" width="300px" height="350px">
-                                            </a>                                
+                                            
+                                            <img class="card-img-top border" src="{{ $document->url }}" alt="" width="300px" height="350px">
                                             
                                             <ul class="product-actions d-flex h-100 align-items-center" >
                                                 <li >
@@ -621,37 +616,8 @@
 
 <script>    
    
-   function Pointer(threshold = 10) {
-        let x = 0;
-        let y = 0;
 
-        return {
-            start(e) {
-            x = e.clientX;
-            y = e.clientY;
-            },
 
-            isClick(e) {
-            const deltaX = Math.abs(e.clientX - x);
-            const deltaY = Math.abs(e.clientY - y);
-            return deltaX < threshold && deltaY < threshold;
-            }
-        }
-    }
-    const pointer = new Pointer();
-
-    $('.new_books').on('mousedown', (e) => pointer.start(e))
-    $(document).on('mouseup','.new_books',function(e){
-    const id = $(this).data('id');
-    const slug = $(this).data('slug'); 
-
-   
-    const operation = pointer.isClick(e) 
-        ?window.location.href =  `/sach/${id}/${slug}`
-        :"";
-            
-        
-    })
    
 
     $('.preview-book-btn').on('click', function(e) {

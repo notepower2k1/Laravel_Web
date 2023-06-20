@@ -1,6 +1,11 @@
 @extends('client/homepage.layouts.app')
 @section('additional-style')
 <style>
+    @media (min-width: 1200px){
+        .container-xl, .container-lg, .container-md, .container-sm, .container {
+            max-width: 1300px;
+        }
+    }
     .nk-content{
         background-image:url('https://raw.githubusercontent.com/notepower2k1/MyImage/main/banner/main-banner-1.png') !important;
         background-repeat: no-repeat;

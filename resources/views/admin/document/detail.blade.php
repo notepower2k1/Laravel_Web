@@ -28,6 +28,21 @@
                 <span>Khôi phục dữ liệu</span>
             </button>
         @endif
+
+        <div class="ms-1"></div>
+
+
+        @if($document->users->id != 1)
+            @if($document->status == -2)
+                <a href="#" class="btn btn-outline-primary lock-button" data-id="{{ $document->id }}" data-name="{{ $document->name }}" data-status ="{{ $document->status }}">
+                    <em class="icon ni ni-unlock"></em><span>Mở khóa tài liệu</span>
+                </a>
+            @else
+                <a href="#" class="btn btn-outline-warning lock-button" data-id="{{ $document->id }}" data-name="{{ $document->name }}"  data-status ="{{ $document->status }}">
+                    <em class="icon ni ni-lock"></em><span>Khóa tài liệu</span>
+                </a>
+            @endif
+        @endif
       </div>
 
     <div class="nk-content-inner">
@@ -1418,6 +1433,83 @@
 
 
     })
+
+    $(document).on('click','.lock-button',function(e){
+      e.preventDefault();
+
+      var document_id = $(this).data('id');
+      var name = $(this).data('name');
+      var status = $(this).data('status');
+
+      
+      var token = $("meta[name='csrf-token']").attr("content");
+
+      Swal.fire({
+          title: status === -2 ? "Bạn muốn mở khóa tài liệu " + name : "Bạn muốn khóa tài liệu " + name,
+          html:status === -2 ?  '<em class="icon icon-circle bg-success-dim ni ni-unlock"></em>':  '<em class="icon icon-circle bg-warning-dim ni ni-lock"></em>',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Đồng ý',
+          cancelButtonText: 'Không'
+          }).then((result) => {
+          if (result.isConfirmed) {
+              $.ajax({
+              type:"GET",
+              url:'/admin/document/lock/' + document_id,
+              data : {
+              },
+              })
+              .done(function(res) {
+              // If successful
+
+                if(res.status == 1){
+                  Swal.fire({
+                      icon: 'success',
+                      title: `Mở khóa thành công`,
+                      showConfirmButton: false,
+                      timer: 2500
+                  });
+
+                  $('#document-render-div').load(' #document-render-div > *')
+
+
+                }
+                else{
+                  Swal.fire({
+                      icon: 'success',
+                      title: `Khóa thành thành công`,
+                      showConfirmButton: false,
+                      timer: 2500
+                  });
+
+                  $('#document-render-div').load(' #document-render-div > *')
+
+
+
+                  $("#note-type").select2().select2('val',[`5`]);
+
+                  setTimeout(() => {
+
+                      $('#note-object').select2().select2('val',[`${document_id}`]);
+                      $('#modalNote').modal('show');
+                    }, 2500);
+                }
+
+
+
+           
+
+              })
+              .fail(function(jqXHR, textStatus, errorThrown) {
+              // If fail
+              console.log(textStatus + ': ' + errorThrown);
+              })
+          
+          }
+        })
+      })
+    
 </script>
 
 @endsection

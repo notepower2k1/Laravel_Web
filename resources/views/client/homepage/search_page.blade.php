@@ -3,7 +3,11 @@
 <link href="{{ asset('js/pagination/pagination.css') }}" rel="stylesheet" type="text/css">
 
 <style>
-
+    @media (min-width: 1200px){
+        .container-xl, .container-lg, .container-md, .container-sm, .container {
+            max-width: 1300px;
+        }
+    }
     .nk-content{
         background-image:url('https://raw.githubusercontent.com/notepower2k1/MyImage/main/banner/main-banner-1.png') !important;
         background-repeat: no-repeat;
@@ -63,7 +67,7 @@
                         <div class="card">
                             <div class="d-flex">  
                                 <div class="me-2 shine">
-                                    <img class="card-img-top" src="{{ $book->url }}" alt="" style="width:200px;height:150px">    
+                                    <img class="card-img-top" src="{{ $book->url }}" alt="" style="width:180px;height:150px">    
                                 </div>
                                 <div class="d-flex flex-column">                                 
                                     <a class="title-book" href="/sach/{{$book->id}}/{{$book->slug}}">{{ Str::limit($book->name,40) }}</a>

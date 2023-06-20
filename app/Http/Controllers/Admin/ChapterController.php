@@ -173,21 +173,27 @@ class ChapterController extends Controller
 
         $word_count = 0;
 
-        if($request->wordCount!=null){
+        if($request->wordCount == null){
+            $word_count = 0;
+        }
+        else{
             $word_count = $request->wordCount;
         }
         
         $name = '';
+        $slug = '';
 
         if($request->name == null){
             $name = '';
+            $slug =  Str::slug($request->code);
         }
         else{
             $name = $request->name;
+            $slug =  Str::slug($name);
         }
+
        
 
-        $slug =  Str::slug($request->name);
 
         $chapter = Chapter::findOrFail($id)
         ->update([

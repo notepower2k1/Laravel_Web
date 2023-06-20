@@ -621,6 +621,14 @@
                                                                     {{ $comments->links('vendor.pagination.custom',['elements' => $comments]) }}
                                                                 </div> --}}
     
+                                                                <div id="new-comment-loading" style="display:none">
+                                                                    <div class="d-flex justify-content-center">
+                                                                        <div class="spinner-border" role="status">
+                                                                          <span class="visually-hidden">Loading...</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
                                                                 @if ($comments->count() > 0)
     
                                                                 <div class="data-container"></div>
@@ -681,12 +689,10 @@
                             <div class="nk-block">
                                 <div class="slider-init" data-slick='{"slidesToShow": 4, "slidesToScroll": 2, "infinite":false, "responsive":[ {"breakpoint": 992,"settings":{"slidesToShow": 2}}, {"breakpoint": 768,"settings":{"slidesToShow": 1}} ]}'>
                                     @foreach ($documentsWithSameType as $document)
-                                    <div class="col high_rating_books" >
+                                    <div class="col" >
                                         <div class="card card-bordered product-card shadow">
                                             <div class="product-thumb shine">
-                                                <a href="/tai-lieu/{{$document->id}}/{{$document->slug}}">
-                                                    <img class="card-img-top" src="{{ $document->url }}" alt="" width="300px" height="350px">
-                                                </a>                                
+                                                <img class="card-img-top" src="{{ $document->url }}" alt="" width="300px" height="350px">
                                                 
                                                 <ul class="product-actions d-flex h-100 align-items-center" >
                                                     <li >
@@ -907,12 +913,12 @@
     $.ajaxSetup({
     headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
+        }
     });
     var pusher = new Pusher('{{env('PUSHER_APP_KEY')}}', {
             cluster: 'ap1',
             encrypted: true
-    });
+        });
 
     const document_id = {!! $document_id !!};
 
@@ -921,11 +927,19 @@
     if(commentChannel){
         commentChannel.bind('send-comment', function(data) {
             if (document_id == data['itemID'] && data['typeID'] == 1){                 
-                
+                const oldComment = $('.total-comment-span').first().text();
+
                 switch(data['eventType']) {
                     case "add-comment":
+                        $('#new-comment-loading').show();          
+
+                        $('.total-comment-span').text(parseInt(oldComment) + 1 + " ");
+
                         $("#comment-box").load(" #comment-box > *",function(){
+                            commentRender();
                             $('.replies-item').css('display', 'none');
+
+                            $('#new-comment-loading').hide();        
 
                         });
                         break;
@@ -934,13 +948,33 @@
                         $("#comment-content-"+ data['id']).load(` #comment-content-${data['id']} > *`)
                         break;
                     case "delete-comment":
+
+                        var totalRepliesLeft = $("#comment-" + data['id']).find(".replies-item").length;
+
+                        if(totalRepliesLeft){
+                            $('.total-comment-span').text(parseInt(oldComment) - parseInt(totalRepliesLeft) -1 + " ");
+
+                        }
+                        else{
+                            $('.total-comment-span').text(parseInt(oldComment) - 1 + " ");
+
+                        }
+
                         $("#comment-" + data['id']).fadeOut();
                         $("#comment-" + data['id']).remove();
 
                         break;
                     case "add-reply":
+                        $('#new-comment-loading').show();          
+
+                        $('.total-comment-span').text(parseInt(oldComment) + 1 + " ");
+
+
                         $("#comment-box").load(" #comment-box > *",function(){
+                            commentRender();
                             $('.replies-item').css('display', 'none');
+
+                            $('#new-comment-loading').hide();        
 
                         });
                         break;
@@ -949,8 +983,9 @@
                         break;
                     case "delete-reply":
 
-                        var totalRepliesLeft = $("#reply-"+ data['id']).parent().find(".replies-item").length;
+                        $('.total-comment-span').text(parseInt(oldComment) -1 + " ");
 
+                        var totalRepliesLeft = $("#reply-"+ data['id']).parent().find(".replies-item").length;
                         totalRepliesLeft = totalRepliesLeft - 1;
 
                         if(totalRepliesLeft > 0){
@@ -996,7 +1031,7 @@
 
     
 
-     function commentRender(){
+    function commentRender(){
         const container = $('#tabItem7').find('#pagination');
 
 
@@ -1173,7 +1208,7 @@
 
 
      //Comments && Replies report
-     $(document).on('click','.report-comment-btn',function(e){
+    $(document).on('click','.report-comment-btn',function(e){
         e.preventDefault();
         const form = $('#reportFormComment');
 
@@ -1317,7 +1352,7 @@
                 $('#main-comment-box').find('.emojionearea-editor').text('');
             
 
-                $('.total-comment-span').text(res.totalComments + " ");
+                // $('.total-comment-span').text(res.totalComments + " ");
                 
             })
             .fail(function(jqXHR, textStatus, errorThrown) {
@@ -1359,7 +1394,7 @@
                   
               
 
-                    $('.total-comment-span').text(res.totalComments + " ");
+                    // $('.total-comment-span').text(res.totalComments + " ");
 
                     })
                     .fail(function(jqXHR, textStatus, errorThrown) {
@@ -1401,7 +1436,7 @@
                     });
 
                 
-                    $('.total-comment-span').text(res.totalComments + " ");
+                    // $('.total-comment-span').text(res.totalComments + " ");
 
                    
                     })
@@ -1485,7 +1520,7 @@
 
                 $('#reply-modal').modal('hide');
 
-                $('.total-comment-span').text(res.totalComments + " ");
+                // $('.total-comment-span').text(res.totalComments + " ");
 
             })
             .fail(function(jqXHR, textStatus, errorThrown) {

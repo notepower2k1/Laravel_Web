@@ -29,6 +29,22 @@
                 <span>Khôi phục dữ liệu</span>
             </button>
         @endif
+
+        <div class="ms-1"></div>
+
+        @if($book->users->id != 1)
+            @if($book->status == -2)       
+                <a href="#" class="btn btn-outline-primary lock-button" data-id="{{ $book->id }}" data-name="{{ $book->name }}" data-status ="{{ $book->status }}">
+                    <em class="icon ni ni-unlock"></em><span>Mở khóa sách</span>
+                </a>
+            
+                @else
+            
+                <a href="#" class="btn btn-outline-warning lock-button" data-id="{{ $book->id }}" data-name="{{ $book->name }}"  data-status ="{{ $book->status }}">
+                    <em class="icon ni ni-lock"></em><span>Khóa sách</span>
+                </a>       
+            @endif
+        @endif
     </div>
    
    
@@ -678,8 +694,83 @@
             console.log(textStatus + ': ' + errorThrown);
         });
         
+
+      
+        
     });
     
+    
+    $(document).on('click','.lock-button',function(e){
+            e.preventDefault();
+
+            var book_id = $(this).data('id');
+            var name = $(this).data('name');
+            var status = $(this).data('status');
+
+            
+            var token = $("meta[name='csrf-token']").attr("content");
+
+            Swal.fire({
+                title: status === -2 ? "Bạn muốn mở khóa sách " + name : "Bạn muốn khóa sách " + name,
+                html:status === -2 ?  '<em class="icon icon-circle bg-success-dim ni ni-unlock"></em>':  '<em class="icon icon-circle bg-warning-dim ni ni-lock"></em>',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Không'
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                    type:"GET",
+                    url:'/admin/book/lock/' + book_id,
+                    data : {
+                    },
+                    })
+                    .done(function(res) {
+                    // If successful
+
+                        if(res.status == 1){
+                            Swal.fire({
+                                icon: 'success',
+                                title: `Mở khóa thành công`,
+                                showConfirmButton: false,
+                                timer: 2500
+                            });
+
+                    
+                            $('#book-render-div').load(' #book-render-div > *')
+
+
+                        }
+                        else{
+                        Swal.fire({
+                            icon: 'success',
+                            title: `Khóa thành thành công`,
+                            showConfirmButton: false,
+                            timer: 2500
+                        });
+
+                        $('#book-render-div').load(' #book-render-div > *')
+
+                        $("#note-type").select2().select2('val',[`4`]);
+
+                        setTimeout(() => {
+
+                            $('#note-object').select2().select2('val',[`${book_id}`]);
+                            $('#modalNote').modal('show');
+                            }, 2500);
+                        }
+
+                    })
+                    .fail(function(jqXHR, textStatus, errorThrown) {
+                    // If fail
+                    console.log(textStatus + ': ' + errorThrown);
+                    })
+                
+                }
+                })
+        });
+        
     $(document).on('click','#verification_item_button',function(){
         const book_id = $(this).data('id');
         var data = [];
@@ -1602,6 +1693,9 @@
         downloadBlob(csv2, `tong-so-luot-phan-hoi-theo-ngay-nam-${yearSelected}.csv`);
 
     })
+
+
+    
 
 </script>
 @endsection

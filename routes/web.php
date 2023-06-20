@@ -80,6 +80,7 @@ Route::get("/tai-tai-lieu",[PagesController::class,'download_document']);
  
 Route::get("/doc-sach/{book_slug}/{chapter_slug}",[PagesController::class,'read_book']);
 Route::get("/doc-sach-pdf/{book_slug}/pdf",[PagesController::class,'read_book_pdf']);
+Route::get("/continue-reading/{chapter_id}",[PagesController::class,'reading_continue']);
 
 Route::get("/sach-noi/{book_slug}/{chapter_slug}",[PagesController::class,'listening_book']);
 
